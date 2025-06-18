@@ -2,12 +2,16 @@
   "id": 11,
   "name": "Pandora",
   "slug": "pandora",
+  "iconUrl": "https://example.com/icons/pandora.png",
+  "websiteUrl": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433",
+  "urls": {
+    "en": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433",
+    "nl": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433",
+    "de": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433",
+    "es": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433"
+  },
   "displayOrder": 11,
   "isActive": true,
-  "urls": {
-    "en": "https://www.pandora.com/podcast/crocafe-award-winning-cro-podcast/PC:48433"
-  },
-  "logoUrl": null,
   "createdAt": "2025-06-03T16:14:24.000Z",
   "updatedAt": "2025-06-03T18:36:18.000Z"
 }

@@ -2,15 +2,16 @@
   "id": 1,
   "name": "Spotify",
   "slug": "spotify",
-  "displayOrder": 1,
-  "isActive": true,
+  "iconUrl": "https://example.com/icons/spotify.png",
+  "websiteUrl": "https://open.spotify.com/show/5TrJo8SegrE2haCeMDLB3M",
   "urls": {
     "en": "https://open.spotify.com/show/5TrJo8SegrE2haCeMDLB3M",
     "nl": "https://open.spotify.com/show/2LwkAHzzFB19pNIgtL4fBs",
     "de": "https://open.spotify.com/show/3uhdVQeyB94u666zuzh6Lo",
     "es": "https://open.spotify.com/show/4x6PY0PeoxoR8hgOSZwVBF"
   },
-  "logoUrl": null,
+  "displayOrder": 1,
+  "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
   "updatedAt": "2025-06-14T17:57:11.000Z"
 }

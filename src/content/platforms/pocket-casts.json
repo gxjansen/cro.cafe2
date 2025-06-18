@@ -2,12 +2,16 @@
   "id": 13,
   "name": "Pocket Casts",
   "slug": "pocket-casts",
+  "iconUrl": "https://example.com/icons/pocket-casts.png",
+  "websiteUrl": "https://pca.st/gpU3",
+  "urls": {
+    "en": "https://pca.st/gpU3",
+    "nl": "https://pca.st/gpU3",
+    "de": "https://pca.st/gpU3",
+    "es": "https://pca.st/gpU3"
+  },
   "displayOrder": 13,
   "isActive": true,
-  "urls": {
-    "en": "https://pca.st/gpU3"
-  },
-  "logoUrl": null,
   "createdAt": "2025-06-03T16:14:24.000Z",
   "updatedAt": "2025-06-03T18:36:18.000Z"
 }

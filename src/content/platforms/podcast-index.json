@@ -2,12 +2,16 @@
   "id": 16,
   "name": "Podcast Index",
   "slug": "podcast-index",
+  "iconUrl": "https://example.com/icons/podcast-index.png",
+  "websiteUrl": "https://example.com/platform/podcast-index",
+  "urls": {
+    "en": "https://example.com/platform/podcast-index",
+    "nl": "https://example.com/platform/podcast-index",
+    "de": "https://podcastindex.org/podcast/5431815",
+    "es": "https://example.com/platform/podcast-index"
+  },
   "displayOrder": 16,
   "isActive": true,
-  "urls": {
-    "de": "https://podcastindex.org/podcast/5431815"
-  },
-  "logoUrl": null,
   "createdAt": "2025-06-03T16:14:24.000Z",
   "updatedAt": "2025-06-03T18:36:18.000Z"
 }

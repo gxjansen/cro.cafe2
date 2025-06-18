@@ -2,13 +2,16 @@
   "id": 4,
   "name": "Castbox",
   "slug": "castbox",
-  "displayOrder": 4,
-  "isActive": true,
+  "iconUrl": "https://example.com/icons/castbox.png",
+  "websiteUrl": "https://castbox.fm/channel/CRO.CAFE-id1484469",
   "urls": {
     "en": "https://castbox.fm/channel/CRO.CAFE-id1484469",
-    "nl": "https://castbox.fm/channel/CRO.CAFE-Nederlands-id3621742"
+    "nl": "https://castbox.fm/channel/CRO.CAFE-Nederlands-id3621742",
+    "de": "https://castbox.fm/channel/CRO.CAFE-id1484469",
+    "es": "https://castbox.fm/channel/CRO.CAFE-id1484469"
   },
-  "logoUrl": null,
+  "displayOrder": 4,
+  "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
   "updatedAt": "2025-06-03T18:36:18.000Z"
 }
