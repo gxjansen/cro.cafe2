@@ -1,0 +1,266 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import { getPlatformsByCategory } from '../../../utils/content';
+import type { Language } from '../../../types';
+
+export async function getStaticPaths() {
+  const languages: Language[] = ['nl', 'de', 'es'];
+  return languages.map(lang => ({
+    params: { lang },
+    props: { language: lang }
+  }));
+}
+
+const { language } = Astro.props;
+
+// Get platforms by category
+const podcastPlatforms = await getPlatformsByCategory('podcast');
+const musicPlatforms = await getPlatformsByCategory('music');
+const generalPlatforms = await getPlatformsByCategory('general');
+
+// Translations
+const translations = {
+  nl: {
+    title: 'Abonneer je op CRO.CAFE Podcast',
+    description: 'Abonneer je op de CRO.CAFE podcast op je favoriete platform. Beschikbaar op alle grote podcast platforms in het Nederlands, Engels, Duits en Spaans.',
+    heading: 'Abonneer je op CRO.CAFE',
+    subheading: 'Mis nooit een aflevering! Abonneer je op de CRO.CAFE podcast op je favoriete platform en ontvang een melding wanneer nieuwe afleveringen worden uitgebracht.',
+    podcastPlatforms: 'Podcast Platforms',
+    musicPlatforms: 'Muziek & Audio Platforms',
+    otherPlatforms: 'Andere Platforms',
+    rssFeed: 'RSS Feed',
+    rssDescription: 'Je kunt je ook direct via RSS abonneren in je favoriete podcast app:',
+    copyRss: 'Kopieer RSS Feed URL',
+    stayUpdated: 'Blijf op de hoogte',
+    newsletterDescription: 'Ontvang meldingen over nieuwe afleveringen, exclusieve content en CRO-inzichten in je inbox.',
+    emailPlaceholder: 'Voer je e-mail in',
+    subscribe: 'Abonneren'
+  },
+  de: {
+    title: 'CRO.CAFE Podcast abonnieren',
+    description: 'Abonnieren Sie den CRO.CAFE Podcast auf Ihrer Lieblingsplattform. Verfügbar auf allen großen Podcast-Plattformen in Deutsch, Englisch, Niederländisch und Spanisch.',
+    heading: 'CRO.CAFE abonnieren',
+    subheading: 'Verpassen Sie keine Folge! Abonnieren Sie den CRO.CAFE Podcast auf Ihrer Lieblingsplattform und erhalten Sie Benachrichtigungen über neue Folgen.',
+    podcastPlatforms: 'Podcast-Plattformen',
+    musicPlatforms: 'Musik- & Audio-Plattformen',
+    otherPlatforms: 'Weitere Plattformen',
+    rssFeed: 'RSS-Feed',
+    rssDescription: 'Sie können auch direkt per RSS in Ihrer bevorzugten Podcast-App abonnieren:',
+    copyRss: 'RSS-Feed-URL kopieren',
+    stayUpdated: 'Bleiben Sie informiert',
+    newsletterDescription: 'Erhalten Sie Benachrichtigungen über neue Folgen, exklusive Inhalte und CRO-Einblicke in Ihrem Posteingang.',
+    emailPlaceholder: 'Geben Sie Ihre E-Mail ein',
+    subscribe: 'Abonnieren'
+  },
+  es: {
+    title: 'Suscríbete al Podcast CRO.CAFE',
+    description: 'Suscríbete al podcast CRO.CAFE en tu plataforma favorita. Disponible en todas las principales plataformas de podcast en español, inglés, neerlandés y alemán.',
+    heading: 'Suscríbete a CRO.CAFE',
+    subheading: '¡No te pierdas ningún episodio! Suscríbete al podcast CRO.CAFE en tu plataforma favorita y recibe notificaciones cuando se publiquen nuevos episodios.',
+    podcastPlatforms: 'Plataformas de Podcast',
+    musicPlatforms: 'Plataformas de Música y Audio',
+    otherPlatforms: 'Otras Plataformas',
+    rssFeed: 'Feed RSS',
+    rssDescription: 'También puedes suscribirte directamente vía RSS en tu aplicación de podcast favorita:',
+    copyRss: 'Copiar URL del Feed RSS',
+    stayUpdated: 'Mantente actualizado',
+    newsletterDescription: 'Recibe notificaciones sobre nuevos episodios, contenido exclusivo y conocimientos de CRO en tu bandeja de entrada.',
+    emailPlaceholder: 'Ingresa tu correo',
+    subscribe: 'Suscribirse'
+  }
+};
+
+const t = translations[language];
+
+// Get language-specific RSS feed URL
+const getRssFeedUrl = (lang: Language) => {
+  const feeds = {
+    nl: 'https://feeds.transistor.fm/cro-cafe-nl',
+    de: 'https://feeds.transistor.fm/cro-cafe-de',
+    es: 'https://feeds.transistor.fm/cro-cafe-es',
+    en: 'https://feeds.transistor.fm/cro-cafe'
+  };
+  return feeds[lang];
+};
+
+const rssFeedUrl = getRssFeedUrl(language);
+---
+
+<BaseLayout 
+  title={t.title}
+  description={t.description}
+  language={language}
+  canonical={`https://cro.cafe/${language}/subscribe`}
+>
+  <Header language={language} currentPath={`/${language}/subscribe`} />
+  
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.heading}
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          {t.subheading}
+        </p>
+      </div>
+
+      <!-- Podcast Platforms -->
+      {podcastPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            {t.podcastPlatforms}
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {podcastPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Music Platforms -->
+      {musicPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            {t.musicPlatforms}
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {musicPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- General Platforms -->
+      {generalPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            {t.otherPlatforms}
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {generalPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- RSS Feed Section -->
+      <section class="mt-12 bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-4">
+          {t.rssFeed}
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          {t.rssDescription}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href={rssFeedUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+            data-rss-url={rssFeedUrl}
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z"></path>
+              <path d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1zM3 15a2 2 0 114 0 2 2 0 01-4 0z"></path>
+            </svg>
+            {t.copyRss}
+          </a>
+        </div>
+      </section>
+
+      <!-- Newsletter Section -->
+      <section class="mt-12 bg-primary-50 dark:bg-primary-900/20 rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-4">
+          {t.stayUpdated}
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          {t.newsletterDescription}
+        </p>
+        <form class="max-w-md mx-auto flex gap-4">
+          <input 
+            type="email" 
+            placeholder={t.emailPlaceholder}
+            class="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            required
+          />
+          <button 
+            type="submit"
+            class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+          >
+            {t.subscribe}
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Copy RSS URL to clipboard
+  document.addEventListener('DOMContentLoaded', () => {
+    const rssButton = document.querySelector('a[data-rss-url]');
+    if (rssButton) {
+      rssButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const url = rssButton.getAttribute('data-rss-url');
+        if (url) {
+          navigator.clipboard.writeText(url).then(() => {
+            const originalText = rssButton.textContent;
+            rssButton.textContent = 'Copied!';
+            setTimeout(() => {
+              rssButton.textContent = originalText;
+            }, 2000);
+          });
+        }
+      });
+    }
+  });
+</script>

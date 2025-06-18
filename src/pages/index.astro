@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import { getLatestEpisodesByLanguage, getFeaturedEpisodes } from '../utils/content';
+import { getLatestEpisodesByLanguage, getFeaturedEpisodes, getEpisodeUrl } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
 const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
@@ -179,7 +179,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                       {episode.data.duration}
                     </span>
                     <a 
-                      href={episode.data.language === 'en' ? `/episodes/${episode.data.slug}` : `/${episode.data.language}/episodes/${episode.data.slug}`}
+                      href={getEpisodeUrl(episode)}
                       class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
                     >
                       Listen →

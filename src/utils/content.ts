@@ -92,8 +92,9 @@ export function formatDuration(duration: string): string {
 }
 
 // Generate episode URL
-export function getEpisodeUrl(episode: { data: { language: Language; slug: string } }): string {
-  const { language, slug } = episode.data;
+export function getEpisodeUrl(episode: { data: { language: Language; slug?: string }; slug?: string }): string {
+  const { language } = episode.data;
+  const slug = episode.data.slug || episode.slug;
   return language === 'en' ? `/episodes/${slug}` : `/${language}/episodes/${slug}`;
 }
 

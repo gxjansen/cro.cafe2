@@ -83,8 +83,9 @@ const quoteSchema = z.object({
 
 // Host schema for podcast hosts
 const hostSchema = z.object({
+  slug: z.string().optional(),
   name: z.string(),
-  bio: z.string(),
+  bio: z.string().optional(),
   company: z.string().optional(),
   title: z.string().optional(),
   role: z.string().optional(),
@@ -92,21 +93,15 @@ const hostSchema = z.object({
   // Media
   imageUrl: z.string().url().optional(),
   
-  // Social media
-  socialLinks: z.array(z.object({
-    platform: z.string(),
-    url: z.string().url(),
-  })).default([]),
+  // Social media - flexible format to handle both YAML arrays and JSON
+  socialLinks: z.any().optional(),
   
   // Relationships
-  episodes: z.array(z.string()).default([]), // Episode IDs
-  
-  // SEO
-  slug: z.string(),
+  episodes: z.array(z.string()).optional(), // Episode IDs
   
   // Timestamps
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 // Brand listener schema

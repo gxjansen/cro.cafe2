@@ -17,9 +17,32 @@ const languages = [
 
 const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
-// Generate language URLs - redirect to homepage for each language
+// Generate language URLs - try to preserve current path structure
 const getLanguageUrl = (langCode: Language) => {
-  return langCode === 'en' ? '/' : `/${langCode}/`;
+  // Remove current language prefix from path to get the base path
+  let basePath = currentPath;
+  
+  // Remove language prefix if it exists
+  const langPrefixes = ['/nl', '/de', '/es'];
+  for (const prefix of langPrefixes) {
+    if (basePath.startsWith(prefix + '/') || basePath === prefix) {
+      basePath = basePath.substring(prefix.length);
+      break;
+    }
+  }
+  
+  // Ensure basePath starts with /
+  if (!basePath.startsWith('/')) {
+    basePath = '/' + basePath;
+  }
+  
+  // For English, return the path without language prefix
+  if (langCode === 'en') {
+    return basePath === '/' ? '/' : basePath;
+  }
+  
+  // For other languages, add the language prefix
+  return `/${langCode}${basePath === '/' ? '' : basePath}`;
 };
 ---
 

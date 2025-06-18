@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import { getPlatformsByCategory } from '../../utils/content';
+import type { Language } from '../../types';
+
+const language: Language = 'en';
+
+// Get platforms by category
+const podcastPlatforms = await getPlatformsByCategory('podcast');
+const musicPlatforms = await getPlatformsByCategory('music');
+const generalPlatforms = await getPlatformsByCategory('general');
+
+// SEO metadata
+const title = 'Subscribe to CRO.CAFE Podcast';
+const description = 'Subscribe to the CRO.CAFE podcast on your favorite platform. Available on all major podcast platforms in English, Dutch, German, and Spanish.';
+---
+
+<BaseLayout 
+  title={title}
+  description={description}
+  language={language}
+  canonical="https://cro.cafe/subscribe"
+>
+  <Header language={language} currentPath="/subscribe" />
+  
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          Subscribe to CRO.CAFE
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Never miss an episode! Subscribe to the CRO.CAFE podcast on your favorite platform and get notified when new episodes are released.
+        </p>
+      </div>
+
+      <!-- Podcast Platforms -->
+      {podcastPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            Podcast Platforms
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {podcastPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Music Platforms -->
+      {musicPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            Music & Audio Platforms
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {musicPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- General Platforms -->
+      {generalPlatforms.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
+            Other Platforms
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {generalPlatforms.map((platform) => (
+              <a 
+                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <img 
+                  src={platform.data.iconUrl} 
+                  alt={platform.data.name}
+                  class="w-16 h-16 mb-3 object-contain"
+                />
+                <span class="text-gray-900 dark:text-white font-medium text-center">
+                  {platform.data.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- RSS Feed Section -->
+      <section class="mt-12 bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-4">
+          RSS Feed
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          You can also subscribe directly via RSS in your favorite podcast app:
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="https://feeds.transistor.fm/cro-cafe"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z"></path>
+              <path d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1zM3 15a2 2 0 114 0 2 2 0 01-4 0z"></path>
+            </svg>
+            Copy RSS Feed URL
+          </a>
+        </div>
+      </section>
+
+      <!-- Newsletter Section -->
+      <section class="mt-12 bg-primary-50 dark:bg-primary-900/20 rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-4">
+          Stay Updated
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          Get notified about new episodes, exclusive content, and CRO insights delivered to your inbox.
+        </p>
+        <form class="max-w-md mx-auto flex gap-4">
+          <input 
+            type="email" 
+            placeholder="Enter your email"
+            class="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            required
+          />
+          <button 
+            type="submit"
+            class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Subscribe
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Copy RSS URL to clipboard
+  document.addEventListener('DOMContentLoaded', () => {
+    const rssButton = document.querySelector('a[href="https://feeds.transistor.fm/cro-cafe"]');
+    if (rssButton) {
+      rssButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const url = 'https://feeds.transistor.fm/cro-cafe';
+        navigator.clipboard.writeText(url).then(() => {
+          const originalText = rssButton.textContent;
+          rssButton.textContent = 'Copied!';
+          setTimeout(() => {
+            rssButton.textContent = originalText;
+          }, 2000);
+        });
+      });
+    }
+  });
+</script>

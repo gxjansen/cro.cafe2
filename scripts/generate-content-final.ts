@@ -60,7 +60,7 @@ async function main() {
     // Initialize content generator
     const generator = new SimpleContentGenerator(client, {
       outputDir: options.outputDir || 'src/content',
-      overwriteExisting: options.overwrite || false,
+      overwriteExisting: options.overwrite !== false, // Default to true unless explicitly set to false
       languages: options.languages || ['en', 'nl', 'de', 'es'],
       defaultLanguage: 'en'
     })

@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import { getEpisodeBySlug, getGuestBySlug, getGuestUrl } from '../../utils/content';
+import type { Language } from '../../types';
+
+export async function getStaticPaths() {
+  const { getCollection } = await import('astro:content');
+  const episodes = await getCollection('episodes');
+  
+  // Only get English episodes for this route
+  return episodes
+    .filter(episode => episode.data.language === 'en')
+    .map(episode => ({
+      params: { slug: episode.data.slug || episode.slug },
+      props: { episode }
+    }));
+}
+
+const { episode } = Astro.props;
+const language: Language = 'en';
+
+// Fetch guest details
+const guestDetails = await Promise.all(
+  episode.data.guests.map(async (guestSlug: string) => {
+    const guest = await getGuestBySlug(guestSlug);
+    return guest;
+  })
+);
+
+// SEO metadata
+const title = `${episode.data.title} - CRO.CAFE Podcast`;
+const description = episode.data.summary || episode.data.description.substring(0, 160);
+
+// Generate hreflang URLs for other languages
+const hreflang = {
+  en: `https://cro.cafe/episodes/${episode.data.slug}`,
+  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}`,
+  de: `https://cro.cafe/de/episodes/${episode.data.slug}`,
+  es: `https://cro.cafe/es/episodes/${episode.data.slug}`
+};
+---
+
+<BaseLayout 
+  title={title}
+  description={description}
+  language={language}
+  canonical={`https://cro.cafe/episodes/${episode.data.slug}`}
+  hreflang={hreflang}
+  ogImage={episode.data.imageUrl}
+>
+  <Header language={language} currentPath="/episodes" />
+  
+  <main class="flex-grow">
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Episode Header -->
+      <header class="mb-8">
+        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <a href="/episodes" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            ← Back to Episodes
+          </a>
+          <span>•</span>
+          <span>Season {episode.data.season}, Episode {episode.data.episode}</span>
+        </div>
+        
+        <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {episode.data.title}
+        </h1>
+        
+        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+          <time datetime={episode.data.pubDate.toISOString()}>
+            {new Date(episode.data.pubDate).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </time>
+          <span>•</span>
+          <span>{episode.data.duration}</span>
+          {episode.data.episodeType !== 'full' && (
+            <>
+              <span>•</span>
+              <span class="uppercase text-xs bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded">
+                {episode.data.episodeType}
+              </span>
+            </>
+          )}
+        </div>
+      </header>
+
+      <!-- Episode Image -->
+      {episode.data.imageUrl && (
+        <div class="mb-8 rounded-xl overflow-hidden">
+          <img 
+            src={episode.data.imageUrl} 
+            alt={episode.data.title}
+            class="w-full h-auto"
+          />
+        </div>
+      )}
+
+      <!-- Audio Player -->
+      <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Listen to this episode</h2>
+        
+        <!-- Embedded player if available -->
+        {episode.data.embedHtml ? (
+          <div set:html={episode.data.embedHtml} class="transistor-embed" />
+        ) : (
+          <audio controls class="w-full">
+            <source src={episode.data.audioUrl} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+        )}
+        
+        <!-- Subscribe links -->
+        <div class="mt-4 flex flex-wrap gap-4">
+          <a 
+            href={episode.data.shareUrl || episode.data.audioUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+          >
+            Share Episode →
+          </a>
+          <a 
+            href="/subscribe" 
+            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+          >
+            Subscribe to Podcast →
+          </a>
+        </div>
+      </div>
+
+      <!-- Episode Description -->
+      <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
+        <h2>Episode Description</h2>
+        <p>{episode.data.description}</p>
+        
+        {episode.data.summary && episode.data.summary !== episode.data.description && (
+          <>
+            <h3>Summary</h3>
+            <p>{episode.data.summary}</p>
+          </>
+        )}
+      </div>
+
+      <!-- Guests Section -->
+      {guestDetails.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+            Guests in this Episode
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            {guestDetails.map((guest) => guest && (
+              <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                <div class="flex items-start gap-4">
+                  {guest.data.imageUrl && (
+                    <img 
+                      src={guest.data.imageUrl} 
+                      alt={guest.data.name}
+                      class="w-16 h-16 rounded-full object-cover"
+                    />
+                  )}
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                      <a 
+                        href={getGuestUrl(guest, language)} 
+                        class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                      >
+                        {guest.data.name}
+                      </a>
+                    </h3>
+                    {guest.data.title && guest.data.company && (
+                      <p class="text-sm text-gray-600 dark:text-gray-400">
+                        {guest.data.title} at {guest.data.company}
+                      </p>
+                    )}
+                    <p class="mt-2 text-gray-600 dark:text-gray-400 line-clamp-3">
+                      {guest.data.bio}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Transcript Section -->
+      {episode.data.transcript && (
+        <div class="mb-8">
+          <details class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+            <summary class="cursor-pointer font-semibold text-gray-900 dark:text-white">
+              Episode Transcript
+            </summary>
+            <div class="mt-4 prose prose-sm dark:prose-invert max-w-none">
+              <div set:html={episode.data.transcript} />
+            </div>
+          </details>
+        </div>
+      )}
+
+      <!-- Keywords/Tags -->
+      {episode.data.keywords.length > 0 && (
+        <div class="mb-8">
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Topics covered:</h3>
+          <div class="flex flex-wrap gap-2">
+            {episode.data.keywords.map((keyword) => (
+              <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
+                {keyword}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Transistor embed styling */
+  .transistor-embed :global(iframe) {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+</style>
