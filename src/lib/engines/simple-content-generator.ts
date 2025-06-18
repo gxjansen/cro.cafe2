@@ -356,15 +356,33 @@ export class SimpleContentGenerator {
 
   private generateHostFrontmatter(host: any): string {
     const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
+    
+    // Create social links array from individual fields
+    const socialLinks = []
+    if (host.website || host.Website) {
+      socialLinks.push({ platform: 'website', url: host.website || host.Website })
+    }
+    if (host.twitter || host.Twitter) {
+      const twitter = host.twitter || host.Twitter
+      const twitterUrl = twitter.startsWith('http') ? twitter : `https://twitter.com/${twitter.replace('@', '')}`
+      socialLinks.push({ platform: 'twitter', url: twitterUrl })
+    }
+    if (host.linkedin || host.LinkedIn) {
+      const linkedin = host.linkedin || host.LinkedIn
+      const linkedinUrl = linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`
+      socialLinks.push({ platform: 'linkedin', url: linkedinUrl })
+    }
 
     return [
       `name: "${this.escapeYaml(host.name || '')}"`,
       `slug: "${host.slug || ''}"`,
       `bio: "${this.escapeYaml(host.bio || '')}"`,
+      host.company ? `company: "${this.escapeYaml(host.company)}"` : '',
+      host.title ? `title: "${this.escapeYaml(host.title)}"` : '',
       host.role ? `role: "${this.escapeYaml(host.role)}"` : '',
       this.isValidUrl(host.image_url) ? `imageUrl: "${host.image_url}"` : '',
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
-      `socialLinks: ${JSON.stringify(host.social_links || [])}`,
+      `socialLinks: ${JSON.stringify(socialLinks.length > 0 ? socialLinks : (Array.isArray(host.social_links) ? host.social_links : []))}`,
       `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(host.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')

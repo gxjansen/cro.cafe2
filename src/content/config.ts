@@ -81,6 +81,34 @@ const quoteSchema = z.object({
   authorImage: z.string().url().optional(),
 });
 
+// Host schema for podcast hosts
+const hostSchema = z.object({
+  name: z.string(),
+  bio: z.string(),
+  company: z.string().optional(),
+  title: z.string().optional(),
+  role: z.string().optional(),
+  
+  // Media
+  imageUrl: z.string().url().optional(),
+  
+  // Social media
+  socialLinks: z.array(z.object({
+    platform: z.string(),
+    url: z.string().url(),
+  })).default([]),
+  
+  // Relationships
+  episodes: z.array(z.string()).default([]), // Episode IDs
+  
+  // SEO
+  slug: z.string(),
+  
+  // Timestamps
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
 // Brand listener schema
 const brandSchema = z.object({
   name: z.string(),
@@ -126,6 +154,10 @@ export const collections = {
     type: 'content', 
     schema: guestSchema,
   }),
+  hosts: defineCollection({
+    type: 'content',
+    schema: hostSchema,
+  }),
   quotes: defineCollection({
     type: 'content',
     schema: quoteSchema,
@@ -143,6 +175,7 @@ export const collections = {
 // Export types for use in components
 export type Episode = z.infer<typeof episodeSchema>;
 export type Guest = z.infer<typeof guestSchema>;
+export type Host = z.infer<typeof hostSchema>;
 export type Quote = z.infer<typeof quoteSchema>;
 export type Brand = z.infer<typeof brandSchema>;
 export type Platform = z.infer<typeof platformSchema>;
