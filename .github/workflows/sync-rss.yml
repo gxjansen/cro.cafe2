@@ -413,8 +413,3 @@ jobs:
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
-
-# Workflow-level environment variables
-env:
-  # Increase Node.js memory limit for large RSS processing
-  NODE_OPTIONS: '--max-old-space-size=4096'
