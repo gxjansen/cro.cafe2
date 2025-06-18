@@ -1,0 +1,17 @@
+{
+  "id": 24,
+  "name": "Platform 24",
+  "slug": "platform-24",
+  "iconUrl": "https://example.com/icons/platform-24.png",
+  "websiteUrl": "https://example.com/platform/platform-24",
+  "urls": {
+    "en": "https://example.com/platform/platform-24",
+    "nl": "https://example.com/platform/platform-24",
+    "de": "https://example.com/platform/platform-24",
+    "es": "https://example.com/platform/platform-24"
+  },
+  "displayOrder": 0,
+  "isActive": false,
+  "createdAt": "2025-06-18T21:08:56.000Z",
+  "updatedAt": "2025-06-18T21:09:44.174Z"
+}
