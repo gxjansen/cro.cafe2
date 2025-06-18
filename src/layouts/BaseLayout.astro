@@ -67,11 +67,14 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
-    <!-- RSS Feeds -->
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE English" href="https://feeds.transistor.fm/cro-cafe" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Nederlands" href="https://feeds.transistor.fm/cro-cafe-nl" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Deutsch" href="https://feeds.transistor.fm/cro-cafe-deutsch" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Español" href="https://feeds.transistor.fm/cro-cafe-es" />
+    <!-- RSS Feeds: Disabled - using NocoDB data flow instead of direct Transistor feeds -->
+    <!-- Future: Generate RSS feeds from NocoDB content if needed -->
+    <!-- 
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE English" href="/rss/en.xml" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Nederlands" href="/rss/nl.xml" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Deutsch" href="/rss/de.xml" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Español" href="/rss/es.xml" />
+    -->
     
     <title>{fullTitle}</title>
     

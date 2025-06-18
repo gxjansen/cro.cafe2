@@ -18,7 +18,7 @@ PUBLIC_SITE_NAME=CROCAFE
 ```
 
 ### Why Production Values During Development
-1. **SEO Consistency** - Sitemap and RSS feeds generate correct final URLs
+1. **SEO Consistency** - Sitemap and content URLs generate correct final URLs
 2. **No Environment Switch** - No config changes needed when going live
 3. **Search Engine Prep** - Google indexes correct canonical URLs from start
 4. **Simple Transition** - Only DNS changes required, no environment updates
@@ -55,7 +55,7 @@ When ready to go live:
 ### No Code Changes Required
 - ✅ Environment variables already set for production
 - ✅ Astro config already points to `cro.cafe`
-- ✅ Sitemap/RSS feeds already generate correct URLs
+- ✅ Sitemap and content URLs already generate correctly
 - ✅ GitHub Actions continue to work unchanged
 
 ## Architecture Benefits
@@ -79,7 +79,7 @@ GitHub Repository → Netlify Build → Static Site Deploy
 
 ### Build Status
 - **Netlify Dashboard**: Monitor build success/failures
-- **GitHub Actions**: RSS sync and content generation
+- **GitHub Actions**: NocoDB sync and content generation
 - **Performance**: Lighthouse scores via Netlify
 
 ### Domain Management
@@ -110,7 +110,7 @@ GitHub Repository → Netlify Build → Static Site Deploy
 ### Update Triggers
 - **Manual**: Push code changes to GitHub
 - **Automatic**: NocoDB content changes trigger GitHub Actions
-- **Scheduled**: RSS sync runs periodically
+- **Scheduled**: Content sync runs periodically
 
 ## Backup & Recovery
 

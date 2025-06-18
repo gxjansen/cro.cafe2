@@ -1,8 +1,8 @@
 import { defineCollection, z } from 'astro:content';
 
-// Episode schema based on RSS feed structure and research findings
+// Episode schema based on NocoDB database structure
 const episodeSchema = z.object({
-  // Required RSS fields
+  // Core episode fields
   title: z.string(),
   description: z.string(),
   pubDate: z.date(),

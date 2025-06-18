@@ -15,7 +15,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "generate-content": "tsx scripts/generate-content.ts",
-    "sync-rss": "npm run generate-content && npm run validate-content",
+    "sync-content": "npm run generate-content && npm run validate-content",
     "validate-content": "tsx scripts/validate-content.ts"
   },
   "dependencies": {

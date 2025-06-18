@@ -34,12 +34,14 @@ on:
       - 'src/lib/services/nocodb-service.ts'
       - 'scripts/generate-content.ts'
       - 'scripts/sync-images.ts'
-      - '.github/workflows/sync-rss.yml'
+      - '.github/workflows/sync-nocodb.yml'
 
 # Environment variables
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '8'
+  # Increase Node.js memory limit for NocoDB processing
+  NODE_OPTIONS: '--max-old-space-size=4096'
 
 # Define jobs
 jobs:
