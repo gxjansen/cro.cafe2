@@ -106,8 +106,8 @@ jobs:
             ARGS="$ARGS --languages ${{ github.event.inputs.languages }}"
           fi
           
-          # Run robust content generation (tests multiple API patterns)
-          npx tsx scripts/generate-content-robust.ts $ARGS 2>&1 | tee content-generation.log
+          # Run NocoDB diagnostic to find correct API pattern
+          npx tsx scripts/diagnose-nocodb.ts 2>&1 | tee content-generation.log
           
           # Extract statistics from log or report file
           if [ -f content-generation-report.md ]; then
