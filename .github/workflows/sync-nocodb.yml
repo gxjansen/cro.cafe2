@@ -96,11 +96,9 @@ jobs:
         id: content-gen
         run: |
           # Set up command arguments
-          ARGS=""
+          ARGS="--overwrite"  # Always overwrite to prevent duplicate files
           
-          if [ "${{ github.event.inputs.force_overwrite }}" = "true" ]; then
-            ARGS="$ARGS --overwrite"
-          fi
+          # Note: force_overwrite input is now always enabled to prevent stale files
           
           if [ "${{ github.event.inputs.languages }}" != "all" ] && [ -n "${{ github.event.inputs.languages }}" ]; then
             ARGS="$ARGS --languages ${{ github.event.inputs.languages }}"
