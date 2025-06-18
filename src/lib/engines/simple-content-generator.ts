@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
 import type { Language } from '../../types/index'
-import { NocoDBAPIClient } from '../services/nocodb-api-client'
+import { DeletionTracker } from './deletion-tracker.js'
 
 /**
  * Simple Content Generation Engine for GitHub Actions
@@ -20,18 +20,19 @@ interface GenerationStats {
   guestsGenerated: number
   hostsGenerated: number
   platformsGenerated: number
+  filesDeleted: number
   errors: string[]
   startTime: Date
   endTime?: Date
 }
 
 export class SimpleContentGenerator {
-  private client: NocoDBAPIClient
+  private client: any // Accept any NocoDB client implementation
   private config: ContentGenerationConfig
   private stats: GenerationStats
 
   constructor(
-    client: NocoDBAPIClient,
+    client: any, // Accept any NocoDB client implementation
     config: Partial<ContentGenerationConfig> = {}
   ) {
     this.client = client
@@ -48,6 +49,7 @@ export class SimpleContentGenerator {
       guestsGenerated: 0,
       hostsGenerated: 0,
       platformsGenerated: 0,
+      filesDeleted: 0,
       errors: [],
       startTime: new Date()
     }
@@ -55,6 +57,17 @@ export class SimpleContentGenerator {
 
   async generateAll(): Promise<GenerationStats> {
     console.log('🚀 Starting simple content generation...')
+    
+    // Reset stats for this generation run
+    this.stats = {
+      episodesGenerated: 0,
+      guestsGenerated: 0,
+      hostsGenerated: 0,
+      platformsGenerated: 0,
+      filesDeleted: 0,
+      errors: [],
+      startTime: new Date()
+    }
     
     try {
       // Test connection first
@@ -66,17 +79,59 @@ export class SimpleContentGenerator {
       // Create output directories
       await this.ensureDirectories()
 
-      // Generate content by type
-      await this.generateEpisodes()
-      await this.generateGuests()
-      await this.generateHosts()
-      await this.generatePlatforms()
+      // Initialize deletion tracker
+      const deletionTracker = new DeletionTracker(this.config.outputDir)
+      
+      // Get existing content files mapped by ID/slug BEFORE generation
+      const existingContentMap = await deletionTracker.getExistingContentMap()
+      console.log(`📁 Found ${existingContentMap.size} existing content files`)
+
+      // Fetch all records from NocoDB to track what should exist
+      console.log('📥 Fetching all records from NocoDB...')
+      const [episodes, guests, hosts, platforms] = await Promise.all([
+        this.client.getEpisodes({ limit: 1000 }),
+        this.client.getGuests({ limit: 1000 }),
+        this.client.getHosts({ limit: 100 }),
+        this.client.getPlatforms({ limit: 100 })
+      ])
+      
+      console.log(`📊 NocoDB records: ${episodes.length} episodes, ${guests.length} guests, ${hosts.length} hosts, ${platforms.length} platforms`)
+
+      // Generate content by type and collect generated files
+      const generatedFiles = new Set<string>()
+      await this.generateEpisodesWithTracking(episodes, generatedFiles)
+      await this.generateGuestsWithTracking(guests, generatedFiles)
+      await this.generateHostsWithTracking(hosts, generatedFiles)
+      await this.generatePlatformsWithTracking(platforms, generatedFiles)
+      
+      console.log(`📝 Generated ${generatedFiles.size} files in this sync`)
+
+      // Identify files to delete based on active records
+      const filesToDelete = await deletionTracker.getFilesToDelete(existingContentMap, {
+        episodes,
+        guests,
+        hosts,
+        platforms
+      })
+      
+      if (filesToDelete.length > 0) {
+        console.log(`🗑️ Found ${filesToDelete.length} orphaned files to delete:`)
+        filesToDelete.forEach(file => console.log(`  - ${file}`))
+        
+        // Delete orphaned files
+        this.stats.filesDeleted = await deletionTracker.deleteOrphanedFiles(filesToDelete)
+      } else {
+        console.log('✅ No orphaned files to clean up')
+      }
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
       
       console.log(`✅ Content generation complete in ${duration}ms`)
       console.log(`📊 Generated: ${this.stats.episodesGenerated} episodes, ${this.stats.guestsGenerated} guests, ${this.stats.hostsGenerated} hosts, ${this.stats.platformsGenerated} platforms`)
+      if (this.stats.filesDeleted > 0) {
+        console.log(`🗑️ Deleted: ${this.stats.filesDeleted} orphaned files`)
+      }
       
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred:`)
@@ -91,15 +146,16 @@ export class SimpleContentGenerator {
     return this.stats
   }
 
-  private async generateEpisodes(): Promise<void> {
+  private async generateEpisodesWithTracking(episodes: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('📝 Generating episodes...')
-    
-    const episodes = await this.client.getEpisodes({ limit: 1000 })
 
     for (const episode of episodes) {
       try {
-        await this.generateEpisodeMDX(episode)
-        this.stats.episodesGenerated++
+        const filePath = await this.generateEpisodeMDX(episode)
+        if (filePath) {
+          generatedFiles.add(filePath)
+          this.stats.episodesGenerated++
+        }
       } catch (error) {
         const errorMsg = `Failed to generate episode ${episode.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
@@ -108,7 +164,16 @@ export class SimpleContentGenerator {
     }
   }
 
-  private async generateEpisodeMDX(episode: any): Promise<void> {
+  private async generateEpisodeMDX(episode: any): Promise<string> {
+    // Validate required fields
+    if (!episode.slug && !episode.Id) {
+      throw new Error('Episode missing both slug and ID - cannot generate file')
+    }
+    
+    if (!episode.title) {
+      console.warn(`Warning: Episode ${episode.Id} missing title`)
+    }
+    
     const language = episode.language as Language || this.config.defaultLanguage
     const seasonDir = `season-${episode.season || 1}`
     const episodePath = join(
@@ -116,13 +181,11 @@ export class SimpleContentGenerator {
       'episodes',
       language,
       seasonDir,
-      `episode-${String(episode.episode_number || episode.Id).padStart(3, '0')}-${episode.slug}.mdx`
+      `episode-${String(episode.episode_number || episode.Id).padStart(3, '0')}-${episode.slug || `episode-${episode.Id}`}.mdx`
     )
 
-    // Check if file exists and shouldn't overwrite
-    if (!this.config.overwriteExisting && await this.fileExists(episodePath)) {
-      return
-    }
+    // Always overwrite to ensure updates are synced
+    // This ensures content changes in NocoDB are reflected in the files
 
     const frontmatter = this.generateEpisodeFrontmatter(episode)
     const content = this.generateEpisodeContent(episode)
@@ -130,6 +193,8 @@ export class SimpleContentGenerator {
 
     await this.ensureDirectoryExists(dirname(episodePath))
     await fs.writeFile(episodePath, mdxContent, 'utf8')
+    
+    return episodePath
   }
 
   private generateEpisodeFrontmatter(episode: any): string {
@@ -245,15 +310,16 @@ export class SimpleContentGenerator {
       .trim()
   }
 
-  private async generateGuests(): Promise<void> {
+  private async generateGuestsWithTracking(guests: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('👥 Generating guests...')
-    
-    const guests = await this.client.getGuests({ limit: 1000 })
 
     for (const guest of guests) {
       try {
-        await this.generateGuestMDX(guest)
-        this.stats.guestsGenerated++
+        const filePath = await this.generateGuestMDX(guest)
+        if (filePath) {
+          generatedFiles.add(filePath)
+          this.stats.guestsGenerated++
+        }
       } catch (error) {
         const errorMsg = `Failed to generate guest ${guest.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
@@ -262,22 +328,28 @@ export class SimpleContentGenerator {
     }
   }
 
-  private async generateGuestMDX(guest: any): Promise<void> {
-    const guestPath = join(this.config.outputDir, 'guests', `${guest.slug}.mdx`)
-
-    if (!this.config.overwriteExisting && await this.fileExists(guestPath)) {
-      return
+  private async generateGuestMDX(guest: any): Promise<string> {
+    // Validate required fields
+    if (!guest.slug && !guest.name) {
+      throw new Error('Guest missing both slug and name - cannot generate file')
     }
+    
+    const slug = guest.slug || guest.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+    const guestPath = join(this.config.outputDir, 'guests', `${slug}.mdx`)
 
-    const frontmatter = this.generateGuestFrontmatter(guest)
+    // Always overwrite to ensure updates are synced
+
+    const frontmatter = this.generateGuestFrontmatter(guest, slug)
     const content = this.generateGuestContent(guest)
     const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
 
     await this.ensureDirectoryExists(dirname(guestPath))
     await fs.writeFile(guestPath, mdxContent, 'utf8')
+    
+    return guestPath
   }
 
-  private generateGuestFrontmatter(guest: any): string {
+  private generateGuestFrontmatter(guest: any, slug: string): string {
     const episodes = Array.isArray(guest.Episodes) ? guest.Episodes.map((e: any) => e.slug || e.Id) : []
     const languages = Array.isArray(guest.Language) ? guest.Language : [this.config.defaultLanguage]
     
@@ -289,7 +361,7 @@ export class SimpleContentGenerator {
 
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
-      `slug: "${guest.slug || ''}"`,
+      `slug: "${slug}"`,
       `bio: "${this.escapeYaml(guest.ai_bio || guest.bio || '')}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
@@ -322,15 +394,16 @@ export class SimpleContentGenerator {
     return content.join('\n')
   }
 
-  private async generateHosts(): Promise<void> {
+  private async generateHostsWithTracking(hosts: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('🎙️ Generating hosts...')
-    
-    const hosts = await this.client.getHosts({ limit: 100 })
 
     for (const host of hosts) {
       try {
-        await this.generateHostMDX(host)
-        this.stats.hostsGenerated++
+        const filePath = await this.generateHostMDX(host)
+        if (filePath) {
+          generatedFiles.add(filePath)
+          this.stats.hostsGenerated++
+        }
       } catch (error) {
         const errorMsg = `Failed to generate host ${host.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
@@ -339,22 +412,28 @@ export class SimpleContentGenerator {
     }
   }
 
-  private async generateHostMDX(host: any): Promise<void> {
-    const hostPath = join(this.config.outputDir, 'hosts', `${host.slug}.mdx`)
-
-    if (!this.config.overwriteExisting && await this.fileExists(hostPath)) {
-      return
+  private async generateHostMDX(host: any): Promise<string> {
+    // Validate required fields
+    if (!host.slug && !host.name) {
+      throw new Error('Host missing both slug and name - cannot generate file')
     }
+    
+    const slug = host.slug || host.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+    const hostPath = join(this.config.outputDir, 'hosts', `${slug}.mdx`)
 
-    const frontmatter = this.generateHostFrontmatter(host)
+    // Always overwrite to ensure updates are synced
+
+    const frontmatter = this.generateHostFrontmatter(host, slug)
     const content = host.bio || ''
     const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
 
     await this.ensureDirectoryExists(dirname(hostPath))
     await fs.writeFile(hostPath, mdxContent, 'utf8')
+    
+    return hostPath
   }
 
-  private generateHostFrontmatter(host: any): string {
+  private generateHostFrontmatter(host: any, slug: string): string {
     const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
     
     // Create social links array from individual fields
@@ -375,7 +454,7 @@ export class SimpleContentGenerator {
 
     return [
       `name: "${this.escapeYaml(host.name || '')}"`,
-      `slug: "${host.slug || ''}"`,
+      `slug: "${slug}"`,
       `bio: "${this.escapeYaml(host.bio || '')}"`,
       host.company ? `company: "${this.escapeYaml(host.company)}"` : '',
       host.title ? `title: "${this.escapeYaml(host.title)}"` : '',
@@ -388,11 +467,9 @@ export class SimpleContentGenerator {
     ].filter(Boolean).join('\n')
   }
 
-  private async generatePlatforms(): Promise<void> {
+  private async generatePlatformsWithTracking(platforms: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('🎵 Generating platforms...')
-    
-    const platforms = await this.client.getPlatforms({ limit: 100 })
-    console.log(`🔍 Retrieved ${platforms.length} platforms from NocoDB`)
+    console.log(`🔍 Processing ${platforms.length} platforms from NocoDB`)
     
     // Debug: Log first platform structure
     if (platforms.length > 0) {
@@ -401,8 +478,11 @@ export class SimpleContentGenerator {
 
     for (const platform of platforms) {
       try {
-        await this.generatePlatformJSON(platform)
-        this.stats.platformsGenerated++
+        const filePath = await this.generatePlatformJSON(platform)
+        if (filePath) {
+          generatedFiles.add(filePath)
+          this.stats.platformsGenerated++
+        }
       } catch (error) {
         const errorMsg = `Failed to generate platform ${platform.Id || platform.id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
@@ -411,51 +491,61 @@ export class SimpleContentGenerator {
     }
   }
 
-  private async generatePlatformJSON(platform: any): Promise<void> {
-    // Generate a slug from the actual Name field
+  private async generatePlatformJSON(platform: any): Promise<string> {
+    // Debug log to see actual platform data
+    console.log('📊 Platform data from NocoDB:', JSON.stringify(platform, null, 2))
+    
+    // Use the actual field names from NocoDB (case-sensitive - Name with capital N)
     const name = platform.Name || platform.name || `Platform ${platform.Id || platform.id}`
-    const slug = platform.slug || name.toLowerCase().replace(/[^a-z0-9-]/g, '-')
+    const slug = platform.slug || platform.Slug || name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const platformPath = join(this.config.outputDir, 'platforms', `${slug}.json`)
 
-    if (!this.config.overwriteExisting && await this.fileExists(platformPath)) {
-      return
-    }
+    // Always overwrite to ensure updates are synced
 
+    // Extract the actual URL from NocoDB - it might be a single url field or language-specific
+    const baseUrl = platform.url || platform.URL || platform.website || platform.Website || `https://example.com/platform/${slug}`
+    
     // Build URLs object with all required languages (schema requires all 4)
     const urls = {
-      en: platform.url_en || `https://example.com/platform/${slug}`,
-      nl: platform.url_nl || platform.url_en || `https://example.com/platform/${slug}`,
-      de: platform.url_de || platform.url_en || `https://example.com/platform/${slug}`,
-      es: platform.url_es || platform.url_en || `https://example.com/platform/${slug}`
+      en: platform.url_en || platform['URL EN'] || baseUrl,
+      nl: platform.url_nl || platform['URL NL'] || baseUrl,
+      de: platform.url_de || platform['URL DE'] || baseUrl,
+      es: platform.url_es || platform['URL ES'] || baseUrl
     }
 
-    // Get iconUrl and websiteUrl - both required by schema
-    const iconUrl = this.isValidUrl(platform.logo_url) ? platform.logo_url : 
+    // Get iconUrl - check various possible field names
+    const iconUrl = this.isValidUrl(platform.icon) ? platform.icon :
+                   this.isValidUrl(platform.Icon) ? platform.Icon :
+                   this.isValidUrl(platform.icon_url) ? platform.icon_url :
                    this.isValidUrl(platform.iconUrl) ? platform.iconUrl :
+                   this.isValidUrl(platform.logo) ? platform.logo :
+                   this.isValidUrl(platform.Logo) ? platform.Logo :
                    `https://example.com/icons/${slug}.png`
     
-    const websiteUrl = this.isValidUrl(platform.url_en) ? platform.url_en :
-                      this.isValidUrl(platform.website_url) ? platform.website_url :
-                      urls.en
+    const websiteUrl = baseUrl
 
     // Use proper field mapping for actual NocoDB data structure
     const platformData = {
-      id: platform.Id || platform.id,
+      id: platform.Id || platform.id || platform.ID,
       name: name,
       slug: slug,
       iconUrl: iconUrl,
       websiteUrl: websiteUrl,
       urls: urls,
-      displayOrder: platform.display_order || platform.displayOrder || 0,
-      isActive: platform.is_active !== undefined ? platform.is_active : platform.isActive !== undefined ? platform.isActive : true,
-      createdAt: new Date(platform.CreatedAt || platform.created_at || Date.now()).toISOString(),
-      updatedAt: new Date(platform.UpdatedAt || platform.updated_at || Date.now()).toISOString()
+      displayOrder: platform.displayOrder || platform.display_order || platform['Display Order'] || platform.order || 0,
+      isActive: platform.isActive !== undefined ? platform.isActive : 
+                platform.is_active !== undefined ? platform.is_active : 
+                platform['Is Active'] !== undefined ? platform['Is Active'] : true,
+      createdAt: new Date(platform.CreatedAt || platform.created_at || platform['Created At'] || Date.now()).toISOString(),
+      updatedAt: new Date(platform.UpdatedAt || platform.updated_at || platform['Updated At'] || Date.now()).toISOString()
     }
 
     console.log(`📝 Creating platform file: ${slug}.json for platform: ${name}`)
 
     await this.ensureDirectoryExists(dirname(platformPath))
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
+    
+    return platformPath
   }
 
   private async ensureDirectories(): Promise<void> {

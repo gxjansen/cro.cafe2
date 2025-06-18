@@ -58,9 +58,11 @@ jobs:
     
     # Define outputs for use in other jobs
     outputs:
-      episodes-created: ${{ steps.content-gen.outputs.episodes-created }}
-      episodes-updated: ${{ steps.content-gen.outputs.episodes-updated }}
-      guests-created: ${{ steps.content-gen.outputs.guests-created }}
+      episodes-generated: ${{ steps.content-gen.outputs.episodes-generated }}
+      guests-generated: ${{ steps.content-gen.outputs.guests-generated }}
+      hosts-generated: ${{ steps.content-gen.outputs.hosts-generated }}
+      platforms-generated: ${{ steps.content-gen.outputs.platforms-generated }}
+      files-deleted: ${{ steps.content-gen.outputs.files-deleted }}
       has-changes: ${{ steps.check-changes.outputs.has-changes }}
     
     steps:
@@ -107,20 +109,23 @@ jobs:
           # Run final working content generation with confirmed API patterns
           npx tsx scripts/generate-content-final.ts $ARGS 2>&1 | tee content-generation.log
           
-          # Extract statistics from log or report file
-          if [ -f content-generation-report.md ]; then
-            EPISODES_CREATED=$(grep "Created:" content-generation-report.md | grep Episodes | awk '{print $3}' || echo "0")
-            EPISODES_UPDATED=$(grep "Updated:" content-generation-report.md | grep Episodes | awk '{print $3}' || echo "0")
-            GUESTS_CREATED=$(grep "Created:" content-generation-report.md | grep Guests | awk '{print $3}' || echo "0")
-          else
-            EPISODES_CREATED="0"
-            EPISODES_UPDATED="0"
-            GUESTS_CREATED="0"
+          # Extract statistics from the console output in the log
+          EPISODES_GENERATED=$(grep "Generated:" content-generation.log | grep "episodes" | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
+          GUESTS_GENERATED=$(grep "Generated:" content-generation.log | grep "guests" | sed 's/.*\([0-9]*\) guests.*/\1/' || echo "0")
+          HOSTS_GENERATED=$(grep "Generated:" content-generation.log | grep "hosts" | sed 's/.*\([0-9]*\) hosts.*/\1/' || echo "0")
+          PLATFORMS_GENERATED=$(grep "Generated:" content-generation.log | grep "platforms" | sed 's/.*\([0-9]*\) platforms.*/\1/' || echo "0")
+          FILES_DELETED=$(grep "Deleted:" content-generation.log | grep "orphaned files" | sed 's/.*Deleted: \([0-9]*\) orphaned files.*/\1/' || echo "0")
+          
+          # Fallback to simpler extraction if the above doesn't work
+          if [ "$EPISODES_GENERATED" = "0" ]; then
+            EPISODES_GENERATED=$(grep "📊 Generated:" content-generation.log | tail -1 | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
           fi
           
-          echo "episodes-created=$EPISODES_CREATED" >> $GITHUB_OUTPUT
-          echo "episodes-updated=$EPISODES_UPDATED" >> $GITHUB_OUTPUT
-          echo "guests-created=$GUESTS_CREATED" >> $GITHUB_OUTPUT
+          echo "episodes-generated=$EPISODES_GENERATED" >> $GITHUB_OUTPUT
+          echo "guests-generated=$GUESTS_GENERATED" >> $GITHUB_OUTPUT
+          echo "hosts-generated=$HOSTS_GENERATED" >> $GITHUB_OUTPUT
+          echo "platforms-generated=$PLATFORMS_GENERATED" >> $GITHUB_OUTPUT
+          echo "files-deleted=$FILES_DELETED" >> $GITHUB_OUTPUT
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
           NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
@@ -162,11 +167,17 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Add all content files
+          # Add all content files (including new files)
           git add src/content/episodes/
           git add src/content/guests/
           git add src/content/hosts/
           git add src/content/platforms/
+          
+          # Track deletions using git add -u
+          git add -u src/content/
+          
+          # Count deletions for better reporting
+          DELETED_COUNT=$(git status --porcelain | grep "^D" | wc -l)
           
           # Add report file if it exists
           if [ -f content-generation-report.md ]; then
@@ -174,15 +185,19 @@ jobs:
           fi
           
           # Create commit message with statistics
-          EPISODES_CREATED="${{ steps.content-gen.outputs.episodes-created }}"
-          EPISODES_UPDATED="${{ steps.content-gen.outputs.episodes-updated }}"
-          GUESTS_CREATED="${{ steps.content-gen.outputs.guests-created }}"
+          EPISODES_GENERATED="${{ steps.content-gen.outputs.episodes-generated }}"
+          GUESTS_GENERATED="${{ steps.content-gen.outputs.guests-generated }}"
+          HOSTS_GENERATED="${{ steps.content-gen.outputs.hosts-generated }}"
+          PLATFORMS_GENERATED="${{ steps.content-gen.outputs.platforms-generated }}"
+          FILES_DELETED="${{ steps.content-gen.outputs.files-deleted }}"
           
           COMMIT_MSG="Update podcast content from NocoDB
           
-          Episodes: ${EPISODES_CREATED} created, ${EPISODES_UPDATED} updated
-          Guests: ${GUESTS_CREATED} created
-          Hosts and Platforms updated
+          Episodes: ${EPISODES_GENERATED} generated
+          Guests: ${GUESTS_GENERATED} generated  
+          Hosts: ${HOSTS_GENERATED} generated
+          Platforms: ${PLATFORMS_GENERATED} generated
+          Files deleted: ${FILES_DELETED}
           
           Generated MDX files with multi-language support and cross-references"
           
@@ -401,9 +416,11 @@ jobs:
           
           if [ "${{ needs.sync-nocodb-content.result }}" = "success" ]; then
             echo "✅ **NocoDB Content Sync**: Success" >> $GITHUB_STEP_SUMMARY
-            echo "- Episodes Created: ${{ needs.sync-nocodb-content.outputs.episodes-created }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Episodes Updated: ${{ needs.sync-nocodb-content.outputs.episodes-updated }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Guests Created: ${{ needs.sync-nocodb-content.outputs.guests-created }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Episodes Generated: ${{ needs.sync-nocodb-content.outputs.episodes-generated }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Guests Generated: ${{ needs.sync-nocodb-content.outputs.guests-generated }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Hosts Generated: ${{ needs.sync-nocodb-content.outputs.hosts-generated }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Platforms Generated: ${{ needs.sync-nocodb-content.outputs.platforms-generated }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Files Deleted: ${{ needs.sync-nocodb-content.outputs.files-deleted }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **NocoDB Content Sync**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
