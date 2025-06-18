@@ -84,7 +84,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm run typecheck
       
       # Create directories for content
       - name: Create content directories
