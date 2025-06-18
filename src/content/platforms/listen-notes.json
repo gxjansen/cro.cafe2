@@ -1,0 +1,14 @@
+{
+  "id": 9,
+  "name": "Listen Notes",
+  "slug": "listen-notes",
+  "displayOrder": 9,
+  "isActive": true,
+  "urls": {
+    "en": "https://www.listennotes.com/podcasts/crocafe-award-winning-cro-podcast-guido-x-OlAT7GvhCBY/",
+    "de": "https://www.listennotes.com/podcasts/crocafe-deutsch-yvonne-teufel-michael-GQM745IYhbA/"
+  },
+  "logoUrl": null,
+  "createdAt": "2025-06-03T16:14:24.000Z",
+  "updatedAt": "2025-06-03T18:36:18.000Z"
+}

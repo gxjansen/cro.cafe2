@@ -364,29 +364,36 @@ export class SimpleContentGenerator {
   }
 
   private async generatePlatformJSON(platform: any): Promise<void> {
-    // Generate a slug if missing - use name or fallback to id
-    const slug = platform.slug || platform.name?.toLowerCase().replace(/[^a-z0-9-]/g, '-') || `platform-${platform.Id || platform.id}`
+    // Generate a slug from the actual Name field
+    const name = platform.Name || platform.name || `Platform ${platform.Id || platform.id}`
+    const slug = platform.slug || name.toLowerCase().replace(/[^a-z0-9-]/g, '-')
     const platformPath = join(this.config.outputDir, 'platforms', `${slug}.json`)
 
     if (!this.config.overwriteExisting && await this.fileExists(platformPath)) {
       return
     }
 
-    // Use proper field mapping for NocoDB data structure
+    // Build URLs object from individual language URL fields
+    const urls: Record<string, string> = {}
+    if (platform.url_en) urls.en = platform.url_en
+    if (platform.url_nl) urls.nl = platform.url_nl
+    if (platform.url_de) urls.de = platform.url_de
+    if (platform.url_es) urls.es = platform.url_es
+
+    // Use proper field mapping for actual NocoDB data structure
     const platformData = {
       id: platform.Id || platform.id,
-      name: platform.name || platform.title || `Platform ${platform.Id || platform.id}`,
+      name: name,
       slug: slug,
       displayOrder: platform.display_order || platform.displayOrder || 0,
       isActive: platform.is_active !== undefined ? platform.is_active : platform.isActive !== undefined ? platform.isActive : true,
-      urls: platform.urls || {},
-      website: platform.website || platform.url || null,
-      iconUrl: platform.icon_url || platform.iconUrl || null,
+      urls: urls,
+      logoUrl: platform.logo_url || platform.iconUrl || null,
       createdAt: new Date(platform.CreatedAt || platform.created_at || Date.now()).toISOString(),
       updatedAt: new Date(platform.UpdatedAt || platform.updated_at || Date.now()).toISOString()
     }
 
-    console.log(`📝 Creating platform file: ${slug}.json for platform:`, platform.name || platform.title || platform.Id)
+    console.log(`📝 Creating platform file: ${slug}.json for platform: ${name}`)
 
     await this.ensureDirectoryExists(dirname(platformPath))
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
