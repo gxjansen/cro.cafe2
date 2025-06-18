@@ -211,6 +211,9 @@ export class SimpleContentGenerator {
       .replace(/&gt;/g, '>')
       .replace(/&lt;/g, '<')
       .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'")
       .trim()
   }
 
