@@ -1,8 +1,8 @@
-name: RSS Feed Synchronization
+name: Content Synchronization from NocoDB
 
 # Trigger the workflow on multiple events
 on:
-  # Schedule: Run every 6 hours to check for new episodes
+  # Schedule: Run every 6 hours to check for new content
   schedule:
     - cron: '0 */6 * * *'
   
@@ -30,7 +30,8 @@ on:
     branches:
       - main
     paths:
-      - 'src/utils/rss-parser.ts'
+      - 'src/lib/engines/content-generator.ts'
+      - 'src/lib/services/nocodb-service.ts'
       - 'scripts/generate-content.ts'
       - 'scripts/sync-images.ts'
       - '.github/workflows/sync-rss.yml'
@@ -42,9 +43,9 @@ env:
 
 # Define jobs
 jobs:
-  # Job 1: Parse RSS feeds and generate content
-  sync-rss-content:
-    name: Sync RSS Content
+  # Job 1: Generate content from NocoDB
+  sync-nocodb-content:
+    name: Sync NocoDB Content
     runs-on: ubuntu-latest
     
     # Set permissions for GitHub token
@@ -88,8 +89,8 @@ jobs:
           mkdir -p src/content/guests
           mkdir -p public/images/episodes
       
-      # Generate content from RSS feeds
-      - name: Generate content from RSS
+      # Generate content from NocoDB
+      - name: Generate content from NocoDB
         id: content-gen
         run: |
           # Set up command arguments
@@ -97,6 +98,10 @@ jobs:
           
           if [ "${{ github.event.inputs.force_overwrite }}" = "true" ]; then
             ARGS="$ARGS --overwrite"
+          fi
+          
+          if [ "${{ github.event.inputs.languages }}" != "all" ] && [ -n "${{ github.event.inputs.languages }}" ]; then
+            ARGS="$ARGS --languages ${{ github.event.inputs.languages }}"
           fi
           
           # Run content generation
@@ -118,6 +123,9 @@ jobs:
           echo "guests-created=$GUESTS_CREATED" >> $GITHUB_OUTPUT
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
       
       # Check for changes in the repository
       - name: Check for changes
@@ -164,14 +172,13 @@ jobs:
           EPISODES_UPDATED="${{ steps.content-gen.outputs.episodes-updated }}"
           GUESTS_CREATED="${{ steps.content-gen.outputs.guests-created }}"
           
-          COMMIT_MSG="Update podcast content from RSS feeds
+          COMMIT_MSG="Update podcast content from NocoDB
           
           Episodes: ${EPISODES_CREATED} created, ${EPISODES_UPDATED} updated
           Guests: ${GUESTS_CREATED} created
+          Hosts and Platforms updated
           
-          🤖 Generated with [Claude Code](https://claude.ai/code)
-          
-          Co-Authored-By: Claude <noreply@anthropic.com>"
+          Generated MDX files with multi-language support and cross-references"
           
           git commit -m "$COMMIT_MSG"
           git push
@@ -180,11 +187,11 @@ jobs:
   sync-images:
     name: Sync Episode Images
     runs-on: ubuntu-latest
-    needs: sync-rss-content
+    needs: sync-nocodb-content
     
     # Only run if there are content changes, manual trigger, or scheduled run
     if: |
-      needs.sync-rss-content.outputs.has-changes == 'true' || 
+      needs.sync-nocodb-content.outputs.has-changes == 'true' || 
       github.event.inputs.sync_images == 'true' ||
       github.event_name == 'schedule'
     
@@ -281,10 +288,10 @@ jobs:
   validate-content:
     name: Validate Content
     runs-on: ubuntu-latest
-    needs: [sync-rss-content, sync-images]
+    needs: [sync-nocodb-content, sync-images]
     
     # Run if content was generated (even if no changes)
-    if: always() && needs.sync-rss-content.result == 'success'
+    if: always() && needs.sync-nocodb-content.result == 'success'
     
     steps:
       # Checkout repository with latest changes
@@ -357,7 +364,7 @@ jobs:
   summary:
     name: Create Summary
     runs-on: ubuntu-latest
-    needs: [sync-rss-content, sync-images, validate-content]
+    needs: [sync-nocodb-content, sync-images, validate-content]
     
     # Always run to provide summary
     if: always()
@@ -366,17 +373,17 @@ jobs:
       # Create job summary
       - name: Create job summary
         run: |
-          echo "# RSS Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "# NocoDB Content Sync Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Content Generation" >> $GITHUB_STEP_SUMMARY
           
-          if [ "${{ needs.sync-rss-content.result }}" = "success" ]; then
-            echo "✅ **RSS Content Sync**: Success" >> $GITHUB_STEP_SUMMARY
-            echo "- Episodes Created: ${{ needs.sync-rss-content.outputs.episodes-created }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Episodes Updated: ${{ needs.sync-rss-content.outputs.episodes-updated }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Guests Created: ${{ needs.sync-rss-content.outputs.guests-created }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.sync-nocodb-content.result }}" = "success" ]; then
+            echo "✅ **NocoDB Content Sync**: Success" >> $GITHUB_STEP_SUMMARY
+            echo "- Episodes Created: ${{ needs.sync-nocodb-content.outputs.episodes-created }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Episodes Updated: ${{ needs.sync-nocodb-content.outputs.episodes-updated }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Guests Created: ${{ needs.sync-nocodb-content.outputs.guests-created }}" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ **RSS Content Sync**: Failed" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **NocoDB Content Sync**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
