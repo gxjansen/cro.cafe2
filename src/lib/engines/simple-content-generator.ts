@@ -203,17 +203,45 @@ export class SimpleContentGenerator {
     if (!html) return ''
     // Basic HTML to markdown conversion
     return html
+      // Remove HTML comments first
+      .replace(/<!--[\s\S]*?-->/g, '')
+      // Convert lists to markdown
+      .replace(/<ul>/g, '\n')
+      .replace(/<\/ul>/g, '\n')
+      .replace(/<ol>/g, '\n')
+      .replace(/<\/ol>/g, '\n')
+      .replace(/<li>/g, '- ')
+      .replace(/<\/li>/g, '\n')
+      // Convert other HTML tags
       .replace(/<div>/g, '')
       .replace(/<\/div>/g, '\n')
       .replace(/<p>/g, '')
       .replace(/<\/p>/g, '\n\n')
       .replace(/<br\s*\/?>/g, '\n')
+      // Handle inline styles and attributes
+      .replace(/<(\w+)([^>]*)>/g, '<$1>') // Remove attributes from tags
+      // Convert strong/bold
+      .replace(/<strong>/g, '**')
+      .replace(/<\/strong>/g, '**')
+      .replace(/<b>/g, '**')
+      .replace(/<\/b>/g, '**')
+      // Convert emphasis/italic
+      .replace(/<em>/g, '*')
+      .replace(/<\/em>/g, '*')
+      .replace(/<i>/g, '*')
+      .replace(/<\/i>/g, '*')
+      // Remove any remaining HTML tags
+      .replace(/<[^>]+>/g, '')
+      // Decode HTML entities
       .replace(/&gt;/g, '>')
       .replace(/&lt;/g, '<')
       .replace(/&amp;/g, '&')
       .replace(/&nbsp;/g, ' ')
       .replace(/&quot;/g, '"')
       .replace(/&#039;/g, "'")
+      .replace(/&#39;/g, "'")
+      // Clean up extra whitespace
+      .replace(/\n{3,}/g, '\n\n')
       .trim()
   }
 
@@ -451,7 +479,11 @@ export class SimpleContentGenerator {
 
   private escapeYaml(str: string): string {
     if (!str) return ''
-    return str.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    // Remove HTML comments and escape for YAML
+    return str
+      .replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
