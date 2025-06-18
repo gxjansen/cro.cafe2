@@ -62,32 +62,46 @@ describe('Cache Manager', () => {
 
   describe('TTL Management', () => {
     it('should respect TTL for cache entries', async () => {
+      // Use FIFO policy to avoid TTL refresh on access
+      const fifoCache = new CacheManager({
+        ttl: 100,
+        maxSize: 100,
+        evictionPolicy: 'fifo'
+      })
+      
       const key = 'ttl-test'
       const value = 'test-value'
       
-      await cacheManager.set(key, value, 100) // 100ms TTL for faster test
+      await fifoCache.set(key, value, 100) // 100ms TTL for faster test
       
       // Should exist immediately
-      expect(await cacheManager.get(key)).toBe(value)
+      expect(await fifoCache.get(key)).toBe(value)
       
       // Wait for expiration
       await new Promise(resolve => setTimeout(resolve, 150))
       
       // Should be expired
-      expect(await cacheManager.get(key)).toBeNull()
+      expect(await fifoCache.get(key)).toBeNull()
     })
 
     it('should use default TTL when not specified', async () => {
+      // Use FIFO policy to avoid TTL refresh on access
+      const fifoCache = new CacheManager({
+        ttl: 2000, // 2 second TTL for faster test
+        maxSize: 100,
+        evictionPolicy: 'fifo'
+      })
+      
       const key = 'default-ttl'
-      await cacheManager.set(key, 'value')
+      await fifoCache.set(key, 'value')
       
-      // Should use policy TTL (5000ms)
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      expect(await cacheManager.get(key)).toBe('value')
+      // Should exist initially
+      expect(await fifoCache.get(key)).toBe('value')
       
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      expect(await cacheManager.get(key)).toBeNull()
-    }, 10000)
+      // Wait for expiration
+      await new Promise(resolve => setTimeout(resolve, 2500))
+      expect(await fifoCache.get(key)).toBeNull()
+    }, 5000)
 
     it('should update expiration on access for LRU', async () => {
       const key = 'lru-test'

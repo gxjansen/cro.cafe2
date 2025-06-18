@@ -61,6 +61,10 @@ export class NocoDBService {
     await this.adapter.disconnect()
   }
 
+  isConnected(): boolean {
+    return this.adapter.isConnected()
+  }
+
   async healthCheck(): Promise<HealthStatus> {
     return this.adapter.healthCheck()
   }

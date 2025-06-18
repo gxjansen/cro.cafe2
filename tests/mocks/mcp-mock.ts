@@ -32,7 +32,7 @@ export const mockGuests = [
     role: 'CEO',
     socialLinks: [],
     episodeCount: 1,
-    episodes: [],
+    episodes: [{ id: 1, title: 'Episode 1' }], // Match episodeCount
     languages: ['en'],
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
@@ -72,8 +72,16 @@ export const mockPlatforms = [
 
 export class MockMCPClient {
   private connected = false
+  private shouldFailConnection = false
+  
+  setConnectionFailure(shouldFail: boolean) {
+    this.shouldFailConnection = shouldFail
+  }
   
   async connect() {
+    if (this.shouldFailConnection) {
+      throw new Error('Connection failed')
+    }
     this.connected = true
   }
   
