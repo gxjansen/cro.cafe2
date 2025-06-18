@@ -1,0 +1,17 @@
+{
+  "id": 25,
+  "name": "Platform 25",
+  "slug": "platform-25",
+  "iconUrl": "https://example.com/icons/platform-25.png",
+  "websiteUrl": "https://example.com/platform/platform-25",
+  "urls": {
+    "en": "https://example.com/platform/platform-25",
+    "nl": "https://example.com/platform/platform-25",
+    "de": "https://example.com/platform/platform-25",
+    "es": "https://example.com/platform/platform-25"
+  },
+  "displayOrder": 0,
+  "isActive": false,
+  "createdAt": "2025-06-18T21:30:46.000Z",
+  "updatedAt": "2025-06-18T21:31:14.640Z"
+}
