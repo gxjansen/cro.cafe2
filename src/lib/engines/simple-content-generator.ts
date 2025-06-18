@@ -344,13 +344,19 @@ export class SimpleContentGenerator {
     console.log('🎵 Generating platforms...')
     
     const platforms = await this.client.getPlatforms({ limit: 100 })
+    console.log(`🔍 Retrieved ${platforms.length} platforms from NocoDB`)
+    
+    // Debug: Log first platform structure
+    if (platforms.length > 0) {
+      console.log('📊 Sample platform data structure:', JSON.stringify(platforms[0], null, 2))
+    }
 
     for (const platform of platforms) {
       try {
         await this.generatePlatformJSON(platform)
         this.stats.platformsGenerated++
       } catch (error) {
-        const errorMsg = `Failed to generate platform ${platform.Id}: ${error instanceof Error ? error.message : String(error)}`
+        const errorMsg = `Failed to generate platform ${platform.Id || platform.id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
         console.error(errorMsg)
       }
@@ -358,22 +364,29 @@ export class SimpleContentGenerator {
   }
 
   private async generatePlatformJSON(platform: any): Promise<void> {
-    const platformPath = join(this.config.outputDir, 'platforms', `${platform.slug}.json`)
+    // Generate a slug if missing - use name or fallback to id
+    const slug = platform.slug || platform.name?.toLowerCase().replace(/[^a-z0-9-]/g, '-') || `platform-${platform.Id || platform.id}`
+    const platformPath = join(this.config.outputDir, 'platforms', `${slug}.json`)
 
     if (!this.config.overwriteExisting && await this.fileExists(platformPath)) {
       return
     }
 
+    // Use proper field mapping for NocoDB data structure
     const platformData = {
-      id: platform.Id,
-      name: platform.name,
-      slug: platform.slug,
-      displayOrder: platform.display_order,
-      isActive: platform.is_active,
-      urls: platform.urls,
-      createdAt: new Date(platform.CreatedAt || Date.now()).toISOString(),
-      updatedAt: new Date(platform.UpdatedAt || Date.now()).toISOString()
+      id: platform.Id || platform.id,
+      name: platform.name || platform.title || `Platform ${platform.Id || platform.id}`,
+      slug: slug,
+      displayOrder: platform.display_order || platform.displayOrder || 0,
+      isActive: platform.is_active !== undefined ? platform.is_active : platform.isActive !== undefined ? platform.isActive : true,
+      urls: platform.urls || {},
+      website: platform.website || platform.url || null,
+      iconUrl: platform.icon_url || platform.iconUrl || null,
+      createdAt: new Date(platform.CreatedAt || platform.created_at || Date.now()).toISOString(),
+      updatedAt: new Date(platform.UpdatedAt || platform.updated_at || Date.now()).toISOString()
     }
+
+    console.log(`📝 Creating platform file: ${slug}.json for platform:`, platform.name || platform.title || platform.Id)
 
     await this.ensureDirectoryExists(dirname(platformPath))
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
