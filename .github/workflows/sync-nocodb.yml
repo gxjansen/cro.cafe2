@@ -167,7 +167,13 @@ jobs:
           # Add all content files
           git add src/content/episodes/
           git add src/content/guests/
-          git add content-generation-report.md
+          git add src/content/hosts/
+          git add src/content/platforms/
+          
+          # Add report file if it exists
+          if [ -f content-generation-report.md ]; then
+            git add content-generation-report.md
+          fi
           
           # Create commit message with statistics
           EPISODES_CREATED="${{ steps.content-gen.outputs.episodes-created }}"
