@@ -98,6 +98,7 @@ export class NocoDBAPIClient {
     })
 
     if (!response.ok) {
+      console.error(`NocoDB API error for ${url}: ${response.status} ${response.statusText}`)
       throw new Error(`NocoDB API error: ${response.status} ${response.statusText}`)
     }
 
@@ -106,25 +107,25 @@ export class NocoDBAPIClient {
 
   async getEpisodes(options: { limit?: number } = {}): Promise<Episode[]> {
     const { limit = 1000 } = options
-    const response = await this.request(`/tables/${this.getTableId('episodes')}/records?limit=${limit}`)
+    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('episodes')}/records?limit=${limit}`)
     return response.list || []
   }
 
   async getGuests(options: { limit?: number } = {}): Promise<Guest[]> {
     const { limit = 1000 } = options
-    const response = await this.request(`/tables/${this.getTableId('guests')}/records?limit=${limit}`)
+    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('guests')}/records?limit=${limit}`)
     return response.list || []
   }
 
   async getHosts(options: { limit?: number } = {}): Promise<Host[]> {
     const { limit = 100 } = options
-    const response = await this.request(`/tables/${this.getTableId('hosts')}/records?limit=${limit}`)
+    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('hosts')}/records?limit=${limit}`)
     return response.list || []
   }
 
   async getPlatforms(options: { limit?: number } = {}): Promise<Platform[]> {
     const { limit = 100 } = options
-    const response = await this.request(`/tables/${this.getTableId('platforms')}/records?limit=${limit}`)
+    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('platforms')}/records?limit=${limit}`)
     return response.list || []
   }
 
