@@ -266,7 +266,7 @@ export class SimpleContentGenerator {
       `episodeCount: ${guest.episode_count || 0}`,
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
       `languages: [${languages.map(l => `"${l}"`).join(', ')}]`,
-      guest.image_url ? `imageUrl: "${guest.image_url}"` : '',
+      this.isValidUrl(guest.image_url) ? `imageUrl: "${guest.image_url}"` : '',
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
@@ -332,7 +332,7 @@ export class SimpleContentGenerator {
       `slug: "${host.slug || ''}"`,
       `bio: "${this.escapeYaml(host.bio || '')}"`,
       host.role ? `role: "${this.escapeYaml(host.role)}"` : '',
-      host.image_url ? `imageUrl: "${host.image_url}"` : '',
+      this.isValidUrl(host.image_url) ? `imageUrl: "${host.image_url}"` : '',
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
       `socialLinks: ${JSON.stringify(host.social_links || [])}`,
       `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
@@ -373,22 +373,33 @@ export class SimpleContentGenerator {
       return
     }
 
-    // Build URLs object from individual language URL fields
-    const urls: Record<string, string> = {}
-    if (platform.url_en) urls.en = platform.url_en
-    if (platform.url_nl) urls.nl = platform.url_nl
-    if (platform.url_de) urls.de = platform.url_de
-    if (platform.url_es) urls.es = platform.url_es
+    // Build URLs object with all required languages (schema requires all 4)
+    const urls = {
+      en: platform.url_en || `https://example.com/platform/${slug}`,
+      nl: platform.url_nl || platform.url_en || `https://example.com/platform/${slug}`,
+      de: platform.url_de || platform.url_en || `https://example.com/platform/${slug}`,
+      es: platform.url_es || platform.url_en || `https://example.com/platform/${slug}`
+    }
+
+    // Get iconUrl and websiteUrl - both required by schema
+    const iconUrl = this.isValidUrl(platform.logo_url) ? platform.logo_url : 
+                   this.isValidUrl(platform.iconUrl) ? platform.iconUrl :
+                   `https://example.com/icons/${slug}.png`
+    
+    const websiteUrl = this.isValidUrl(platform.url_en) ? platform.url_en :
+                      this.isValidUrl(platform.website_url) ? platform.website_url :
+                      urls.en
 
     // Use proper field mapping for actual NocoDB data structure
     const platformData = {
       id: platform.Id || platform.id,
       name: name,
       slug: slug,
+      iconUrl: iconUrl,
+      websiteUrl: websiteUrl,
+      urls: urls,
       displayOrder: platform.display_order || platform.displayOrder || 0,
       isActive: platform.is_active !== undefined ? platform.is_active : platform.isActive !== undefined ? platform.isActive : true,
-      urls: urls,
-      logoUrl: platform.logo_url || platform.iconUrl || null,
       createdAt: new Date(platform.CreatedAt || platform.created_at || Date.now()).toISOString(),
       updatedAt: new Date(platform.UpdatedAt || platform.updated_at || Date.now()).toISOString()
     }
@@ -439,6 +450,16 @@ export class SimpleContentGenerator {
   private escapeYaml(str: string): string {
     if (!str) return ''
     return str.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+  }
+
+  private isValidUrl(url: string | null | undefined): boolean {
+    if (!url) return false
+    try {
+      new URL(url)
+      return true
+    } catch {
+      return false
+    }
   }
 
   getStats(): GenerationStats {
