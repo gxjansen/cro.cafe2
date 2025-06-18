@@ -1,0 +1,118 @@
+---
+import type { Language } from '../types';
+
+export interface Props {
+  currentLanguage: Language;
+  currentPath: string;
+}
+
+const { currentLanguage, currentPath } = Astro.props;
+
+const languages = [
+  { code: 'en' as Language, name: 'English', nativeName: 'English', flag: '🇺🇸' },
+  { code: 'nl' as Language, name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
+  { code: 'de' as Language, name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  { code: 'es' as Language, name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+];
+
+const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
+
+// Generate language URLs - redirect to homepage for each language
+const getLanguageUrl = (langCode: Language) => {
+  return langCode === 'en' ? '/' : `/${langCode}/`;
+};
+---
+
+<div class="relative inline-block text-left">
+  <button
+    id="language-switcher-button"
+    type="button"
+    class="inline-flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-label="Select language"
+  >
+    <span class="mr-2">{currentLang.flag}</span>
+    <span class="hidden sm:inline">{currentLang.nativeName}</span>
+    <span class="sm:hidden">{currentLang.code.toUpperCase()}</span>
+    <svg class="ml-2 -mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <div
+    id="language-switcher-menu"
+    class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="language-switcher-button"
+  >
+    <div class="py-1" role="none">
+      {languages.map((lang) => (
+        <a
+          href={getLanguageUrl(lang.code)}
+          class={`flex items-center px-4 py-2 text-sm transition-colors ${
+            lang.code === currentLanguage
+              ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+              : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+          }`}
+          role="menuitem"
+          aria-current={lang.code === currentLanguage ? 'page' : undefined}
+        >
+          <span class="mr-3">{lang.flag}</span>
+          <div class="flex flex-col">
+            <span class="font-medium">{lang.nativeName}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">{lang.name}</span>
+          </div>
+          {lang.code === currentLanguage && (
+            <svg class="ml-auto h-4 w-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+          )}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  const languageSwitcherButton = document.getElementById('language-switcher-button');
+  const languageSwitcherMenu = document.getElementById('language-switcher-menu');
+
+  if (languageSwitcherButton && languageSwitcherMenu) {
+    // Toggle dropdown
+    languageSwitcherButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isHidden = languageSwitcherMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        languageSwitcherMenu.classList.remove('hidden');
+        languageSwitcherButton.setAttribute('aria-expanded', 'true');
+      } else {
+        languageSwitcherMenu.classList.add('hidden');
+        languageSwitcherButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      if (!languageSwitcherButton.contains(target) && !languageSwitcherMenu.contains(target)) {
+        languageSwitcherMenu.classList.add('hidden');
+        languageSwitcherButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Handle keyboard navigation
+    languageSwitcherButton.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        languageSwitcherButton.click();
+      } else if (event.key === 'Escape') {
+        languageSwitcherMenu.classList.add('hidden');
+        languageSwitcherButton.setAttribute('aria-expanded', 'false');
+        languageSwitcherButton.focus();
+      }
+    });
+  }
+</script>

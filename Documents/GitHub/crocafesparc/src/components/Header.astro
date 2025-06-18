@@ -1,0 +1,192 @@
+---
+import type { Language } from '../types';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface Props {
+  language?: Language;
+  currentPath?: string;
+}
+
+const { language = 'en', currentPath = '/' } = Astro.props;
+
+// Navigation items based on language
+const getNavItems = (lang: Language) => {
+  const basePath = lang === 'en' ? '' : `/${lang}`;
+  
+  const navTexts = {
+    en: {
+      episodes: 'Episodes',
+      guests: 'Guests', 
+      subscribe: 'Subscribe',
+      search: 'Search'
+    },
+    nl: {
+      episodes: 'Afleveringen',
+      guests: 'Gasten',
+      subscribe: 'Abonneren', 
+      search: 'Zoeken'
+    },
+    de: {
+      episodes: 'Folgen',
+      guests: 'Gäste',
+      subscribe: 'Abonnieren',
+      search: 'Suche'
+    },
+    es: {
+      episodes: 'Episodios',
+      guests: 'Invitados',
+      subscribe: 'Suscríbete',
+      search: 'Buscar'
+    }
+  };
+  
+  const texts = navTexts[lang];
+  
+  return [
+    { href: `${basePath}/episodes`, label: texts.episodes },
+    { href: `${basePath}/guests`, label: texts.guests },
+    { href: `${basePath}/subscribe`, label: texts.subscribe },
+  ];
+};
+
+const navItems = getNavItems(language);
+---
+
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a 
+          href={language === 'en' ? '/' : `/${language}`}
+          class="flex items-center space-x-2 group"
+          aria-label="CRO.CAFE Home"
+        >
+          <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <span class="text-white font-bold text-sm">CC</span>
+          </div>
+          <span class="text-xl font-heading font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            CRO.CAFE
+          </span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          {navItems.map((item) => (
+            <a
+              href={item.href}
+              class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                currentPath.startsWith(item.href)
+                  ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+              aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right side controls -->
+      <div class="flex items-center space-x-4">
+        <!-- Search Button -->
+        <button
+          id="search-toggle"
+          type="button"
+          class="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          aria-label="Open search"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+
+        <!-- Language Switcher -->
+        <LanguageSwitcher currentLanguage={language} currentPath={currentPath} />
+
+        <!-- Theme Toggle -->
+        <ThemeToggle />
+
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button
+            id="mobile-menu-toggle"
+            type="button"
+            class="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            aria-label="Open main menu"
+            aria-expanded="false"
+          >
+            <svg class="w-6 h-6 block" id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg class="w-6 h-6 hidden" id="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+              currentPath.startsWith(item.href)
+                ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+            }`}
+            aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  if (mobileMenuToggle && mobileMenu && menuIcon && closeIcon) {
+    mobileMenuToggle.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'true');
+      } else {
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (event) => {
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      const target = event.target as Element;
+      if (!mobileMenuToggle?.contains(target) && !mobileMenu.contains(target)) {
+        mobileMenu.classList.add('hidden');
+        menuIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        mobileMenuToggle?.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+</script>
