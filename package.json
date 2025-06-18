@@ -16,6 +16,7 @@
     "test:run": "vitest run",
     "generate-content": "tsx scripts/generate-content.ts",
     "generate-content-simple": "tsx scripts/generate-content-simple.ts",
+    "generate-content-robust": "tsx scripts/generate-content-robust.ts",
     "sync-content": "npm run generate-content-simple && npm run validate-content",
     "validate-content": "tsx scripts/validate-content.ts"
   },

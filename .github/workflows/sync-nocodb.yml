@@ -106,8 +106,8 @@ jobs:
             ARGS="$ARGS --languages ${{ github.event.inputs.languages }}"
           fi
           
-          # Run simple content generation (direct API)
-          npx tsx scripts/generate-content-simple.ts $ARGS 2>&1 | tee content-generation.log
+          # Run robust content generation (tests multiple API patterns)
+          npx tsx scripts/generate-content-robust.ts $ARGS 2>&1 | tee content-generation.log
           
           # Extract statistics from log or report file
           if [ -f content-generation-report.md ]; then
