@@ -107,30 +107,31 @@ export class NocoDBAPIClient {
 
   async getEpisodes(options: { limit?: number } = {}): Promise<Episode[]> {
     const { limit = 1000 } = options
-    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('episodes')}/records?limit=${limit}`)
+    // Use the v1 API endpoint structure which seems to work
+    const response = await this.request(`/meta/tables/${this.getTableId('episodes')}/rows?limit=${limit}`)
     return response.list || []
   }
 
   async getGuests(options: { limit?: number } = {}): Promise<Guest[]> {
     const { limit = 1000 } = options
-    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('guests')}/records?limit=${limit}`)
+    const response = await this.request(`/meta/tables/${this.getTableId('guests')}/rows?limit=${limit}`)
     return response.list || []
   }
 
   async getHosts(options: { limit?: number } = {}): Promise<Host[]> {
     const { limit = 100 } = options
-    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('hosts')}/records?limit=${limit}`)
+    const response = await this.request(`/meta/tables/${this.getTableId('hosts')}/rows?limit=${limit}`)
     return response.list || []
   }
 
   async getPlatforms(options: { limit?: number } = {}): Promise<Platform[]> {
     const { limit = 100 } = options
-    const response = await this.request(`/bases/${this.config.baseId}/tables/${this.getTableId('platforms')}/records?limit=${limit}`)
+    const response = await this.request(`/meta/tables/${this.getTableId('platforms')}/rows?limit=${limit}`)
     return response.list || []
   }
 
   private getTableId(tableName: string): string {
-    // Map lowercase table names to capitalized NocoDB table names
+    // Use actual NocoDB table names (capitalized)
     const tableMap: Record<string, string> = {
       episodes: 'Episodes',
       guests: 'Guests', 
