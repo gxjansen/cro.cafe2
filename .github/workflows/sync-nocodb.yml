@@ -110,16 +110,23 @@ jobs:
           npx tsx scripts/generate-content-final.ts $ARGS 2>&1 | tee content-generation.log
           
           # Extract statistics from the console output in the log
-          EPISODES_GENERATED=$(grep "Generated:" content-generation.log | grep "episodes" | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
-          GUESTS_GENERATED=$(grep "Generated:" content-generation.log | grep "guests" | sed 's/.*\([0-9]*\) guests.*/\1/' || echo "0")
-          HOSTS_GENERATED=$(grep "Generated:" content-generation.log | grep "hosts" | sed 's/.*\([0-9]*\) hosts.*/\1/' || echo "0")
-          PLATFORMS_GENERATED=$(grep "Generated:" content-generation.log | grep "platforms" | sed 's/.*\([0-9]*\) platforms.*/\1/' || echo "0")
-          FILES_DELETED=$(grep "Deleted:" content-generation.log | grep "orphaned files" | sed 's/.*Deleted: \([0-9]*\) orphaned files.*/\1/' || echo "0")
+          # Look for the final summary line with emoji
+          STATS_LINE=$(grep "📊 Generated:" content-generation.log | tail -1)
           
-          # Fallback to simpler extraction if the above doesn't work
-          if [ "$EPISODES_GENERATED" = "0" ]; then
-            EPISODES_GENERATED=$(grep "📊 Generated:" content-generation.log | tail -1 | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
+          if [ -n "$STATS_LINE" ]; then
+            EPISODES_GENERATED=$(echo "$STATS_LINE" | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
+            GUESTS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) guests.*/\1/' || echo "0")
+            HOSTS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) hosts.*/\1/' || echo "0")
+            PLATFORMS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) platforms.*/\1/' || echo "0")
+          else
+            EPISODES_GENERATED="0"
+            GUESTS_GENERATED="0"
+            HOSTS_GENERATED="0"
+            PLATFORMS_GENERATED="0"
           fi
+          
+          # Extract deletion count
+          FILES_DELETED=$(grep "🗑️ Deleted:" content-generation.log | grep "orphaned files" | sed 's/.*Deleted: \([0-9]*\) orphaned files.*/\1/' || echo "0")
           
           echo "episodes-generated=$EPISODES_GENERATED" >> $GITHUB_OUTPUT
           echo "guests-generated=$GUESTS_GENERATED" >> $GITHUB_OUTPUT
