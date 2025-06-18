@@ -116,7 +116,7 @@ export class SimpleContentGenerator {
       'episodes',
       language,
       seasonDir,
-      `episode-${String(episode.episodeNumber || episode.id).padStart(3, '0')}-${episode.slug}.mdx`
+      `episode-${String(episode.episode_number || episode.Id).padStart(3, '0')}-${episode.slug}.mdx`
     )
 
     // Check if file exists and shouldn't overwrite
@@ -133,56 +133,86 @@ export class SimpleContentGenerator {
   }
 
   private generateEpisodeFrontmatter(episode: any): string {
-    const hosts = Array.isArray(episode.hosts) ? episode.hosts.map((h: any) => h.slug || h.name) : []
-    const guests = Array.isArray(episode.guests) ? episode.guests.map((g: any) => g.slug || g.name) : []
-    const platforms = Array.isArray(episode.platforms) ? episode.platforms.map((p: any) => p.slug || p.name) : []
+    // Extract hosts from relationship data
+    const hosts = []
+    if (episode.host && Array.isArray(episode.host)) {
+      hosts.push(...episode.host.map((h: any) => h.slug || h.name))
+    }
+    if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
+      hosts.push(...episode._nc_m2m_Episodes_Hosts.map((rel: any) => rel.Hosts?.slug || rel.Hosts?.name).filter(Boolean))
+    }
+
+    // Extract guests from relationship data
+    const guests = []
+    if (episode.guest && Array.isArray(episode.guest)) {
+      guests.push(...episode.guest.map((g: any) => g.slug || g.name))
+    }
+    if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
+      guests.push(...episode._nc_m2m_Episodes_Guests.map((rel: any) => rel.Guests?.slug || rel.Guests?.name).filter(Boolean))
+    }
 
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
       `slug: "${episode.slug || ''}"`,
-      `description: "${this.escapeYaml(episode.description || '')}"`,
-      `summary: "${this.escapeYaml(episode.summary || '')}"`,
-      `episodeNumber: ${episode.episodeNumber || 0}`,
+      `description: "${this.escapeYaml(episode.formatted_description || episode.description || '')}"`,
+      `summary: "${this.escapeYaml(episode.formatted_summary || episode.summary || '')}"`,
+      `episodeNumber: ${episode.episode_number || 0}`,
       `season: ${episode.season || 1}`,
       `language: "${episode.language || this.config.defaultLanguage}"`,
       `duration: ${episode.duration || 0}`,
-      `mediaUrl: "${episode.mediaUrl || ''}"`,
-      `publishedAt: ${episode.publishedAt ? new Date(episode.publishedAt).toISOString() : 'null'}`,
+      `mediaUrl: "${episode.media_url || ''}"`,
+      `publishedAt: ${episode.published_at ? new Date(episode.published_at).toISOString() : 'null'}`,
       `status: "${episode.status || 'draft'}"`,
-      `transistorId: "${episode.transistorId || ''}"`,
+      `transistorId: "${episode.transistor_id || ''}"`,
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
       `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
-      `platforms: [${platforms.map(p => `"${p}"`).join(', ')}]`,
-      episode.aiKeywords ? `keywords: "${this.escapeYaml(episode.aiKeywords)}"` : '',
-      episode.aiSummary ? `aiSummary: "${this.escapeYaml(episode.aiSummary)}"` : '',
-      `createdAt: ${new Date(episode.createdAt || Date.now()).toISOString()}`,
-      `updatedAt: ${new Date(episode.updatedAt || Date.now()).toISOString()}`
+      episode.ai_keywords ? `keywords: "${this.escapeYaml(episode.ai_keywords)}"` : '',
+      episode.ai_summary ? `aiSummary: "${this.escapeYaml(episode.ai_summary)}"` : '',
+      `createdAt: ${new Date(episode.CreatedAt || Date.now()).toISOString()}`,
+      `updatedAt: ${new Date(episode.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')
   }
 
   private generateEpisodeContent(episode: any): string {
     const content = []
 
-    if (episode.description) {
-      content.push(episode.description)
+    // Use formatted description if available, fallback to description
+    const description = episode.formatted_description || episode.description
+    if (description) {
+      content.push(this.cleanHtmlContent(description))
       content.push('')
     }
 
-    if (episode.aiTranscriptText) {
+    if (episode.ai_transcript_text) {
       content.push('## Transcript')
       content.push('')
-      content.push(episode.aiTranscriptText)
+      content.push(episode.ai_transcript_text)
       content.push('')
     }
 
-    if (episode.showNotes) {
+    if (episode.show_notes) {
       content.push('## Show Notes')
       content.push('')
-      content.push(episode.showNotes)
+      content.push(episode.show_notes)
       content.push('')
     }
 
     return content.join('\n')
+  }
+
+  private cleanHtmlContent(html: string): string {
+    if (!html) return ''
+    // Basic HTML to markdown conversion
+    return html
+      .replace(/<div>/g, '')
+      .replace(/<\/div>/g, '\n')
+      .replace(/<p>/g, '')
+      .replace(/<\/p>/g, '\n\n')
+      .replace(/<br\s*\/?>/g, '\n')
+      .replace(/&gt;/g, '>')
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&')
+      .trim()
   }
 
   private async generateGuests(): Promise<void> {
@@ -218,21 +248,28 @@ export class SimpleContentGenerator {
   }
 
   private generateGuestFrontmatter(guest: any): string {
-    const episodes = Array.isArray(guest.episodes) ? guest.episodes.map((e: any) => e.slug || e.id) : []
-    const languages = Array.isArray(guest.languages) ? guest.languages : [this.config.defaultLanguage]
+    const episodes = Array.isArray(guest.Episodes) ? guest.Episodes.map((e: any) => e.slug || e.Id) : []
+    const languages = Array.isArray(guest.Language) ? guest.Language : [this.config.defaultLanguage]
+    
+    // Create social links array from individual fields
+    const socialLinks = []
+    if (guest.LinkedIn) {
+      socialLinks.push({ platform: 'linkedin', url: guest.LinkedIn })
+    }
 
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
       `slug: "${guest.slug || ''}"`,
-      `bio: "${this.escapeYaml(guest.bio || '')}"`,
+      `bio: "${this.escapeYaml(guest.ai_bio || guest.bio || '')}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
-      `episodeCount: ${guest.episodeCount || 0}`,
+      `episodeCount: ${guest.episode_count || 0}`,
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
       `languages: [${languages.map(l => `"${l}"`).join(', ')}]`,
-      `socialLinks: ${JSON.stringify(guest.socialLinks || [])}`,
-      `createdAt: ${new Date(guest.createdAt || Date.now()).toISOString()}`,
-      `updatedAt: ${new Date(guest.updatedAt || Date.now()).toISOString()}`
+      guest.image_url ? `imageUrl: "${guest.image_url}"` : '',
+      `socialLinks: ${JSON.stringify(socialLinks)}`,
+      `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
+      `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')
   }
 
@@ -288,16 +325,18 @@ export class SimpleContentGenerator {
   }
 
   private generateHostFrontmatter(host: any): string {
-    const episodes = Array.isArray(host.episodes) ? host.episodes.map((e: any) => e.slug || e.id) : []
+    const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
 
     return [
       `name: "${this.escapeYaml(host.name || '')}"`,
       `slug: "${host.slug || ''}"`,
       `bio: "${this.escapeYaml(host.bio || '')}"`,
+      host.role ? `role: "${this.escapeYaml(host.role)}"` : '',
+      host.image_url ? `imageUrl: "${host.image_url}"` : '',
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
-      `socialLinks: ${JSON.stringify(host.socialLinks || [])}`,
-      `createdAt: ${new Date(host.createdAt || Date.now()).toISOString()}`,
-      `updatedAt: ${new Date(host.updatedAt || Date.now()).toISOString()}`
+      `socialLinks: ${JSON.stringify(host.social_links || [])}`,
+      `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
+      `updatedAt: ${new Date(host.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')
   }
 
@@ -326,13 +365,14 @@ export class SimpleContentGenerator {
     }
 
     const platformData = {
+      id: platform.Id,
       name: platform.name,
       slug: platform.slug,
-      displayOrder: platform.displayOrder,
-      isActive: platform.isActive,
+      displayOrder: platform.display_order,
+      isActive: platform.is_active,
       urls: platform.urls,
-      createdAt: new Date(platform.createdAt || Date.now()).toISOString(),
-      updatedAt: new Date(platform.updatedAt || Date.now()).toISOString()
+      createdAt: new Date(platform.CreatedAt || Date.now()).toISOString(),
+      updatedAt: new Date(platform.UpdatedAt || Date.now()).toISOString()
     }
 
     await this.ensureDirectoryExists(dirname(platformPath))
