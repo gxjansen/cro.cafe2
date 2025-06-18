@@ -101,7 +101,7 @@ export class SimpleContentGenerator {
         await this.generateEpisodeMDX(episode)
         this.stats.episodesGenerated++
       } catch (error) {
-        const errorMsg = `Failed to generate episode ${episode.id}: ${error instanceof Error ? error.message : String(error)}`
+        const errorMsg = `Failed to generate episode ${episode.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
         console.error(errorMsg)
       }
@@ -225,7 +225,7 @@ export class SimpleContentGenerator {
         await this.generateGuestMDX(guest)
         this.stats.guestsGenerated++
       } catch (error) {
-        const errorMsg = `Failed to generate guest ${guest.id}: ${error instanceof Error ? error.message : String(error)}`
+        const errorMsg = `Failed to generate guest ${guest.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
         console.error(errorMsg)
       }
@@ -302,7 +302,7 @@ export class SimpleContentGenerator {
         await this.generateHostMDX(host)
         this.stats.hostsGenerated++
       } catch (error) {
-        const errorMsg = `Failed to generate host ${host.id}: ${error instanceof Error ? error.message : String(error)}`
+        const errorMsg = `Failed to generate host ${host.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
         console.error(errorMsg)
       }
@@ -350,7 +350,7 @@ export class SimpleContentGenerator {
         await this.generatePlatformJSON(platform)
         this.stats.platformsGenerated++
       } catch (error) {
-        const errorMsg = `Failed to generate platform ${platform.id}: ${error instanceof Error ? error.message : String(error)}`
+        const errorMsg = `Failed to generate platform ${platform.Id}: ${error instanceof Error ? error.message : String(error)}`
         this.stats.errors.push(errorMsg)
         console.error(errorMsg)
       }

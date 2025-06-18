@@ -10,65 +10,72 @@ interface NocoDBConfig {
 }
 
 interface Episode {
-  id: number
-  transistorId?: string
+  Id: number
+  transistor_id?: string
   title: string
   slug: string
   description?: string
+  formatted_description?: string
   summary?: string
-  episodeNumber: number
+  formatted_summary?: string
+  episode_number: number
   season?: number
   language: string
   duration?: number
-  mediaUrl?: string
-  publishedAt?: string
+  media_url?: string
+  published_at?: string
   status: string
-  hosts?: any[]
-  guests?: any[]
-  platforms?: any[]
-  aiKeywords?: string
-  aiSummary?: string
-  aiTranscriptText?: string
-  showNotes?: string
-  createdAt: string
-  updatedAt: string
+  host?: any[]
+  guest?: any[]
+  _nc_m2m_Episodes_Hosts?: any[]
+  _nc_m2m_Episodes_Guests?: any[]
+  ai_keywords?: string
+  ai_summary?: string
+  ai_transcript_text?: string
+  show_notes?: string
+  CreatedAt: string
+  UpdatedAt: string
 }
 
 interface Guest {
-  id: number
+  Id: number
   slug: string
   name: string
   bio?: string
+  ai_bio?: string
   company?: string
   role?: string
-  episodeCount?: number
-  episodes?: any[]
-  languages?: string[]
-  socialLinks?: any[]
-  createdAt: string
-  updatedAt: string
+  episode_count?: number
+  Episodes?: any[]
+  Language?: string[]
+  LinkedIn?: string
+  image_url?: string
+  CreatedAt: string
+  UpdatedAt: string
 }
 
 interface Host {
-  id: number
+  Id: number
   slug: string
   name: string
   bio?: string
-  episodes?: any[]
-  socialLinks?: any[]
-  createdAt: string
-  updatedAt: string
+  Episodes?: any[]
+  social_links?: any
+  role?: string
+  image_url?: string
+  CreatedAt: string
+  UpdatedAt: string
 }
 
 interface Platform {
-  id: number
+  Id: number
   name: string
   slug: string
-  displayOrder?: number
-  isActive: boolean
+  display_order?: number
+  is_active: boolean
   urls?: Record<string, string>
-  createdAt: string
-  updatedAt: string
+  CreatedAt: string
+  UpdatedAt: string
 }
 
 export class NocoDBAPIClient {
@@ -122,13 +129,12 @@ export class NocoDBAPIClient {
   }
 
   private getTableId(tableName: string): string {
-    // In a real implementation, you might need to fetch table IDs dynamically
-    // For now, we'll assume standard table names or IDs
+    // Map lowercase table names to capitalized NocoDB table names
     const tableMap: Record<string, string> = {
-      episodes: 'episodes',
-      guests: 'guests', 
-      hosts: 'hosts',
-      platforms: 'platforms'
+      episodes: 'Episodes',
+      guests: 'Guests', 
+      hosts: 'Hosts',
+      platforms: 'Platforms'
     }
     
     return tableMap[tableName] || tableName
