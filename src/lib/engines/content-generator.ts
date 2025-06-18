@@ -150,7 +150,7 @@ export class ContentGenerator {
     }
 
     const frontmatter = this.generateEpisodeFrontmatter(episode)
-    const content = this.generateEpisodeContent(episode)
+    const content = this.generateEpisodeContent(episode, language)
     const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
 
     await this.ensureDirectoryExists(dirname(episodePath))
@@ -166,10 +166,10 @@ export class ContentGenerator {
     const platforms = Array.isArray(episode.platforms) ? episode.platforms.map((p: any) => p.slug || p.name) : []
 
     return [
-      `title: "${this.escapeYaml(episode.title)}"`,
+      `title: "${this.escapeYaml(getTranslatedValue(episode.title, this.config.defaultLanguage))}"`,
       `slug: "${episode.slug}"`,
-      `description: "${this.escapeYaml(episode.description || '')}"`,
-      `summary: "${this.escapeYaml(episode.summary || '')}"`,
+      `description: "${this.escapeYaml(getTranslatedValue(episode.description, this.config.defaultLanguage))}"`,
+      `summary: "${this.escapeYaml(getTranslatedValue(episode.summary, this.config.defaultLanguage))}"`,
       `episodeNumber: ${episode.episodeNumber}`,
       `season: ${episode.season || 1}`,
       `language: "${episode.language}"`,
@@ -181,8 +181,8 @@ export class ContentGenerator {
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
       `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
       `platforms: [${platforms.map(p => `"${p}"`).join(', ')}]`,
-      episode.aiKeywords ? `keywords: "${this.escapeYaml(episode.aiKeywords)}"` : '',
-      episode.aiSummary ? `aiSummary: "${this.escapeYaml(episode.aiSummary)}"` : '',
+      episode.aiKeywords ? `keywords: "${this.escapeYaml(Array.isArray(episode.aiKeywords) ? episode.aiKeywords.join(', ') : String(episode.aiKeywords))}"` : '',
+      episode.aiSummary ? `aiSummary: "${this.escapeYaml(getTranslatedValue(episode.aiSummary, this.config.defaultLanguage))}"` : '',
       `createdAt: ${episode.createdAt.toISOString()}`,
       `updatedAt: ${episode.updatedAt.toISOString()}`
     ].filter(Boolean).join('\n')
@@ -191,12 +191,13 @@ export class ContentGenerator {
   /**
    * Generate episode content body
    */
-  private generateEpisodeContent(episode: Episode): string {
+  private generateEpisodeContent(episode: Episode, language: Language = 'en'): string {
     const content = []
 
     // Description
-    if (episode.description) {
-      content.push(episode.description)
+    const description = getTranslatedValue(episode.description, language)
+    if (description) {
+      content.push(description)
       content.push('')
     }
 
