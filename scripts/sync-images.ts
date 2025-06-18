@@ -1,8 +1,25 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { parseAllRSSFeeds, type ParsedEpisode } from '../src/utils/rss-parser.js';
+// import { parseAllRSSFeeds, type ParsedEpisode } from '../src/utils/rss-parser.js';
 import type { Language } from '../src/types/index.js';
+
+// Temporary type definition until rss-parser is implemented
+type ParsedEpisode = {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  language: Language;
+  slug: string;
+  season: number;
+  episode: number;
+};
+
+// Temporary stub function until rss-parser is implemented
+async function parseAllRSSFeeds(): Promise<ParsedEpisode[]> {
+  console.warn('parseAllRSSFeeds is not implemented yet - returning empty array');
+  return [];
+}
 
 /**
  * Image optimization configuration

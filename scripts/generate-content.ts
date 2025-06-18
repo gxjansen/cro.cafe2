@@ -37,6 +37,7 @@ async function main() {
       nocodb: {
         server: process.env.NOCODB_BASE_URL || 'http://localhost:8080',
         apiKey: process.env.NOCODB_API_KEY || 'test-api-key',
+        timeout: 30000,
         retryPolicy: {
           maxAttempts: 3,
           backoffStrategy: 'exponential',

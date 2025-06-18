@@ -309,9 +309,9 @@ async function main() {
 
     // Initialize client
     const client = new NocoDBWorkingClient({
-      baseUrl: process.env.NOCODB_BASE_URL,
-      apiKey: process.env.NOCODB_API_KEY,
-      baseId: process.env.NOCODB_BASE_ID
+      baseUrl: process.env.NOCODB_BASE_URL!,
+      apiKey: process.env.NOCODB_API_KEY!,
+      baseId: process.env.NOCODB_BASE_ID!
     })
 
     // Test connection

@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
-import type { Episode, Guest, Host, Platform } from '../types/database'
+import type { Episode, Guest, Host, Platform, TranslatedField } from '../types/database'
 import type { Language } from '../../types/index'
 import { NocoDBService } from '../services/nocodb-service'
 
@@ -26,6 +26,15 @@ interface GenerationStats {
   errors: string[]
   startTime: Date
   endTime?: Date
+}
+
+/**
+ * Helper function to extract a string value from a TranslatedField
+ */
+function getTranslatedValue(field: TranslatedField<string> | string | undefined, language: Language = 'en', fallback: string = ''): string {
+  if (!field) return fallback
+  if (typeof field === 'string') return field
+  return field[language] || field.en || field.nl || field.de || field.es || fallback
 }
 
 export class ContentGenerator {
@@ -192,18 +201,20 @@ export class ContentGenerator {
     }
 
     // AI-generated transcript
-    if (episode.aiTranscriptText) {
+    const aiTranscript = getTranslatedValue(episode.aiTranscript, language)
+    if (aiTranscript) {
       content.push('## Transcript')
       content.push('')
-      content.push(episode.aiTranscriptText)
+      content.push(aiTranscript)
       content.push('')
     }
 
-    // Show notes
-    if (episode.showNotes) {
+    // Show notes (use summary if showNotes is not available)
+    const showNotes = getTranslatedValue(episode.summary, language)
+    if (showNotes) {
       content.push('## Show Notes')
       content.push('')
-      content.push(episode.showNotes)
+      content.push(showNotes)
       content.push('')
     }
 
@@ -261,7 +272,7 @@ export class ContentGenerator {
     return [
       `name: "${this.escapeYaml(guest.name)}"`,
       `slug: "${guest.slug}"`,
-      `bio: "${this.escapeYaml(guest.bio || '')}"`,
+      `bio: "${this.escapeYaml(getTranslatedValue(guest.bio, this.config.defaultLanguage))}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
       `episodeCount: ${guest.episodeCount || 0}`,
@@ -345,7 +356,7 @@ export class ContentGenerator {
     return [
       `name: "${this.escapeYaml(host.name)}"`,
       `slug: "${host.slug}"`,
-      `bio: "${this.escapeYaml(host.bio || '')}"`,
+      `bio: "${this.escapeYaml(getTranslatedValue(host.bio, this.config.defaultLanguage))}"`,
       `episodes: [${episodes.map(e => `"${e}"`).join(', ')}]`,
       `socialLinks: ${JSON.stringify(host.socialLinks || [])}`,
       `createdAt: ${host.createdAt.toISOString()}`,
@@ -357,10 +368,7 @@ export class ContentGenerator {
    * Generate host content body
    */
   private generateHostContent(host: Host): string {
-    if (host.bio) {
-      return host.bio
-    }
-    return ''
+    return getTranslatedValue(host.bio, this.config.defaultLanguage)
   }
 
   /**
