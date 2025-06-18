@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 
+// NocoDB Content Generation Script - Manual trigger test
 import { ContentGenerator } from '../src/lib/engines/content-generator.js'
 import { NocoDBService } from '../src/lib/services/nocodb-service.js'
 import type { Language } from '../src/types/index.js'
