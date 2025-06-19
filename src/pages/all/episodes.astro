@@ -8,13 +8,13 @@ import { getCollection } from 'astro:content';
 import { getEpisodeUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
-// Get all episodes from all languages
+// Get all published episodes from all languages
 const allEpisodes = await getCollection('episodes');
 
-// Sort episodes by date (newest first)
-const sortedEpisodes = allEpisodes.sort((a, b) => 
-  b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
+// Filter for published episodes only and sort by date (newest first)
+const sortedEpisodes = allEpisodes
+  .filter(episode => episode.data.status === 'published')
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
 // Group episodes by language
 const episodesByLanguage = sortedEpisodes.reduce((acc, episode) => {

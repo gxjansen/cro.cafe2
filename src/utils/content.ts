@@ -5,7 +5,7 @@ import type { Language } from '../types';
 export async function getEpisodesByLanguage(language: Language) {
   const episodes = await getCollection('episodes');
   return episodes
-    .filter(episode => episode.data.language === language)
+    .filter(episode => episode.data.language === language && episode.data.status === 'published')
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
 
@@ -13,7 +13,7 @@ export async function getEpisodesByLanguage(language: Language) {
 export async function getFeaturedEpisodes(limit = 4) {
   const episodes = await getCollection('episodes');
   return episodes
-    .filter(episode => episode.data.featured)
+    .filter(episode => episode.data.featured && episode.data.status === 'published')
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
     .slice(0, limit);
 }
@@ -129,7 +129,7 @@ export async function getValidPlatformsForLanguage(language: Language) {
 export async function getEpisodeBySlug(slug: string, language: Language) {
   const episodes = await getCollection('episodes');
   return episodes.find(episode => 
-    episode.data.slug === slug && episode.data.language === language
+    episode.data.slug === slug && episode.data.language === language && episode.data.status === 'published'
   );
 }
 
@@ -145,7 +145,8 @@ export async function getGuestEpisodes(guestSlug: string, language: Language) {
   return episodes
     .filter(episode => 
       episode.data.language === language && 
-      episode.data.guests.includes(guestSlug)
+      episode.data.guests.includes(guestSlug) &&
+      episode.data.status === 'published'
     )
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
@@ -191,7 +192,7 @@ export async function getLatestEpisodesByLanguage() {
   
   for (const language of languages) {
     result[language] = episodes
-      .filter(ep => ep.data.language === language)
+      .filter(ep => ep.data.language === language && ep.data.status === 'published')
       .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
       .slice(0, 3);
   }
@@ -208,7 +209,7 @@ export async function getLatestEpisodeFromEachLanguage() {
   
   for (const language of languages) {
     const latestEpisode = episodes
-      .filter(ep => ep.data.language === language)
+      .filter(ep => ep.data.language === language && ep.data.status === 'published')
       .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())[0];
     
     if (latestEpisode) {
@@ -222,13 +223,13 @@ export async function getLatestEpisodeFromEachLanguage() {
 // Get episode count by language
 export async function getEpisodeCountByLanguage(language: Language): Promise<number> {
   const episodes = await getCollection('episodes');
-  return episodes.filter(episode => episode.data.language === language).length;
+  return episodes.filter(episode => episode.data.language === language && episode.data.status === 'published').length;
 }
 
 // Get total episode count across all languages
 export async function getTotalEpisodeCount(): Promise<number> {
   const episodes = await getCollection('episodes');
-  return episodes.length;
+  return episodes.filter(episode => episode.data.status === 'published').length;
 }
 
 // Get guest count by language
@@ -260,10 +261,12 @@ export async function getLanguageCounts() {
     getCollection('guests')
   ]);
 
-  // Count episodes by language
+  // Count episodes by language (only published)
   for (const episode of episodes) {
-    counts[episode.data.language].episodes++;
-    counts.global.episodes++;
+    if (episode.data.status === 'published') {
+      counts[episode.data.language].episodes++;
+      counts.global.episodes++;
+    }
   }
 
   // Count guests - avoiding duplicates for global count
@@ -292,10 +295,10 @@ export async function getHostsByLanguage(language: Language) {
     getCollection('episodes')
   ]);
   
-  // Get episode IDs for this language
+  // Get episode IDs for this language (only published)
   const languageEpisodeIds = new Set(
     episodes
-      .filter(ep => ep.data.language === language)
+      .filter(ep => ep.data.language === language && ep.data.status === 'published')
       .map(ep => ep.data.transistorId)
   );
   

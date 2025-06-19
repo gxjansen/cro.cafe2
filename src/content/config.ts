@@ -29,6 +29,7 @@ const episodeSchema = z.object({
   // Content flags
   featured: z.boolean().default(false),
   episodeType: z.enum(['full', 'trailer', 'bonus']).default('full'),
+  status: z.enum(['published', 'draft', 'scheduled']).default('published'),
   
   // SEO optimization
   summary: z.string().optional(), // For meta description

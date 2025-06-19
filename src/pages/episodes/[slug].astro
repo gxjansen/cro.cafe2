@@ -4,9 +4,9 @@ export async function getStaticPaths() {
   const { getCollection } = await import('astro:content');
   const episodes = await getCollection('episodes');
   
-  // Only get English episodes for redirect
+  // Only get published English episodes for redirect
   return episodes
-    .filter(episode => episode.data.language === 'en')
+    .filter(episode => episode.data.language === 'en' && episode.data.status === 'published')
     .map(episode => ({
       params: { slug: episode.data.slug || episode.slug }
     }));
