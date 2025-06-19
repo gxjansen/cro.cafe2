@@ -132,10 +132,10 @@ const navItems = getNavItems(language, isGlobalMode);
             aria-label="Open main menu"
             aria-expanded="false"
           >
-            <svg class="w-6 h-6 block" id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 block" id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
-            <svg class="w-6 h-6 hidden" id="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 hidden" id="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
@@ -144,7 +144,11 @@ const navItems = getNavItems(language, isGlobalMode);
     </div>
 
     <!-- Mobile Navigation Menu -->
-    <div class="md:hidden hidden" id="mobile-menu">
+    <nav 
+      class="md:hidden hidden" 
+      id="mobile-menu"
+      aria-label="Mobile navigation"
+    >
       <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
         {navItems.map((item) => (
           <a
@@ -160,7 +164,7 @@ const navItems = getNavItems(language, isGlobalMode);
           </a>
         ))}
       </div>
-    </div>
+    </nav>
   </nav>
 </header>
 
@@ -180,11 +184,16 @@ const navItems = getNavItems(language, isGlobalMode);
         menuIcon.classList.add('hidden');
         closeIcon.classList.remove('hidden');
         mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        mobileMenuToggle.setAttribute('aria-label', 'Close main menu');
+        // Focus first menu item
+        const firstLink = mobileMenu.querySelector('a');
+        if (firstLink) firstLink.focus();
       } else {
         mobileMenu.classList.add('hidden');
         menuIcon.classList.remove('hidden');
         closeIcon.classList.add('hidden');
         mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.setAttribute('aria-label', 'Open main menu');
       }
     });
   }
@@ -198,7 +207,20 @@ const navItems = getNavItems(language, isGlobalMode);
         menuIcon?.classList.remove('hidden');
         closeIcon?.classList.add('hidden');
         mobileMenuToggle?.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle?.setAttribute('aria-label', 'Open main menu');
       }
+    }
+  });
+  
+  // Handle Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      mobileMenuToggle?.setAttribute('aria-expanded', 'false');
+      mobileMenuToggle?.setAttribute('aria-label', 'Open main menu');
+      mobileMenuToggle?.focus();
     }
   });
 </script>

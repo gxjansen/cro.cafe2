@@ -1,0 +1,80 @@
+/* Global Focus Indicators for Accessibility */
+
+/* Remove default outline for all elements */
+*:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Visible focus indicators for keyboard navigation */
+*:focus-visible {
+  outline-color: rgb(221, 142, 145); /* accent-500 */
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+
+/* Enhanced focus for interactive elements */
+a:focus-visible,
+button:focus-visible {
+  outline-width: 3px;
+}
+
+/* Enhanced focus for form elements */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-width: 3px;
+  outline-color: rgb(90, 138, 135); /* primary-500 */
+}
+
+/* Remove outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Skip link styles (complementing the component) */
+.skip-link:focus {
+  outline: 3px solid rgb(149, 195, 192); /* primary-300 */
+  outline-offset: 2px;
+}
+
+/* Ensure focus is visible in dark mode */
+.dark *:focus-visible {
+  outline-color: rgb(240, 165, 168); /* accent-200 for dark mode */
+}
+
+.dark input:focus-visible,
+.dark select:focus-visible,
+.dark textarea:focus-visible {
+  outline-color: rgb(168, 213, 210); /* primary-200 for dark mode */
+}
+
+/* Screen reader only utility class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Allow screen reader text to be visible when focused */
+.sr-only:focus {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 0.5rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(221, 142, 145);
+  z-index: 9999;
+}

@@ -31,18 +31,18 @@ export default {
           800: '#722629',  // high contrast
           900: '#581719',  // highest contrast
         },
-        // Neutral grays for UI elements
+        // Neutral grays for UI elements - optimized for WCAG AA compliance
         gray: {
           50: '#f9fafb',
           100: '#f3f4f6',
           200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
-          800: '#1f2937',
-          900: '#111827',
+          300: '#d1d5db',   // Light mode borders only
+          400: '#6b7280',   // Updated from #9ca3af - minimum for text on white (4.5:1)
+          500: '#4b5563',   // Better contrast for body text
+          600: '#374151',   // Preferred for important text
+          700: '#1f2937',
+          800: '#111827',
+          900: '#030712',
         }
       },
       fontFamily: {

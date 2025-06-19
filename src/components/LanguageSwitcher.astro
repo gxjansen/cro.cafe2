@@ -134,12 +134,12 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     class="inline-flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
     aria-expanded="false"
     aria-haspopup="true"
-    aria-label="Select language"
+    aria-label={`Choose language. Current: ${currentLang.nativeName}`}
   >
-    <span class="mr-2">{currentLang.flag}</span>
+    <span class="mr-2" aria-hidden="true">{currentLang.flag}</span>
     <span class="hidden sm:inline">{currentLang.nativeName}</span>
     <span class="sm:hidden">{currentLang.code.toUpperCase()}</span>
-    <svg class="ml-2 -mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="ml-2 -mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
     </svg>
   </button>
@@ -165,12 +165,12 @@ const getLanguageUrl = (langCode: Language | 'global') => {
             role="menuitem"
             aria-current={isCurrent ? 'page' : undefined}
           >
-            <span class="mr-3 text-lg">{lang.flag}</span>
+            <span class="mr-3 text-lg" aria-hidden="true">{lang.flag}</span>
             <div class="flex-1">
               <div class="flex items-center justify-between">
                 <span class="font-medium">{lang.nativeName}</span>
                 {isCurrent && (
-                  <svg class="ml-2 h-4 w-4 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="ml-2 h-4 w-4 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" aria-label="Currently selected">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                   </svg>
                 )}
@@ -216,13 +216,51 @@ const getLanguageUrl = (langCode: Language | 'global') => {
 
     // Handle keyboard navigation
     languageSwitcherButton.addEventListener('keydown', (event) => {
+      const isExpanded = languageSwitcherButton.getAttribute('aria-expanded') === 'true';
+      
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         languageSwitcherButton.click();
-      } else if (event.key === 'Escape') {
+      } else if (event.key === 'Escape' && isExpanded) {
+        event.preventDefault();
         languageSwitcherMenu.classList.add('hidden');
         languageSwitcherButton.setAttribute('aria-expanded', 'false');
         languageSwitcherButton.focus();
+      } else if (event.key === 'ArrowDown' && !isExpanded) {
+        event.preventDefault();
+        languageSwitcherButton.click();
+        // Focus first menu item after opening
+        setTimeout(() => {
+          const firstLink = languageSwitcherMenu.querySelector('a[role="menuitem"]') as HTMLElement;
+          firstLink?.focus();
+        }, 50);
+      }
+    });
+    
+    // Add keyboard navigation within menu
+    languageSwitcherMenu.addEventListener('keydown', (event) => {
+      const menuItems = Array.from(languageSwitcherMenu.querySelectorAll('a[role="menuitem"]')) as HTMLElement[];
+      const currentIndex = menuItems.findIndex(item => item === document.activeElement);
+      
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextIndex = (currentIndex + 1) % menuItems.length;
+        menuItems[nextIndex]?.focus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevIndex = currentIndex === 0 ? menuItems.length - 1 : currentIndex - 1;
+        menuItems[prevIndex]?.focus();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        languageSwitcherMenu.classList.add('hidden');
+        languageSwitcherButton.setAttribute('aria-expanded', 'false');
+        languageSwitcherButton.focus();
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        menuItems[0]?.focus();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        menuItems[menuItems.length - 1]?.focus();
       }
     });
   }

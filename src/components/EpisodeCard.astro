@@ -52,12 +52,19 @@ const classes = sizeClasses[size];
 const episodeUrl = getEpisodeUrl(episode);
 ---
 
-<article class={classes.container}>
-  <a href={episodeUrl} class="block">
+<article 
+  class={classes.container}
+  aria-labelledby={`episode-${episode.id || episode.slug}-title`}
+>
+  <a 
+    href={episodeUrl} 
+    class="block"
+    aria-describedby={`episode-${episode.id || episode.slug}-meta`}
+  >
     <div class="aspect-w-16 aspect-h-9 overflow-hidden">
       <EpisodeImage 
         imageUrl={episode.data.imageUrl} 
-        alt={episode.data.title}
+        alt={`Cover art for episode: ${episode.data.title}`}
         class={classes.image}
       />
     </div>
@@ -70,21 +77,22 @@ const episodeUrl = getEpisodeUrl(episode);
           </span>
         ) : (
           <span class={`font-medium text-primary-600 dark:text-primary-400 ${classes.metadata}`}>
-            S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}
+            <span class="sr-only">Season {episode.data.season}, Episode {episode.data.episode}</span>
+            <span aria-hidden="true">S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}</span>
           </span>
         )}
         {showLanguage && (
           <div class="flex items-center gap-2">
-            <span class="text-lg">{languageInfo[episode.data.language].flag}</span>
+            <span class="text-lg" aria-hidden="true">{languageInfo[episode.data.language].flag}</span>
             <span class={`text-gray-500 dark:text-gray-400 uppercase font-medium ${classes.metadata}`}>
-              {languageInfo[episode.data.language].name}
+              <span class="sr-only">Language: </span>{languageInfo[episode.data.language].name}
             </span>
           </div>
         )}
       </div>
 
       <!-- Title -->
-      <h3 class={classes.title}>
+      <h3 id={`episode-${episode.id || episode.slug}-title`} class={classes.title}>
         {episode.data.title}
       </h3>
 
@@ -94,15 +102,19 @@ const episodeUrl = getEpisodeUrl(episode);
       </p>
 
       <!-- Footer metadata (date + duration) -->
-      <div class={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${classes.metadata}`}>
+      <div id={`episode-${episode.id || episode.slug}-meta`} class={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${classes.metadata}`}>
         <time datetime={episode.data.pubDate.toISOString()}>
+          <span class="sr-only">Published on </span>
           {episode.data.pubDate.toLocaleDateString('en-US', { 
             year: 'numeric', 
             month: 'short', 
             day: 'numeric' 
           })}
         </time>
-        <span>{formatDuration(episode.data.duration)}</span>
+        <span>
+          <span class="sr-only">Duration: </span>
+          {formatDuration(episode.data.duration)}
+        </span>
       </div>
     </div>
   </a>
