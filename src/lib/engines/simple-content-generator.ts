@@ -396,6 +396,12 @@ export class SimpleContentGenerator {
     if (guests.length > 0) {
       console.log('🔍 FIRST GUEST STRUCTURE:', JSON.stringify(guests[0], null, 2))
     }
+    
+    // Look specifically for Amber Taal to debug image URL issue
+    const amberGuest = guests.find(g => g.name && g.name.toLowerCase().includes('amber'))
+    if (amberGuest) {
+      console.log('🔍 FOUND AMBER TAAL GUEST:', JSON.stringify(amberGuest, null, 2))
+    }
 
     for (const guest of guests) {
       try {
@@ -440,6 +446,8 @@ export class SimpleContentGenerator {
         name: guest.name,
         slug: guest.slug,
         image_url: guest.image_url,
+        imageUrl: guest.imageUrl,
+        image: guest.image,
         allFields: Object.keys(guest)
       }, null, 2))
     }
@@ -447,6 +455,20 @@ export class SimpleContentGenerator {
     // Also log if this is specifically the amber-taal guest
     if (guest.name && guest.name.toLowerCase().includes('amber')) {
       console.log(`🔍 DEBUG AMBER TAAL guest data:`, JSON.stringify(guest, null, 2))
+    }
+    
+    // Try different possible image field names
+    const imageValue = guest.image_url || guest.imageUrl || guest.image || guest.Image || guest.photo_url || guest.picture
+    if (guest.name && guest.name.toLowerCase().includes('amber')) {
+      console.log(`🔍 AMBER IMAGE FIELD CHECK:`, {
+        image_url: guest.image_url,
+        imageUrl: guest.imageUrl,
+        image: guest.image,
+        Image: guest.Image,
+        photo_url: guest.photo_url,
+        picture: guest.picture,
+        finalValue: imageValue
+      })
     }
     
     // Filter episodes to only include published ones
@@ -472,7 +494,7 @@ export class SimpleContentGenerator {
       `episodeCount: ${episodeCount}`,
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
       `languages: [${languages.map((l: string) => `"${l}"`).join(', ')}]`,
-      this.getGuestImageUrl(guest.image_url),
+      this.getGuestImageUrl(imageValue),
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
@@ -707,12 +729,13 @@ export class SimpleContentGenerator {
   }
 
   private getGuestImageUrl(imageUrl: string | null | undefined): string {
-    // ALWAYS log for debugging - temporarily remove sampling
-    console.log('🔍 PROCESSING imageUrl:', { imageUrl, type: typeof imageUrl })
+    // Log processing for debugging
+    if (Math.random() < 0.02 || !imageUrl) { // Log 2% of guests or all empty cases
+      console.log('🔍 PROCESSING imageUrl:', { imageUrl, type: typeof imageUrl })
+    }
     
-    // If no imageUrl, log this fact for debugging
+    // If no imageUrl, return empty
     if (!imageUrl) {
-      console.log('🔍 Empty imageUrl detected:', { imageUrl, type: typeof imageUrl })
       return ''
     }
     
