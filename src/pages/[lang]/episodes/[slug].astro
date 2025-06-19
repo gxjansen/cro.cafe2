@@ -3,7 +3,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
 import GuestCard from '../../../components/GuestCard.astro';
-import { getEpisodeBySlug, getGuestBySlug, getGuestUrl } from '../../../utils/content';
+import HostCard from '../../../components/HostCard.astro';
+import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -29,12 +30,26 @@ export async function getStaticPaths() {
 const { episode, language } = Astro.props;
 
 // Fetch guest details
-const guestDetails = await Promise.all(
+const guestDetailsRaw = await Promise.all(
   episode.data.guests.map(async (guestSlug: string) => {
     const guest = await getGuestBySlug(guestSlug);
     return guest;
   })
 );
+
+// Filter out any null/undefined guests
+const guestDetails = guestDetailsRaw.filter(guest => guest !== null && guest !== undefined);
+
+// Fetch host details
+const hostDetailsRaw = await Promise.all(
+  episode.data.hosts.map(async (hostSlug: string) => {
+    const host = await getHostBySlug(hostSlug);
+    return host;
+  })
+);
+
+// Filter out any null/undefined hosts
+const hostDetails = hostDetailsRaw.filter(host => host !== null && host !== undefined);
 
 // Translations
 const translations = {
@@ -48,6 +63,7 @@ const translations = {
     description: 'Episode Description',
     summary: 'Summary',
     guests: 'Guests in this Episode',
+    hosts: 'Hosted by',
     transcript: 'Episode Transcript',
     topics: 'Topics covered:'
   },
@@ -61,6 +77,7 @@ const translations = {
     description: 'Aflevering Beschrijving',
     summary: 'Samenvatting',
     guests: 'Gasten in deze Aflevering',
+    hosts: 'Gehost door',
     transcript: 'Aflevering Transcript',
     topics: 'Onderwerpen behandeld:'
   },
@@ -74,6 +91,7 @@ const translations = {
     description: 'Folgenbeschreibung',
     summary: 'Zusammenfassung',
     guests: 'Gäste in dieser Folge',
+    hosts: 'Moderiert von',
     transcript: 'Folgen-Transkript',
     topics: 'Behandelte Themen:'
   },
@@ -87,6 +105,7 @@ const translations = {
     description: 'Descripción del Episodio',
     summary: 'Resumen',
     guests: 'Invitados en este Episodio',
+    hosts: 'Presentado por',
     transcript: 'Transcripción del Episodio',
     topics: 'Temas cubiertos:'
   }
@@ -231,6 +250,20 @@ const getDateLocale = (lang: Language) => {
           <div class="grid gap-6 md:grid-cols-2">
             {guestDetails.map((guest) => guest && (
               <GuestCard guest={guest} language={language} size="medium" />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Hosts Section -->
+      {hostDetails.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+            {t.hosts}
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            {hostDetails.map((host) => host && (
+              <HostCard host={host} language={language} size="medium" />
             ))}
           </div>
         </div>

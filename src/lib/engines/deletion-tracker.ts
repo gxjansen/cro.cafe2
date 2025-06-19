@@ -74,7 +74,7 @@ export class DeletionTracker {
       episodes: Array<{ Id: number; episode_number?: number }>
       guests: Array<{ Id: number; slug?: string; name?: string }>
       hosts: Array<{ Id: number; slug?: string; name?: string }>
-      platforms: Array<{ Id: number; slug?: string }>
+      platforms: Array<{ Id?: number; id?: number; slug?: string; Slug?: string; Name?: string; name?: string }>
     }
   ): Promise<string[]> {
     const filesToDelete: string[] = []
@@ -99,10 +99,11 @@ export class DeletionTracker {
     }
     
     for (const platform of activeRecords.platforms) {
-      activeKeys.add(`platform-${platform.Id}`)
-      if (platform.slug) {
-        activeKeys.add(`platform-${platform.slug}`)
-      }
+      // Platforms are stored by slug, not by ID
+      // Use same slug generation as content generator
+      const name = platform.Name || platform.name || `Platform ${platform.Id || platform.id}`
+      const slug = platform.slug || platform.Slug || name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+      activeKeys.add(`platform-${slug}`)
     }
     
     // Find files that don't have corresponding active records

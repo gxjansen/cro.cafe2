@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const pageTitle = "About CRO.CAFE";
+const pageDescription = "Learn about CRO.CAFE - An interview-driven podcast about CRO, experimentation, user research, and digital marketing";
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/about/"
+  currentPath="/about/"
+>
+  <Header language="en" currentPath="/about/" />
+  
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article class="prose prose-lg dark:prose-invert max-w-none">
+        <h1>About CRO.CAFE</h1>
+        
+        <p class="lead">CRO.CAFE is an interview-driven show about conversion rate optimization (CRO), experimentation, user research, and digital marketing, hosted by Guido X Jansen.</p>
+        
+        <h2>Our Vision</h2>
+        
+        <p><strong>To create a world where having a great user experience is the norm and where we have an open, healthy and powerful CRO ecosystem.</strong></p>
+        
+        <h2>Our Mission</h2>
+        
+        <p>We encourage businesses to make decisions based on customer behavioral data rather than gut feelings. Through qualitative and quantitative research, experimentation, and validation practices, we empower the global CRO community with insights, tools, and motivation.</p>
+        
+        <h2>Our Story</h2>
+        
+        <p>CRO.CAFE began when Guido X Jansen, who studied Applied Cognitive Psychology in Utrecht, Netherlands, decided to share his passion for conversion optimization with the world. What started as a Dutch podcast in January 2019 has grown into a multilingual platform:</p>
+        
+        <ul>
+          <li><strong>January 2019:</strong> Launched the Dutch podcast channel</li>
+          <li><strong>Mid-2020:</strong> Added the English channel to reach a global audience</li>
+          <li><strong>January 2021:</strong> Expanded to Spanish with co-host Ricardo Tayar</li>
+          <li><strong>2023:</strong> Added German language episodes</li>
+        </ul>
+        
+        <h2>What We Stand For</h2>
+        
+        <p>Our culture reflects the values we believe are essential for a thriving CRO ecosystem:</p>
+        
+        <ul>
+          <li><strong>Inclusivity:</strong> We welcome and reflect all members of the CRO ecosystem</li>
+          <li><strong>Diversity:</strong> We embrace different perspectives and approaches</li>
+          <li><strong>Integrity:</strong> We act with honesty and transparency in all our content</li>
+          <li><strong>Collaboration:</strong> We encourage knowledge sharing and community building</li>
+          <li><strong>Innovation:</strong> We foster creative thinking and new methodologies</li>
+          <li><strong>Growth:</strong> We support continuous learning and adaptation</li>
+        </ul>
+        
+        <h2>What You'll Find Here</h2>
+        
+        <p>Through honest conversations with industry experts, we explore:</p>
+        
+        <ul>
+          <li>Conversion rate optimization strategies and tactics</li>
+          <li>A/B testing and experimentation methodologies</li>
+          <li>User research techniques and insights</li>
+          <li>Digital marketing trends and best practices</li>
+          <li>Psychology and behavioral economics in digital experiences</li>
+          <li>Tools, technologies, and platforms for optimization</li>
+        </ul>
+        
+        <h2>Join Our Community</h2>
+        
+        <p>Whether you're a seasoned CRO professional or just starting your journey, CRO.CAFE provides the insights, tools, and motivation you need to excel in the world of conversion optimization.</p>
+        
+        <p>Listen to our episodes in your preferred language and become part of a global community dedicated to creating better user experiences through data-driven decisions.</p>
+        
+        <div class="mt-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h3 class="text-xl font-semibold mb-3">Get in Touch</h3>
+          <p>Have questions, suggestions, or want to be a guest on the show?</p>
+          <p>Email us at: <a href="mailto:crocafe@gui.do" class="text-primary-600 dark:text-primary-400 hover:underline">crocafe@gui.do</a></p>
+        </div>
+      </article>
+    </div>
+  </main>
+</BaseLayout>
