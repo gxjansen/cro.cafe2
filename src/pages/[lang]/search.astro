@@ -1,0 +1,590 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import type { Language } from '../../types';
+
+export async function getStaticPaths() {
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  return languages.map(lang => ({
+    params: { lang },
+    props: { language: lang }
+  }));
+}
+
+const { language } = Astro.props;
+
+// Get all episodes and guests, filtered by language where applicable
+const allEpisodes = await getCollection('episodes');
+const allGuests = await getCollection('guests');
+
+// Filter episodes by language
+const episodes = allEpisodes.filter(episode => episode.data.language === language);
+
+// Filter guests by language (guests can appear in multiple languages)
+const guests = allGuests.filter(guest => 
+  guest.data.languages && guest.data.languages.includes(language)
+);
+
+// Create search index data
+const searchData = {
+  episodes: episodes.map(episode => ({
+    slug: episode.slug,
+    title: episode.data.title,
+    description: episode.data.description,
+    language: episode.data.language,
+    season: episode.data.season,
+    episode: episode.data.episode,
+    keywords: episode.data.keywords || [],
+    guests: episode.data.guests || [],
+    pubDate: episode.data.pubDate
+  })),
+  guests: guests.map(guest => ({
+    slug: guest.data.slug || guest.slug,
+    name: guest.data.name,
+    bio: guest.data.bio,
+    company: guest.data.company,
+    role: guest.data.role,
+    languages: guest.data.languages || [],
+    episodeCount: guest.data.episodeCount || 0
+  }))
+};
+
+// Translations
+const translations = {
+  en: {
+    title: 'Search - CRO.CAFE Podcast',
+    description: 'Search through episodes and guests of the CRO.CAFE English podcast',
+    searchTitle: 'Search',
+    searchSubtitle: 'Find episodes and guests in English',
+    placeholder: 'Search episodes, guests, topics...',
+    quickSearches: 'Quick searches:',
+    resultsFor: 'Found {count} result{plural} for "{query}"',
+    episodes: 'Episodes',
+    guests: 'Guests',
+    listenNow: 'Listen now',
+    episodeCount: '{count} episode{plural}',
+    startSearchTitle: 'Start your search',
+    startSearchSubtitle: 'Enter keywords to find episodes and guests from the English CRO.CAFE podcast',
+    noResultsTitle: 'No results found',
+    noResultsSubtitle: 'Try adjusting your search terms or browse our episodes and guests pages'
+  },
+  nl: {
+    title: 'Zoeken - CRO.CAFE Podcast',
+    description: 'Zoek door afleveringen en gasten van de CRO.CAFE Nederlandse podcast',
+    searchTitle: 'Zoeken',
+    searchSubtitle: 'Vind afleveringen en gasten in het Nederlands',
+    placeholder: 'Zoek afleveringen, gasten, onderwerpen...',
+    quickSearches: 'Snelzoeken:',
+    resultsFor: '{count} resultaat{plural} gevonden voor "{query}"',
+    episodes: 'Afleveringen',
+    guests: 'Gasten',
+    listenNow: 'Nu luisteren',
+    episodeCount: '{count} aflevering{plural}',
+    startSearchTitle: 'Begin met zoeken',
+    startSearchSubtitle: 'Voer zoekwoorden in om afleveringen en gasten te vinden van de Nederlandse CRO.CAFE podcast',
+    noResultsTitle: 'Geen resultaten gevonden',
+    noResultsSubtitle: 'Probeer je zoekwoorden aan te passen of bekijk onze afleveringen en gasten pagina\'s'
+  },
+  de: {
+    title: 'Suche - CRO.CAFE Podcast',
+    description: 'Durchsuchen Sie Folgen und Gäste des deutschen CRO.CAFE Podcasts',
+    searchTitle: 'Suche',
+    searchSubtitle: 'Finden Sie Folgen und Gäste auf Deutsch',
+    placeholder: 'Folgen, Gäste, Themen suchen...',
+    quickSearches: 'Schnellsuche:',
+    resultsFor: '{count} Ergebnis{plural} für "{query}" gefunden',
+    episodes: 'Folgen',
+    guests: 'Gäste',
+    listenNow: 'Jetzt anhören',
+    episodeCount: '{count} Folge{plural}',
+    startSearchTitle: 'Suche starten',
+    startSearchSubtitle: 'Geben Sie Suchbegriffe ein, um Folgen und Gäste des deutschen CRO.CAFE Podcasts zu finden',
+    noResultsTitle: 'Keine Ergebnisse gefunden',
+    noResultsSubtitle: 'Versuchen Sie, Ihre Suchbegriffe anzupassen oder besuchen Sie unsere Folgen- und Gästeseiten'
+  },
+  es: {
+    title: 'Buscar - CRO.CAFE Podcast',
+    description: 'Busca a través de episodios e invitados del podcast CRO.CAFE en español',
+    searchTitle: 'Buscar',
+    searchSubtitle: 'Encuentra episodios e invitados en español',
+    placeholder: 'Buscar episodios, invitados, temas...',
+    quickSearches: 'Búsquedas rápidas:',
+    resultsFor: '{count} resultado{plural} encontrado{plural} para "{query}"',
+    episodes: 'Episodios',
+    guests: 'Invitados',
+    listenNow: 'Escuchar ahora',
+    episodeCount: '{count} episodio{plural}',
+    startSearchTitle: 'Comienza tu búsqueda',
+    startSearchSubtitle: 'Ingresa palabras clave para encontrar episodios e invitados del podcast CRO.CAFE en español',
+    noResultsTitle: 'No se encontraron resultados',
+    noResultsSubtitle: 'Intenta ajustar tus términos de búsqueda o navega por nuestras páginas de episodios e invitados'
+  }
+};
+
+const t = translations[language];
+
+// Quick search terms by language
+const quickSearchTerms = {
+  en: ['experimentation', 'conversion optimization', 'analytics'],
+  nl: ['experimentatie', 'conversie optimalisatie', 'analytics'],
+  de: ['experimentierung', 'conversion optimierung', 'analytics'],
+  es: ['experimentación', 'optimización conversión', 'analíticas']
+};
+---
+
+<BaseLayout 
+  title={t.title}
+  description={t.description}
+  language={language}
+  canonical={`https://cro.cafe/${language}/search/`}
+>
+  <Header language={language} currentPath={`/${language}/search/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/search/`} />
+  
+  <main id="main-content" class="flex-1 py-16" tabindex="-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Search Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.searchTitle}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          {t.searchSubtitle}
+        </p>
+      </div>
+
+      <!-- Search Input -->
+      <div class="max-w-4xl mx-auto mb-12">
+        <div class="relative mb-6">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="search-input"
+            class="block w-full pl-10 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            placeholder={t.placeholder}
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
+          <div class="flex flex-wrap items-center gap-4">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
+            
+            <!-- Content Type Filter -->
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Content:</span>
+              <div class="flex gap-1">
+                <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
+                  All
+                </button>
+                <button id="filter-episodes" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  {t.episodes}
+                </button>
+                <button id="filter-guests" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  {t.guests}
+                </button>
+              </div>
+            </div>
+
+            <!-- Language Filter (for global search) -->
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Language:</span>
+              <div class="flex gap-1">
+                <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
+                  Current ({language.toUpperCase()})
+                </button>
+                <button id="lang-other" class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  All Languages
+                </button>
+              </div>
+            </div>
+
+            <!-- Clear Filters -->
+            <button id="clear-filters" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline">
+              Clear filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Searches -->
+        <div class="flex flex-wrap gap-2">
+          <span class="text-sm text-gray-500 dark:text-gray-400">{t.quickSearches}</span>
+          {quickSearchTerms[language].map(term => (
+            <button class="search-tag px-3 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-query={term}>
+              {term}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Search Results -->
+      <div id="search-results" class="hidden">
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Search Results
+          </h2>
+          <p id="results-count" class="text-gray-600 dark:text-gray-400"></p>
+        </div>
+
+        <!-- Episodes Results -->
+        <div id="episodes-section" class="mb-12 hidden">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">{t.episodes}</h3>
+          <div id="episodes-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          </div>
+        </div>
+
+        <!-- Guests Results -->
+        <div id="guests-section" class="mb-12 hidden">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">{t.guests}</h3>
+          <div id="guests-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="text-center py-12">
+        <svg class="mx-auto h-24 w-24 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{t.startSearchTitle}</h3>
+        <p class="text-gray-500 dark:text-gray-400">
+          {t.startSearchSubtitle}
+        </p>
+      </div>
+
+      <!-- No Results State -->
+      <div id="no-results" class="text-center py-12 hidden">
+        <svg class="mx-auto h-24 w-24 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291.94-5.709 2.291M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{t.noResultsTitle}</h3>
+        <p class="text-gray-500 dark:text-gray-400">
+          {t.noResultsSubtitle}
+        </p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script define:vars={{ searchData, language, translations }}>
+  const t = translations[language];
+
+  // Search state
+  let currentFilters = {
+    contentType: 'all', // 'all', 'episodes', 'guests'
+    language: 'current' // 'current', 'all'
+  };
+
+  // Simple fuzzy search function
+  function fuzzySearch(query, text) {
+    if (!query || !text) return false;
+    
+    const normalizedQuery = query.toLowerCase().trim();
+    const normalizedText = text.toLowerCase();
+    
+    // Exact match gets highest score
+    if (normalizedText.includes(normalizedQuery)) {
+      return true;
+    }
+    
+    // Word-based fuzzy matching
+    const queryWords = normalizedQuery.split(/\s+/);
+    return queryWords.some(word => 
+      word.length > 2 && normalizedText.includes(word)
+    );
+  }
+
+  // Apply filters to results
+  function applyFilters(episodes, guests) {
+    let filteredEpisodes = episodes;
+    let filteredGuests = guests;
+
+    // Content type filter
+    if (currentFilters.contentType === 'episodes') {
+      filteredGuests = [];
+    } else if (currentFilters.contentType === 'guests') {
+      filteredEpisodes = [];
+    }
+
+    // Language filter (for when "All Languages" is selected)
+    if (currentFilters.language === 'all') {
+      // Would need access to all episodes/guests across languages
+      // For now, we'll keep current language data
+    }
+
+    return { episodes: filteredEpisodes, guests: filteredGuests };
+  }
+
+  // Update filter button states
+  function updateFilterButtons() {
+    // Content type filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active', 'bg-primary-600', 'text-white');
+      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    });
+    
+    const activeContentBtn = document.getElementById(`filter-${currentFilters.contentType}`);
+    if (activeContentBtn) {
+      activeContentBtn.classList.add('active', 'bg-primary-600', 'text-white');
+      activeContentBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    }
+
+    // Language filters
+    document.querySelectorAll('.lang-filter').forEach(btn => {
+      btn.classList.remove('active', 'bg-primary-600', 'text-white');
+      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    });
+    
+    const activeLangBtn = document.getElementById(currentFilters.language === 'current' ? 'lang-all' : 'lang-other');
+    if (activeLangBtn) {
+      activeLangBtn.classList.add('active', 'bg-primary-600', 'text-white');
+      activeLangBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    }
+  }
+
+  // Format results count text
+  function formatResultsText(count, query) {
+    const plural = count !== 1 ? 's' : '';
+    return t.resultsFor
+      .replace('{count}', count)
+      .replace('{plural}', plural)
+      .replace('{query}', query);
+  }
+
+  // Format episode count text
+  function formatEpisodeCount(count) {
+    const plural = count !== 1 ? 's' : '';
+    return t.episodeCount
+      .replace('{count}', count)
+      .replace('{plural}', plural);
+  }
+
+  // Search function
+  function performSearch(query) {
+    if (!query || query.trim().length < 2) {
+      showEmptyState();
+      return;
+    }
+
+    let episodeResults = searchData.episodes.filter(episode => {
+      return fuzzySearch(query, episode.title) ||
+             fuzzySearch(query, episode.description) ||
+             (episode.keywords && episode.keywords.some(keyword => fuzzySearch(query, keyword)));
+    });
+
+    let guestResults = searchData.guests.filter(guest => {
+      return fuzzySearch(query, guest.name) ||
+             fuzzySearch(query, guest.bio) ||
+             fuzzySearch(query, guest.company) ||
+             fuzzySearch(query, guest.role);
+    });
+
+    // Apply filters
+    const filtered = applyFilters(episodeResults, guestResults);
+    displayResults(filtered.episodes, filtered.guests, query);
+  }
+
+  // Display search results
+  function displayResults(episodes, guests, query) {
+    const resultsContainer = document.getElementById('search-results');
+    const emptyState = document.getElementById('empty-state');
+    const noResults = document.getElementById('no-results');
+    const resultsCount = document.getElementById('results-count');
+
+    const totalResults = episodes.length + guests.length;
+
+    if (totalResults === 0) {
+      resultsContainer.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      noResults.classList.remove('hidden');
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    noResults.classList.add('hidden');
+    resultsContainer.classList.remove('hidden');
+    
+    resultsCount.textContent = formatResultsText(totalResults, query);
+
+    // Display episodes
+    const episodesSection = document.getElementById('episodes-section');
+    const episodesResults = document.getElementById('episodes-results');
+    
+    if (episodes.length > 0) {
+      episodesSection.classList.remove('hidden');
+      episodesResults.innerHTML = episodes.map(episode => `
+        <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
+              ${episode.language.toUpperCase()}
+            </span>
+            <span class="text-sm text-gray-500 dark:text-gray-400">
+              S${episode.season}E${episode.episode}
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+            <a href="/${episode.language}/episodes/${episode.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              ${episode.title}
+            </a>
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
+            ${episode.description}
+          </p>
+          <a 
+            href="/${episode.language}/episodes/${episode.slug}/" 
+            class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+          >
+            ${t.listenNow}
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </article>
+      `).join('');
+    } else {
+      episodesSection.classList.add('hidden');
+    }
+
+    // Display guests
+    const guestsSection = document.getElementById('guests-section');
+    const guestsResults = document.getElementById('guests-results');
+    
+    if (guests.length > 0) {
+      guestsSection.classList.remove('hidden');
+      guestsResults.innerHTML = guests.map(guest => `
+        <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center">
+          <div class="mb-4">
+            <img 
+              src="/images/guests/${guest.slug}.jpeg" 
+              alt="${guest.name}"
+              class="w-20 h-20 mx-auto rounded-full object-cover"
+              onerror="this.src='/images/placeholder-guest.jpg'"
+            />
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <a href="/${language}/guests/${guest.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              ${guest.name}
+            </a>
+          </h3>
+          ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${guest.company}</p>` : ''}
+          ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${guest.role}</p>` : ''}
+          <div class="text-xs text-gray-500 dark:text-gray-400">
+            ${formatEpisodeCount(guest.episodeCount)}
+          </div>
+        </article>
+      `).join('');
+    } else {
+      guestsSection.classList.add('hidden');
+    }
+  }
+
+  // Show empty state
+  function showEmptyState() {
+    document.getElementById('search-results').classList.add('hidden');
+    document.getElementById('no-results').classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
+  }
+
+  // Set up event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-input');
+    const searchTags = document.querySelectorAll('.search-tag');
+
+    // Auto-focus search input
+    searchInput.focus();
+
+    // Handle search input
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        performSearch(e.target.value);
+      }, 300); // Debounce search
+    });
+
+    // Handle quick search tags
+    searchTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        const query = tag.dataset.query;
+        searchInput.value = query;
+        performSearch(query);
+      });
+    });
+
+    // Handle filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filterId = btn.id.replace('filter-', '');
+        currentFilters.contentType = filterId;
+        updateFilterButtons();
+        
+        // Re-run search with new filters
+        const currentQuery = searchInput.value;
+        if (currentQuery && currentQuery.trim().length >= 2) {
+          performSearch(currentQuery);
+        }
+      });
+    });
+
+    // Handle language filter buttons
+    document.querySelectorAll('.lang-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const langId = btn.id === 'lang-all' ? 'current' : 'all';
+        currentFilters.language = langId;
+        updateFilterButtons();
+        
+        // Re-run search with new filters
+        const currentQuery = searchInput.value;
+        if (currentQuery && currentQuery.trim().length >= 2) {
+          performSearch(currentQuery);
+        }
+      });
+    });
+
+    // Handle clear filters
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      currentFilters = {
+        contentType: 'all',
+        language: 'current'
+      };
+      updateFilterButtons();
+      
+      // Re-run search with cleared filters
+      const currentQuery = searchInput.value;
+      if (currentQuery && currentQuery.trim().length >= 2) {
+        performSearch(currentQuery);
+      }
+    });
+
+    // Handle URL search parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('q');
+    if (queryParam) {
+      searchInput.value = queryParam;
+      performSearch(queryParam);
+    }
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

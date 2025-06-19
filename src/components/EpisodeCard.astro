@@ -78,7 +78,7 @@ const episodeUrl = getEpisodeUrl(episode);
             {episode.data.episode_type}
           </span>
         ) : (
-          <span class={`font-medium text-primary-600 dark:text-primary-400 ${classes.metadata}`}>
+          <span class={`font-medium text-primary-600 dark:text-primary-200 ${classes.metadata}`}>
             <span class="sr-only">Season {episode.data.season}, Episode {episode.data.episode}</span>
             <span aria-hidden="true">S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}</span>
           </span>

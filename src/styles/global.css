@@ -8,7 +8,7 @@
 
 /* Visible focus indicators for keyboard navigation */
 *:focus-visible {
-  outline-color: rgb(221, 142, 145); /* accent-500 */
+  outline-color: rgb(192, 85, 89); /* accent-500 - accessible coral */
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
@@ -35,7 +35,7 @@ textarea:focus-visible {
 
 /* Skip link styles (complementing the component) */
 .skip-link:focus {
-  outline: 3px solid rgb(149, 195, 192); /* primary-300 */
+  outline: 3px solid rgb(90, 138, 135); /* primary-500 - accessible teal */
   outline-offset: 2px;
 }
 
@@ -75,6 +75,6 @@ textarea:focus-visible {
   white-space: normal;
   background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
-  border: 2px solid rgb(221, 142, 145);
+  border: 2px solid rgb(192, 85, 89); /* accent-500 - accessible coral */
   z-index: 9999;
 }
