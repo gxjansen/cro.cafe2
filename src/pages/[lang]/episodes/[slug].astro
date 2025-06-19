@@ -58,7 +58,6 @@ const translations = {
     season: 'Season',
     episode: 'Episode',
     listenTo: 'Listen to this episode',
-    share: 'Share Episode →',
     subscribe: 'Subscribe to Podcast →',
     description: 'Episode Description',
     summary: 'Summary',
@@ -72,7 +71,6 @@ const translations = {
     season: 'Seizoen',
     episode: 'Aflevering',
     listenTo: 'Luister naar deze aflevering',
-    share: 'Deel Aflevering →',
     subscribe: 'Abonneer op Podcast →',
     description: 'Aflevering Beschrijving',
     summary: 'Samenvatting',
@@ -86,7 +84,6 @@ const translations = {
     season: 'Staffel',
     episode: 'Folge',
     listenTo: 'Diese Folge anhören',
-    share: 'Folge teilen →',
     subscribe: 'Podcast abonnieren →',
     description: 'Folgenbeschreibung',
     summary: 'Zusammenfassung',
@@ -100,7 +97,6 @@ const translations = {
     season: 'Temporada',
     episode: 'Episodio',
     listenTo: 'Escuchar este episodio',
-    share: 'Compartir Episodio →',
     subscribe: 'Suscribirse al Podcast →',
     description: 'Descripción del Episodio',
     summary: 'Resumen',
@@ -207,16 +203,8 @@ const getDateLocale = (lang: Language) => {
           </audio>
         )}
         
-        <!-- Subscribe links -->
-        <div class="mt-4 flex flex-wrap gap-4">
-          <a 
-            href={episode.data.shareUrl || episode.data.audioUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-          >
-            {t.share}
-          </a>
+        <!-- Subscribe link -->
+        <div class="mt-4">
           <a 
             href={`/${language}/subscribe/`} 
             class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
