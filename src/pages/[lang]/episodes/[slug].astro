@@ -161,8 +161,19 @@ const getDateLocale = (lang: Language) => {
           <a href={`/${language}/episodes/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             {t.backToEpisodes}
           </a>
-          <span>•</span>
-          <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
+          {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
+            <>
+              <span>•</span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 uppercase">
+                {episode.data.episode_type}
+              </span>
+            </>
+          ) : (
+            <>
+              <span>•</span>
+              <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
+            </>
+          )}
         </div>
         
         <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
@@ -179,14 +190,6 @@ const getDateLocale = (lang: Language) => {
           </time>
           <span>•</span>
           <span>{episode.data.duration}</span>
-          {episode.data.episodeType !== 'full' && (
-            <>
-              <span>•</span>
-              <span class="uppercase text-xs bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded">
-                {episode.data.episodeType}
-              </span>
-            </>
-          )}
         </div>
       </header>
 

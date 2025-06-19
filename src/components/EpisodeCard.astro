@@ -62,11 +62,17 @@ const episodeUrl = getEpisodeUrl(episode);
       />
     </div>
     <div class={classes.padding}>
-      <!-- Episode metadata (season/episode + language) -->
+      <!-- Episode metadata (season/episode or badge + language) -->
       <div class="flex items-center justify-between mb-3">
-        <span class={`font-medium text-primary-600 dark:text-primary-400 ${classes.metadata}`}>
-          S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}
-        </span>
+        {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
+          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 uppercase`}>
+            {episode.data.episode_type}
+          </span>
+        ) : (
+          <span class={`font-medium text-primary-600 dark:text-primary-400 ${classes.metadata}`}>
+            S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}
+          </span>
+        )}
         {showLanguage && (
           <div class="flex items-center gap-2">
             <span class="text-lg">{languageInfo[episode.data.language].flag}</span>
