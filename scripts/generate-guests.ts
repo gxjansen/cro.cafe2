@@ -147,6 +147,7 @@ class GuestGenerator {
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
       `slug: "${slug}"`,
+      guest.isFeatured !== undefined ? `isFeatured: ${guest.isFeatured}` : null,
       `bio: "${this.escapeYaml(guest.ai_bio || guest.bio || '')}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
