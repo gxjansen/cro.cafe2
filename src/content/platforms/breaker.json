@@ -1,0 +1,16 @@
+{
+  "id": 32,
+  "name": "Breaker",
+  "slug": "breaker",
+  "iconUrl": "/images/platforms/breaker.png",
+  "urls": {
+    "en": "https://www.breaker.audio/cro-dot-cafe-1",
+    "nl": "https://www.breaker.audio/cro-dot-cafe-nederlands",
+    "de": "",
+    "es": "https://www.breaker.audio/cro-dot-cafe-espanol"
+  },
+  "displayOrder": 0,
+  "isActive": false,
+  "createdAt": "2025-06-19T09:22:22.000Z",
+  "updatedAt": "2025-06-19T09:25:50.000Z"
+}
