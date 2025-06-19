@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const pageTitle = "Privacy Policy - CRO.CAFE";
+const pageDescription = "Privacy Policy for CRO.CAFE - Learn how we collect, use, and protect your personal information.";
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/privacy-policy/"
+  currentPath="/privacy-policy/"
+>
+  <Header language="en" currentPath="/privacy-policy/" />
+  
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article class="prose prose-lg dark:prose-invert max-w-none">
+        <h1>Privacy Policy for CRO.CAFE</h1>
+        
+        <p>At CRO.CAFE, accessible from <a href="https://www.cro.cafe">https://www.cro.cafe</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by CRO.CAFE and how we use it.</p>
+        
+        <h2>General Data Protection Regulation (GDPR)</h2>
+        
+        <p>We are a Data Controller of your information.</p>
+        
+        <p>CRO.CAFE's legal basis for collecting and using personal information depends on the specific context:</p>
+        
+        <ul>
+          <li>CRO.CAFE needs to perform a contract with you</li>
+          <li>You have given CRO.CAFE permission to do so</li>
+          <li>Processing your personal information is in CRO.CAFE legitimate interests</li>
+          <li>CRO.CAFE needs to comply with the law</li>
+        </ul>
+        
+        <p>CRO.CAFE will retain your personal information only for as long as necessary for the purposes set out in this Privacy Policy.</p>
+        
+        <h3>Data Protection Rights</h3>
+        
+        <p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights:</p>
+        
+        <ul>
+          <li>The right to access, update or delete the information we have on you</li>
+          <li>The right of rectification</li>
+          <li>The right to object</li>
+          <li>The right of restriction</li>
+          <li>The right to data portability</li>
+          <li>The right to withdraw consent</li>
+        </ul>
+        
+        <h2>Server Logs</h2>
+        
+        <p>When you visit CRO.CAFE, our web hosting provider (Netlify) may collect standard server logs that include:</p>
+        
+        <ul>
+          <li>Internet protocol (IP) addresses</li>
+          <li>Browser type</li>
+          <li>Date and time stamp</li>
+          <li>Referring pages</li>
+          <li>Pages visited</li>
+        </ul>
+        
+        <p>This is standard practice for web hosting services and is used for security and maintenance purposes.</p>
+        
+        <h2>Cookies and Local Storage</h2>
+        
+        <p>CRO.CAFE does not use cookies. We use browser localStorage to:</p>
+        
+        <ul>
+          <li>Store your theme preference (light or dark mode)</li>
+        </ul>
+        
+        <p>This information is stored locally on your device and is not transmitted to our servers. You can clear localStorage data at any time through your browser settings.</p>
+        
+        <h2>Third-Party Services</h2>
+        
+        <p>CRO.CAFE currently does not use any third-party analytics, advertising, or tracking services. If we add such services in the future, we will update this privacy policy accordingly.</p>
+        
+        <p>We may embed content from external platforms (such as podcast players). These services may have their own privacy policies and data collection practices.</p>
+        
+        <h2>Children's Information</h2>
+        
+        <p>CRO.CAFE does not knowingly collect Personal Identifiable Information from children under 13.</p>
+        
+        <h2>Consent</h2>
+        
+        <p>By using our website, you consent to our Privacy Policy and agree to its terms.</p>
+        
+        <h2>Contact Information</h2>
+        
+        <p>If you have any questions about this Privacy Policy, please contact us.</p>
+        
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-8">Last updated: {new Date().toLocaleDateString()}</p>
+      </article>
+    </div>
+  </main>
+</BaseLayout>

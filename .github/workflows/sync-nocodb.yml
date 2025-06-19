@@ -219,7 +219,9 @@ jobs:
             echo "Merge conflicts detected. Resolving by favoring local content changes..."
             
             # For content files, always favor our local version (newly generated)
-            git status --porcelain | grep "^UU" | while read status file; do
+            git status --porcelain | grep "^UU" | while IFS= read -r line; do
+              # Extract the filename (everything after the status code and space)
+              file="${line:3}"
               echo "Resolving conflict in $file by favoring local version"
               git checkout --ours "$file"
               git add "$file"
@@ -241,7 +243,9 @@ jobs:
                 git fetch origin main
                 if ! git merge origin/main --no-edit; then
                   echo "Resolving conflicts by favoring local changes..."
-                  git status --porcelain | grep "^UU" | while read status file; do
+                  git status --porcelain | grep "^UU" | while IFS= read -r line; do
+                    # Extract the filename (everything after the status code and space)
+                    file="${line:3}"
                     git checkout --ours "$file"
                     git add "$file"
                   done
