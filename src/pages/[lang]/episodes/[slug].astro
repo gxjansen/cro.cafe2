@@ -358,24 +358,24 @@ const getDateLocale = (lang: Language) => {
     </article>
 
     <!-- Call to Action -->
-    <section class="py-16 bg-primary-600 dark:bg-primary-700 mt-16">
+    <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl font-heading font-bold text-white mb-4">
           {t.discoverMore}
         </h2>
-        <p class="text-xl text-primary-100 mb-8">
+        <p class="text-xl text-white/90 mb-8">
           {t.continueListening}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <a 
             href={`/${language}/episodes/`}
-            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-gray-50 transition-colors"
+            class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-accent-600 dark:text-accent-700 bg-white hover:bg-white/90 transition-all shadow-lg"
           >
             {t.browseMoreEpisodes}
           </a>
           <a 
             href={`/${language}/subscribe/`}
-            class="inline-flex items-center px-8 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-primary-500 transition-colors"
+            class="inline-flex items-center px-8 py-3 border-2 border-white/70 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 transition-all"
           >
             {t.subscribeNow}
           </a>
