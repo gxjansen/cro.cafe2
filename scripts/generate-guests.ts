@@ -56,6 +56,13 @@ class GuestGenerator {
 
       // Generate guest files
       const generatedFiles = new Set<string>()
+      
+      // Debug: Log first guest to see field names
+      if (guests.length > 0) {
+        console.log('📋 Sample guest data structure:')
+        console.log(JSON.stringify(guests[0], null, 2))
+      }
+      
       for (const guest of guests) {
         try {
           const filePath = await this.generateGuestMDX(guest)
@@ -144,10 +151,13 @@ class GuestGenerator {
       socialLinks.push({ platform: 'linkedin', url: guest.LinkedIn })
     }
 
+    // Check for isFeatured in different possible field names
+    const isFeatured = guest.isFeatured ?? guest.is_featured ?? guest.IsFeatured ?? guest.Featured ?? false;
+    
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
       `slug: "${slug}"`,
-      guest.isFeatured !== undefined ? `isFeatured: ${guest.isFeatured}` : null,
+      `isFeatured: ${isFeatured}`,
       `bio: "${this.escapeYaml(guest.ai_bio || guest.bio || '')}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
