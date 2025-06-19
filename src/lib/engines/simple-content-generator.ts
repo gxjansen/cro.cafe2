@@ -446,7 +446,7 @@ export class SimpleContentGenerator {
       `episodeCount: ${guest.episode_count || 0}`,
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
       `languages: [${languages.map((l: string) => `"${l}"`).join(', ')}]`,
-      this.isValidUrl(guest.image_url) ? `imageUrl: "${guest.image_url}"` : '',
+      this.getGuestImageUrl(guest.image_url),
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
@@ -678,6 +678,22 @@ export class SimpleContentGenerator {
     } catch {
       return false
     }
+  }
+
+  private getGuestImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) return ''
+    
+    // If it's already a full URL, use it as-is
+    if (this.isValidUrl(imageUrl)) {
+      return `imageUrl: "${imageUrl}"`
+    }
+    
+    // If it's a relative filename, construct the path to /images/guests/
+    if (imageUrl && typeof imageUrl === 'string') {
+      return `imageUrl: "/images/guests/${imageUrl}"`
+    }
+    
+    return ''
   }
 
   getStats(): GenerationStats {
