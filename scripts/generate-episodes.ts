@@ -6,7 +6,7 @@
 
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
-import { NocdbClient } from '../src/lib/services/nocodb-service'
+import { NocoDBAPIClient as NocdbClient } from '../src/lib/services/nocodb-api-client'
 import type { Language } from '../src/types'
 
 interface EpisodeGenerationStats {
