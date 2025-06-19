@@ -65,7 +65,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   let basePath = currentPath;
   
   // Remove language prefix if it exists
-  const langPrefixes = ['/nl', '/de', '/es'];
+  const langPrefixes = ['/en', '/nl', '/de', '/es'];
   for (const prefix of langPrefixes) {
     if (basePath.startsWith(prefix + '/') || basePath === prefix) {
       basePath = basePath.substring(prefix.length);
@@ -92,6 +92,16 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     }
     // Otherwise go to homepage
     return '/';
+  }
+  
+  // Handle global pages - they don't have language versions
+  if (basePath.includes('/hosts') || basePath.includes('/color-test')) {
+    // Always return to the global (all languages) homepage when switching languages from a global page
+    if (langCode === 'global') {
+      return basePath; // Stay on the same page
+    }
+    // For language-specific selections from global pages, go to that language's homepage
+    return langCode === 'en' ? '/en/' : `/${langCode}/`;
   }
   
   // Handle episode, guest, and subscribe pages (both detail and listing pages)

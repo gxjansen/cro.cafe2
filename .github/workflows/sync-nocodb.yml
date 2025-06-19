@@ -113,10 +113,11 @@ jobs:
           STATS_LINE=$(grep "📊 Generated:" content-generation.log | tail -1)
           
           if [ -n "$STATS_LINE" ]; then
-            EPISODES_GENERATED=$(echo "$STATS_LINE" | sed 's/.*Generated: \([0-9]*\) episodes.*/\1/' || echo "0")
-            GUESTS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) guests.*/\1/' || echo "0")
-            HOSTS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) hosts.*/\1/' || echo "0")
-            PLATFORMS_GENERATED=$(echo "$STATS_LINE" | sed 's/.*\([0-9]*\) platforms.*/\1/' || echo "0")
+            # Extract numbers more carefully from the format: "Generated: X episodes, Y guests, Z hosts, W platforms"
+            EPISODES_GENERATED=$(echo "$STATS_LINE" | sed -E 's/.*Generated: ([0-9]+) episodes.*/\1/' || echo "0")
+            GUESTS_GENERATED=$(echo "$STATS_LINE" | sed -E 's/.*episodes, ([0-9]+) guests.*/\1/' || echo "0")
+            HOSTS_GENERATED=$(echo "$STATS_LINE" | sed -E 's/.*guests, ([0-9]+) hosts.*/\1/' || echo "0")
+            PLATFORMS_GENERATED=$(echo "$STATS_LINE" | sed -E 's/.*hosts, ([0-9]+) platforms.*/\1/' || echo "0")
           else
             EPISODES_GENERATED="0"
             GUESTS_GENERATED="0"

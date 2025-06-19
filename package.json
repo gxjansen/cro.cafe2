@@ -19,7 +19,9 @@
     "generate-content-robust": "tsx scripts/generate-content-robust.ts",
     "generate-content-final": "tsx scripts/generate-content-final.ts",
     "sync-content": "npm run generate-content-simple && npm run validate-content",
-    "validate-content": "tsx scripts/validate-content.ts"
+    "validate-content": "tsx scripts/validate-content.ts",
+    "check-links": "node scripts/check-links.js",
+    "build:check": "npm run build && npm run check-links"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -45,7 +47,9 @@
     "@typescript-eslint/parser": "^8.18.1",
     "@vitest/coverage-v8": "^2.1.9",
     "@vitest/ui": "^2.1.8",
+    "chalk": "^5.4.0",
     "eslint": "^9.18.0",
+    "glob": "^11.0.0",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
