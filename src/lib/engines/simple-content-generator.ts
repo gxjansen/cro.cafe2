@@ -428,10 +428,11 @@ export class SimpleContentGenerator {
   }
 
   private generateGuestFrontmatter(guest: any, slug: string): string {
-    // Debug logging for specific guests
-    if (guest.name && guest.name.toLowerCase().includes('amber')) {
-      console.log('🔍 Debug amber guest data:', JSON.stringify({
+    // Debug logging for first few guests to understand data structure
+    if (this.stats.guestsGenerated < 3) {
+      console.log(`🔍 Debug guest #${this.stats.guestsGenerated + 1} data:`, JSON.stringify({
         name: guest.name,
+        slug: guest.slug,
         image_url: guest.image_url,
         allFields: Object.keys(guest)
       }, null, 2))
