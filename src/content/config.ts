@@ -121,9 +121,11 @@ const brandSchema = z.object({
 
 // Platform schema for subscription links
 const platformSchema = z.object({
+  id: z.number(),
   name: z.string(),
-  iconUrl: z.string().url(),
-  websiteUrl: z.string().url(),
+  slug: z.string(),
+  iconUrl: z.string(), // Allow relative paths for local images
+  websiteUrl: z.string(),
   
   // Language-specific URLs
   urls: z.object({
@@ -133,10 +135,16 @@ const platformSchema = z.object({
     es: z.string().url(),
   }),
   
-  // Display
+  // Display and status
+  displayOrder: z.number().default(0),
+  isActive: z.boolean().default(true),
   featured: z.boolean().default(false),
   order: z.number().optional(),
   category: z.enum(['podcast', 'music', 'general']).default('podcast'),
+  
+  // Timestamps
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 // Define collections

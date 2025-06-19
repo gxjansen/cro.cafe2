@@ -5,6 +5,9 @@
  * Uses the confirmed working API patterns from diagnostic
  */
 
+import { config } from 'dotenv'
+config() // Load environment variables from .env file
+
 import { SimpleContentGenerator } from '../src/lib/engines/simple-content-generator.js'
 import { NocoDBWorkingClient } from '../src/lib/services/nocodb-working-client.js'
 import type { Language } from '../src/types/index.js'

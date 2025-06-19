@@ -1,0 +1,17 @@
+{
+  "id": 15,
+  "name": "Podcast Addict",
+  "slug": "podcast-addict",
+  "iconUrl": "/images/platforms/podcast-addict.png",
+  "websiteUrl": "https://example.com/platform/podcast-addict",
+  "urls": {
+    "en": "http://podplayer.net/?podId=2340305",
+    "nl": "https://example.com/platform/podcast-addict",
+    "de": "https://podcastaddict.com/podcast/3844571",
+    "es": "https://example.com/platform/podcast-addict"
+  },
+  "displayOrder": 15,
+  "isActive": true,
+  "createdAt": "2025-06-03T16:14:24.000Z",
+  "updatedAt": "2025-06-03T18:36:18.000Z"
+}
