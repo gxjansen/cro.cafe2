@@ -29,6 +29,12 @@ export async function getStaticPaths() {
 
 const { episode, language } = Astro.props;
 
+// Get popular platform links
+const { getCollection: getContentCollection } = await import('astro:content');
+const platforms = await getContentCollection('platforms');
+const spotify = platforms.find(p => p.data.slug === 'spotify');
+const applePodcasts = platforms.find(p => p.data.slug === 'apple-podcasts');
+
 // Fetch guest details
 const guestDetailsRaw = await Promise.all(
   episode.data.guests.map(async (guestSlug: string) => {
@@ -58,7 +64,8 @@ const translations = {
     season: 'Season',
     episode: 'Episode',
     listenTo: 'Listen to this episode',
-    subscribe: 'Subscribe to the English edition of the CRO.CAFE podcast →',
+    subscribe: 'Subscribe to the English edition of the CRO.CAFE podcast',
+    morePlatforms: 'More platforms →',
     description: 'Episode Description',
     summary: 'Summary',
     guests: 'Guests in this Episode',
@@ -71,7 +78,8 @@ const translations = {
     season: 'Seizoen',
     episode: 'Aflevering',
     listenTo: 'Luister naar deze aflevering',
-    subscribe: 'Abonneer je op de Nederlandse editie van de CRO.CAFE podcast →',
+    subscribe: 'Abonneer je op de Nederlandse editie van de CRO.CAFE podcast',
+    morePlatforms: 'Meer platforms →',
     description: 'Aflevering Beschrijving',
     summary: 'Samenvatting',
     guests: 'Gasten in deze Aflevering',
@@ -84,7 +92,8 @@ const translations = {
     season: 'Staffel',
     episode: 'Folge',
     listenTo: 'Diese Folge anhören',
-    subscribe: 'Die deutsche Ausgabe des CRO.CAFE Podcasts abonnieren →',
+    subscribe: 'Die deutsche Ausgabe des CRO.CAFE Podcasts abonnieren',
+    morePlatforms: 'Weitere Plattformen →',
     description: 'Folgenbeschreibung',
     summary: 'Zusammenfassung',
     guests: 'Gäste in dieser Folge',
@@ -97,7 +106,8 @@ const translations = {
     season: 'Temporada',
     episode: 'Episodio',
     listenTo: 'Escuchar este episodio',
-    subscribe: 'Suscríbete a la edición en español del podcast CRO.CAFE →',
+    subscribe: 'Suscríbete a la edición en español del podcast CRO.CAFE',
+    morePlatforms: 'Más plataformas →',
     description: 'Descripción del Episodio',
     summary: 'Resumen',
     guests: 'Invitados en este Episodio',
@@ -203,14 +213,56 @@ const getDateLocale = (lang: Language) => {
           </audio>
         )}
         
-        <!-- Subscribe link -->
-        <div class="mt-4">
-          <a 
-            href={`/${language}/subscribe/`} 
-            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-          >
+        <!-- Subscribe options -->
+        <div class="mt-6 space-y-3">
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
             {t.subscribe}
-          </a>
+          </p>
+          <div class="flex flex-wrap items-center gap-4">
+            {/* Spotify */}
+            {spotify && spotify.data.urls[language] && (
+              <a 
+                href={spotify.data.urls[language]}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 px-4 py-2 bg-[#1DB954] hover:bg-[#1aa34a] text-white rounded-full transition-colors"
+                aria-label="Listen on Spotify"
+              >
+                <img 
+                  src={spotify.data.iconUrl} 
+                  alt="Spotify" 
+                  class="w-5 h-5 brightness-0 invert"
+                />
+                <span class="text-sm font-medium">Spotify</span>
+              </a>
+            )}
+            
+            {/* Apple Podcasts */}
+            {applePodcasts && applePodcasts.data.urls[language] && (
+              <a 
+                href={applePodcasts.data.urls[language]}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 px-4 py-2 bg-[#872EC4] hover:bg-[#7326ad] text-white rounded-full transition-colors"
+                aria-label="Listen on Apple Podcasts"
+              >
+                <img 
+                  src={applePodcasts.data.iconUrl} 
+                  alt="Apple Podcasts" 
+                  class="w-5 h-5 brightness-0 invert"
+                />
+                <span class="text-sm font-medium">Apple Podcasts</span>
+              </a>
+            )}
+            
+            {/* More options link */}
+            <a 
+              href={`/${language}/subscribe/`} 
+              class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium underline"
+            >
+              {t.morePlatforms}
+            </a>
+          </div>
         </div>
       </div>
 
