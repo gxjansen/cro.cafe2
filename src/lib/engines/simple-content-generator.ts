@@ -702,20 +702,29 @@ export class SimpleContentGenerator {
   }
 
   private getGuestImageUrl(imageUrl: string | null | undefined): string {
-    // Debug logging for the first few guests
-    if (Math.random() < 0.01) { // Log 1% of guests
+    // Debug logging to understand image_url field status
+    if (Math.random() < 0.02) { // Log 2% of guests  
       console.log('🔍 Debug guest imageUrl:', { imageUrl, type: typeof imageUrl })
     }
     
-    if (!imageUrl) return ''
+    // If no imageUrl, log this fact for debugging
+    if (!imageUrl) {
+      // Sample some empty image URLs for debugging
+      if (Math.random() < 0.01) {
+        console.log('🔍 Empty imageUrl detected:', { imageUrl, type: typeof imageUrl })
+      }
+      return ''
+    }
     
     // If it's already a full URL, use it as-is
     if (this.isValidUrl(imageUrl)) {
+      console.log('🔍 Found valid URL imageUrl:', imageUrl)
       return `imageUrl: "${imageUrl}"`
     }
     
     // If it's a relative filename, construct the path to /images/guests/
     if (imageUrl && typeof imageUrl === 'string') {
+      console.log('🔍 Converting relative imageUrl:', imageUrl, '-> /images/guests/' + imageUrl)
       return `imageUrl: "/images/guests/${imageUrl}"`
     }
     
