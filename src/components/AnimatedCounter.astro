@@ -1,0 +1,61 @@
+---
+export interface Props {
+  target: number;
+  suffix?: string;
+  prefix?: string;
+  duration?: number;
+}
+
+const { target, suffix = '', prefix = '', duration = 2000 } = Astro.props;
+const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<span id={id} class="tabular-nums" data-target={target} data-suffix={suffix} data-prefix={prefix} data-duration={duration}>
+  {prefix}0{suffix}
+</span>
+
+<script>
+  // Counter animation logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px'
+    };
+
+    const animateCounter = (element: Element) => {
+      const target = parseInt(element.getAttribute('data-target') || '0');
+      const suffix = element.getAttribute('data-suffix') || '';
+      const prefix = element.getAttribute('data-prefix') || '';
+      const duration = parseInt(element.getAttribute('data-duration') || '2000');
+      
+      let current = 0;
+      const increment = target / (duration / 16); // 60 FPS
+      
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          element.textContent = `${prefix}${Math.floor(current).toLocaleString()}${suffix}`;
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = `${prefix}${target.toLocaleString()}${suffix}`;
+        }
+      };
+      
+      updateCounter();
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+          entry.target.classList.add('animated');
+          animateCounter(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe all counters
+    document.querySelectorAll('[data-target]').forEach(counter => {
+      observer.observe(counter);
+    });
+  });
+</script>

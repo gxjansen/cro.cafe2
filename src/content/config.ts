@@ -63,6 +63,9 @@ const guestSchema = z.object({
   languages: z.array(z.enum(['en', 'nl', 'de', 'es'])).default(['en']),
   episodeCount: z.number().optional(),
   
+  // Display
+  isFeatured: z.boolean().default(false),
+  
   // SEO
   slug: z.string().optional(),
   canonicalLanguage: z.enum(['en', 'nl', 'de', 'es']).default('en'),
@@ -74,21 +77,22 @@ const guestSchema = z.object({
 
 // Quote schema for homepage testimonials
 const quoteSchema = z.object({
-  text: z.string(),
   author: z.string(),
   company: z.string().optional(),
   title: z.string().optional(),
   
   // Language support
-  language: z.enum(['en', 'nl', 'de', 'es']),
-  originalLanguage: z.enum(['en', 'nl', 'de', 'es']).optional(),
+  language: z.enum(['en', 'nl', 'de', 'es']).default('en'),
+  type: z.string().optional(),
   
   // Display
   featured: z.boolean().default(false),
   order: z.number().optional(),
   
-  // Media
-  authorImage: z.string().url().optional(),
+  // Media and links
+  authorImage: z.string().optional(),
+  linkedin: z.string().optional(),
+  twitter: z.string().optional(),
 });
 
 // Host schema for podcast hosts
@@ -118,7 +122,7 @@ const hostSchema = z.object({
 // Brand listener schema
 const brandSchema = z.object({
   name: z.string(),
-  logoUrl: z.string().url(),
+  logoUrl: z.string(), // Allow relative paths for brand logos
   websiteUrl: z.string().url().optional(),
   
   // Display

@@ -331,6 +331,17 @@ export function getHostImageUrl(hostSlug: string): string {
   return filename ? `/images/hosts/${filename}` : '/images/default-host.jpg';
 }
 
+// Get guest image URL
+export function getGuestImageUrl(guestSlug: string): string {
+  // For guests, we check if the image exists in the guests folder
+  // The image filename is typically the guest slug with common extensions
+  const possibleExtensions = ['.jpeg', '.jpg', '.png', '.webp'];
+  
+  // In production, you might want to check if file exists
+  // For now, we'll assume the image exists with .jpeg extension
+  return `/images/guests/${guestSlug}.jpeg`;
+}
+
 // Get host by slug
 export async function getHostBySlug(slug: string) {
   const hosts = await getCollection('hosts');

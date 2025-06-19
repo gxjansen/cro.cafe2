@@ -1,0 +1,9 @@
+{
+  "name": "Google",
+  "logoUrl": "/images/brands/google.png",
+  "websiteUrl": "https://www.google.com",
+  "featured": true,
+  "order": 5,
+  "industry": "",
+  "description": ""
+}

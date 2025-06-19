@@ -4,7 +4,11 @@ import Header from '../components/Header.astro';
 import EpisodeImage from '../components/EpisodeImage.astro';
 import EpisodeCard from '../components/EpisodeCard.astro';
 import HostImage from '../components/HostImage.astro';
-import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl, getPopularEpisodeFromEachLanguage, getTotalDurationByLanguage } from '../utils/content';
+import BrandLogoBar from '../components/BrandLogoBar.astro';
+import TestimonialsSection from '../components/TestimonialsSection.astro';
+import NotableGuestsSection from '../components/NotableGuestsSection.astro';
+import AnimatedCounter from '../components/AnimatedCounter.astro';
+import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl, getPopularEpisodeFromEachLanguage, getTotalDurationByLanguage, getTotalGuestCount, getGuestImageUrl } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
 const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
@@ -40,6 +44,13 @@ const totalHoursByLanguage = {
 
 // Calculate total published episodes across all languages
 const totalEpisodes = Object.values(allEpisodesByLanguage).reduce((total, episodes) => total + episodes.length, 0);
+
+// Calculate total guests across all languages
+const totalGuests = await getTotalGuestCount();
+
+// Calculate total hours across all languages
+const allLanguageTotalHours = Object.values(totalHoursByLanguage).reduce((sum, hours) => sum + hours, 0);
+const totalHoursRounded = Math.round(allLanguageTotalHours);
 
 // Get hosts and assign them to languages manually for now
 // (The automatic matching can be implemented later when episode-host relationships are clarified)
@@ -82,17 +93,40 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             The Global CRO Podcast Network
           </p>
           <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto">
-            Join 14K+ CRO professionals getting raw, unfiltered insights from industry leaders
+            Join <AnimatedCounter target={14000} suffix="+" /> CRO professionals getting raw, unfiltered insights from industry leaders
           </p>
           <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
             Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.
           </p>
+          
+          <!-- Stats -->
+          <div class="flex justify-center gap-8 mb-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalEpisodes} />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Episodes</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalGuests} suffix="+" />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Expert Guests</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalHoursRounded} suffix="+" />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Hours of Content</div>
+            </div>
+          </div>
+          
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="/all/episodes/" 
               class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-accent-500 hover:bg-accent-600 dark:bg-accent-200 dark:text-gray-900 dark:hover:bg-accent-300 transition-colors shadow-lg"
             >
-              Explore all {totalEpisodes} episodes
+              Explore all episodes →
             </a>
             <a 
               href="/subscribe/" 
@@ -104,6 +138,9 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
         </div>
       </div>
     </section>
+
+    <!-- Brand Logo Bar -->
+    <BrandLogoBar />
 
     <!-- Language Selection -->
     <section class="py-16 bg-white dark:bg-gray-800">
@@ -375,6 +412,12 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
         </div>
       </section>
     )}
+
+    <!-- Notable Guests -->
+    <NotableGuestsSection language="en" limit={8} />
+
+    <!-- Testimonials -->
+    <TestimonialsSection language="en" limit={3} />
 
     <!-- Newsletter Signup -->
     <!--

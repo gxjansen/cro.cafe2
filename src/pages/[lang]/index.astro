@@ -5,6 +5,8 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeImage from '../../components/EpisodeImage.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestCard from '../../components/GuestCard.astro';
+import TestimonialsSection from '../../components/TestimonialsSection.astro';
+import BrandLogoBar from '../../components/BrandLogoBar.astro';
 import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -22,7 +24,33 @@ const { language } = Astro.props;
 const episodes = await getEpisodesByLanguage(language);
 const latestEpisodes = episodes.slice(0, 3);
 const guests = await getGuestsByLanguage(language);
-const featuredGuests = guests.slice(0, 4);
+
+// Get popular episodes based on downloads
+const popularEpisodes = episodes
+  .filter(ep => ep.data.downloads_total && ep.data.downloads_total > 0)
+  .sort((a, b) => (b.data.downloads_total || 0) - (a.data.downloads_total || 0))
+  .slice(0, 3);
+
+// Get featured guests with randomization
+const featuredGuestsList = guests.filter(guest => guest.data.isFeatured);
+const nonFeaturedGuests = guests.filter(guest => !guest.data.isFeatured);
+
+// If we have more than 4 featured guests, randomize selection
+let selectedFeaturedGuests = featuredGuestsList;
+if (featuredGuestsList.length > 4) {
+  // Shuffle and take 4
+  selectedFeaturedGuests = [...featuredGuestsList].sort(() => Math.random() - 0.5).slice(0, 4);
+} else if (featuredGuestsList.length < 4) {
+  // If less than 4 featured, supplement with top guests by episode count
+  const additionalGuests = nonFeaturedGuests
+    .filter(guest => guest.data.episodeCount && guest.data.episodeCount > 0)
+    .sort((a, b) => (b.data.episodeCount || 0) - (a.data.episodeCount || 0))
+    .slice(0, 4 - featuredGuestsList.length);
+  
+  selectedFeaturedGuests = [...featuredGuestsList, ...additionalGuests];
+}
+
+const featuredGuests = selectedFeaturedGuests.slice(0, 4);
 const platforms = await getValidPlatformsForLanguage(language);
 
 // Get total episode count for this language
@@ -40,7 +68,7 @@ const translations = {
     heroTitle: 'Welcome to CRO.CAFE',
     heroSubtitle: 'Join 14K+ CRO professionals getting raw, unfiltered insights from industry leaders',
     heroDescription: 'Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.',
-    browseEpisodes: `Explore all ${totalEpisodes} episodes`,
+    browseEpisodes: 'Browse episodes',
     subscribeNow: 'Start listening for free →',
     latestEpisodesTitle: 'Latest Episodes',
     latestEpisodesSubtitle: 'Listen to our newest conversations about CRO and experimentation',
@@ -62,7 +90,9 @@ const translations = {
     statsEpisodes: 'Episodes',
     statsGuests: 'Expert Guests',
     statsHours: 'Hours of Content',
-    statsSubtitle: 'Join our growing community of CRO professionals'
+    statsSubtitle: 'Join our growing community of CRO professionals',
+    popularEpisodesTitle: 'Popular Episodes',
+    popularEpisodesSubtitle: 'Most downloaded episodes from our community'
   },
   nl: {
     title: 'CRO.CAFE Podcast - De Nederlandse CRO & Experimentatie Podcast',
@@ -70,7 +100,7 @@ const translations = {
     heroTitle: 'Welkom bij CRO.CAFE',
     heroSubtitle: 'Sluit je aan bij 14K+ CRO professionals voor ongefilterde inzichten van industry leaders',
     heroDescription: 'Gesprekken die verder gaan dan de oppervlakte. Echte experimenten, echte mislukkingen, echte doorbraken in CRO, experimenteren en digitale groei.',
-    browseEpisodes: `Ontdek alle ${totalEpisodes} afleveringen`,
+    browseEpisodes: 'Bekijk afleveringen',
     subscribeNow: 'Start met luisteren (gratis) →',
     latestEpisodesTitle: 'Laatste Afleveringen',
     latestEpisodesSubtitle: 'Luister naar onze nieuwste gesprekken over CRO en experimentatie',
@@ -92,7 +122,9 @@ const translations = {
     statsEpisodes: 'Afleveringen',
     statsGuests: 'Expert Gasten',
     statsHours: 'Uur Content',
-    statsSubtitle: 'Sluit je aan bij onze groeiende community van CRO professionals'
+    statsSubtitle: 'Sluit je aan bij onze groeiende community van CRO professionals',
+    popularEpisodesTitle: 'Populaire Afleveringen',
+    popularEpisodesSubtitle: 'Meest gedownloade afleveringen van onze community'
   },
   de: {
     title: 'CRO.CAFE Podcast - Der deutsche CRO & Experimentation Podcast', 
@@ -100,7 +132,7 @@ const translations = {
     heroTitle: 'Willkommen bei CRO.CAFE',
     heroSubtitle: 'Schließen Sie sich 14K+ CRO-Experten an für ungefilterte Einblicke von Branchenführern',
     heroDescription: 'Gespräche, die unter die Oberfläche gehen. Echte Experimente, echte Fehlschläge, echte Durchbrüche in CRO, Experimentation und digitalem Wachstum.',
-    browseEpisodes: `Alle ${totalEpisodes} Folgen entdecken`,
+    browseEpisodes: 'Folgen ansehen',
     subscribeNow: 'Jetzt kostenlos anhören →',
     latestEpisodesTitle: 'Neueste Folgen',
     latestEpisodesSubtitle: 'Hören Sie unsere neuesten Gespräche über CRO und Experimentation',
@@ -122,7 +154,9 @@ const translations = {
     statsEpisodes: 'Folgen',
     statsGuests: 'Experten Gäste',
     statsHours: 'Stunden Inhalt',
-    statsSubtitle: 'Treten Sie unserer wachsenden Community von CRO-Experten bei'
+    statsSubtitle: 'Treten Sie unserer wachsenden Community von CRO-Experten bei',
+    popularEpisodesTitle: 'Beliebte Folgen',
+    popularEpisodesSubtitle: 'Die meistgeladenen Folgen unserer Community'
   },
   es: {
     title: 'CRO.CAFE Podcast - El Podcast español de CRO y Experimentación',
@@ -130,7 +164,7 @@ const translations = {
     heroTitle: 'Bienvenido a CRO.CAFE',
     heroSubtitle: 'Únete a 14K+ profesionales CRO para obtener insights sin filtros de líderes de la industria',
     heroDescription: 'Conversaciones que van más allá de lo superficial. Experimentos reales, fracasos reales, avances reales en CRO, experimentación y crecimiento digital.',
-    browseEpisodes: `Explora los ${totalEpisodes} episodios`,
+    browseEpisodes: 'Ver episodios',
     subscribeNow: 'Empieza a escuchar gratis →',
     latestEpisodesTitle: 'Últimos Episodios',
     latestEpisodesSubtitle: 'Escucha nuestras conversaciones más recientes sobre CRO y experimentación',
@@ -152,7 +186,9 @@ const translations = {
     statsEpisodes: 'Episodios',
     statsGuests: 'Invitados Expertos',
     statsHours: 'Horas de Contenido',
-    statsSubtitle: 'Únete a nuestra creciente comunidad de profesionales CRO'
+    statsSubtitle: 'Únete a nuestra creciente comunidad de profesionales CRO',
+    popularEpisodesTitle: 'Episodios Populares',
+    popularEpisodesSubtitle: 'Los episodios más descargados de nuestra comunidad'
   }
 };
 
@@ -261,6 +297,9 @@ const hreflang = {
       </div>
     </section>
 
+    <!-- Brand Logo Bar -->
+    <BrandLogoBar />
+
     <!-- Latest Episodes -->
     <section class="py-16 bg-white dark:bg-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -289,6 +328,32 @@ const hreflang = {
       </div>
     </section>
 
+    <!-- Popular Episodes -->
+    {popularEpisodes.length > 0 && (
+      <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              {t.popularEpisodesTitle}
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              {t.popularEpisodesSubtitle}
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {popularEpisodes.map((episode) => (
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={false}
+                size="large"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
     <!-- Featured Guests -->
     {featuredGuests.length > 0 && (
       <section class="py-16 bg-gray-50 dark:bg-gray-900">
@@ -311,6 +376,8 @@ const hreflang = {
       </section>
     )}
 
+    <!-- Testimonials -->
+    <TestimonialsSection language={language} limit={3} />
 
     <!-- Platform Section -->
     <section class="py-16 bg-gray-50 dark:bg-gray-900">

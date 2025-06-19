@@ -1,9 +1,0 @@
-{
-  "name": "TechStart",
-  "logoUrl": "https://example.com/logos/techstart.png",
-  "websiteUrl": "https://techstart.com",
-  "featured": true,
-  "order": 1,
-  "description": "A leading technology startup focused on growth and conversion optimization",
-  "industry": "Technology"
-}
