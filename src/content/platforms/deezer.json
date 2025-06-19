@@ -1,0 +1,17 @@
+{
+  "id": 6,
+  "name": "Deezer",
+  "slug": "deezer",
+  "iconUrl": "https://example.com/icons/deezer.png",
+  "websiteUrl": "https://example.com/platform/deezer",
+  "urls": {
+    "en": "https://deezer.com/show/1917002",
+    "nl": "https://deezer.com/show/2113932",
+    "de": "https://www.deezer.com/en/show/3705867",
+    "es": "https://example.com/platform/deezer"
+  },
+  "displayOrder": 6,
+  "isActive": true,
+  "createdAt": "2025-06-03T16:14:24.000Z",
+  "updatedAt": "2025-06-03T18:36:18.000Z"
+}
