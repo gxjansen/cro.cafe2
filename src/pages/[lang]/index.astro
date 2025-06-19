@@ -25,16 +25,19 @@ const guests = await getGuestsByLanguage(language);
 const featuredGuests = guests.slice(0, 4);
 const platforms = await getValidPlatformsForLanguage(language);
 
+// Get total episode count for this language
+const totalEpisodes = episodes.length;
+
 // Translations
 const translations = {
   en: {
     title: 'CRO.CAFE Podcast - The English CRO & Experimentation Podcast',
     description: 'Listen to the CRO.CAFE Podcast - in-depth conversations with leaders in conversion rate optimization, experimentation, and digital growth. Hosted by Guido X Jansen.',
     heroTitle: 'Welcome to CRO.CAFE',
-    heroSubtitle: 'The leading English podcast for conversion rate optimization professionals',
-    heroDescription: 'In-depth conversations with experts about CRO, experimentation, and digital growth.',
-    browseEpisodes: 'Browse Episodes',
-    subscribeNow: 'Subscribe Now',
+    heroSubtitle: 'Join 14K+ CRO professionals getting raw, unfiltered insights from industry leaders',
+    heroDescription: 'Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.',
+    browseEpisodes: `Explore all ${totalEpisodes} episodes`,
+    subscribeNow: 'Start listening for free →',
     latestEpisodesTitle: 'Latest Episodes',
     latestEpisodesSubtitle: 'Listen to our newest conversations about CRO and experimentation',
     featuredGuestsTitle: 'Featured Guests',
@@ -57,10 +60,10 @@ const translations = {
     title: 'CRO.CAFE Podcast - De Nederlandse CRO & Experimentatie Podcast',
     description: 'Luister naar de CRO.CAFE Podcast - diepe gesprekken met leiders in conversion rate optimization, experimentatie en digitale groei. Gehost door Guido X Jansen.',
     heroTitle: 'Welkom bij CRO.CAFE',
-    heroSubtitle: 'De toonaangevende Nederlandse podcast voor conversion rate optimization professionals',
-    heroDescription: 'Diepgaande gesprekken met experts over CRO, experimentatie en digitale groei.',
-    browseEpisodes: 'Bekijk Afleveringen',
-    subscribeNow: 'Abonneer Nu',
+    heroSubtitle: 'Sluit je aan bij 14K+ CRO professionals voor ongefilterde inzichten van industry leaders',
+    heroDescription: 'Gesprekken die verder gaan dan de oppervlakte. Echte experimenten, echte mislukkingen, echte doorbraken in CRO, experimenteren en digitale groei.',
+    browseEpisodes: `Ontdek alle ${totalEpisodes} afleveringen`,
+    subscribeNow: 'Start met luisteren (gratis) →',
     latestEpisodesTitle: 'Laatste Afleveringen',
     latestEpisodesSubtitle: 'Luister naar onze nieuwste gesprekken over CRO en experimentatie',
     featuredGuestsTitle: 'Uitgelichte Gasten',
@@ -83,10 +86,10 @@ const translations = {
     title: 'CRO.CAFE Podcast - Der deutsche CRO & Experimentation Podcast', 
     description: 'Hören Sie den CRO.CAFE Podcast - tiefgehende Gespräche mit Führungskräften in Conversion Rate Optimization, Experimentation und digitalem Wachstum. Moderiert von Guido X Jansen.',
     heroTitle: 'Willkommen bei CRO.CAFE',
-    heroSubtitle: 'Der führende deutsche Podcast für Conversion Rate Optimization Profis',
-    heroDescription: 'Tiefgehende Gespräche mit Experten über CRO, Experimentation und digitales Wachstum.',
-    browseEpisodes: 'Folgen Durchsuchen',
-    subscribeNow: 'Jetzt Abonnieren',
+    heroSubtitle: 'Schließen Sie sich 14K+ CRO-Experten an für ungefilterte Einblicke von Branchenführern',
+    heroDescription: 'Gespräche, die unter die Oberfläche gehen. Echte Experimente, echte Fehlschläge, echte Durchbrüche in CRO, Experimentation und digitalem Wachstum.',
+    browseEpisodes: `Alle ${totalEpisodes} Folgen entdecken`,
+    subscribeNow: 'Jetzt kostenlos anhören →',
     latestEpisodesTitle: 'Neueste Folgen',
     latestEpisodesSubtitle: 'Hören Sie unsere neuesten Gespräche über CRO und Experimentation',
     featuredGuestsTitle: 'Ausgewählte Gäste',
@@ -109,10 +112,10 @@ const translations = {
     title: 'CRO.CAFE Podcast - El Podcast español de CRO y Experimentación',
     description: 'Escucha el CRO.CAFE Podcast - conversaciones profundas con líderes en optimización de tasa de conversión, experimentación y crecimiento digital. Presentado por Guido X Jansen.',
     heroTitle: 'Bienvenido a CRO.CAFE',
-    heroSubtitle: 'El podcast líder en español para profesionales de optimización de tasa de conversión',
-    heroDescription: 'Conversaciones profundas con expertos sobre CRO, experimentación y crecimiento digital.',
-    browseEpisodes: 'Explorar Episodios',
-    subscribeNow: 'Suscríbete Ahora',
+    heroSubtitle: 'Únete a 14K+ profesionales CRO para obtener insights sin filtros de líderes de la industria',
+    heroDescription: 'Conversaciones que van más allá de lo superficial. Experimentos reales, fracasos reales, avances reales en CRO, experimentación y crecimiento digital.',
+    browseEpisodes: `Explora los ${totalEpisodes} episodios`,
+    subscribeNow: 'Empieza a escuchar gratis →',
     latestEpisodesTitle: 'Últimos Episodios',
     latestEpisodesSubtitle: 'Escucha nuestras conversaciones más recientes sobre CRO y experimentación',
     featuredGuestsTitle: 'Invitados Destacados',

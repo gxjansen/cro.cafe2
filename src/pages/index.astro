@@ -10,6 +10,26 @@ import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpiso
 const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
 const latestFromEachLanguage = await getLatestEpisodeFromEachLanguage();
 
+// Get all episodes for each language to calculate the total
+const allEpisodesByLanguage = {
+  en: await getEpisodesByLanguage('en'),
+  nl: await getEpisodesByLanguage('nl'),
+  de: await getEpisodesByLanguage('de'),
+  es: await getEpisodesByLanguage('es')
+};
+
+// Get all guests for each language
+const { getGuestsByLanguage } = await import('../utils/content');
+const guestsByLanguage = {
+  en: await getGuestsByLanguage('en'),
+  nl: await getGuestsByLanguage('nl'),
+  de: await getGuestsByLanguage('de'),
+  es: await getGuestsByLanguage('es')
+};
+
+// Calculate total published episodes across all languages
+const totalEpisodes = Object.values(allEpisodesByLanguage).reduce((total, episodes) => total + episodes.length, 0);
+
 // Get hosts and assign them to languages manually for now
 // (The automatic matching can be implemented later when episode-host relationships are clarified)
 const allHosts = await getAllHosts();
@@ -44,25 +64,30 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
     <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
-          <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-6">
+          <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-2">
             Welcome to <span class="text-primary-600 dark:text-primary-300">CRO.CAFE</span>
           </h1>
-          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            The world's leading podcast for conversion rate optimization professionals. 
-            Expert insights, case studies, and strategies in <strong>4 languages</strong>.
+          <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-4">
+            The Global CRO Podcast Network
+          </p>
+          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto">
+            Join 14K+ CRO professionals getting raw, unfiltered insights from industry leaders
+          </p>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+            Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="/all/episodes/" 
-              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
+              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-accent-500 hover:bg-accent-600 dark:bg-accent-200 dark:text-gray-900 dark:hover:bg-accent-300 transition-colors shadow-lg"
             >
-              Browse Episodes
+              Explore all {totalEpisodes} episodes
             </a>
             <a 
               href="/subscribe/" 
               class="inline-flex items-center px-8 py-3 border border-primary-600 dark:border-primary-300 text-base font-medium rounded-md text-primary-600 dark:text-primary-300 bg-transparent hover:bg-primary-50 dark:hover:bg-gray-800 transition-colors"
             >
-              Subscribe Now
+              Start listening for free →
             </a>
           </div>
         </div>
@@ -74,10 +99,13 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-            Choose Your Language
+            Choose Your Show
           </h2>
-          <p class="text-lg text-gray-600 dark:text-gray-300">
-            CRO insights tailored for your market and language
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-2">
+            4 languages • 4 unique shows • Local experts and insights
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Each show features unique episodes and local experts, all focused on CRO and experimentation
           </p>
         </div>
         
@@ -86,8 +114,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇺🇸</div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">English</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">English-language CRO insights and strategies</p>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE English</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Global CRO insights and strategies</p>
               
               <!-- Host Information -->
               <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
@@ -113,6 +141,11 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                 )}
               </div>
               
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.en.length} episodes • {guestsByLanguage.en.length} guests
+              </div>
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
                 Latest: {latestEpisodesByLanguage.en[0]?.data.title || 'No episodes yet'}
               </div>
@@ -131,8 +164,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇳🇱</div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Nederlands</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Dutch-language CRO inzichten en strategieën</p>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Nederlands</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Nederlandse markt CRO inzichten</p>
               
               <!-- Host Information -->
               <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
@@ -158,6 +191,11 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                 )}
               </div>
               
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.nl.length} afleveringen • {guestsByLanguage.nl.length} gasten
+              </div>
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
                 Laatste: {latestEpisodesByLanguage.nl[0]?.data.title || 'Nog geen afleveringen'}
               </div>
@@ -176,8 +214,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇩🇪</div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Deutsch</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">German-language CRO Einblicke und Strategien</p>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Deutsch</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">DACH-Region CRO Einblicke</p>
               
               <!-- Host Information -->
               <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
@@ -203,6 +241,11 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                 )}
               </div>
               
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.de.length} Folgen • {guestsByLanguage.de.length} Gäste
+              </div>
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
                 Neueste: {latestEpisodesByLanguage.de[0]?.data.title || 'Noch keine Folgen'}
               </div>
@@ -221,8 +264,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇪🇸</div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Español</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Spanish-language perspectivas y estrategias de CRO</p>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Español</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Perspectivas CRO de Iberoamérica</p>
               
               <!-- Host Information -->
               <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
@@ -246,6 +289,11 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                 ) : (
                   <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Información del presentador próximamente</div>
                 )}
+              </div>
+              
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.es.length} episodios • {guestsByLanguage.es.length} invitados
               </div>
               
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
