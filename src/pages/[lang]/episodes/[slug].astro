@@ -68,7 +68,9 @@ const translations = {
     morePlatforms: 'More platforms →',
     description: 'Episode Description',
     summary: 'Summary',
+    guest: 'Guest in this Episode',
     guests: 'Guests in this Episode',
+    host: 'Hosted by',
     hosts: 'Hosted by',
     transcript: 'Episode Transcript',
     topics: 'Topics covered:',
@@ -86,7 +88,9 @@ const translations = {
     morePlatforms: 'Meer platforms →',
     description: 'Aflevering Beschrijving',
     summary: 'Samenvatting',
+    guest: 'Gast in deze Aflevering',
     guests: 'Gasten in deze Aflevering',
+    host: 'Gehost door',
     hosts: 'Gehost door',
     transcript: 'Aflevering Transcript',
     topics: 'Onderwerpen behandeld:',
@@ -104,7 +108,9 @@ const translations = {
     morePlatforms: 'Weitere Plattformen →',
     description: 'Folgenbeschreibung',
     summary: 'Zusammenfassung',
+    guest: 'Gast in dieser Folge',
     guests: 'Gäste in dieser Folge',
+    host: 'Moderiert von',
     hosts: 'Moderiert von',
     transcript: 'Folgen-Transkript',
     topics: 'Behandelte Themen:',
@@ -122,7 +128,9 @@ const translations = {
     morePlatforms: 'Más plataformas →',
     description: 'Descripción del Episodio',
     summary: 'Resumen',
+    guest: 'Invitado en este Episodio',
     guests: 'Invitados en este Episodio',
+    host: 'Presentado por',
     hosts: 'Presentado por',
     transcript: 'Transcripción del Episodio',
     topics: 'Temas cubiertos:',
@@ -304,7 +312,7 @@ const getDateLocale = (lang: Language) => {
       {guestDetails.length > 0 && (
         <div class="mb-8">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-            {t.guests}
+            {guestDetails.length === 1 ? t.guest : t.guests}
           </h2>
           <div class="grid gap-6 md:grid-cols-2">
             {guestDetails.map((guest) => guest && (
@@ -318,7 +326,7 @@ const getDateLocale = (lang: Language) => {
       {hostDetails.length > 0 && (
         <div class="mb-8">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-            {t.hosts}
+            {hostDetails.length === 1 ? t.host : t.hosts}
           </h2>
           <div class="grid gap-6 md:grid-cols-2">
             {hostDetails.map((host) => host && (
