@@ -204,6 +204,11 @@ export class SimpleContentGenerator {
       console.log('📊 Sample episode data structure:', JSON.stringify(episode, null, 2))
     }
     
+    // Debug duration fields to ensure we're using the right one
+    if (episode.duration && episode.duration_formatted) {
+      console.log(`🔍 Duration fields - raw: "${episode.duration}", formatted: "${episode.duration_formatted}"`)
+    }
+    
     // Extract hosts from relationship data and deduplicate
     // Collect all host data first to find slugs
     const hostData: Array<{slug?: string, name?: string}> = []
@@ -291,6 +296,14 @@ export class SimpleContentGenerator {
     // Clean description and summary by removing HTML first, then escaping for YAML
     const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
     const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
+    
+    // Ensure we only use the raw duration field (in seconds), never the formatted one
+    const durationInSeconds = episode.duration || '0'
+    
+    // Log if we detect mixed duration formats to help debug
+    if (durationInSeconds && durationInSeconds.toString().includes(':')) {
+      console.warn(`⚠️ Found formatted duration in raw field for episode ${episode.Id}: "${durationInSeconds}" - this should be seconds only`)
+    }
 
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
@@ -300,7 +313,7 @@ export class SimpleContentGenerator {
       `episode: ${episode.episode_number || 0}`,
       `season: ${episode.season || 1}`,
       `language: "${episode.language || this.config.defaultLanguage}"`,
-      `duration: "${episode.duration || '0'}"`,
+      `duration: "${durationInSeconds}"`,
       `audioUrl: "${episode.media_url || ''}"`,
       episode.image_url ? `imageUrl: "${episode.image_url}"` : '',
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
