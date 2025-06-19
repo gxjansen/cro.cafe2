@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
 import { getEpisodesByLanguage, getEpisodeUrl, formatDuration } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -61,9 +62,10 @@ const getDateLocale = (lang: Language) => {
   title={t.title}
   description={t.description}
   language={language}
-  canonical={`https://cro.cafe/${language}/episodes`}
+  canonical={`https://cro.cafe/${language}/episodes/`}
 >
-  <Header language={language} currentPath={`/${language}/episodes`} />
+  <Header language={language} currentPath={`/${language}/episodes/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/episodes/`} />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -81,7 +83,7 @@ const getDateLocale = (lang: Language) => {
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {episodes.map((episode) => (
           <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-            <a href={`/${language}/episodes/${episode.data.slug || episode.slug}`} class="block">
+            <a href={`/${language}/episodes/${episode.data.slug || episode.slug}/`} class="block">
               {episode.data.imageUrl && (
                 <div class="aspect-w-16 aspect-h-9 overflow-hidden">
                   <img 

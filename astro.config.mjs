@@ -20,6 +20,24 @@ export default defineConfig({
       }
     })
   ],
+  image: {
+    // Allow external images from common podcast/CDN sources
+    domains: ['transistor.fm', 'media.transistor.fm', 'images.transistor.fm', 'cdn.transistor.fm'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.transistor.fm',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+      }
+    ]
+  },
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'nl', 'de', 'es'],
@@ -28,5 +46,5 @@ export default defineConfig({
     }
   },
   output: 'static',
-  trailingSlash: 'never'
+  trailingSlash: 'always'
 });

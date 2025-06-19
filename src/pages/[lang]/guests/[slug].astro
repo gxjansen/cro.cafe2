@@ -26,9 +26,10 @@ export async function getStaticPaths() {
 }
 
 const { guest, language } = Astro.props;
+const guestSlug = guest.data.slug || guest.slug;
 
 // Get all episodes featuring this guest in the current language
-const guestEpisodes = await getGuestEpisodes(guest.data.slug, language);
+const guestEpisodes = await getGuestEpisodes(guestSlug, language);
 
 // Translations
 const translations = {
@@ -71,10 +72,10 @@ const description = guest.data.bio.substring(0, 160);
 
 // Generate hreflang URLs
 const hreflang: Record<Language, string> = {
-  en: `https://cro.cafe/guests/${guest.data.slug}`,
-  nl: `https://cro.cafe/nl/guests/${guest.data.slug}`,
-  de: `https://cro.cafe/de/guests/${guest.data.slug}`,
-  es: `https://cro.cafe/es/guests/${guest.data.slug}`
+  en: `https://cro.cafe/guests/${guestSlug}`,
+  nl: `https://cro.cafe/nl/guests/${guestSlug}`,
+  de: `https://cro.cafe/de/guests/${guestSlug}`,
+  es: `https://cro.cafe/es/guests/${guestSlug}`
 };
 
 // Get locale-specific date formatting
@@ -93,11 +94,11 @@ const getDateLocale = (lang: Language) => {
   title={title}
   description={description}
   language={language}
-  canonical={`https://cro.cafe/${language}/guests/${guest.data.slug}`}
+  canonical={`https://cro.cafe/${language}/guests/${guestSlug}/`}
   hreflang={hreflang}
   ogImage={guest.data.imageUrl}
 >
-  <Header language={language} currentPath={`/${language}/guests`} />
+  <Header language={language} currentPath={`/${language}/guests/`} />
   
   <main class="flex-grow">
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -231,24 +232,6 @@ const getDateLocale = (lang: Language) => {
         </div>
       )}
 
-      {/* Languages Available */}
-      {guest.data.languages.length > 1 && (
-        <div class="mt-12 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            {t.availableLanguages}
-          </h3>
-          <div class="flex gap-4">
-            {guest.data.languages.filter(lang => lang !== language).map(lang => (
-              <a 
-                href={hreflang[lang]} 
-                class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
-              >
-                {t.viewIn} {languageNames[lang][language]}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
     </article>
   </main>
 </BaseLayout>

@@ -87,6 +87,33 @@ export async function getPlatformsByCategoryAndLanguage(
     .sort((a, b) => (a.data.displayOrder || a.data.order || 999) - (b.data.displayOrder || b.data.order || 999));
 }
 
+// Get platforms by media type (audio vs video) filtered by language with valid URLs
+export async function getPlatformsByMediaTypeAndLanguage(
+  mediaType: 'audio' | 'video',
+  language: Language
+) {
+  const platforms = await getCollection('platforms');
+  return platforms
+    .filter(platform => {
+      // Check if platform has a valid URL for this language
+      const languageUrl = platform.data.urls[language];
+      if (!isValidPlatformUrl(languageUrl)) return false;
+      
+      // Determine media type based on platform name/slug
+      const platformName = platform.data.name.toLowerCase();
+      const platformSlug = platform.data.slug.toLowerCase();
+      
+      if (mediaType === 'video') {
+        // Only YouTube is considered a video platform
+        return platformName.includes('youtube') || platformSlug.includes('youtube');
+      } else {
+        // All other platforms are audio platforms
+        return !platformName.includes('youtube') && !platformSlug.includes('youtube');
+      }
+    })
+    .sort((a, b) => (a.data.displayOrder || a.data.order || 999) - (b.data.displayOrder || b.data.order || 999));
+}
+
 // Get all valid platforms for a specific language (regardless of category)
 export async function getValidPlatformsForLanguage(language: Language) {
   const platforms = await getCollection('platforms');
@@ -147,7 +174,7 @@ export function getEpisodeUrl(episode: { data: { language: Language; slug?: stri
 // Generate guest URL
 export function getGuestUrl(guest: { data: { slug?: string }; slug?: string }, language: Language): string {
   const slug = guest.data.slug || guest.slug;
-  return language === 'en' ? `/guests/${slug}` : `/${language}/guests/${slug}`;
+  return language === 'en' ? `/guests/${slug}/` : `/${language}/guests/${slug}/`;
 }
 
 // Get latest episodes across all languages for homepage
@@ -313,4 +340,26 @@ export async function getHostLanguages(hostSlug: string): Promise<Language[]> {
 // Generate host URL
 export function getHostUrl(hostSlug: string): string {
   return `/hosts/${hostSlug}/`;
+}
+
+// Get platform counts by language
+export async function getPlatformCountsByLanguage() {
+  const platforms = await getCollection('platforms');
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  
+  const counts: Record<Language, number> = {
+    en: 0,
+    nl: 0,
+    de: 0,
+    es: 0
+  };
+
+  for (const language of languages) {
+    counts[language] = platforms.filter(platform => {
+      const languageUrl = platform.data.urls[language];
+      return isValidPlatformUrl(languageUrl);
+    }).length;
+  }
+
+  return counts;
 }

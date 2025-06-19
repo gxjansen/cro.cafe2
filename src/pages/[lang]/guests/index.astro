@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -18,28 +19,28 @@ const guests = await getGuestsByLanguage(language);
 // Translations
 const translations = {
   nl: {
-    title: 'Alle Gasten - CRO.CAFE Podcast',
-    description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de CRO.CAFE podcast.',
-    heading: 'Alle Gasten',
-    subheading: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld over CRO, experimenteren en digitale optimalisatie.',
+    title: 'Alle Dutch-language Gasten - CRO.CAFE Podcast',
+    description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de Dutch-language CRO.CAFE podcast afleveringen.',
+    heading: 'Alle Dutch-language Gasten',
+    subheading: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld over CRO, experimenteren en digitale optimalisatie in Dutch-language afleveringen.',
     episodes: 'aflevering',
     episodesPlural: 'afleveringen',
     noGuests: 'Nog geen gasten beschikbaar. Check binnenkort terug!'
   },
   de: {
-    title: 'Alle Gäste - CRO.CAFE Podcast',
-    description: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse im CRO.CAFE Podcast geteilt haben.',
-    heading: 'Alle Gäste',
-    subheading: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse über CRO, Experimente und digitale Optimierung geteilt haben.',
+    title: 'Alle German-language Gäste - CRO.CAFE Podcast',
+    description: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse in den German-language CRO.CAFE Podcast Folgen geteilt haben.',
+    heading: 'Alle German-language Gäste',
+    subheading: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse über CRO, Experimente und digitale Optimierung in German-language Folgen geteilt haben.',
     episodes: 'Folge',
     episodesPlural: 'Folgen',
     noGuests: 'Noch keine Gäste verfügbar. Schauen Sie bald wieder vorbei!'
   },
   es: {
-    title: 'Todos los Invitados - CRO.CAFE Podcast',
-    description: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos en el podcast CRO.CAFE.',
-    heading: 'Todos los Invitados',
-    subheading: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos sobre CRO, experimentación y optimización digital.',
+    title: 'Todos los Invitados Spanish-language - CRO.CAFE Podcast',
+    description: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos en los episodios Spanish-language del podcast CRO.CAFE.',
+    heading: 'Todos los Invitados Spanish-language',
+    subheading: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos sobre CRO, experimentación y optimización digital en episodios Spanish-language.',
     episodes: 'episodio',
     episodesPlural: 'episodios',
     noGuests: '¡Aún no hay invitados disponibles. Vuelve pronto!'
@@ -53,9 +54,10 @@ const t = translations[language];
   title={t.title}
   description={t.description}
   language={language}
-  canonical={`https://cro.cafe/${language}/guests`}
+  canonical={`https://cro.cafe/${language}/guests/`}
 >
-  <Header language={language} currentPath={`/${language}/guests`} />
+  <Header language={language} currentPath={`/${language}/guests/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/guests/`} />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

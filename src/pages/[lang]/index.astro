@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getEpisodesByLanguage, getGuestsByLanguage, getFeaturedQuotes, getPlatformsByCategory, getEpisodeUrl, getGuestUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -129,6 +130,7 @@ const hreflang = {
   hreflang={hreflang}
 >
   <Header language={language} currentPath={`/${language}/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/`} />
   
   <main class="flex-1">
     <!-- Hero Section -->
@@ -147,13 +149,13 @@ const hreflang = {
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href={`/${language}/episodes`}
+              href={`/${language}/episodes/`}
               class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors"
             >
               {t.browseEpisodes}
             </a>
             <a 
-              href={`/${language}/subscribe`}
+              href={`/${language}/subscribe/`}
               class="inline-flex items-center px-8 py-3 border border-primary-600 text-base font-medium rounded-md text-primary-600 bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900 transition-colors"
             >
               {t.subscribeNow}
@@ -361,51 +363,6 @@ const hreflang = {
       </div>
     </section>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div class="col-span-1 md:col-span-2">
-          <div class="flex items-center space-x-2 mb-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-sm">CC</span>
-            </div>
-            <span class="text-xl font-heading font-semibold">CRO.CAFE</span>
-          </div>
-          <p class="text-gray-300 mb-4">
-            {t.footerDescription}
-          </p>
-        </div>
-        
-        <div>
-          <h3 class="text-lg font-semibold mb-4">{t.languages}</h3>
-          <ul class="space-y-2">
-            <li><a href="/" class="text-gray-300 hover:text-white transition-colors">English</a></li>
-            <li><a href="/nl/" class="text-gray-300 hover:text-white transition-colors">Nederlands</a></li>
-            <li><a href="/de/" class="text-gray-300 hover:text-white transition-colors">Deutsch</a></li>
-            <li><a href="/es/" class="text-gray-300 hover:text-white transition-colors">Español</a></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 class="text-lg font-semibold mb-4">{t.subscribeOn}</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Apple Podcasts</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Spotify</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Google Podcasts</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">RSS Feed</a></li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="border-t border-gray-800 pt-8 mt-8 text-center">
-        <p class="text-gray-400">
-          © 2024 CRO.CAFE. All rights reserved. Built with ❤️ and Astro.
-        </p>
-      </div>
-    </div>
-  </footer>
 </BaseLayout>
 
 <style>

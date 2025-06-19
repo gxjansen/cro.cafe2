@@ -10,8 +10,21 @@ export interface Props {
 
 const { language = 'en', currentPath = '/' } = Astro.props;
 
-// Navigation items based on language
-const getNavItems = (lang: Language) => {
+// Check if we're in global mode (on root page or all-languages pages)
+const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/');
+
+// Navigation items based on language and mode
+const getNavItems = (lang: Language, isGlobal: boolean) => {
+  // For global mode, use all-languages paths
+  if (isGlobal) {
+    return [
+      { href: '/all/episodes/', label: 'Episodes' },
+      { href: '/all/guests/', label: 'Guests' },
+      { href: '/subscribe/', label: 'Subscribe' },
+    ];
+  }
+  
+  // For language-specific mode
   const basePath = lang === 'en' ? '' : `/${lang}`;
   
   const navTexts = {
@@ -44,13 +57,13 @@ const getNavItems = (lang: Language) => {
   const texts = navTexts[lang];
   
   return [
-    { href: `${basePath}/episodes`, label: texts.episodes },
-    { href: `${basePath}/guests`, label: texts.guests },
-    { href: `${basePath}/subscribe`, label: texts.subscribe },
+    { href: `${basePath}/episodes/`, label: texts.episodes },
+    { href: `${basePath}/guests/`, label: texts.guests },
+    { href: `${basePath}/subscribe/`, label: texts.subscribe },
   ];
 };
 
-const navItems = getNavItems(language);
+const navItems = getNavItems(language, isGlobalMode);
 ---
 
 <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -59,16 +72,15 @@ const navItems = getNavItems(language);
       <!-- Logo -->
       <div class="flex-shrink-0">
         <a 
-          href={language === 'en' ? '/' : `/${language}`}
+          href={isGlobalMode ? '/' : (language === 'en' ? '/' : `/${language}/`)}
           class="flex items-center space-x-2 group"
           aria-label="CRO.CAFE Home"
         >
-          <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <span class="text-white font-bold text-sm">CC</span>
-          </div>
-          <span class="text-xl font-heading font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            CRO.CAFE
-          </span>
+          <img 
+            src="/images/crocafe-logo.svg" 
+            alt="CRO.CAFE Logo"
+            class="h-8 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
+          />
         </a>
       </div>
 
@@ -80,8 +92,8 @@ const navItems = getNavItems(language);
               href={item.href}
               class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 currentPath.startsWith(item.href)
-                  ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200 font-medium'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800'
               }`}
               aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
             >
@@ -97,7 +109,7 @@ const navItems = getNavItems(language);
         <button
           id="search-toggle"
           type="button"
-          class="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors"
           aria-label="Open search"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +128,7 @@ const navItems = getNavItems(language);
           <button
             id="mobile-menu-toggle"
             type="button"
-            class="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors"
             aria-label="Open main menu"
             aria-expanded="false"
           >

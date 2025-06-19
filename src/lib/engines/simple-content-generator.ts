@@ -198,23 +198,37 @@ export class SimpleContentGenerator {
   }
 
   private generateEpisodeFrontmatter(episode: any): string {
-    // Extract hosts from relationship data
-    const hosts = []
+    // Extract hosts from relationship data and deduplicate
+    const hostsSet = new Set<string>()
     if (episode.host && Array.isArray(episode.host)) {
-      hosts.push(...episode.host.map((h: any) => h.slug || h.name))
+      episode.host.forEach((h: any) => {
+        const hostValue = h.slug || h.name
+        if (hostValue) hostsSet.add(hostValue)
+      })
     }
     if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
-      hosts.push(...episode._nc_m2m_Episodes_Hosts.map((rel: any) => rel.Hosts?.slug || rel.Hosts?.name).filter(Boolean))
+      episode._nc_m2m_Episodes_Hosts.forEach((rel: any) => {
+        const hostValue = rel.Hosts?.slug || rel.Hosts?.name
+        if (hostValue) hostsSet.add(hostValue)
+      })
     }
+    const hosts = Array.from(hostsSet)
 
-    // Extract guests from relationship data
-    const guests = []
+    // Extract guests from relationship data and deduplicate
+    const guestsSet = new Set<string>()
     if (episode.guest && Array.isArray(episode.guest)) {
-      guests.push(...episode.guest.map((g: any) => g.slug || g.name))
+      episode.guest.forEach((g: any) => {
+        const guestValue = g.slug || g.name
+        if (guestValue) guestsSet.add(guestValue)
+      })
     }
     if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
-      guests.push(...episode._nc_m2m_Episodes_Guests.map((rel: any) => rel.Guests?.slug || rel.Guests?.name).filter(Boolean))
+      episode._nc_m2m_Episodes_Guests.forEach((rel: any) => {
+        const guestValue = rel.Guests?.slug || rel.Guests?.name
+        if (guestValue) guestsSet.add(guestValue)
+      })
     }
+    const guests = Array.from(guestsSet)
 
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
@@ -226,6 +240,7 @@ export class SimpleContentGenerator {
       `language: "${episode.language || this.config.defaultLanguage}"`,
       `duration: "${episode.duration || '0'}"`,
       `audioUrl: "${episode.media_url || ''}"`,
+      episode.image_url ? `imageUrl: "${episode.image_url}"` : '',
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
       `transistorId: "${episode.transistor_id || ''}"`,
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
@@ -502,35 +517,34 @@ export class SimpleContentGenerator {
 
     // Always overwrite to ensure updates are synced
 
-    // Extract the actual URL from NocoDB - it might be a single url field or language-specific
-    const baseUrl = platform.url || platform.URL || platform.website || platform.Website || `https://example.com/platform/${slug}`
+    // Extract the actual URL from NocoDB - NO fallbacks to example.com
+    const baseUrl = platform.url || platform.URL || platform.website || platform.Website || ''
     
-    // Build URLs object with all required languages (schema requires all 4)
+    // Build URLs object with all required languages - only use real URLs, no fallbacks
     const urls = {
-      en: platform.url_en || platform['URL EN'] || baseUrl,
-      nl: platform.url_nl || platform['URL NL'] || baseUrl,
-      de: platform.url_de || platform['URL DE'] || baseUrl,
-      es: platform.url_es || platform['URL ES'] || baseUrl
+      en: platform.url_en || platform['URL EN'] || '',
+      nl: platform.url_nl || platform['URL NL'] || '',
+      de: platform.url_de || platform['URL DE'] || '',
+      es: platform.url_es || platform['URL ES'] || ''
     }
 
-    // Get iconUrl - check various possible field names
+    // Get iconUrl - check various possible field names, NO fallback to example.com
     const iconUrl = this.isValidUrl(platform.icon) ? platform.icon :
                    this.isValidUrl(platform.Icon) ? platform.Icon :
                    this.isValidUrl(platform.icon_url) ? platform.icon_url :
                    this.isValidUrl(platform.iconUrl) ? platform.iconUrl :
                    this.isValidUrl(platform.logo) ? platform.logo :
                    this.isValidUrl(platform.Logo) ? platform.Logo :
-                   `https://example.com/icons/${slug}.png`
+                   `/images/platforms/${slug}.png` // Use relative path for local icons
     
     const websiteUrl = baseUrl
 
     // Use proper field mapping for actual NocoDB data structure
-    const platformData = {
+    const platformData: any = {
       id: platform.Id || platform.id || platform.ID,
       name: name,
       slug: slug,
       iconUrl: iconUrl,
-      websiteUrl: websiteUrl,
       urls: urls,
       displayOrder: platform.displayOrder || platform.display_order || platform['Display Order'] || platform.order || 0,
       isActive: platform.isActive !== undefined ? platform.isActive : 
@@ -538,6 +552,11 @@ export class SimpleContentGenerator {
                 platform['Is Active'] !== undefined ? platform['Is Active'] : true,
       createdAt: new Date(platform.CreatedAt || platform.created_at || platform['Created At'] || Date.now()).toISOString(),
       updatedAt: new Date(platform.UpdatedAt || platform.updated_at || platform['Updated At'] || Date.now()).toISOString()
+    }
+
+    // Only add websiteUrl if it's not empty
+    if (websiteUrl) {
+      platformData.websiteUrl = websiteUrl
     }
 
     console.log(`📝 Creating platform file: ${slug}.json for platform: ${name}`)

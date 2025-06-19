@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "name": "Spotify",
+  "slug": "spotify",
+  "iconUrl": "https://example.com/icons/spotify.png",
+  "websiteUrl": "https://spotify.com",
+  "urls": {
+    "en": "https://spotify.com",
+    "nl": "https://spotify.com",
+    "de": "https://spotify.com",
+    "es": "https://spotify.com"
+  },
+  "displayOrder": 0,
+  "isActive": true,
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}

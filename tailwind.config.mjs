@@ -5,41 +5,44 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Teal color palette based on #95c3c0
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#e8f4f3',   // background tints
+          100: '#d1e9e7',  // dark mode text
+          200: '#a3d3ce',  // dark mode accents
+          300: '#95c3c0',  // original - dark mode primary
+          400: '#6ba9a4',  // transitions
+          500: '#4d8783',  // light mode secondary text
+          600: '#3d6b68',  // light mode links/buttons
+          700: '#2e504e',  // light mode body text
+          800: '#1e3533',  // light mode headings
+          900: '#0f1a1a',  // high contrast elements
         },
+        // Coral pink palette based on #dd8e91
         secondary: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
+          50: '#fef1f1',   // background tints
+          100: '#fce3e4',  // dark mode text
+          200: '#f9c7c9',  // dark mode accents
+          300: '#dd8e91',  // original - dark mode primary
+          400: '#d16669',  // transitions
+          500: '#c14448',  // light mode secondary text
+          600: '#9a363a',  // light mode links/buttons
+          700: '#73292c',  // light mode body text
+          800: '#4d1b1d',  // light mode headings
+          900: '#260e0f',  // high contrast elements
         },
-        accent: {
-          50: '#fef7ee',
-          100: '#fdedd3',
-          200: '#fbd9a5',
-          300: '#f8be6d',
-          400: '#f59e0b',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+        // Neutral grays for UI elements
+        gray: {
+          50: '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+          300: '#d1d5db',
+          400: '#9ca3af',
+          500: '#6b7280',
+          600: '#4b5563',
+          700: '#374151',
+          800: '#1f2937',
+          900: '#111827',
         }
       },
       fontFamily: {

@@ -125,14 +125,14 @@ const platformSchema = z.object({
   name: z.string(),
   slug: z.string(),
   iconUrl: z.string(), // Allow relative paths for local images
-  websiteUrl: z.string(),
+  websiteUrl: z.string().optional(),
   
-  // Language-specific URLs
+  // Language-specific URLs - allow empty strings
   urls: z.object({
-    en: z.string().url(),
-    nl: z.string().url(),
-    de: z.string().url(),
-    es: z.string().url(),
+    en: z.string().url().or(z.literal('')),
+    nl: z.string().url().or(z.literal('')),
+    de: z.string().url().or(z.literal('')),
+    es: z.string().url().or(z.literal('')),
   }),
   
   // Display and status

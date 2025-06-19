@@ -1,5 +1,6 @@
 ---
 import type { Language } from '../types';
+import Footer from '../components/Footer.astro';
 
 export interface Props {
   title: string;
@@ -8,6 +9,7 @@ export interface Props {
   canonical?: string;
   hreflang?: Record<Language, string>;
   ogImage?: string;
+  currentPath?: string;
 }
 
 const { 
@@ -16,7 +18,8 @@ const {
   language = 'en', 
   canonical, 
   hreflang,
-  ogImage = '/images/og-default.jpg'
+  ogImage = '/images/og-default.jpg',
+  currentPath = Astro.url.pathname
 } = Astro.props;
 
 const siteUrl = 'https://cro.cafe';
@@ -58,9 +61,9 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <meta property="twitter:site" content="@crocafe" />
     
     <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
-    <link rel="icon" type="image/png" href="/icons/favicon.png" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/crocafe-icon.png" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -102,6 +105,7 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
   <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
     <div class="min-h-screen flex flex-col">
       <slot />
+      <Footer language={language} currentPath={currentPath} />
     </div>
     
     <!-- Analytics and external scripts would go here -->

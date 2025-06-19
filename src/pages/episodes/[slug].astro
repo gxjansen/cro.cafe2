@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import EpisodeImage from '../../components/EpisodeImage.astro';
 import { getEpisodeBySlug, getGuestBySlug, getGuestUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -34,10 +35,10 @@ const description = episode.data.summary || episode.data.description.substring(0
 
 // Generate hreflang URLs for other languages
 const hreflang = {
-  en: `https://cro.cafe/episodes/${episode.data.slug}`,
-  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}`,
-  de: `https://cro.cafe/de/episodes/${episode.data.slug}`,
-  es: `https://cro.cafe/es/episodes/${episode.data.slug}`
+  en: `https://cro.cafe/episodes/${episode.data.slug}/`,
+  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}/`,
+  de: `https://cro.cafe/de/episodes/${episode.data.slug}/`,
+  es: `https://cro.cafe/es/episodes/${episode.data.slug}/`
 };
 ---
 
@@ -45,18 +46,18 @@ const hreflang = {
   title={title}
   description={description}
   language={language}
-  canonical={`https://cro.cafe/episodes/${episode.data.slug}`}
+  canonical={`https://cro.cafe/episodes/${episode.data.slug}/`}
   hreflang={hreflang}
   ogImage={episode.data.imageUrl}
 >
-  <Header language={language} currentPath="/episodes" />
+  <Header language={language} currentPath="/episodes/" />
   
   <main class="flex-grow">
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Episode Header -->
       <header class="mb-8">
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-          <a href="/episodes" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          <a href="/episodes/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             ← Back to Episodes
           </a>
           <span>•</span>
@@ -89,15 +90,13 @@ const hreflang = {
       </header>
 
       <!-- Episode Image -->
-      {episode.data.imageUrl && (
-        <div class="mb-8 rounded-xl overflow-hidden">
-          <img 
-            src={episode.data.imageUrl} 
-            alt={episode.data.title}
-            class="w-full h-auto"
-          />
-        </div>
-      )}
+      <div class="mb-8 rounded-xl overflow-hidden">
+        <EpisodeImage 
+          imageUrl={episode.data.imageUrl} 
+          alt={episode.data.title}
+          class="w-full h-auto max-h-96"
+        />
+      </div>
 
       <!-- Audio Player -->
       <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-xl p-6">
@@ -124,7 +123,7 @@ const hreflang = {
             Share Episode →
           </a>
           <a 
-            href="/subscribe" 
+            href="/subscribe/" 
             class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
           >
             Subscribe to Podcast →

@@ -1,15 +1,15 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
-import { getPlatformsByCategoryAndLanguage } from '../../../utils/content';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getPlatformsByMediaTypeAndLanguage } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 const language: Language = 'en';
 
-// Get platforms by category and language (only showing platforms with valid URLs for English)
-const podcastPlatforms = await getPlatformsByCategoryAndLanguage('podcast', language);
-const musicPlatforms = await getPlatformsByCategoryAndLanguage('music', language);
-const generalPlatforms = await getPlatformsByCategoryAndLanguage('general', language);
+// Get platforms by media type (audio vs video) and language
+const audioPlatforms = await getPlatformsByMediaTypeAndLanguage('audio', language);
+const videoPlatforms = await getPlatformsByMediaTypeAndLanguage('video', language);
 
 // SEO metadata
 const title = 'Subscribe to English CRO.CAFE Podcast';
@@ -20,9 +20,10 @@ const description = 'Subscribe to the English CRO.CAFE podcast on your favorite 
   title={title}
   description={description}
   language={language}
-  canonical="https://cro.cafe/en/subscribe"
+  canonical="https://cro.cafe/en/subscribe/"
 >
-  <Header language={language} currentPath="/en/subscribe" />
+  <Header language={language} currentPath="/en/subscribe/" />
+  <Breadcrumb language={language} currentPath="/en/subscribe/" />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -36,14 +37,14 @@ const description = 'Subscribe to the English CRO.CAFE podcast on your favorite 
         </p>
       </div>
 
-      <!-- Podcast Platforms -->
-      {podcastPlatforms.length > 0 && (
+      <!-- Audio Platforms -->
+      {audioPlatforms.length > 0 && (
         <section class="mb-12">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
-            Podcast Platforms
+            Audio Platforms
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {podcastPlatforms.map((platform) => (
+            {audioPlatforms.map((platform) => (
               <a 
                 href={platform.data.urls[language]} 
                 target="_blank" 
@@ -64,42 +65,14 @@ const description = 'Subscribe to the English CRO.CAFE podcast on your favorite 
         </section>
       )}
 
-      <!-- Music Platforms -->
-      {musicPlatforms.length > 0 && (
+      <!-- Video Platforms -->
+      {videoPlatforms.length > 0 && (
         <section class="mb-12">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
-            Music & Audio Platforms
+            Video Platforms
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {musicPlatforms.map((platform) => (
-              <a 
-                href={platform.data.urls[language]} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-              >
-                <img 
-                  src={platform.data.iconUrl} 
-                  alt={platform.data.name}
-                  class="w-16 h-16 mb-3 object-contain"
-                />
-                <span class="text-gray-900 dark:text-white font-medium text-center">
-                  {platform.data.name}
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <!-- General Platforms -->
-      {generalPlatforms.length > 0 && (
-        <section class="mb-12">
-          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
-            Other Platforms
-          </h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {generalPlatforms.map((platform) => (
+            {videoPlatforms.map((platform) => (
               <a 
                 href={platform.data.urls[language]} 
                 target="_blank" 

@@ -1,5 +1,6 @@
 ---
 import type { Language } from '../types';
+import { getLanguageCounts } from '../utils/content';
 
 export interface Props {
   currentLanguage: Language;
@@ -8,17 +9,58 @@ export interface Props {
 
 const { currentLanguage, currentPath } = Astro.props;
 
+// Get counts for all languages
+const counts = await getLanguageCounts();
+
 const languages = [
-  { code: 'en' as Language, name: 'English', nativeName: 'English', flag: '🇺🇸' },
-  { code: 'nl' as Language, name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
-  { code: 'de' as Language, name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
-  { code: 'es' as Language, name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  { 
+    code: 'global' as 'global', 
+    name: 'All Languages', 
+    nativeName: 'All Languages', 
+    flag: '🌍',
+    episodes: counts.global.episodes,
+    guests: counts.global.guests
+  },
+  { 
+    code: 'en' as Language, 
+    name: 'English', 
+    nativeName: 'English', 
+    flag: '🇺🇸',
+    episodes: counts.en.episodes,
+    guests: counts.en.guests
+  },
+  { 
+    code: 'nl' as Language, 
+    name: 'Dutch', 
+    nativeName: 'Nederlands', 
+    flag: '🇳🇱',
+    episodes: counts.nl.episodes,
+    guests: counts.nl.guests
+  },
+  { 
+    code: 'de' as Language, 
+    name: 'German', 
+    nativeName: 'Deutsch', 
+    flag: '🇩🇪',
+    episodes: counts.de.episodes,
+    guests: counts.de.guests
+  },
+  { 
+    code: 'es' as Language, 
+    name: 'Spanish', 
+    nativeName: 'Español', 
+    flag: '🇪🇸',
+    episodes: counts.es.episodes,
+    guests: counts.es.guests
+  },
 ];
 
-const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
+// Check if we're on a global/all-languages page (root page, /all/ pages, and /subscribe)
+const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/';
+const currentLang = isGlobal ? languages[0] : languages.find(lang => lang.code === currentLanguage) || languages[1];
 
 // Generate language URLs - try to preserve current path structure
-const getLanguageUrl = (langCode: Language) => {
+const getLanguageUrl = (langCode: Language | 'global') => {
   // Remove current language prefix from path to get the base path
   let basePath = currentPath;
   
@@ -36,13 +78,42 @@ const getLanguageUrl = (langCode: Language) => {
     basePath = '/' + basePath;
   }
   
-  // For English, return the path without language prefix
+  // For global option
+  if (langCode === 'global') {
+    // If on episodes or guests pages, go to all-languages version
+    if (basePath.includes('/episodes')) {
+      return '/all/episodes/';
+    }
+    if (basePath.includes('/guests')) {
+      return '/all/guests/';
+    }
+    if (basePath.includes('/subscribe')) {
+      return '/subscribe/';
+    }
+    // Otherwise go to homepage
+    return '/';
+  }
+  
+  // Handle episode, guest, and subscribe pages (both detail and listing pages)
+  if (basePath.includes('/episodes') || basePath.includes('/guests') || basePath.includes('/subscribe')) {
+    // For detail pages, redirect to the listing page for that language
+    if (langCode === 'en') {
+      if (basePath.includes('/episodes')) return '/episodes/';
+      if (basePath.includes('/guests')) return '/guests/';
+      if (basePath.includes('/subscribe')) return '/en/subscribe/';
+    }
+    if (basePath.includes('/episodes')) return `/${langCode}/episodes/`;
+    if (basePath.includes('/guests')) return `/${langCode}/guests/`;
+    if (basePath.includes('/subscribe')) return `/${langCode}/subscribe/`;
+  }
+  
+  // For English, go to the dedicated English homepage or pages
   if (langCode === 'en') {
-    return basePath === '/' ? '/' : basePath;
+    return basePath === '/' ? '/en/' : basePath;
   }
   
   // For other languages, add the language prefix
-  return `/${langCode}${basePath === '/' ? '' : basePath}`;
+  return `/${langCode}${basePath === '/' ? '/' : basePath}`;
 };
 ---
 
@@ -50,7 +121,7 @@ const getLanguageUrl = (langCode: Language) => {
   <button
     id="language-switcher-button"
     type="button"
-    class="inline-flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    class="inline-flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
     aria-expanded="false"
     aria-haspopup="true"
     aria-label="Select language"
@@ -65,35 +136,42 @@ const getLanguageUrl = (langCode: Language) => {
 
   <div
     id="language-switcher-menu"
-    class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+    class="hidden absolute right-0 z-50 mt-2 w-64 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="language-switcher-button"
   >
     <div class="py-1" role="none">
-      {languages.map((lang) => (
-        <a
-          href={getLanguageUrl(lang.code)}
-          class={`flex items-center px-4 py-2 text-sm transition-colors ${
-            lang.code === currentLanguage
-              ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
-              : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-          }`}
-          role="menuitem"
-          aria-current={lang.code === currentLanguage ? 'page' : undefined}
-        >
-          <span class="mr-3">{lang.flag}</span>
-          <div class="flex flex-col">
-            <span class="font-medium">{lang.nativeName}</span>
-            <span class="text-xs text-gray-500 dark:text-gray-400">{lang.name}</span>
-          </div>
-          {lang.code === currentLanguage && (
-            <svg class="ml-auto h-4 w-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-          )}
-        </a>
-      ))}
+      {languages.map((lang) => {
+        const isCurrent = (lang.code === 'global' && isGlobal) || (lang.code === currentLanguage && !isGlobal);
+        return (
+          <a
+            href={getLanguageUrl(lang.code)}
+            class={`flex items-center px-4 py-2 text-sm transition-colors ${
+              isCurrent
+                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700'
+            }`}
+            role="menuitem"
+            aria-current={isCurrent ? 'page' : undefined}
+          >
+            <span class="mr-3 text-lg">{lang.flag}</span>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-medium">{lang.nativeName}</span>
+                {isCurrent && (
+                  <svg class="ml-2 h-4 w-4 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                  </svg>
+                )}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {lang.episodes} episodes · {lang.guests} guests
+              </div>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </div>
 </div>

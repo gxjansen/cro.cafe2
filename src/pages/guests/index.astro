@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -8,24 +9,25 @@ const language: Language = 'en';
 const guests = await getGuestsByLanguage(language);
 
 // SEO metadata
-const title = 'All Guests - CRO.CAFE Podcast';
-const description = 'Meet the experts and thought leaders who have shared their insights on the CRO.CAFE podcast.';
+const title = 'All English-language Guests - CRO.CAFE Podcast';
+const description = 'Meet the experts and thought leaders who have shared their insights on the English-language CRO.CAFE podcast episodes.';
 ---
 
 <BaseLayout 
   title={title}
   description={description}
   language={language}
-  canonical="https://cro.cafe/guests"
+  canonical="https://cro.cafe/guests/"
 >
-  <Header language={language} currentPath="/guests" />
+  <Header language={language} currentPath="/guests/" />
+  <Breadcrumb language={language} currentPath="/guests/" />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Page Header -->
       <div class="text-center mb-12">
         <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-          All Guests
+          All English-language Guests
         </h1>
         <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
           Meet the experts and thought leaders who have shared their insights on CRO, experimentation, and digital optimization.

@@ -1,11 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import { getLatestEpisodesByLanguage, getFeaturedEpisodes, getEpisodeUrl } from '../utils/content';
+import EpisodeImage from '../components/EpisodeImage.astro';
+import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
 const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
-const featuredEpisodes = await getFeaturedEpisodes(4);
+const latestFromEachLanguage = await getLatestEpisodeFromEachLanguage();
+
+// Get hosts and assign them to languages manually for now
+// (The automatic matching can be implemented later when episode-host relationships are clarified)
+const allHosts = await getAllHosts();
+const hostsByLanguage = {
+  en: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts English
+  nl: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts Dutch too  
+  de: allHosts.filter(h => ['michaelwitzenleiter', 'yvonneteufel'].includes(h.data.slug || h.slug)), // Michael & Yvonne host German
+  es: allHosts.filter(h => (h.data.slug || h.slug) === 'ricardotayar') // Ricardo hosts Spanish
+};
 
 const pageTitle = "CRO.CAFE - Conversion Rate Optimization Podcast";
 const pageDescription = "The leading podcast for conversion rate optimization professionals. Episodes in English, Dutch, German, and Spanish covering CRO strategies, case studies, and expert insights.";
@@ -22,16 +33,17 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
     de: "https://cro.cafe/de/",
     es: "https://cro.cafe/es/"
   }}
+  currentPath="/"
 >
   <Header language="en" currentPath="/" />
   
   <main class="flex-1">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
+    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
           <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-6">
-            Welcome to <span class="text-primary-600 dark:text-primary-400">CRO.CAFE</span>
+            Welcome to <span class="text-primary-600 dark:text-primary-300">CRO.CAFE</span>
           </h1>
           <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
             The world's leading podcast for conversion rate optimization professionals. 
@@ -39,14 +51,14 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="/episodes" 
-              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+              href="/all/episodes/" 
+              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
             >
               Browse Episodes
             </a>
             <a 
-              href="/subscribe" 
-              class="inline-flex items-center px-8 py-3 border border-primary-600 text-base font-medium rounded-md text-primary-600 bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900 transition-colors"
+              href="/subscribe/" 
+              class="inline-flex items-center px-8 py-3 border border-primary-600 dark:border-primary-300 text-base font-medium rounded-md text-primary-600 dark:text-primary-300 bg-transparent hover:bg-primary-50 dark:hover:bg-gray-800 transition-colors"
             >
               Subscribe Now
             </a>
@@ -73,13 +85,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             <div class="text-center">
               <div class="text-4xl mb-4">🇺🇸</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">English</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">International CRO insights and strategies</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-4">English-language CRO insights and strategies</p>
+              
+              <!-- Host Information -->
+              {hostsByLanguage.en.length > 0 && (
+                <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4">
+                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Hosted by</h4>
+                  <div class="flex justify-center">
+                    {hostsByLanguage.en.slice(0, 2).map((host) => (
+                      <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
+                        <img 
+                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                          alt={host.data.name}
+                          class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Latest: {latestEpisodesByLanguage.en[0]?.data.title || 'No episodes yet'}
               </div>
               <a 
-                href="/episodes" 
-                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                href="/episodes/" 
+                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
               >
                 View Episodes
               </a>
@@ -91,13 +124,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             <div class="text-center">
               <div class="text-4xl mb-4">🇳🇱</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Nederlands</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">Nederlandse CRO inzichten en strategieën</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-4">Dutch-language CRO inzichten en strategieën</p>
+              
+              <!-- Host Information -->
+              {hostsByLanguage.nl.length > 0 && (
+                <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4">
+                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Gehost door</h4>
+                  <div class="flex justify-center">
+                    {hostsByLanguage.nl.slice(0, 2).map((host) => (
+                      <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
+                        <img 
+                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                          alt={host.data.name}
+                          class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Laatste: {latestEpisodesByLanguage.nl[0]?.data.title || 'Nog geen afleveringen'}
               </div>
               <a 
-                href="/nl/episodes" 
-                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                href="/nl/episodes/" 
+                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
               >
                 Bekijk Afleveringen
               </a>
@@ -109,13 +163,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             <div class="text-center">
               <div class="text-4xl mb-4">🇩🇪</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Deutsch</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">Deutsche CRO Einblicke und Strategien</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-4">German-language CRO Einblicke und Strategien</p>
+              
+              <!-- Host Information -->
+              {hostsByLanguage.de.length > 0 && (
+                <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4">
+                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Moderiert von</h4>
+                  <div class="flex justify-center gap-4">
+                    {hostsByLanguage.de.slice(0, 2).map((host) => (
+                      <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
+                        <img 
+                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                          alt={host.data.name}
+                          class="w-10 h-10 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <div class="text-xs font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Neueste: {latestEpisodesByLanguage.de[0]?.data.title || 'Noch keine Folgen'}
               </div>
               <a 
-                href="/de/episodes" 
-                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                href="/de/episodes/" 
+                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
               >
                 Folgen Ansehen
               </a>
@@ -127,13 +202,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             <div class="text-center">
               <div class="text-4xl mb-4">🇪🇸</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Español</h3>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">Perspectivas y estrategias de CRO en español</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-4">Spanish-language perspectivas y estrategias de CRO</p>
+              
+              <!-- Host Information -->
+              {hostsByLanguage.es.length > 0 && (
+                <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4">
+                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Presentado por</h4>
+                  <div class="flex justify-center">
+                    {hostsByLanguage.es.slice(0, 2).map((host) => (
+                      <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
+                        <img 
+                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                          alt={host.data.name}
+                          class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Último: {latestEpisodesByLanguage.es[0]?.data.title || 'Aún no hay episodios'}
               </div>
               <a 
-                href="/es/episodes" 
-                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                href="/es/episodes/" 
+                class="inline-block px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors"
               >
                 Ver Episodios
               </a>
@@ -143,30 +239,42 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
       </div>
     </section>
 
-    <!-- Featured Episodes -->
-    {featuredEpisodes.length > 0 && (
+    <!-- Latest Episodes from Each Language -->
+    {latestFromEachLanguage.length > 0 && (
       <section class="py-16 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-              Featured Episodes
+              Latest Episodes
             </h2>
             <p class="text-lg text-gray-600 dark:text-gray-300">
-              Don't miss these top episodes across all languages
+              The newest episode from each language
             </p>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredEpisodes.map((episode) => (
+            {latestFromEachLanguage.map((episode) => (
               <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <EpisodeImage 
+                  imageUrl={episode.data.imageUrl} 
+                  alt={episode.data.title}
+                  class="w-full h-48"
+                />
                 <div class="p-6">
                   <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-primary-600 dark:text-primary-400">
                       S{episode.data.season}E{episode.data.episode}
                     </span>
-                    <span class="text-xs text-gray-500 dark:text-gray-400 uppercase">
-                      {episode.data.language}
-                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-lg">
+                        {episode.data.language === 'en' ? '🇺🇸' : 
+                         episode.data.language === 'nl' ? '🇳🇱' :
+                         episode.data.language === 'de' ? '🇩🇪' : '🇪🇸'}
+                      </span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 uppercase">
+                        {episode.data.language}
+                      </span>
+                    </div>
                   </div>
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
                     {episode.data.title}
@@ -175,9 +283,10 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                     {episode.data.description}
                   </p>
                   <div class="flex items-center justify-between">
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                      {episode.data.duration}
-                    </span>
+                    <div class="flex flex-col text-xs text-gray-500 dark:text-gray-400">
+                      <span>{episode.data.duration}</span>
+                      <span>{new Date(episode.data.pubDate).toLocaleDateString()}</span>
+                    </div>
                     <a 
                       href={getEpisodeUrl(episode)}
                       class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
@@ -219,52 +328,6 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
       </div>
     </section>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div class="col-span-1 md:col-span-2">
-          <div class="flex items-center space-x-2 mb-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-sm">CC</span>
-            </div>
-            <span class="text-xl font-heading font-semibold">CRO.CAFE</span>
-          </div>
-          <p class="text-gray-300 mb-4">
-            The world's leading podcast for conversion rate optimization professionals. 
-            Expert insights in English, Dutch, German, and Spanish.
-          </p>
-        </div>
-        
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Languages</h3>
-          <ul class="space-y-2">
-            <li><a href="/" class="text-gray-300 hover:text-white transition-colors">English</a></li>
-            <li><a href="/nl" class="text-gray-300 hover:text-white transition-colors">Nederlands</a></li>
-            <li><a href="/de" class="text-gray-300 hover:text-white transition-colors">Deutsch</a></li>
-            <li><a href="/es" class="text-gray-300 hover:text-white transition-colors">Español</a></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Subscribe</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Apple Podcasts</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Spotify</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Google Podcasts</a></li>
-            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">RSS Feed</a></li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="border-t border-gray-800 pt-8 mt-8 text-center">
-        <p class="text-gray-400">
-          © 2024 CRO.CAFE. All rights reserved. Built with ❤️ and Astro.
-        </p>
-      </div>
-    </div>
-  </footer>
 </BaseLayout>
 
 <style>
