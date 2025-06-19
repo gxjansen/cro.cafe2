@@ -150,6 +150,12 @@ coverage/
 .rollup.cache/
 .turbo/
 
+# Test folders and documentation
+test-content-output/
+test-crud-output/
+tests/
+docs/
+
 # Misc
 *.tgz
 *.tar.gz
