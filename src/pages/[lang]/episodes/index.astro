@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
+import EpisodeCard from '../../../components/EpisodeCard.astro';
 import { getEpisodesByLanguage, getEpisodeUrl, formatDuration } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -91,43 +92,11 @@ const getDateLocale = (lang: Language) => {
       <!-- Episodes Grid -->
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {episodes.map((episode) => (
-          <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-            <a href={`/${language}/episodes/${episode.data.slug || episode.slug}/`} class="block">
-              <div class="aspect-w-16 aspect-h-9 overflow-hidden">
-                <EpisodeImage 
-                  imageUrl={episode.data.imageUrl}
-                  alt={episode.data.title}
-                  class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div class="p-6">
-                <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
-                  <span>S{episode.data.season} E{episode.data.episode}</span>
-                  <span>•</span>
-                  <span>{formatDuration(episode.data.duration)}</span>
-                  <span>•</span>
-                  <time datetime={episode.data.pubDate.toISOString()}>
-                    {new Date(episode.data.pubDate).toLocaleDateString(getDateLocale(language), { 
-                      year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}
-                  </time>
-                </div>
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                  {episode.data.title}
-                </h2>
-                <p class="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
-                  {episode.data.description}
-                </p>
-                {episode.data.guests.length > 0 && (
-                  <div class="text-sm text-gray-500 dark:text-gray-400">
-                    <span class="font-medium">{t.guests}:</span> {episode.data.guests.join(', ')}
-                  </div>
-                )}
-              </div>
-            </a>
-          </article>
+          <EpisodeCard 
+            episode={episode} 
+            showLanguage={false}
+            size="large"
+          />
         ))}
       </div>
 

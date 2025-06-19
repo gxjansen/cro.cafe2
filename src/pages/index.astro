@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import EpisodeImage from '../components/EpisodeImage.astro';
+import EpisodeCard from '../components/EpisodeCard.astro';
 import HostImage from '../components/HostImage.astro';
 import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl } from '../utils/content';
 
@@ -279,48 +280,11 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {latestFromEachLanguage.map((episode) => (
-              <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <EpisodeImage 
-                  imageUrl={episode.data.imageUrl} 
-                  alt={episode.data.title}
-                  class="w-full h-48"
-                />
-                <div class="p-6">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-primary-600 dark:text-primary-400">
-                      S{episode.data.season}E{episode.data.episode}
-                    </span>
-                    <div class="flex items-center gap-2">
-                      <span class="text-lg">
-                        {episode.data.language === 'en' ? '🇺🇸' : 
-                         episode.data.language === 'nl' ? '🇳🇱' :
-                         episode.data.language === 'de' ? '🇩🇪' : '🇪🇸'}
-                      </span>
-                      <span class="text-xs text-gray-500 dark:text-gray-400 uppercase">
-                        {episode.data.language}
-                      </span>
-                    </div>
-                  </div>
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                    {episode.data.title}
-                  </h3>
-                  <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
-                    {episode.data.description}
-                  </p>
-                  <div class="flex items-center justify-between">
-                    <div class="flex flex-col text-xs text-gray-500 dark:text-gray-400">
-                      <span>{episode.data.duration}</span>
-                      <span>{new Date(episode.data.pubDate).toLocaleDateString()}</span>
-                    </div>
-                    <a 
-                      href={getEpisodeUrl(episode)}
-                      class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
-                    >
-                      Listen →
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={true}
+                size="medium"
+              />
             ))}
           </div>
         </div>

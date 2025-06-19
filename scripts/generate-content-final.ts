@@ -79,6 +79,9 @@ async function main() {
     console.log(`Hosts: ${stats.hostsGenerated}`)
     console.log(`Platforms: ${stats.platformsGenerated}`)
     
+    // Add the format expected by the GitHub Action
+    console.log(`📊 Generated: ${stats.episodesGenerated} episodes, ${stats.guestsGenerated} guests, ${stats.hostsGenerated} hosts, ${stats.platformsGenerated} platforms`)
+    
     if (stats.endTime) {
       const duration = stats.endTime.getTime() - stats.startTime.getTime()
       console.log(`Duration: ${duration}ms`)
