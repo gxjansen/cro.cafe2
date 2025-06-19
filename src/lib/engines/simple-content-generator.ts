@@ -391,6 +391,11 @@ export class SimpleContentGenerator {
   private async generateGuestsWithTracking(guests: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('👥 Generating guests...')
     console.log(`🔍 Processing ${guests.length} guests from NocoDB`)
+    
+    // Log first guest structure to understand data format
+    if (guests.length > 0) {
+      console.log('🔍 FIRST GUEST STRUCTURE:', JSON.stringify(guests[0], null, 2))
+    }
 
     for (const guest of guests) {
       try {
@@ -702,17 +707,12 @@ export class SimpleContentGenerator {
   }
 
   private getGuestImageUrl(imageUrl: string | null | undefined): string {
-    // Debug logging to understand image_url field status
-    if (Math.random() < 0.02) { // Log 2% of guests  
-      console.log('🔍 Debug guest imageUrl:', { imageUrl, type: typeof imageUrl })
-    }
+    // ALWAYS log for debugging - temporarily remove sampling
+    console.log('🔍 PROCESSING imageUrl:', { imageUrl, type: typeof imageUrl })
     
     // If no imageUrl, log this fact for debugging
     if (!imageUrl) {
-      // Sample some empty image URLs for debugging
-      if (Math.random() < 0.01) {
-        console.log('🔍 Empty imageUrl detected:', { imageUrl, type: typeof imageUrl })
-      }
+      console.log('🔍 Empty imageUrl detected:', { imageUrl, type: typeof imageUrl })
       return ''
     }
     
