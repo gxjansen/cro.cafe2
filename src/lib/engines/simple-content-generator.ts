@@ -428,6 +428,15 @@ export class SimpleContentGenerator {
   }
 
   private generateGuestFrontmatter(guest: any, slug: string): string {
+    // Debug logging for specific guests
+    if (guest.name && guest.name.toLowerCase().includes('amber')) {
+      console.log('🔍 Debug amber guest data:', JSON.stringify({
+        name: guest.name,
+        image_url: guest.image_url,
+        allFields: Object.keys(guest)
+      }, null, 2))
+    }
+    
     const episodes = Array.isArray(guest.Episodes) ? guest.Episodes.map((e: any) => e.slug || e.Id) : []
     const languages = Array.isArray(guest.Language) ? guest.Language : [this.config.defaultLanguage]
     
@@ -681,6 +690,11 @@ export class SimpleContentGenerator {
   }
 
   private getGuestImageUrl(imageUrl: string | null | undefined): string {
+    // Debug logging for the first few guests
+    if (Math.random() < 0.01) { // Log 1% of guests
+      console.log('🔍 Debug guest imageUrl:', { imageUrl, type: typeof imageUrl })
+    }
+    
     if (!imageUrl) return ''
     
     // If it's already a full URL, use it as-is
