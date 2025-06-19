@@ -2,7 +2,7 @@
   "id": 15,
   "name": "Podcast Addict",
   "slug": "podcast-addict",
-  "iconUrl": "/images/platforms/podcast-addict.png",
+  "iconUrl": "https://example.com/icons/podcast-addict.png",
   "websiteUrl": "https://example.com/platform/podcast-addict",
   "urls": {
     "en": "http://podplayer.net/?podId=2340305",
@@ -13,6 +13,5 @@
   "displayOrder": 15,
   "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
-  "updatedAt": "2025-06-03T18:36:18.000Z",
-  "category": "podcast"
+  "updatedAt": "2025-06-03T18:36:18.000Z"
 }

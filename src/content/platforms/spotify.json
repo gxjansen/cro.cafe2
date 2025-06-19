@@ -2,7 +2,7 @@
   "id": 1,
   "name": "Spotify",
   "slug": "spotify",
-  "iconUrl": "/images/platforms/spotify.png",
+  "iconUrl": "https://example.com/icons/spotify.png",
   "websiteUrl": "https://example.com/platform/spotify",
   "urls": {
     "en": "https://open.spotify.com/show/5TrJo8SegrE2haCeMDLB3M",
@@ -13,6 +13,5 @@
   "displayOrder": 1,
   "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
-  "updatedAt": "2025-06-14T17:57:11.000Z",
-  "category": "podcast"
+  "updatedAt": "2025-06-14T17:57:11.000Z"
 }

@@ -2,7 +2,7 @@
   "id": 21,
   "name": "Stitcher",
   "slug": "stitcher",
-  "iconUrl": "/images/platforms/stitcher.png",
+  "iconUrl": "https://example.com/icons/stitcher.png",
   "websiteUrl": "https://example.com/platform/stitcher",
   "urls": {
     "en": "https://example.com/platform/stitcher",
@@ -13,6 +13,5 @@
   "displayOrder": 21,
   "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
-  "updatedAt": "2025-06-03T18:36:18.000Z",
-  "category": "podcast"
+  "updatedAt": "2025-06-03T18:36:18.000Z"
 }

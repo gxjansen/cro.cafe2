@@ -2,7 +2,7 @@
   "id": 8,
   "name": "iVoox",
   "slug": "ivoox",
-  "iconUrl": "/images/platforms/ivoox.png",
+  "iconUrl": "https://example.com/icons/ivoox.png",
   "websiteUrl": "https://example.com/platform/ivoox",
   "urls": {
     "en": "https://us.ivoox.com/en/podcast-cro-cafe_sq_f1642715_1.html",
@@ -13,6 +13,5 @@
   "displayOrder": 8,
   "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
-  "updatedAt": "2025-06-03T18:36:18.000Z",
-  "category": "general"
+  "updatedAt": "2025-06-03T18:36:18.000Z"
 }
