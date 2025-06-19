@@ -308,32 +308,62 @@ const getDateLocale = (lang: Language) => {
         )}
       </div>
 
-      <!-- Guests Section -->
-      {guestDetails.length > 0 && (
+      <!-- Guest(s) and Host(s) Section -->
+      {guestDetails.length === 1 && hostDetails.length > 0 ? (
+        <!-- Single guest - show guest and host side by side -->
         <div class="mb-8">
-          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-            {guestDetails.length === 1 ? t.guest : t.guests}
-          </h2>
           <div class="grid gap-6 md:grid-cols-2">
-            {guestDetails.map((guest) => guest && (
-              <GuestCard guest={guest} language={language} size="medium" />
-            ))}
+            <!-- Guest Column -->
+            <div>
+              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+                {t.guest}
+              </h2>
+              {guestDetails.map((guest) => guest && (
+                <GuestCard guest={guest} language={language} size="medium" />
+              ))}
+            </div>
+            <!-- Host Column -->
+            <div>
+              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+                {hostDetails.length === 1 ? t.host : t.hosts}
+              </h2>
+              <div class="space-y-6">
+                {hostDetails.map((host) => host && (
+                  <HostCard host={host} language={language} size="medium" />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      ) : (
+        <>
+          <!-- Multiple guests or no guests - show sections separately -->
+          {guestDetails.length > 0 && (
+            <div class="mb-8">
+              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+                {guestDetails.length === 1 ? t.guest : t.guests}
+              </h2>
+              <div class="grid gap-6 md:grid-cols-2">
+                {guestDetails.map((guest) => guest && (
+                  <GuestCard guest={guest} language={language} size="medium" />
+                ))}
+              </div>
+            </div>
+          )}
 
-      <!-- Hosts Section -->
-      {hostDetails.length > 0 && (
-        <div class="mb-8">
-          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-            {hostDetails.length === 1 ? t.host : t.hosts}
-          </h2>
-          <div class="grid gap-6 md:grid-cols-2">
-            {hostDetails.map((host) => host && (
-              <HostCard host={host} language={language} size="medium" />
-            ))}
-          </div>
-        </div>
+          {hostDetails.length > 0 && (
+            <div class="mb-8">
+              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+                {hostDetails.length === 1 ? t.host : t.hosts}
+              </h2>
+              <div class="grid gap-6 md:grid-cols-2">
+                {hostDetails.map((host) => host && (
+                  <HostCard host={host} language={language} size="medium" />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <!-- Transcript Section -->
