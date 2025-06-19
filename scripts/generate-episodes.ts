@@ -277,6 +277,7 @@ class EpisodeGenerator {
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
       `transistorId: "${episode.transistor_id || ''}"`,
       episode.downloads_total ? `downloads_total: ${episode.downloads_total}` : '',
+      episode.episode_type ? `episode_type: "${episode.episode_type}"` : '',
       `status: "${episode.status || 'published'}"`,
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
       `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
