@@ -204,9 +204,16 @@ export class SimpleContentGenerator {
       console.log('📊 Sample episode data structure:', JSON.stringify(episode, null, 2))
     }
     
-    // Debug duration fields to ensure we're using the right one
-    if (episode.duration && episode.duration_formatted) {
-      console.log(`🔍 Duration fields - raw: "${episode.duration}", formatted: "${episode.duration_formatted}"`)
+    // Debug duration fields to ensure we're using the right one (only for first few episodes)
+    if (this.stats.episodesGenerated < 5) {
+      console.log(`🔍 Episode ${episode.Id || episode.episode_number} duration fields:`, {
+        duration: episode.duration,
+        duration_formatted: episode.duration_formatted,
+        Duration: episode.Duration,
+        'Duration Formatted': episode['Duration Formatted'],
+        duration_seconds: episode.duration_seconds,
+        allKeys: Object.keys(episode).filter(k => k.toLowerCase().includes('duration'))
+      })
     }
     
     // Extract hosts from relationship data and deduplicate
@@ -297,12 +304,37 @@ export class SimpleContentGenerator {
     const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
     const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
     
-    // Ensure we only use the raw duration field (in seconds), never the formatted one
-    const durationInSeconds = episode.duration || '0'
+    // Try to find the duration in seconds from various possible field names
+    // Check for duration_seconds, Duration (capitalized), or numeric duration
+    let durationInSeconds = '0'
     
-    // Log if we detect mixed duration formats to help debug
-    if (durationInSeconds && durationInSeconds.toString().includes(':')) {
-      console.warn(`⚠️ Found formatted duration in raw field for episode ${episode.Id}: "${durationInSeconds}" - this should be seconds only`)
+    // First try to find a numeric duration field
+    if (episode.duration_seconds && !episode.duration_seconds.toString().includes(':')) {
+      durationInSeconds = episode.duration_seconds.toString()
+    } else if (episode.Duration && !episode.Duration.toString().includes(':')) {
+      durationInSeconds = episode.Duration.toString()
+    } else if (episode.duration && !episode.duration.toString().includes(':')) {
+      durationInSeconds = episode.duration.toString()
+    } else {
+      // If all duration fields contain colons, we have a problem
+      console.error(`❌ Episode ${episode.Id || episode.episode_number} has no valid duration in seconds. Available fields:`, {
+        duration: episode.duration,
+        Duration: episode.Duration,
+        duration_seconds: episode.duration_seconds,
+        duration_formatted: episode.duration_formatted
+      })
+      
+      // As a fallback, try to convert MM:SS to seconds
+      const formatted = episode.duration || episode.Duration || episode.duration_formatted || '0'
+      if (formatted.toString().includes(':')) {
+        const parts = formatted.toString().split(':')
+        if (parts.length === 2) {
+          const minutes = parseInt(parts[0], 10) || 0
+          const seconds = parseInt(parts[1], 10) || 0
+          durationInSeconds = (minutes * 60 + seconds).toString()
+          console.warn(`⚠️ Converted formatted duration "${formatted}" to ${durationInSeconds} seconds for episode ${episode.Id}`)
+        }
+      }
     }
 
     return [
