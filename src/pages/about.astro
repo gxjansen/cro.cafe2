@@ -1,9 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
+import HostCard from '../components/HostCard.astro';
+import { getAllHosts } from '../utils/content';
 
 const pageTitle = "About CRO.CAFE";
 const pageDescription = "Learn about CRO.CAFE - An interview-driven podcast about CRO, experimentation, user research, and digital marketing";
+
+// Get all hosts
+const allHosts = await getAllHosts();
+
+// Sort hosts in the desired order
+const hostOrder = ['gxjansen', 'ricardotayar', 'michaelwitzenleiter', 'yvonneteufel'];
+const sortedHosts = hostOrder
+  .map(slug => allHosts.find(host => host.slug === slug))
+  .filter(Boolean);
 ---
 
 <BaseLayout 
@@ -21,7 +32,26 @@ const pageDescription = "Learn about CRO.CAFE - An interview-driven podcast abou
         <h1>About CRO.CAFE</h1>
         
         <p class="lead">CRO.CAFE is an interview-driven show about conversion rate optimization (CRO), experimentation, user research, and digital marketing, available in four languages with dedicated hosts for each region.</p>
-        
+      </article>
+      
+      <!-- Host Cards Section -->
+      <section class="mt-12 mb-12">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-8 text-center">Meet Our Hosts</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {sortedHosts.map((host, index) => (
+            <div>
+              <HostCard host={host} size="large" />
+              <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                {index === 0 ? 'Dutch & English Host' : 
+                 index === 1 ? 'Spanish Host' : 
+                 'German Host'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      <article class="prose prose-lg dark:prose-invert max-w-none">
         <h2>Our Vision</h2>
         
         <p><strong>To create a world where having a great user experience is the norm and where we have an open, healthy and powerful CRO ecosystem.</strong></p>
