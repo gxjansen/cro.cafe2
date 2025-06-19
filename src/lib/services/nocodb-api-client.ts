@@ -25,6 +25,7 @@ interface Episode {
   media_url?: string
   published_at?: string
   status: string
+  downloads_total?: number
   host?: any[]
   guest?: any[]
   _nc_m2m_Episodes_Hosts?: any[]

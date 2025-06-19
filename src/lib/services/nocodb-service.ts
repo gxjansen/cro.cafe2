@@ -227,3 +227,4 @@ export class NocoDBService {
     )
   }
 }
+export { NocoDBService as NocdbClient }

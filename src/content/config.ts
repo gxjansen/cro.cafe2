@@ -25,6 +25,7 @@ const episodeSchema = z.object({
   transistorId: z.string(),
   shareUrl: z.string().url().optional(),
   embedHtml: z.string().optional(),
+  downloads_total: z.number().optional(),
   
   // Content flags
   featured: z.boolean().default(false),

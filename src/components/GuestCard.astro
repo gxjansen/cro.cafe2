@@ -78,13 +78,17 @@ const classes = sizeClasses[size];
 <div class={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700 ${classes.container}`}>
   <div class="flex items-start gap-4">
     <!-- Guest Image -->
-    <div class="flex-shrink-0">
+    <a 
+      href={getGuestUrl(guest, language)} 
+      class="flex-shrink-0 hover:opacity-80 transition-opacity"
+      aria-label={`View ${guest.data.name}'s profile`}
+    >
       <GuestImage 
         imageUrl={imageUrl} 
         alt={guest.data.name}
         class={`${classes.image} rounded-full object-cover`}
       />
-    </div>
+    </a>
     
     <!-- Guest Info -->
     <div class="flex-1 min-w-0">
@@ -102,13 +106,16 @@ const classes = sizeClasses[size];
           
           <!-- Job Title and Company -->
           {(guest.data.role || guest.data.company) && (
-            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-2`}>
+            <a 
+              href={getGuestUrl(guest, language)} 
+              class={`${classes.subtitle} text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-300 transition-colors block mb-2`}
+            >
               {guest.data.role && guest.data.company ? (
                 <>{guest.data.role} at {guest.data.company}</>
               ) : (
                 guest.data.role || guest.data.company
               )}
-            </p>
+            </a>
           )}
           
           <!-- Episode Count (optional) -->
