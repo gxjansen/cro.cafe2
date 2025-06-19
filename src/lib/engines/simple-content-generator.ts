@@ -199,36 +199,88 @@ export class SimpleContentGenerator {
 
   private generateEpisodeFrontmatter(episode: any): string {
     // Extract hosts from relationship data and deduplicate
-    const hostsSet = new Set<string>()
+    // Collect all host data first to find slugs
+    const hostData: Array<{slug?: string, name?: string}> = []
+    
     if (episode.host && Array.isArray(episode.host)) {
       episode.host.forEach((h: any) => {
-        const hostValue = h.slug || h.name
-        if (hostValue) hostsSet.add(hostValue)
+        hostData.push({ slug: h.slug, name: h.name })
       })
     }
+    
     if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
       episode._nc_m2m_Episodes_Hosts.forEach((rel: any) => {
-        const hostValue = rel.Hosts?.slug || rel.Hosts?.name
-        if (hostValue) hostsSet.add(hostValue)
+        if (rel.Hosts) {
+          hostData.push({ slug: rel.Hosts.slug, name: rel.Hosts.name })
+        }
       })
     }
-    const hosts = Array.from(hostsSet)
+    
+    // Create a map of names to slugs for deduplication
+    const nameToSlugMap = new Map<string, string>()
+    const finalHostsSet = new Set<string>()
+    
+    // First pass: collect all name->slug mappings
+    hostData.forEach(h => {
+      if (h.slug && h.name) {
+        nameToSlugMap.set(h.name, h.slug)
+      }
+    })
+    
+    // Second pass: add hosts, preferring slugs
+    hostData.forEach(h => {
+      if (h.slug) {
+        finalHostsSet.add(h.slug)
+      } else if (h.name) {
+        // Check if we have a slug for this name
+        const slug = nameToSlugMap.get(h.name)
+        finalHostsSet.add(slug || h.name)
+      }
+    })
+    
+    const hosts = Array.from(finalHostsSet)
 
     // Extract guests from relationship data and deduplicate
-    const guestsSet = new Set<string>()
+    // Collect all guest data first to find slugs
+    const guestData: Array<{slug?: string, name?: string}> = []
+    
     if (episode.guest && Array.isArray(episode.guest)) {
       episode.guest.forEach((g: any) => {
-        const guestValue = g.slug || g.name
-        if (guestValue) guestsSet.add(guestValue)
+        guestData.push({ slug: g.slug, name: g.name })
       })
     }
+    
     if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
       episode._nc_m2m_Episodes_Guests.forEach((rel: any) => {
-        const guestValue = rel.Guests?.slug || rel.Guests?.name
-        if (guestValue) guestsSet.add(guestValue)
+        if (rel.Guests) {
+          guestData.push({ slug: rel.Guests.slug, name: rel.Guests.name })
+        }
       })
     }
-    const guests = Array.from(guestsSet)
+    
+    // Create a map of names to slugs for deduplication
+    const guestNameToSlugMap = new Map<string, string>()
+    const finalGuestsSet = new Set<string>()
+    
+    // First pass: collect all name->slug mappings
+    guestData.forEach(g => {
+      if (g.slug && g.name) {
+        guestNameToSlugMap.set(g.name, g.slug)
+      }
+    })
+    
+    // Second pass: add guests, preferring slugs
+    guestData.forEach(g => {
+      if (g.slug) {
+        finalGuestsSet.add(g.slug)
+      } else if (g.name) {
+        // Check if we have a slug for this name
+        const slug = guestNameToSlugMap.get(g.name)
+        finalGuestsSet.add(slug || g.name)
+      }
+    })
+    
+    const guests = Array.from(finalGuestsSet)
 
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
