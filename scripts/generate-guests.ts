@@ -154,6 +154,16 @@ class GuestGenerator {
     // Check for isFeatured in different possible field names
     const isFeatured = guest.isFeatured ?? guest.is_featured ?? guest.IsFeatured ?? guest.Featured ?? false;
     
+    // Debug log for first few guests
+    if (this.stats.guestsGenerated < 3) {
+      console.log(`Guest ${guest.name}: isFeatured=${isFeatured}, raw fields:`, {
+        isFeatured: guest.isFeatured,
+        is_featured: guest.is_featured,
+        IsFeatured: guest.IsFeatured,
+        Featured: guest.Featured
+      });
+    }
+    
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
       `slug: "${slug}"`,
@@ -168,7 +178,7 @@ class GuestGenerator {
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
-    ].filter(Boolean).join('\n')
+    ].filter(line => line !== null && line !== '').join('\n')
   }
 
   private generateGuestContent(guest: any): string {
