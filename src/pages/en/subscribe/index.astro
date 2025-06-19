@@ -1,40 +1,38 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import { getPlatformsByCategoryAndLanguage } from '../../utils/content';
-import type { Language } from '../../types';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import { getPlatformsByCategoryAndLanguage } from '../../../utils/content';
+import type { Language } from '../../../types';
 
-// Detect if this is global mode based on path
-const isGlobalMode = Astro.url.pathname === '/subscribe/' || Astro.url.pathname === '/subscribe';
 const language: Language = 'en';
 
-// Get platforms by category and language (defaulting to English for root page)
+// Get platforms by category and language (only showing platforms with valid URLs for English)
 const podcastPlatforms = await getPlatformsByCategoryAndLanguage('podcast', language);
 const musicPlatforms = await getPlatformsByCategoryAndLanguage('music', language);
 const generalPlatforms = await getPlatformsByCategoryAndLanguage('general', language);
 
 // SEO metadata
-const title = 'Subscribe to CRO.CAFE Podcast';
-const description = 'Subscribe to the CRO.CAFE podcast on your favorite platform. Available on all major podcast platforms in English, Dutch, German, and Spanish.';
+const title = 'Subscribe to English CRO.CAFE Podcast';
+const description = 'Subscribe to the English CRO.CAFE podcast on your favorite platform. Listen to in-depth conversations about conversion rate optimization and experimentation.';
 ---
 
 <BaseLayout 
   title={title}
   description={description}
   language={language}
-  canonical="https://cro.cafe/subscribe"
+  canonical="https://cro.cafe/en/subscribe"
 >
-  <Header language={language} currentPath="/subscribe" />
+  <Header language={language} currentPath="/en/subscribe" />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Page Header -->
       <div class="text-center mb-12">
         <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-          Subscribe to CRO.CAFE
+          Subscribe to English CRO.CAFE
         </h1>
         <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-          Never miss an episode! Subscribe to the CRO.CAFE podcast on your favorite platform and get notified when new episodes are released.
+          Never miss an English episode! Subscribe to the CRO.CAFE podcast on your favorite platform and get notified when new English episodes are released.
         </p>
       </div>
 
@@ -152,7 +150,7 @@ const description = 'Subscribe to the CRO.CAFE podcast on your favorite platform
           Stay Updated
         </h2>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
-          Get notified about new episodes, exclusive content, and CRO insights delivered to your inbox.
+          Get notified about new English episodes, exclusive content, and CRO insights delivered to your inbox.
         </p>
         <form class="max-w-md mx-auto flex gap-4">
           <input 
@@ -168,6 +166,30 @@ const description = 'Subscribe to the CRO.CAFE podcast on your favorite platform
             Subscribe
           </button>
         </form>
+      </section>
+
+      <!-- Language Information -->
+      <section class="mt-12 bg-accent-50 dark:bg-accent-900/20 rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-4">
+          Multiple Languages Available
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          CRO.CAFE is also available in other languages. Visit our global pages to explore content in Dutch, German, and Spanish.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+            View All Languages
+          </a>
+          <a href="/nl/" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+            Nederlandse Versie
+          </a>
+          <a href="/de/" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+            Deutsche Version
+          </a>
+          <a href="/es/" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+            Versión Español
+          </a>
+        </div>
       </section>
     </div>
   </main>
@@ -187,7 +209,7 @@ const description = 'Subscribe to the CRO.CAFE podcast on your favorite platform
           setTimeout(() => {
             rssButton.textContent = originalText;
           }, 2000);
-        });
+        }, 2000);
       });
     }
   });

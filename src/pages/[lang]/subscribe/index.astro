@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
-import { getPlatformsByCategory } from '../../../utils/content';
+import { getPlatformsByCategoryAndLanguage } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -14,10 +14,10 @@ export async function getStaticPaths() {
 
 const { language } = Astro.props;
 
-// Get platforms by category
-const podcastPlatforms = await getPlatformsByCategory('podcast');
-const musicPlatforms = await getPlatformsByCategory('music');
-const generalPlatforms = await getPlatformsByCategory('general');
+// Get platforms by category and language (only showing platforms with valid URLs for this language)
+const podcastPlatforms = await getPlatformsByCategoryAndLanguage('podcast', language);
+const musicPlatforms = await getPlatformsByCategoryAndLanguage('music', language);
+const generalPlatforms = await getPlatformsByCategoryAndLanguage('general', language);
 
 // Translations
 const translations = {
@@ -116,7 +116,7 @@ const rssFeedUrl = getRssFeedUrl(language);
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {podcastPlatforms.map((platform) => (
               <a 
-                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                href={platform.data.urls[language]} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
@@ -144,7 +144,7 @@ const rssFeedUrl = getRssFeedUrl(language);
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {musicPlatforms.map((platform) => (
               <a 
-                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                href={platform.data.urls[language]} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
@@ -172,7 +172,7 @@ const rssFeedUrl = getRssFeedUrl(language);
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {generalPlatforms.map((platform) => (
               <a 
-                href={platform.data.urls[language] || platform.data.websiteUrl} 
+                href={platform.data.urls[language]} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
