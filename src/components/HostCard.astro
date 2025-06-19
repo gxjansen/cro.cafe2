@@ -96,16 +96,20 @@ const sizeClasses = {
 const classes = sizeClasses[size];
 ---
 
-<div class={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700 ${classes.container} h-full`}>
-  <div class="flex items-start gap-4 h-full">
+<div class={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700 ${classes.container}`}>
+  <div class="flex items-start gap-4">
     <!-- Host Image -->
-    <div class="flex-shrink-0">
+    <a 
+      href={getHostUrl(host)} 
+      class="flex-shrink-0 hover:opacity-80 transition-opacity"
+      aria-label={`View ${host.data.name}'s profile`}
+    >
       <HostImage 
         imageUrl={imageUrl} 
         alt={host.data.name}
         class={`${classes.image} rounded-full object-cover`}
       />
-    </div>
+    </a>
     
     <!-- Host Info -->
     <div class="flex-1 min-w-0">
@@ -123,11 +127,14 @@ const classes = sizeClasses[size];
           
           <!-- Title and Company -->
           {(host.data.title || host.data.role || host.data.company) && (
-            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-2`}>
+            <a 
+              href={getHostUrl(host)} 
+              class={`${classes.subtitle} text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-300 transition-colors block mb-2`}
+            >
               {host.data.title || host.data.role}
               {(host.data.title || host.data.role) && host.data.company && ' at '}
               {host.data.company}
-            </p>
+            </a>
           )}
           
           <!-- Episode Count (optional) -->
