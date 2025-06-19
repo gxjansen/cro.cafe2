@@ -215,28 +215,25 @@ const rssFeedUrl = getRssFeedUrl(language);
               {t.languageNoticeDescription}
             </p>
             <p class="text-gray-600 dark:text-gray-300">
-              {t.otherLanguages}
-              {language !== 'en' && (
-                <>
-                  {' '}<a href="/en/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'nl' ? t.english : language === 'de' ? t.english : language === 'es' ? t.english : 'English'}</a>
-                </>
-              )}
-              {language !== 'nl' && (
-                <>
-                  {language !== 'en' && ', '}<a href="/nl/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.dutch : language === 'de' ? t.dutch : language === 'es' ? t.dutch : 'Nederlands'}</a>
-                </>
-              )}
-              {language !== 'de' && (
-                <>
-                  {', '}<a href="/de/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.german : language === 'nl' ? t.german : language === 'es' ? t.german : 'Deutsch'}</a>
-                </>
-              )}
-              {language !== 'es' && (
-                <>
-                  {', '}<a href="/es/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.spanish : language === 'nl' ? t.spanish : language === 'de' ? t.spanish : 'Español'}</a>
-                </>
-              )}
-              {language === 'de' && t.subscribeToThose ? ` ${t.subscribeToThose}` : ''}.
+              {t.otherLanguages} {(() => {
+                const links = [];
+                if (language !== 'en') {
+                  links.push(<a href="/en/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'nl' ? t.english : language === 'de' ? t.english : language === 'es' ? t.english : 'English'}</a>);
+                }
+                if (language !== 'nl') {
+                  links.push(<a href="/nl/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.dutch : language === 'de' ? t.dutch : language === 'es' ? t.dutch : 'Nederlands'}</a>);
+                }
+                if (language !== 'de') {
+                  links.push(<a href="/de/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.german : language === 'nl' ? t.german : language === 'es' ? t.german : 'Deutsch'}</a>);
+                }
+                if (language !== 'es') {
+                  links.push(<a href="/es/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.spanish : language === 'nl' ? t.spanish : language === 'de' ? t.spanish : 'Español'}</a>);
+                }
+                
+                return links.map((link, index) => (
+                  <>{index > 0 && ', '}{link}</>
+                ));
+              })()}{language === 'de' && t.subscribeToThose ? ` ${t.subscribeToThose}` : ''}.
             </p>
           </div>
         </div>
