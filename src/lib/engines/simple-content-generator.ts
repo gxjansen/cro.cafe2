@@ -199,6 +199,11 @@ export class SimpleContentGenerator {
   }
 
   private generateEpisodeFrontmatter(episode: any): string {
+    // Debug: Log episode structure for the first episode to check for status field
+    if (episode.Id === 1 || episode.episode_number === 1) {
+      console.log('📊 Sample episode data structure:', JSON.stringify(episode, null, 2))
+    }
+    
     // Extract hosts from relationship data and deduplicate
     // Collect all host data first to find slugs
     const hostData: Array<{slug?: string, name?: string}> = []
@@ -300,6 +305,7 @@ export class SimpleContentGenerator {
       episode.image_url ? `imageUrl: "${episode.image_url}"` : '',
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
       `transistorId: "${episode.transistor_id || ''}"`,
+      `status: "${episode.status || 'published'}"`,
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
       `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
       episode.ai_keywords ? `keywords: "${this.escapeYaml(episode.ai_keywords)}"` : '',
