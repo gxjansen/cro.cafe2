@@ -236,8 +236,7 @@ const rssFeedUrl = getRssFeedUrl(language);
                   {', '}<a href="/es/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.spanish : language === 'nl' ? t.spanish : language === 'de' ? t.spanish : 'Español'}</a>
                 </>
               )}
-              {language === 'de' && t.subscribeToThose ? ` ${t.subscribeToThose}` : ''}
-              {'.'}
+              {language === 'de' && t.subscribeToThose ? ` ${t.subscribeToThose}` : ''}.
             </p>
           </div>
         </div>
