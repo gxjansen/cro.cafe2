@@ -39,6 +39,11 @@ on:
         default: 'all'
         type: string
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   # Sync platforms first (simplest, no dependencies)
   sync-platforms:
