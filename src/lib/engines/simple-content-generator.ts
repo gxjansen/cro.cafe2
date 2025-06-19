@@ -283,11 +283,15 @@ export class SimpleContentGenerator {
     
     const guests = Array.from(finalGuestsSet)
 
+    // Clean description and summary by removing HTML first, then escaping for YAML
+    const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
+    const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
+
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
       `slug: "${episode.slug || ''}"`,
-      `description: "${this.escapeYaml(episode.formatted_description || episode.description || '')}"`,
-      `summary: "${this.escapeYaml(episode.formatted_summary || episode.summary || '')}"`,
+      `description: "${cleanDescription}"`,
+      `summary: "${cleanSummary}"`,
       `episode: ${episode.episode_number || 0}`,
       `season: ${episode.season || 1}`,
       `language: "${episode.language || this.config.defaultLanguage}"`,
@@ -560,9 +564,6 @@ export class SimpleContentGenerator {
   }
 
   private async generatePlatformJSON(platform: any): Promise<string> {
-    // Debug log to see actual platform data
-    console.log('📊 Platform data from NocoDB:', JSON.stringify(platform, null, 2))
-    
     // Use the actual field names from NocoDB (case-sensitive - Name with capital N)
     const name = platform.Name || platform.name || `Platform ${platform.Id || platform.id}`
     const slug = platform.slug || platform.Slug || name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
@@ -570,46 +571,31 @@ export class SimpleContentGenerator {
 
     // Always overwrite to ensure updates are synced
 
-    // Extract the actual URL from NocoDB - NO fallbacks to example.com
-    const baseUrl = platform.url || platform.URL || platform.website || platform.Website || ''
-    
-    // Build URLs object with all required languages - only use real URLs, no fallbacks
+    // Build URLs object with all required languages using actual field names
     const urls = {
-      en: platform.url_en || platform['URL EN'] || '',
-      nl: platform.url_nl || platform['URL NL'] || '',
-      de: platform.url_de || platform['URL DE'] || '',
-      es: platform.url_es || platform['URL ES'] || ''
+      en: platform.url_en || '',
+      nl: platform.url_nl || '',
+      de: platform.url_de || '',
+      es: platform.url_es || ''
     }
 
-    // Get iconUrl - check various possible field names, NO fallback to example.com
-    const iconUrl = this.isValidUrl(platform.icon) ? platform.icon :
-                   this.isValidUrl(platform.Icon) ? platform.Icon :
+    // Get iconUrl - check for logo_url field or use default local icon path
+    const iconUrl = this.isValidUrl(platform.logo_url) ? platform.logo_url :
                    this.isValidUrl(platform.icon_url) ? platform.icon_url :
-                   this.isValidUrl(platform.iconUrl) ? platform.iconUrl :
-                   this.isValidUrl(platform.logo) ? platform.logo :
-                   this.isValidUrl(platform.Logo) ? platform.Logo :
+                   this.isValidUrl(platform.icon) ? platform.icon :
                    `/images/platforms/${slug}.png` // Use relative path for local icons
     
-    const websiteUrl = baseUrl
-
     // Use proper field mapping for actual NocoDB data structure
     const platformData: any = {
-      id: platform.Id || platform.id || platform.ID,
+      id: platform.Id,
       name: name,
       slug: slug,
       iconUrl: iconUrl,
       urls: urls,
-      displayOrder: platform.displayOrder || platform.display_order || platform['Display Order'] || platform.order || 0,
-      isActive: platform.isActive !== undefined ? platform.isActive : 
-                platform.is_active !== undefined ? platform.is_active : 
-                platform['Is Active'] !== undefined ? platform['Is Active'] : true,
-      createdAt: new Date(platform.CreatedAt || platform.created_at || platform['Created At'] || Date.now()).toISOString(),
-      updatedAt: new Date(platform.UpdatedAt || platform.updated_at || platform['Updated At'] || Date.now()).toISOString()
-    }
-
-    // Only add websiteUrl if it's not empty
-    if (websiteUrl) {
-      platformData.websiteUrl = websiteUrl
+      displayOrder: platform.display_order || 0,
+      isActive: platform.is_active !== undefined ? platform.is_active : true,
+      createdAt: new Date(platform.CreatedAt || Date.now()).toISOString(),
+      updatedAt: new Date(platform.UpdatedAt || Date.now()).toISOString()
     }
 
     console.log(`📝 Creating platform file: ${slug}.json for platform: ${name}`)
@@ -657,13 +643,25 @@ export class SimpleContentGenerator {
     }
   }
 
+  private cleanHtmlForYaml(html: string): string {
+    if (!html) return ''
+    
+    // First clean HTML thoroughly
+    const cleaned = this.cleanHtmlContent(html)
+    
+    // Then escape for YAML
+    return this.escapeYaml(cleaned)
+  }
+
   private escapeYaml(str: string): string {
     if (!str) return ''
-    // Remove HTML comments and escape for YAML
+    // Clean and escape for YAML safely
     return str
-      .replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
-      .replace(/"/g, '\\"')
+      .replace(/\\/g, '\\\\') // Escape backslashes first
+      .replace(/"/g, '\\"') // Then escape quotes
       .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
