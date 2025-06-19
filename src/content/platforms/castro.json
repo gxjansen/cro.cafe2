@@ -5,12 +5,12 @@
   "iconUrl": "/images/platforms/castro.png",
   "urls": {
     "en": "https://castro.fm/podcast/84fa3007-f1c7-4c42-8b3a-a8a251a02d0d",
-    "nl": "",
+    "nl": "https://castro.fm/itunes/1544626706",
     "de": "",
-    "es": ""
+    "es": "https://castro.fm/podcast/36083955-cd12-4918-9652-8dceef8879d2"
   },
   "displayOrder": 5,
   "isActive": true,
   "createdAt": "2025-06-03T16:14:24.000Z",
-  "updatedAt": "2025-06-03T18:36:18.000Z"
+  "updatedAt": "2025-06-19T09:26:06.000Z"
 }
