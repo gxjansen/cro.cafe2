@@ -71,7 +71,11 @@ const translations = {
     guests: 'Guests in this Episode',
     hosts: 'Hosted by',
     transcript: 'Episode Transcript',
-    topics: 'Topics covered:'
+    topics: 'Topics covered:',
+    discoverMore: 'Discover More Episodes',
+    continueListening: 'Continue your CRO journey with more expert insights',
+    browseMoreEpisodes: 'Browse More Episodes',
+    subscribeNow: 'Subscribe Now'
   },
   nl: {
     backToEpisodes: '← Terug naar Afleveringen',
@@ -85,7 +89,11 @@ const translations = {
     guests: 'Gasten in deze Aflevering',
     hosts: 'Gehost door',
     transcript: 'Aflevering Transcript',
-    topics: 'Onderwerpen behandeld:'
+    topics: 'Onderwerpen behandeld:',
+    discoverMore: 'Ontdek Meer Afleveringen',
+    continueListening: 'Ga door met je CRO reis met meer expert inzichten',
+    browseMoreEpisodes: 'Bekijk Meer Afleveringen',
+    subscribeNow: 'Abonneer Nu'
   },
   de: {
     backToEpisodes: '← Zurück zu Folgen',
@@ -99,7 +107,11 @@ const translations = {
     guests: 'Gäste in dieser Folge',
     hosts: 'Moderiert von',
     transcript: 'Folgen-Transkript',
-    topics: 'Behandelte Themen:'
+    topics: 'Behandelte Themen:',
+    discoverMore: 'Weitere Folgen entdecken',
+    continueListening: 'Setzen Sie Ihre CRO-Reise mit weiteren Experteneinblicken fort',
+    browseMoreEpisodes: 'Weitere Folgen durchsuchen',
+    subscribeNow: 'Jetzt abonnieren'
   },
   es: {
     backToEpisodes: '← Volver a Episodios',
@@ -113,7 +125,11 @@ const translations = {
     guests: 'Invitados en este Episodio',
     hosts: 'Presentado por',
     transcript: 'Transcripción del Episodio',
-    topics: 'Temas cubiertos:'
+    topics: 'Temas cubiertos:',
+    discoverMore: 'Descubre Más Episodios',
+    continueListening: 'Continúa tu viaje CRO con más perspectivas de expertos',
+    browseMoreEpisodes: 'Ver Más Episodios',
+    subscribeNow: 'Suscríbete Ahora'
   }
 };
 
@@ -340,6 +356,32 @@ const getDateLocale = (lang: Language) => {
         </div>
       )}
     </article>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-primary-600 dark:bg-primary-700 mt-16">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+          {t.discoverMore}
+        </h2>
+        <p class="text-xl text-primary-100 mb-8">
+          {t.continueListening}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href={`/${language}/episodes/`}
+            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-gray-50 transition-colors"
+          >
+            {t.browseMoreEpisodes}
+          </a>
+          <a 
+            href={`/${language}/subscribe/`}
+            class="inline-flex items-center px-8 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-primary-500 transition-colors"
+          >
+            {t.subscribeNow}
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 </BaseLayout>
 

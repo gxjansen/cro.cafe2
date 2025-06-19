@@ -5,31 +5,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Teal color palette based on #95c3c0
+        // Teal color palette based on #95c3c0 - optimized for accessibility
         primary: {
           50: '#e8f4f3',   // background tints
-          100: '#d1e9e7',  // dark mode text
-          200: '#a3d3ce',  // dark mode accents
-          300: '#95c3c0',  // original - dark mode primary
-          400: '#6ba9a4',  // transitions
-          500: '#4d8783',  // light mode secondary text
-          600: '#3d6b68',  // light mode links/buttons
-          700: '#2e504e',  // light mode body text
-          800: '#1e3533',  // light mode headings
-          900: '#0f1a1a',  // high contrast elements
+          100: '#d1e9e7',  // light backgrounds
+          200: '#a8d5d2',  // dark mode text/icons (accessible)
+          300: '#95c3c0',  // original - decorative elements
+          400: '#7ba5a2',  // hover states
+          500: '#5a8a87',  // light mode primary (accessible)
+          600: '#4a726f',  // light mode hover
+          700: '#3a5957',  // light mode pressed
+          800: '#2a413f',  // high contrast
+          900: '#1a2827',  // highest contrast
         },
-        // Coral pink palette based on #dd8e91
-        secondary: {
+        // Coral accent palette based on #dd8e91 - optimized for CTAs
+        accent: {
           50: '#fef1f1',   // background tints
-          100: '#fce3e4',  // dark mode text
-          200: '#f9c7c9',  // dark mode accents
-          300: '#dd8e91',  // original - dark mode primary
-          400: '#d16669',  // transitions
-          500: '#c14448',  // light mode secondary text
-          600: '#9a363a',  // light mode links/buttons
-          700: '#73292c',  // light mode body text
-          800: '#4d1b1d',  // light mode headings
-          900: '#260e0f',  // high contrast elements
+          100: '#fce3e4',  // light backgrounds
+          200: '#f0a5a8',  // dark mode CTAs (accessible)
+          300: '#dd8e91',  // original - decorative elements
+          400: '#d47175',  // hover states
+          500: '#c05559',  // light mode CTAs (accessible)
+          600: '#a64549',  // light mode hover
+          700: '#8c3639',  // light mode pressed
+          800: '#722629',  // high contrast
+          900: '#581719',  // highest contrast
         },
         // Neutral grays for UI elements
         gray: {

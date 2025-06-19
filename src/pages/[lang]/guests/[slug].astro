@@ -40,28 +40,44 @@ const translations = {
     about: 'About',
     episodesWith: 'Episodes with',
     availableLanguages: 'Available in other languages',
-    viewIn: 'View in'
+    viewIn: 'View in',
+    discoverMore: 'Discover More CRO Insights',
+    exploreAll: 'Explore all episodes and learn from industry experts',
+    browseAllEpisodes: 'Browse All Episodes',
+    meetMoreGuests: 'Meet More Guests'
   },
   nl: {
     backToGuests: '← Terug naar Alle Gasten',
     about: 'Over',
     episodesWith: 'Afleveringen met',
     availableLanguages: 'Beschikbaar in andere talen',
-    viewIn: 'Bekijk in het'
+    viewIn: 'Bekijk in het',
+    discoverMore: 'Ontdek Meer CRO Inzichten',
+    exploreAll: 'Verken alle afleveringen en leer van industrie experts',
+    browseAllEpisodes: 'Bekijk Alle Afleveringen',
+    meetMoreGuests: 'Ontmoet Meer Gasten'
   },
   de: {
     backToGuests: '← Zurück zu Allen Gästen',
     about: 'Über',
     episodesWith: 'Folgen mit',
     availableLanguages: 'In anderen Sprachen verfügbar',
-    viewIn: 'Ansehen auf'
+    viewIn: 'Ansehen auf',
+    discoverMore: 'Entdecken Sie mehr CRO Einblicke',
+    exploreAll: 'Entdecken Sie alle Folgen und lernen Sie von Branchenexperten',
+    browseAllEpisodes: 'Alle Folgen durchsuchen',
+    meetMoreGuests: 'Mehr Gäste kennenlernen'
   },
   es: {
     backToGuests: '← Volver a Todos los Invitados',
     about: 'Acerca de',
     episodesWith: 'Episodios con',
     availableLanguages: 'Disponible en otros idiomas',
-    viewIn: 'Ver en'
+    viewIn: 'Ver en',
+    discoverMore: 'Descubre más perspectivas de CRO',
+    exploreAll: 'Explora todos los episodios y aprende de expertos de la industria',
+    browseAllEpisodes: 'Ver todos los episodios',
+    meetMoreGuests: 'Conoce más invitados'
   }
 };
 
@@ -210,5 +226,31 @@ const linkedInUrl = getLinkedInUrl(guest);
       )}
 
     </article>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+          {t.discoverMore}
+        </h2>
+        <p class="text-xl text-white/90 mb-8">
+          {t.exploreAll}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href={`/${language}/episodes/`}
+            class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-accent-600 dark:text-accent-700 bg-white hover:bg-white/90 transition-all shadow-lg"
+          >
+            {t.browseAllEpisodes}
+          </a>
+          <a 
+            href={`/${language}/guests/`}
+            class="inline-flex items-center px-8 py-3 border-2 border-white/70 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 transition-all"
+          >
+            {t.meetMoreGuests}
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 </BaseLayout>
