@@ -6,7 +6,7 @@
 
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
-import { NocdbClient } from '../src/lib/services/nocodb-service'
+import { NocoDBWorkingClient as NocdbClient } from '../src/lib/services/nocodb-working-client'
 
 interface GuestGenerationStats {
   guestsGenerated: number
