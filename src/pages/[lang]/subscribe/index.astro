@@ -34,7 +34,13 @@ const translations = {
     stayUpdated: 'Stay Updated',
     newsletterDescription: 'Get notified about new episodes, exclusive content, and CRO insights delivered to your inbox.',
     emailPlaceholder: 'Enter your email',
-    subscribe: 'Subscribe'
+    subscribe: 'Subscribe',
+    languageNotice: 'Please note: You are subscribing to the English episodes only',
+    languageNoticeDescription: 'The links above will only provide notifications for our English episodes.',
+    otherLanguages: 'You can also subscribe to our episodes in',
+    dutch: 'Dutch',
+    german: 'German',
+    spanish: 'Spanish'
   },
   nl: {
     title: 'Abonneer je op CRO.CAFE Podcast',
@@ -49,7 +55,13 @@ const translations = {
     stayUpdated: 'Blijf op de hoogte',
     newsletterDescription: 'Ontvang meldingen over nieuwe afleveringen, exclusieve content en CRO-inzichten in je inbox.',
     emailPlaceholder: 'Voer je e-mail in',
-    subscribe: 'Abonneren'
+    subscribe: 'Abonneren',
+    languageNotice: 'Let op: Je abonneert je alleen op de Nederlandse afleveringen',
+    languageNoticeDescription: 'Via de bovenstaande links ontvang je alleen meldingen voor onze Nederlandse afleveringen.',
+    otherLanguages: 'Je kunt je (ook) abonneren op onze afleveringen in het',
+    english: 'Engels',
+    german: 'Duits',
+    spanish: 'Spaans'
   },
   de: {
     title: 'CRO.CAFE Podcast abonnieren',
@@ -64,7 +76,14 @@ const translations = {
     stayUpdated: 'Bleiben Sie informiert',
     newsletterDescription: 'Erhalten Sie Benachrichtigungen über neue Folgen, exklusive Inhalte und CRO-Einblicke in Ihrem Posteingang.',
     emailPlaceholder: 'Geben Sie Ihre E-Mail ein',
-    subscribe: 'Abonnieren'
+    subscribe: 'Abonnieren',
+    languageNotice: 'Bitte beachte: Du abonnierst dadurch nur die deutschen Folgen',
+    languageNoticeDescription: 'Durch die angegebenen Links erhältst du nur Benachrichtigungen für unsere deutschen Episoden.',
+    otherLanguages: 'Natürlich kannst du (auch) unsere Episoden auf',
+    english: 'Englisch',
+    dutch: 'Niederländisch',
+    spanish: 'Spanisch',
+    subscribeToThose: 'abonnieren'
   },
   es: {
     title: 'Suscríbete al Podcast CRO.CAFE',
@@ -79,7 +98,13 @@ const translations = {
     stayUpdated: 'Mantente actualizado',
     newsletterDescription: 'Recibe notificaciones sobre nuevos episodios, contenido exclusivo y conocimientos de CRO en tu bandeja de entrada.',
     emailPlaceholder: 'Ingresa tu correo',
-    subscribe: 'Suscribirse'
+    subscribe: 'Suscribirse',
+    languageNotice: 'Nota: Solo te suscribirás a los episodios en español',
+    languageNoticeDescription: 'Los enlaces anteriores solo proporcionarán notificaciones para nuestros episodios en español.',
+    otherLanguages: 'También puedes suscribirte a nuestros episodios en',
+    english: 'inglés',
+    dutch: 'neerlandés',
+    german: 'alemán'
   }
 };
 
@@ -175,6 +200,48 @@ const rssFeedUrl = getRssFeedUrl(language);
           </div>
         </section>
       )}
+
+      <!-- Language Notice -->
+      <section class="mt-8 mb-12 bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 rounded-xl p-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {t.languageNotice}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-3">
+              {t.languageNoticeDescription}
+            </p>
+            <p class="text-gray-600 dark:text-gray-300">
+              {t.otherLanguages}
+              {language !== 'en' && (
+                <>
+                  {' '}<a href="/en/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'nl' ? t.english : language === 'de' ? t.english : language === 'es' ? t.english : 'English'}</a>
+                </>
+              )}
+              {language !== 'nl' && (
+                <>
+                  {language !== 'en' && ', '}<a href="/nl/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.dutch : language === 'de' ? t.dutch : language === 'es' ? t.dutch : 'Nederlands'}</a>
+                </>
+              )}
+              {language !== 'de' && (
+                <>
+                  {', '}<a href="/de/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.german : language === 'nl' ? t.german : language === 'es' ? t.german : 'Deutsch'}</a>
+                </>
+              )}
+              {language !== 'es' && (
+                <>
+                  {', '}<a href="/es/subscribe/" class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{language === 'en' ? t.spanish : language === 'nl' ? t.spanish : language === 'de' ? t.spanish : 'Español'}</a>
+                </>
+              )}
+              {language === 'de' && t.subscribeToThose ? ` ${t.subscribeToThose}` : ''}
+              {'.'}
+            </p>
+          </div>
+        </div>
+      </section>
 
       <!-- RSS Feed Section -->
       <section class="mt-12 bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center">
