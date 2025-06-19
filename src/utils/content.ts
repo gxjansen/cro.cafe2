@@ -153,16 +153,25 @@ export async function getGuestEpisodes(guestSlug: string, language: Language) {
 
 // Format episode duration for display
 export function formatDuration(duration: string): string {
-  // Convert "45:30" to "45 min 30 sec" or similar formatting
-  const [minutes, seconds] = duration.split(':').map(Number);
+  // Duration is in seconds, convert to minutes
+  const totalSeconds = parseInt(duration, 10);
   
-  if (minutes >= 60) {
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
+  // Check if duration is valid
+  if (isNaN(totalSeconds) || totalSeconds <= 0) {
+    return '';
   }
   
-  return `${minutes}m ${seconds}s`;
+  // Convert seconds to minutes and round to nearest integer
+  const totalMinutes = Math.round(totalSeconds / 60);
+  
+  // If over 60 minutes, show as hours and minutes
+  if (totalMinutes >= 60) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h ${minutes} min`;
+  }
+  
+  return `${totalMinutes} min`;
 }
 
 // Generate episode URL
@@ -365,4 +374,62 @@ export async function getPlatformCountsByLanguage() {
   }
 
   return counts;
+}
+
+// Get popular episodes from each language based on downloads
+export async function getPopularEpisodeFromEachLanguage() {
+  const episodes = await getCollection('episodes');
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  
+  const result: any[] = [];
+  
+  for (const language of languages) {
+    const popularEpisode = episodes
+      .filter(ep => ep.data.language === language && ep.data.status === 'published' && ep.data.downloads_total)
+      .sort((a, b) => (b.data.downloads_total || 0) - (a.data.downloads_total || 0))[0];
+    
+    if (popularEpisode) {
+      result.push(popularEpisode);
+    }
+  }
+  
+  return result;
+}
+
+// Get popular episodes by language based on downloads
+export async function getPopularEpisodesByLanguage() {
+  const episodes = await getCollection('episodes');
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  
+  const result: Record<Language, any[]> = {
+    en: [],
+    nl: [],
+    de: [],
+    es: []
+  };
+  
+  for (const language of languages) {
+    result[language] = episodes
+      .filter(ep => ep.data.language === language && ep.data.status === 'published' && ep.data.downloads_total)
+      .sort((a, b) => (b.data.downloads_total || 0) - (a.data.downloads_total || 0))
+      .slice(0, 3);
+  }
+  
+  return result;
+}
+
+// Get total content duration by language in hours
+export async function getTotalDurationByLanguage(language: Language): Promise<number> {
+  const episodes = await getEpisodesByLanguage(language);
+  
+  // Sum up all durations (in seconds)
+  const totalSeconds = episodes.reduce((sum, episode) => {
+    const duration = parseInt(episode.data.duration, 10);
+    return sum + (isNaN(duration) ? 0 : duration);
+  }, 0);
+  
+  // Convert to hours and round to 1 decimal place
+  const totalHours = Math.round((totalSeconds / 3600) * 10) / 10;
+  
+  return totalHours;
 }

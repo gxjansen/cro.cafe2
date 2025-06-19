@@ -15,22 +15,22 @@ const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/');
 const translations = {
   en: {
     footerDescription: 'The world\'s leading podcast for conversion rate optimization professionals. Expert insights in English, Dutch, German, and Spanish.',
-    languages: 'Languages',
+    languages: 'Shows',
     subscribeOn: 'Subscribe'
   },
   nl: {
     footerDescription: 'De toonaangevende podcast voor conversion rate optimization professionals. Expert inzichten in het Nederlands.',
-    languages: 'Talen',
+    languages: 'Shows',
     subscribeOn: 'Abonneer op'
   },
   de: {
     footerDescription: 'Der führende Podcast für Conversion Rate Optimization Profis. Experteneinblicke auf Deutsch.',
-    languages: 'Sprachen',
+    languages: 'Shows',
     subscribeOn: 'Abonnieren'
   },
   es: {
     footerDescription: 'El podcast líder para profesionales de optimización de tasa de conversión. Perspectivas de expertos en español.',
-    languages: 'Idiomas',
+    languages: 'Shows',
     subscribeOn: 'Suscríbete'
   }
 };
@@ -65,7 +65,7 @@ const footerDescription = isGlobalMode
         <ul class="space-y-2">
           {isGlobalMode ? (
             <>
-              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">All Languages</a></li>
+              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">All Shows</a></li>
               <li><a href="/en/" class="text-gray-300 hover:text-white transition-colors">English</a></li>
               <li><a href="/nl/" class="text-gray-300 hover:text-white transition-colors">Nederlands</a></li>
               <li><a href="/de/" class="text-gray-300 hover:text-white transition-colors">Deutsch</a></li>
@@ -73,7 +73,7 @@ const footerDescription = isGlobalMode
             </>
           ) : (
             <>
-              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">{language === 'en' ? 'All Languages' : 'Global'}</a></li>
+              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">All Shows</a></li>
               <li><a href="/en/" class={`transition-colors ${language === 'en' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>English</a></li>
               <li><a href="/nl/" class={`transition-colors ${language === 'nl' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>Nederlands</a></li>
               <li><a href="/de/" class={`transition-colors ${language === 'de' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>Deutsch</a></li>

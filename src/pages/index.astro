@@ -4,11 +4,14 @@ import Header from '../components/Header.astro';
 import EpisodeImage from '../components/EpisodeImage.astro';
 import EpisodeCard from '../components/EpisodeCard.astro';
 import HostImage from '../components/HostImage.astro';
-import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl } from '../utils/content';
+import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl, getPopularEpisodeFromEachLanguage, getTotalDurationByLanguage } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
 const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
 const latestFromEachLanguage = await getLatestEpisodeFromEachLanguage();
+
+// Get popular episodes for all languages
+const popularFromEachLanguage = await getPopularEpisodeFromEachLanguage();
 
 // Get all episodes for each language to calculate the total
 const allEpisodesByLanguage = {
@@ -25,6 +28,14 @@ const guestsByLanguage = {
   nl: await getGuestsByLanguage('nl'),
   de: await getGuestsByLanguage('de'),
   es: await getGuestsByLanguage('es')
+};
+
+// Get total content hours for each language
+const totalHoursByLanguage = {
+  en: await getTotalDurationByLanguage('en'),
+  nl: await getTotalDurationByLanguage('nl'),
+  de: await getTotalDurationByLanguage('de'),
+  es: await getTotalDurationByLanguage('es')
 };
 
 // Calculate total published episodes across all languages
@@ -143,7 +154,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
               
               {/* Episode and Guest Stats */}
               <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {allEpisodesByLanguage.en.length} episodes • {guestsByLanguage.en.length} guests
+                {allEpisodesByLanguage.en.length} episodes • {guestsByLanguage.en.length} guests • {totalHoursByLanguage.en}h content
               </div>
               
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
@@ -193,7 +204,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
               
               {/* Episode and Guest Stats */}
               <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {allEpisodesByLanguage.nl.length} afleveringen • {guestsByLanguage.nl.length} gasten
+                {allEpisodesByLanguage.nl.length} afleveringen • {guestsByLanguage.nl.length} gasten • {totalHoursByLanguage.nl}u content
               </div>
               
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
@@ -243,7 +254,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
               
               {/* Episode and Guest Stats */}
               <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {allEpisodesByLanguage.de.length} Folgen • {guestsByLanguage.de.length} Gäste
+                {allEpisodesByLanguage.de.length} Folgen • {guestsByLanguage.de.length} Gäste • {totalHoursByLanguage.de}h Inhalt
               </div>
               
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
@@ -293,7 +304,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
               
               {/* Episode and Guest Stats */}
               <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {allEpisodesByLanguage.es.length} episodios • {guestsByLanguage.es.length} invitados
+                {allEpisodesByLanguage.es.length} episodios • {guestsByLanguage.es.length} invitados • {totalHoursByLanguage.es}h contenido
               </div>
               
               <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
@@ -328,6 +339,32 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {latestFromEachLanguage.map((episode) => (
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={true}
+                size="medium"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Recently Popular Episodes from Each Language -->
+    {popularFromEachLanguage.length > 0 && (
+      <section class="py-16 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              Recently Popular Episodes
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              The most popular episodes from each language based on episode downloads
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularFromEachLanguage.map((episode) => (
               <EpisodeCard 
                 episode={episode} 
                 showLanguage={true}

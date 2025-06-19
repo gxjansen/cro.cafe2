@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeImage from '../../components/EpisodeImage.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestCard from '../../components/GuestCard.astro';
-import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl } from '../../utils/content';
+import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage } from '../../utils/content';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -27,6 +27,10 @@ const platforms = await getValidPlatformsForLanguage(language);
 
 // Get total episode count for this language
 const totalEpisodes = episodes.length;
+
+// Get statistics
+const totalGuests = guests.length;
+const totalHours = await getTotalDurationByLanguage(language);
 
 // Translations
 const translations = {
@@ -54,7 +58,11 @@ const translations = {
     noEpisodes: 'New episodes coming soon!',
     footerDescription: 'The leading podcast for conversion rate optimization professionals. Expert insights in English.',
     languages: 'Languages',
-    subscribeOn: 'Subscribe on'
+    subscribeOn: 'Subscribe on',
+    statsEpisodes: 'Episodes',
+    statsGuests: 'Expert Guests',
+    statsHours: 'Hours of Content',
+    statsSubtitle: 'Join our growing community of CRO professionals'
   },
   nl: {
     title: 'CRO.CAFE Podcast - De Nederlandse CRO & Experimentatie Podcast',
@@ -80,7 +88,11 @@ const translations = {
     noEpisodes: 'Binnenkort komen er nieuwe afleveringen!',
     footerDescription: 'De toonaangevende podcast voor conversion rate optimization professionals. Expert inzichten in het Nederlands.',
     languages: 'Talen',
-    subscribeOn: 'Abonneer op'
+    subscribeOn: 'Abonneer op',
+    statsEpisodes: 'Afleveringen',
+    statsGuests: 'Expert Gasten',
+    statsHours: 'Uur Content',
+    statsSubtitle: 'Sluit je aan bij onze groeiende community van CRO professionals'
   },
   de: {
     title: 'CRO.CAFE Podcast - Der deutsche CRO & Experimentation Podcast', 
@@ -106,7 +118,11 @@ const translations = {
     noEpisodes: 'Neue Folgen kommen bald!',
     footerDescription: 'Der führende Podcast für Conversion Rate Optimization Profis. Experteneinblicke auf Deutsch.',
     languages: 'Sprachen',
-    subscribeOn: 'Abonnieren auf'
+    subscribeOn: 'Abonnieren auf',
+    statsEpisodes: 'Folgen',
+    statsGuests: 'Experten Gäste',
+    statsHours: 'Stunden Inhalt',
+    statsSubtitle: 'Treten Sie unserer wachsenden Community von CRO-Experten bei'
   },
   es: {
     title: 'CRO.CAFE Podcast - El Podcast español de CRO y Experimentación',
@@ -132,7 +148,11 @@ const translations = {
     noEpisodes: '¡Nuevos episodios próximamente!',
     footerDescription: 'El podcast líder para profesionales de optimización de tasa de conversión. Perspectivas de expertos en español.',
     languages: 'Idiomas',
-    subscribeOn: 'Suscribirse en'
+    subscribeOn: 'Suscribirse en',
+    statsEpisodes: 'Episodios',
+    statsGuests: 'Invitados Expertos',
+    statsHours: 'Horas de Contenido',
+    statsSubtitle: 'Únete a nuestra creciente comunidad de profesionales CRO'
   }
 };
 
@@ -185,6 +205,57 @@ const hreflang = {
             >
               {t.subscribeNow}
             </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-gray-50 dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+          <p class="text-base text-gray-600 dark:text-gray-400">
+            {t.statsSubtitle}
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <!-- Episodes Stat -->
+          <div class="text-center">
+            <div class="flex justify-center mb-3">
+              <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalEpisodes}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsEpisodes}</div>
+          </div>
+          
+          <!-- Guests Stat -->
+          <div class="text-center">
+            <div class="flex justify-center mb-3">
+              <div class="w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-accent-600 dark:text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalGuests}+</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsGuests}</div>
+          </div>
+          
+          <!-- Hours Stat -->
+          <div class="text-center">
+            <div class="flex justify-center mb-3">
+              <div class="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-secondary-600 dark:text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalHours}+</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsHours}</div>
           </div>
         </div>
       </div>
