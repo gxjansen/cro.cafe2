@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import HostImage from '../../components/HostImage.astro';
 import { getHostBySlug, getHostLanguages, getHostImageUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -125,8 +126,8 @@ const pageDescription = `${text[pageLanguage].meet} ${host.data.name}, ${host.da
         <div class="text-center">
           <!-- Host Image -->
           <div class="mb-8">
-            <img 
-              src={getHostImageUrl(hostSlug)} 
+            <HostImage 
+              imageUrl={getHostImageUrl(hostSlug)} 
               alt={host.data.name}
               class="w-32 h-32 rounded-full mx-auto object-cover shadow-lg"
             />

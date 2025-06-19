@@ -6,7 +6,7 @@ import { getPlatformsByMediaTypeAndLanguage } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
-  const languages: Language[] = ['nl', 'de', 'es'];
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
   return languages.map(lang => ({
     params: { lang },
     props: { language: lang }
@@ -21,6 +21,21 @@ const videoPlatforms = await getPlatformsByMediaTypeAndLanguage('video', languag
 
 // Translations
 const translations = {
+  en: {
+    title: 'Subscribe to CRO.CAFE Podcast',
+    description: 'Subscribe to the CRO.CAFE podcast on your favorite platform. Listen to in-depth conversations about conversion rate optimization and experimentation.',
+    heading: 'Subscribe to CRO.CAFE',
+    subheading: 'Never miss an episode! Subscribe to the CRO.CAFE podcast on your favorite platform and get notified when new episodes are released.',
+    audioPlatforms: 'Audio Platforms',
+    videoPlatforms: 'Video Platforms',
+    rssFeed: 'RSS Feed',
+    rssDescription: 'You can also subscribe directly via RSS in your favorite podcast app:',
+    copyRss: 'Copy RSS Feed URL',
+    stayUpdated: 'Stay Updated',
+    newsletterDescription: 'Get notified about new episodes, exclusive content, and CRO insights delivered to your inbox.',
+    emailPlaceholder: 'Enter your email',
+    subscribe: 'Subscribe'
+  },
   nl: {
     title: 'Abonneer je op CRO.CAFE Podcast',
     description: 'Abonneer je op de CRO.CAFE podcast op je favoriete platform. Beschikbaar op alle grote podcast platforms in het Nederlands, Engels, Duits en Spaans.',
@@ -105,14 +120,14 @@ const rssFeedUrl = getRssFeedUrl(language);
         </p>
       </div>
 
-      <!-- Audio Platforms -->
-      {audioPlatforms.length > 0 && (
+      <!-- Video Platforms -->
+      {videoPlatforms.length > 0 && (
         <section class="mb-12">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
-            {t.audioPlatforms}
+            {t.videoPlatforms}
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {audioPlatforms.map((platform) => (
+            {videoPlatforms.map((platform) => (
               <a 
                 href={platform.data.urls[language]} 
                 target="_blank" 
@@ -133,14 +148,14 @@ const rssFeedUrl = getRssFeedUrl(language);
         </section>
       )}
 
-      <!-- Video Platforms -->
-      {videoPlatforms.length > 0 && (
+      <!-- Audio Platforms -->
+      {audioPlatforms.length > 0 && (
         <section class="mb-12">
           <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6 text-center">
-            {t.videoPlatforms}
+            {t.audioPlatforms}
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {videoPlatforms.map((platform) => (
+            {audioPlatforms.map((platform) => (
               <a 
                 href={platform.data.urls[language]} 
                 target="_blank" 

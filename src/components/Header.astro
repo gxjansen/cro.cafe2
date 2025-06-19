@@ -25,7 +25,7 @@ const getNavItems = (lang: Language, isGlobal: boolean) => {
   }
   
   // For language-specific mode
-  const basePath = lang === 'en' ? '' : `/${lang}`;
+  const basePath = `/${lang}`;
   
   const navTexts = {
     en: {
@@ -72,7 +72,7 @@ const navItems = getNavItems(language, isGlobalMode);
       <!-- Logo -->
       <div class="flex-shrink-0">
         <a 
-          href={isGlobalMode ? '/' : (language === 'en' ? '/' : `/${language}/`)}
+          href={isGlobalMode ? '/' : `/${language}/`}
           class="flex items-center space-x-2 group"
           aria-label="CRO.CAFE Home"
         >

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import GuestImage from '../../components/GuestImage.astro';
 import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
 
@@ -79,13 +80,11 @@ function getDefaultGuestUrl(guest: any): string {
         <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {sortedGuests.map((guest) => (
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 border border-gray-200 dark:border-gray-700">
-              {guest.data.image && (
-                <img 
-                  src={guest.data.image} 
-                  alt={guest.data.name}
-                  class="w-full h-48 object-cover rounded-lg mb-4"
-                />
-              )}
+              <GuestImage 
+                imageUrl={guest.data.image || guest.data.imageUrl} 
+                alt={guest.data.name}
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
               <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
                 <a href={getDefaultGuestUrl(guest)} class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors">
                   {guest.data.name}
@@ -130,13 +129,11 @@ function getDefaultGuestUrl(guest: any): string {
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {guestsByLanguage[lang].slice(0, 6).map((guest) => (
                 <div class="flex items-center gap-4 bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 transition-colors">
-                  {guest.data.image && (
-                    <img 
-                      src={guest.data.image} 
-                      alt={guest.data.name}
-                      class="w-16 h-16 object-cover rounded-full flex-shrink-0"
-                    />
-                  )}
+                  <GuestImage 
+                    imageUrl={guest.data.image || guest.data.imageUrl} 
+                    alt={guest.data.name}
+                    class="w-16 h-16 object-cover rounded-full flex-shrink-0"
+                  />
                   <div class="flex-1 min-w-0">
                     <h3 class="font-medium text-gray-900 dark:text-white truncate">
                       <a href={getGuestUrl(guest, lang)} class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors">

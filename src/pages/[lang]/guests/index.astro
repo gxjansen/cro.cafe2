@@ -2,11 +2,12 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
+import GuestImage from '../../../components/GuestImage.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
-  const languages: Language[] = ['nl', 'de', 'es'];
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
   return languages.map(lang => ({
     params: { lang },
     props: { language: lang }
@@ -18,6 +19,15 @@ const guests = await getGuestsByLanguage(language);
 
 // Translations
 const translations = {
+  en: {
+    title: 'All English-language Guests - CRO.CAFE Podcast',
+    description: 'Meet the experts and thought leaders who have shared their insights on the English-language CRO.CAFE podcast episodes.',
+    heading: 'All English-language Guests',
+    subheading: 'Meet the experts and thought leaders who have shared their insights on CRO, experimentation, and digital optimization in English-language episodes.',
+    episodes: 'episode',
+    episodesPlural: 'episodes',
+    noGuests: 'No guests available yet. Check back soon!'
+  },
   nl: {
     title: 'Alle Dutch-language Gasten - CRO.CAFE Podcast',
     description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de Dutch-language CRO.CAFE podcast afleveringen.',
@@ -77,13 +87,11 @@ const t = translations[language];
           <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
             <a href={getGuestUrl(guest, language)} class="block p-6">
               <div class="flex items-start gap-4">
-                {guest.data.imageUrl && (
-                  <img 
-                    src={guest.data.imageUrl} 
-                    alt={guest.data.name}
-                    class="w-20 h-20 rounded-full object-cover flex-shrink-0"
-                  />
-                )}
+                <GuestImage 
+                  imageUrl={guest.data.imageUrl || guest.data.image} 
+                  alt={guest.data.name}
+                  class="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                />
                 <div class="flex-1">
                   <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
                     {guest.data.name}

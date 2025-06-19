@@ -168,13 +168,13 @@ export function formatDuration(duration: string): string {
 export function getEpisodeUrl(episode: { data: { language: Language; slug?: string }; slug?: string }): string {
   const { language } = episode.data;
   const slug = episode.data.slug || episode.slug;
-  return language === 'en' ? `/episodes/${slug}/` : `/${language}/episodes/${slug}/`;
+  return `/${language}/episodes/${slug}/`;
 }
 
 // Generate guest URL
 export function getGuestUrl(guest: { data: { slug?: string }; slug?: string }, language: Language): string {
   const slug = guest.data.slug || guest.slug;
-  return language === 'en' ? `/guests/${slug}/` : `/${language}/guests/${slug}/`;
+  return `/${language}/guests/${slug}/`;
 }
 
 // Get latest episodes across all languages for homepage

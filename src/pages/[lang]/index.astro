@@ -2,11 +2,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
-import { getEpisodesByLanguage, getGuestsByLanguage, getFeaturedQuotes, getPlatformsByCategory, getEpisodeUrl, getGuestUrl } from '../../utils/content';
+import EpisodeImage from '../../components/EpisodeImage.astro';
+import GuestImage from '../../components/GuestImage.astro';
+import { getEpisodesByLanguage, getGuestsByLanguage, getFeaturedQuotes, getPlatformsByCategoryAndLanguage, getEpisodeUrl, getGuestUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
-  const languages: Language[] = ['nl', 'de', 'es'];
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
   return languages.map(lang => ({
     params: { lang },
     props: { language: lang }
@@ -21,10 +23,38 @@ const latestEpisodes = episodes.slice(0, 3);
 const guests = await getGuestsByLanguage(language);
 const featuredGuests = guests.slice(0, 4);
 const quotes = await getFeaturedQuotes(language, 3);
-const platforms = await getPlatformsByCategory('podcast');
+const platforms = await getPlatformsByCategoryAndLanguage('podcast', language);
 
 // Translations
 const translations = {
+  en: {
+    title: 'CRO.CAFE Podcast - The English CRO & Experimentation Podcast',
+    description: 'Listen to the CRO.CAFE Podcast - in-depth conversations with leaders in conversion rate optimization, experimentation, and digital growth. Hosted by Guido X Jansen.',
+    heroTitle: 'Welcome to CRO.CAFE',
+    heroSubtitle: 'The leading English podcast for conversion rate optimization professionals',
+    heroDescription: 'In-depth conversations with experts about CRO, experimentation, and digital growth.',
+    browseEpisodes: 'Browse Episodes',
+    subscribeNow: 'Subscribe Now',
+    latestEpisodesTitle: 'Latest Episodes',
+    latestEpisodesSubtitle: 'Listen to our newest conversations about CRO and experimentation',
+    featuredGuestsTitle: 'Featured Guests',
+    featuredGuestsSubtitle: 'Learn from industry leaders and CRO experts',
+    listen: 'Listen',
+    viewProfile: 'View Profile',
+    quotesTitle: 'Inspiring Quotes',
+    quotesSubtitle: 'Wisdom from our guests',
+    listenOn: 'Listen on',
+    newsletterTitle: 'Stay Updated',
+    newsletterSubtitle: 'Get notified about new episodes and exclusive CRO insights',
+    emailPlaceholder: 'Your email address',
+    subscribe: 'Subscribe',
+    season: 'Season',
+    episode: 'Episode',
+    noEpisodes: 'New episodes coming soon!',
+    footerDescription: 'The leading podcast for conversion rate optimization professionals. Expert insights in English.',
+    languages: 'Languages',
+    subscribeOn: 'Subscribe on'
+  },
   nl: {
     title: 'CRO.CAFE Podcast - De Nederlandse CRO & Experimentatie Podcast',
     description: 'Luister naar de CRO.CAFE Podcast - diepe gesprekken met leiders in conversion rate optimization, experimentatie en digitale groei. Gehost door Guido X Jansen.',
@@ -181,13 +211,11 @@ const hreflang = {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {latestEpisodes.map((episode) => (
               <div class="bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                {episode.data.imageUrl && (
-                  <img 
-                    src={episode.data.imageUrl} 
-                    alt={episode.data.title}
-                    class="w-full h-48 object-cover"
-                  />
-                )}
+                <EpisodeImage 
+                  imageUrl={episode.data.imageUrl}
+                  alt={episode.data.title}
+                  class="w-full h-48 object-cover"
+                />
                 <div class="p-6">
                   <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
                     <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
@@ -232,13 +260,11 @@ const hreflang = {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredGuests.map((guest) => (
               <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-                {guest.data.imageUrl && (
-                  <img 
-                    src={guest.data.imageUrl} 
-                    alt={guest.data.name}
-                    class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                  />
-                )}
+                <GuestImage 
+                  imageUrl={guest.data.imageUrl || guest.data.image} 
+                  alt={guest.data.name}
+                  class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                />
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   {guest.data.name}
                 </h3>

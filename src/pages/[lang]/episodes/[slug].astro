@@ -1,15 +1,17 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import EpisodeImage from '../../../components/EpisodeImage.astro';
+import GuestImage from '../../../components/GuestImage.astro';
 import { getEpisodeBySlug, getGuestBySlug, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
   const { getCollection } = await import('astro:content');
   const episodes = await getCollection('episodes');
-  const languages: Language[] = ['nl', 'de', 'es'];
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
   
-  // Generate paths for each non-English episode
+  // Generate paths for each episode by language
   const paths = [];
   for (const lang of languages) {
     const langEpisodes = episodes.filter(ep => ep.data.language === lang);
@@ -36,6 +38,19 @@ const guestDetails = await Promise.all(
 
 // Translations
 const translations = {
+  en: {
+    backToEpisodes: '← Back to Episodes',
+    season: 'Season',
+    episode: 'Episode',
+    listenTo: 'Listen to this episode',
+    share: 'Share Episode →',
+    subscribe: 'Subscribe to Podcast →',
+    description: 'Episode Description',
+    summary: 'Summary',
+    guests: 'Guests in this Episode',
+    transcript: 'Episode Transcript',
+    topics: 'Topics covered:'
+  },
   nl: {
     backToEpisodes: '← Terug naar Afleveringen',
     season: 'Seizoen',
@@ -118,7 +133,7 @@ const getDateLocale = (lang: Language) => {
       <!-- Episode Header -->
       <header class="mb-8">
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-          <a href={`/${language}/episodes`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          <a href={`/${language}/episodes/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             {t.backToEpisodes}
           </a>
           <span>•</span>
@@ -151,15 +166,13 @@ const getDateLocale = (lang: Language) => {
       </header>
 
       <!-- Episode Image -->
-      {episode.data.imageUrl && (
-        <div class="mb-8 rounded-xl overflow-hidden">
-          <img 
-            src={episode.data.imageUrl} 
-            alt={episode.data.title}
-            class="w-full h-auto"
-          />
-        </div>
-      )}
+      <div class="mb-8 rounded-xl overflow-hidden">
+        <EpisodeImage 
+          imageUrl={episode.data.imageUrl} 
+          alt={episode.data.title}
+          class="w-full h-auto max-h-96"
+        />
+      </div>
 
       <!-- Audio Player -->
       <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-xl p-6">
@@ -186,7 +199,7 @@ const getDateLocale = (lang: Language) => {
             {t.share}
           </a>
           <a 
-            href={`/${language}/subscribe`} 
+            href={`/${language}/subscribe/`} 
             class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
           >
             {t.subscribe}
@@ -217,13 +230,11 @@ const getDateLocale = (lang: Language) => {
             {guestDetails.map((guest) => guest && (
               <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
                 <div class="flex items-start gap-4">
-                  {guest.data.imageUrl && (
-                    <img 
-                      src={guest.data.imageUrl} 
-                      alt={guest.data.name}
-                      class="w-16 h-16 rounded-full object-cover"
-                    />
-                  )}
+                  <GuestImage 
+                    imageUrl={guest.data.imageUrl || guest.data.image} 
+                    alt={guest.data.name}
+                    class="w-16 h-16 rounded-full object-cover"
+                  />
                   <div class="flex-1">
                     <h3 class="font-semibold text-gray-900 dark:text-white">
                       <a 

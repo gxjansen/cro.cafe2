@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import EpisodeImage from '../components/EpisodeImage.astro';
+import HostImage from '../components/HostImage.astro';
 import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
@@ -94,8 +95,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                   <div class="flex justify-center">
                     {hostsByLanguage.en.slice(0, 2).map((host) => (
                       <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                        <img 
-                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                        <HostImage 
+                          imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
                           alt={host.data.name}
                           class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
                         />
@@ -133,8 +134,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                   <div class="flex justify-center">
                     {hostsByLanguage.nl.slice(0, 2).map((host) => (
                       <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                        <img 
-                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                        <HostImage 
+                          imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
                           alt={host.data.name}
                           class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
                         />
@@ -172,8 +173,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                   <div class="flex justify-center gap-4">
                     {hostsByLanguage.de.slice(0, 2).map((host) => (
                       <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                        <img 
-                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                        <HostImage 
+                          imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
                           alt={host.data.name}
                           class="w-10 h-10 rounded-full object-cover mx-auto mb-2"
                         />
@@ -211,8 +212,8 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                   <div class="flex justify-center">
                     {hostsByLanguage.es.slice(0, 2).map((host) => (
                       <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                        <img 
-                          src={getHostImageUrl(host.data.slug || host.slug)} 
+                        <HostImage 
+                          imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
                           alt={host.data.name}
                           class="w-12 h-12 rounded-full object-cover mx-auto mb-2"
                         />
