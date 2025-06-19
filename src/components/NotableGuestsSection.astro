@@ -29,12 +29,12 @@ if (featuredGuests.length === 0) {
       guest.data.episodeCount > 0
     )
     .sort((a, b) => (b.data.episodeCount || 0) - (a.data.episodeCount || 0))
-    .slice(0, limit);
+    .slice(0, 6); // Always limit to exactly 6
 }
 
-// Randomize the selection for variety across builds and limit to 6
+// Randomize the selection for variety across builds and limit to exactly 6
 const shuffled = featuredGuests.sort(() => Math.random() - 0.5);
-const selectedGuests = shuffled.slice(0, limit);
+const selectedGuests = shuffled.slice(0, 6);
 
 // Helper function to get guest image
 function getGuestImage(guest: any): string {

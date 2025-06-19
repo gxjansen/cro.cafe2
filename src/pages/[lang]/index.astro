@@ -8,6 +8,7 @@ import GuestCard from '../../components/GuestCard.astro';
 import TestimonialsSection from '../../components/TestimonialsSection.astro';
 import BrandLogoBar from '../../components/BrandLogoBar.astro';
 import HostSection from '../../components/HostSection.astro';
+import NotableGuestsSection from '../../components/NotableGuestsSection.astro';
 import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage, getHostsByLanguage } from '../../utils/content';
 import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
@@ -42,26 +43,7 @@ const popularEpisodes = episodes
   .sort((a, b) => (b.data.downloads_total || 0) - (a.data.downloads_total || 0))
   .slice(0, 3);
 
-// Get featured guests with randomization
-const featuredGuestsList = guests.filter(guest => guest.data.isFeatured);
-const nonFeaturedGuests = guests.filter(guest => !guest.data.isFeatured);
-
-// If we have more than 4 featured guests, randomize selection
-let selectedFeaturedGuests = featuredGuestsList;
-if (featuredGuestsList.length > 4) {
-  // Shuffle and take 4
-  selectedFeaturedGuests = [...featuredGuestsList].sort(() => Math.random() - 0.5).slice(0, 4);
-} else if (featuredGuestsList.length < 4) {
-  // If less than 4 featured, supplement with top guests by episode count
-  const additionalGuests = nonFeaturedGuests
-    .filter(guest => guest.data.episodeCount && guest.data.episodeCount > 0)
-    .sort((a, b) => (b.data.episodeCount || 0) - (a.data.episodeCount || 0))
-    .slice(0, 4 - featuredGuestsList.length);
-  
-  selectedFeaturedGuests = [...featuredGuestsList, ...additionalGuests];
-}
-
-const featuredGuests = selectedFeaturedGuests.slice(0, 4);
+// Featured guests are now handled by NotableGuestsSection component
 const platforms = await getValidPlatformsForLanguage(language);
 
 // Get total episode count for this language
@@ -382,26 +364,7 @@ const hreflang = {
     )}
 
     <!-- Featured Guests -->
-    {featuredGuests.length > 0 && (
-      <section class="py-16 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-              {t.featuredGuestsTitle}
-            </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300">
-              {t.featuredGuestsSubtitle}
-            </p>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredGuests.map((guest) => (
-              <GuestCard guest={guest} language={language} size="medium" />
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
+    <NotableGuestsSection language={language} limit={6} />
 
     <!-- Testimonials -->
     <TestimonialsSection language={language} limit={3} />
