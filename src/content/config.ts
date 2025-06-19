@@ -98,11 +98,12 @@ const hostSchema = z.object({
   title: z.string().optional(),
   role: z.string().optional(),
   
-  // Media
-  imageUrl: z.string().url().optional(),
+  // Media - allow both full URLs and relative paths
+  imageUrl: z.string().optional(),
   
   // Social media - flexible format to handle both YAML arrays and JSON
   socialLinks: z.any().optional(),
+  linkedin: z.string().optional(),
   
   // Relationships
   episodes: z.array(z.string()).optional(), // Episode IDs

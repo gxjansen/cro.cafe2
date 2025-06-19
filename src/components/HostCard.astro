@@ -28,7 +28,13 @@ function getWebsiteUrl(host: any): string | null {
 }
 
 function getLinkedInUrl(host: any): string | null {
-  if (host.data.linkedin) return host.data.linkedin;
+  // First check the direct linkedin field
+  if (host.data.linkedin) {
+    // Ensure it's a full URL
+    const linkedin = host.data.linkedin;
+    return linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`;
+  }
+  // Then check socialLinks array
   if (host.data.socialLinks) {
     const linkedinLink = host.data.socialLinks.find((link: any) => link.platform === 'linkedin');
     return linkedinLink ? linkedinLink.url : null;

@@ -607,7 +607,28 @@ export class SimpleContentGenerator {
   private generateHostFrontmatter(host: any, slug: string): string {
     const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
     
-    // Create social links array from individual fields
+    // Debug logging for first few hosts to see the data structure
+    if (this.stats.hostsGenerated < 3) {
+      console.log(`🔍 Debug host #${this.stats.hostsGenerated + 1} data:`, JSON.stringify({
+        name: host.name,
+        slug: host.slug,
+        linkedin: host.linkedin,
+        LinkedIn: host.LinkedIn,
+        image_url: host.image_url,
+        allFields: Object.keys(host)
+      }, null, 2))
+    }
+    
+    // Handle LinkedIn field - NocoDB only has 'linkedin' field now
+    let linkedinValue = ''
+    if (host.linkedin || host.LinkedIn) {
+      const linkedin = host.linkedin || host.LinkedIn
+      // Ensure it's a full URL
+      const linkedinUrl = linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`
+      linkedinValue = linkedinUrl
+    }
+    
+    // Create social links array for backward compatibility
     const socialLinks = []
     if (host.website || host.Website) {
       socialLinks.push({ platform: 'website', url: host.website || host.Website })
@@ -617,10 +638,19 @@ export class SimpleContentGenerator {
       const twitterUrl = twitter.startsWith('http') ? twitter : `https://twitter.com/${twitter.replace('@', '')}`
       socialLinks.push({ platform: 'twitter', url: twitterUrl })
     }
-    if (host.linkedin || host.LinkedIn) {
-      const linkedin = host.linkedin || host.LinkedIn
-      const linkedinUrl = linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`
-      socialLinks.push({ platform: 'linkedin', url: linkedinUrl })
+    if (linkedinValue) {
+      socialLinks.push({ platform: 'linkedin', url: linkedinValue })
+    }
+
+    // Handle image URL - allow both relative and absolute URLs
+    let imageUrlField = ''
+    if (host.image_url) {
+      if (this.isValidUrl(host.image_url)) {
+        imageUrlField = `imageUrl: "${host.image_url}"`
+      } else if (host.image_url && typeof host.image_url === 'string') {
+        // Assume it's a filename and construct the path
+        imageUrlField = `imageUrl: "/images/hosts/${host.image_url}"`
+      }
     }
 
     return [
@@ -630,9 +660,10 @@ export class SimpleContentGenerator {
       host.company ? `company: "${this.escapeYaml(host.company)}"` : '',
       host.title ? `title: "${this.escapeYaml(host.title)}"` : '',
       host.role ? `role: "${this.escapeYaml(host.role)}"` : '',
-      this.isValidUrl(host.image_url) ? `imageUrl: "${host.image_url}"` : '',
+      imageUrlField,
+      linkedinValue ? `linkedin: "${linkedinValue}"` : '',
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
-      `socialLinks: ${JSON.stringify(socialLinks.length > 0 ? socialLinks : (Array.isArray(host.social_links) ? host.social_links : []))}`,
+      `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(host.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')
