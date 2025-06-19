@@ -1,0 +1,16 @@
+{
+  "id": 28,
+  "name": "Podchaser",
+  "slug": "podchaser",
+  "iconUrl": "/images/platforms/podchaser.png",
+  "urls": {
+    "en": "",
+    "nl": "",
+    "de": "https://www.podchaser.com/podcasts/crocafe-deutsch-4299186",
+    "es": ""
+  },
+  "displayOrder": 0,
+  "isActive": false,
+  "createdAt": "2025-06-19T09:14:44.000Z",
+  "updatedAt": "2025-06-19T09:14:59.000Z"
+}
