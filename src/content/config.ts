@@ -53,8 +53,8 @@ const guestSchema = z.object({
   linkedin: z.string().url().optional(),
   socialLinks: z.any().optional(), // Flexible array format for social links
   
-  // Media
-  imageUrl: z.string().url().optional(),
+  // Media - allow both full URLs and relative paths
+  imageUrl: z.string().optional(),
   
   // Relationships
   episodes: z.array(z.string()).default([]), // Episode slugs

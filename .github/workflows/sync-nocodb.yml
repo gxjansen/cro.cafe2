@@ -1,10 +1,12 @@
-name: Content Synchronization from NocoDB
+name: [DEPRECATED] Content Synchronization from NocoDB
+# This workflow has been replaced by sync-all-content.yml
+# which uses modular workflows to prevent cross-contamination
 
 # Trigger the workflow on multiple events
 on:
-  # Schedule: Run every 6 hours to check for new content
-  schedule:
-    - cron: '0 */6 * * *'
+  # DISABLED - Use sync-all-content.yml instead
+  # schedule:
+  #   - cron: '0 */6 * * *'
   
   # Manual trigger via GitHub UI
   workflow_dispatch:

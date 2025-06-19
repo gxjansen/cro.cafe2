@@ -1,0 +1,85 @@
+name: Sync Episode Images
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger from main sync workflow
+  workflow_call:
+
+env:
+  NODE_VERSION: '20'
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+jobs:
+  sync-images:
+    name: Sync Episode Images
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Pull latest changes
+        run: git pull origin main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create images directory
+        run: mkdir -p public/images/episodes
+      
+      - name: Sync episode images
+        run: |
+          npx tsx scripts/sync-images.ts --output-dir public/images/episodes 2>&1 | tee image-sync.log
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      
+      - name: Check for new images
+        id: check-images
+        run: |
+          if [ -n "$(git status --porcelain public/images/episodes/)" ]; then
+            echo "has-new-images=true" >> $GITHUB_OUTPUT
+            echo "New images detected"
+            NEW_IMAGES=$(git status --porcelain public/images/episodes/ | wc -l)
+            echo "new-images-count=$NEW_IMAGES" >> $GITHUB_OUTPUT
+          else
+            echo "has-new-images=false" >> $GITHUB_OUTPUT
+            echo "No new images"
+          fi
+      
+      - name: Upload image sync report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-sync-report
+          path: |
+            image-sync-report.md
+            image-sync.log
+          retention-days: 30
+      
+      - name: Commit and push images
+        if: steps.check-images.outputs.has-new-images == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add public/images/episodes/
+          [ -f image-sync-report.md ] && git add image-sync-report.md
+          
+          git commit -m "Add episode artwork images
+          
+          Synced ${{ steps.check-images.outputs.new-images-count }} episode images from Transistor CDN"
+          
+          git push

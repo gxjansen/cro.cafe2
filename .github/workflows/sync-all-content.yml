@@ -1,0 +1,161 @@
+name: Sync All Content from NocoDB
+
+on:
+  # Schedule: Run every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+  
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+    inputs:
+      sync_episodes:
+        description: 'Sync episodes'
+        required: false
+        default: true
+        type: boolean
+      sync_guests:
+        description: 'Sync guests'
+        required: false
+        default: true
+        type: boolean
+      sync_hosts:
+        description: 'Sync hosts'
+        required: false
+        default: true
+        type: boolean
+      sync_platforms:
+        description: 'Sync platforms'
+        required: false
+        default: true
+        type: boolean
+      sync_images:
+        description: 'Sync episode images'
+        required: false
+        default: true
+        type: boolean
+      languages:
+        description: 'Languages to sync for episodes (comma-separated: en,nl,de,es or "all")'
+        required: false
+        default: 'all'
+        type: string
+
+jobs:
+  # Sync platforms first (simplest, no dependencies)
+  sync-platforms:
+    if: github.event_name == 'schedule' || github.event.inputs.sync_platforms == 'true'
+    uses: ./.github/workflows/sync-platforms.yml
+    secrets:
+      NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+      NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+      NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+  
+  # Sync hosts (no dependencies on other content)
+  sync-hosts:
+    if: github.event_name == 'schedule' || github.event.inputs.sync_hosts == 'true'
+    uses: ./.github/workflows/sync-hosts.yml
+    secrets:
+      NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+      NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+      NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+  
+  # Sync guests (no dependencies on other content)
+  sync-guests:
+    if: github.event_name == 'schedule' || github.event.inputs.sync_guests == 'true'
+    uses: ./.github/workflows/sync-guests.yml
+    secrets:
+      NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+      NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+      NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+  
+  # Sync episodes (depends on hosts and guests being available)
+  sync-episodes:
+    needs: [sync-hosts, sync-guests]
+    if: |
+      always() && 
+      (github.event_name == 'schedule' || github.event.inputs.sync_episodes == 'true') &&
+      (needs.sync-hosts.result == 'success' || needs.sync-hosts.result == 'skipped') &&
+      (needs.sync-guests.result == 'success' || needs.sync-guests.result == 'skipped')
+    uses: ./.github/workflows/sync-episodes.yml
+    with:
+      languages: ${{ github.event.inputs.languages || 'all' }}
+    secrets:
+      NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+      NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+      NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+  
+  # Sync images after episodes
+  sync-images:
+    needs: sync-episodes
+    if: |
+      always() && 
+      (github.event_name == 'schedule' || github.event.inputs.sync_images == 'true') &&
+      needs.sync-episodes.result == 'success'
+    uses: ./.github/workflows/sync-images.yml
+    secrets: inherit
+  
+  # Summary job
+  summary:
+    name: Create Summary
+    runs-on: ubuntu-latest
+    needs: [sync-platforms, sync-hosts, sync-guests, sync-episodes, sync-images]
+    if: always()
+    
+    steps:
+      - name: Create job summary
+        run: |
+          echo "# NocoDB Content Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## Sync Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Platforms
+          if [ "${{ needs.sync-platforms.result }}" = "success" ]; then
+            echo "✅ **Platforms**: ${{ needs.sync-platforms.outputs.platforms-generated || '0' }} synced" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-platforms.result }}" = "skipped" ]; then
+            echo "⏭️ **Platforms**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Platforms**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Hosts
+          if [ "${{ needs.sync-hosts.result }}" = "success" ]; then
+            echo "✅ **Hosts**: ${{ needs.sync-hosts.outputs.hosts-generated || '0' }} synced" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-hosts.result }}" = "skipped" ]; then
+            echo "⏭️ **Hosts**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Hosts**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Guests
+          if [ "${{ needs.sync-guests.result }}" = "success" ]; then
+            echo "✅ **Guests**: ${{ needs.sync-guests.outputs.guests-generated || '0' }} synced" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-guests.result }}" = "skipped" ]; then
+            echo "⏭️ **Guests**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Guests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Episodes
+          if [ "${{ needs.sync-episodes.result }}" = "success" ]; then
+            echo "✅ **Episodes**: ${{ needs.sync-episodes.outputs.episodes-generated || '0' }} synced" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-episodes.result }}" = "skipped" ]; then
+            echo "⏭️ **Episodes**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Episodes**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Images
+          if [ "${{ needs.sync-images.result }}" = "success" ]; then
+            echo "✅ **Images**: Synced" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-images.result }}" = "skipped" ]; then
+            echo "⏭️ **Images**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Images**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Workflow Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY

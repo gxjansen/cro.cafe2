@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HostCard from '../components/HostCard.astro';
+import { getAllHosts } from '../utils/content';
+
+const hosts = await getAllHosts();
+---
+
+<BaseLayout title="Host Cards Test">
+  <div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-8">All Host Cards</h1>
+    
+    <div class="grid gap-6 md:grid-cols-2">
+      {hosts.map((host) => (
+        <div>
+          <h3 class="text-xl font-semibold mb-2">{host.data.name}</h3>
+          <p class="text-sm text-gray-600 mb-2">Image URL: {host.data.imageUrl}</p>
+          <HostCard host={host} />
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

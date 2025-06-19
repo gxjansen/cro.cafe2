@@ -648,8 +648,13 @@ export class SimpleContentGenerator {
       if (this.isValidUrl(host.image_url)) {
         imageUrlField = `imageUrl: "${host.image_url}"`
       } else if (host.image_url && typeof host.image_url === 'string') {
-        // Assume it's a filename and construct the path
-        imageUrlField = `imageUrl: "/images/hosts/${host.image_url}"`
+        // Check if it already contains the path
+        if (host.image_url.startsWith('/images/hosts/')) {
+          imageUrlField = `imageUrl: "${host.image_url}"`
+        } else {
+          // Assume it's just a filename and construct the path
+          imageUrlField = `imageUrl: "/images/hosts/${host.image_url}"`
+        }
       }
     }
 
@@ -823,8 +828,14 @@ export class SimpleContentGenerator {
     
     // If it's a relative filename, construct the path to /images/guests/
     if (imageUrl && typeof imageUrl === 'string') {
-      console.log('🔍 Converting relative imageUrl:', imageUrl, '-> /images/guests/' + imageUrl)
-      return `imageUrl: "/images/guests/${imageUrl}"`
+      // Check if it already contains the path
+      if (imageUrl.startsWith('/images/guests/')) {
+        console.log('🔍 ImageUrl already has path:', imageUrl)
+        return `imageUrl: "${imageUrl}"`
+      } else {
+        console.log('🔍 Converting relative imageUrl:', imageUrl, '-> /images/guests/' + imageUrl)
+        return `imageUrl: "/images/guests/${imageUrl}"`
+      }
     }
     
     return ''

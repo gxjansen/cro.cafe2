@@ -1,0 +1,123 @@
+name: Sync Episodes from NocoDB
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+    inputs:
+      languages:
+        description: 'Languages to sync (comma-separated: en,nl,de,es or "all")'
+        required: false
+        default: 'all'
+        type: string
+  
+  # Trigger from main sync workflow
+  workflow_call:
+    inputs:
+      languages:
+        description: 'Languages to sync'
+        required: false
+        default: 'all'
+        type: string
+    secrets:
+      NOCODB_API_KEY:
+        required: true
+      NOCODB_BASE_URL:
+        required: true
+      NOCODB_BASE_ID:
+        required: true
+
+env:
+  NODE_VERSION: '20'
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+jobs:
+  sync-episodes:
+    name: Sync Episodes
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    outputs:
+      episodes-generated: ${{ steps.generate.outputs.episodes-generated }}
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create episode directories
+        run: |
+          mkdir -p src/content/episodes/en
+          mkdir -p src/content/episodes/nl
+          mkdir -p src/content/episodes/de
+          mkdir -p src/content/episodes/es
+      
+      - name: Generate episodes
+        id: generate
+        run: |
+          ARGS=""
+          if [ "${{ inputs.languages }}" != "all" ] && [ -n "${{ inputs.languages }}" ]; then
+            ARGS="--languages ${{ inputs.languages }}"
+          fi
+          
+          npx tsx scripts/generate-episodes.ts $ARGS 2>&1 | tee episode-generation.log
+          
+          # Extract statistics
+          EPISODES_GENERATED=$(grep "✅ Generated" episode-generation.log | grep -oE '[0-9]+ episodes' | grep -oE '[0-9]+' || echo "0")
+          echo "episodes-generated=$EPISODES_GENERATED" >> $GITHUB_OUTPUT
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain src/content/episodes/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Episode changes detected"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No episode changes"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add src/content/episodes/
+          
+          COMMIT_MSG="Update episode content from NocoDB
+          
+          Episodes: ${{ steps.generate.outputs.episodes-generated }} generated"
+          
+          git commit -m "$COMMIT_MSG"
+          
+          # Pull and merge with conflict resolution
+          git fetch origin main
+          if ! git merge origin/main --no-edit; then
+            echo "Resolving conflicts by favoring local changes..."
+            git status --porcelain | grep "^UU" | while IFS= read -r line; do
+              file="${line:3}"
+              git checkout --ours "$file"
+              git add "$file"
+            done
+            git commit --no-edit || echo "No conflicts to resolve"
+          fi
+          
+          git push
