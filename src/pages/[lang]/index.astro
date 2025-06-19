@@ -7,7 +7,9 @@ import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestCard from '../../components/GuestCard.astro';
 import TestimonialsSection from '../../components/TestimonialsSection.astro';
 import BrandLogoBar from '../../components/BrandLogoBar.astro';
-import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage } from '../../utils/content';
+import HostSection from '../../components/HostSection.astro';
+import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage, getHostsByLanguage } from '../../utils/content';
+import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -24,6 +26,15 @@ const { language } = Astro.props;
 const episodes = await getEpisodesByLanguage(language);
 const latestEpisodes = episodes.slice(0, 3);
 const guests = await getGuestsByLanguage(language);
+// Get hosts manually by language (since the automatic matching has ID mismatches)
+const allHosts = await getCollection('hosts');
+const hostsByLanguageMap = {
+  en: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts English
+  nl: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts Dutch too  
+  de: allHosts.filter(h => ['michaelwitzenleiter', 'yvonneteufel'].includes(h.data.slug || h.slug)), // Michael & Yvonne host German
+  es: allHosts.filter(h => (h.data.slug || h.slug) === 'ricardotayar') // Ricardo hosts Spanish
+};
+const hosts = hostsByLanguageMap[language] || [];
 
 // Get popular episodes based on downloads
 const popularEpisodes = episodes
@@ -92,7 +103,9 @@ const translations = {
     statsHours: 'Hours of Content',
     statsSubtitle: 'Join our growing community of CRO professionals',
     popularEpisodesTitle: 'Popular Episodes',
-    popularEpisodesSubtitle: 'Most downloaded episodes from our community'
+    popularEpisodesSubtitle: 'Most listened to episodes from our community',
+    hostSectionTitle: 'Your Host',
+    hostSectionSubtitle: 'Meet the expert bringing you insights from the CRO industry'
   },
   nl: {
     title: 'CRO.CAFE Podcast - De Nederlandse CRO & Experimentatie Podcast',
@@ -124,7 +137,9 @@ const translations = {
     statsHours: 'Uur Content',
     statsSubtitle: 'Sluit je aan bij onze groeiende community van CRO professionals',
     popularEpisodesTitle: 'Populaire Afleveringen',
-    popularEpisodesSubtitle: 'Meest gedownloade afleveringen van onze community'
+    popularEpisodesSubtitle: 'Meest beluisterde afleveringen van onze community',
+    hostSectionTitle: 'Je Host',
+    hostSectionSubtitle: 'Ontmoet de expert die je inzichten brengt uit de CRO industrie'
   },
   de: {
     title: 'CRO.CAFE Podcast - Der deutsche CRO & Experimentation Podcast', 
@@ -156,7 +171,9 @@ const translations = {
     statsHours: 'Stunden Inhalt',
     statsSubtitle: 'Treten Sie unserer wachsenden Community von CRO-Experten bei',
     popularEpisodesTitle: 'Beliebte Folgen',
-    popularEpisodesSubtitle: 'Die meistgeladenen Folgen unserer Community'
+    popularEpisodesSubtitle: 'Die meistgehörten Folgen unserer Community',
+    hostSectionTitle: 'Ihr Moderator',
+    hostSectionSubtitle: 'Lernen Sie den Experten kennen, der Ihnen Einblicke aus der CRO-Branche bringt'
   },
   es: {
     title: 'CRO.CAFE Podcast - El Podcast español de CRO y Experimentación',
@@ -188,7 +205,9 @@ const translations = {
     statsHours: 'Horas de Contenido',
     statsSubtitle: 'Únete a nuestra creciente comunidad de profesionales CRO',
     popularEpisodesTitle: 'Episodios Populares',
-    popularEpisodesSubtitle: 'Los episodios más descargados de nuestra comunidad'
+    popularEpisodesSubtitle: 'Los episodios más escuchados de nuestra comunidad',
+    hostSectionTitle: 'Tu Presentador',
+    hostSectionSubtitle: 'Conoce al experto que te trae conocimientos de la industria CRO'
   }
 };
 
@@ -299,6 +318,14 @@ const hreflang = {
 
     <!-- Brand Logo Bar -->
     <BrandLogoBar />
+
+    <!-- Host Section -->
+    <HostSection 
+      hosts={hosts}
+      language={language}
+      title={hosts.length > 1 ? t.hostSectionTitle.replace('Your Host', 'Your Hosts').replace('Je Host', 'Je Hosts').replace('Ihr Moderator', 'Ihre Moderatoren').replace('Tu Presentador', 'Tus Presentadores') : t.hostSectionTitle}
+      subtitle={t.hostSectionSubtitle}
+    />
 
     <!-- Latest Episodes -->
     <section class="py-16 bg-white dark:bg-gray-800">

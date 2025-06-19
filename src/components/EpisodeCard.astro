@@ -24,7 +24,7 @@ const languageInfo = {
 const sizeClasses = {
   small: {
     container: 'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
-    image: 'w-full h-32',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-4',
     title: 'text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
     description: 'text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2',
@@ -32,7 +32,7 @@ const sizeClasses = {
   },
   medium: {
     container: 'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
-    image: 'w-full h-48',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-6',
     title: 'text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
     description: 'text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3',
@@ -40,7 +40,7 @@ const sizeClasses = {
   },
   large: {
     container: 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300',
-    image: 'w-full h-56',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-6',
     title: 'text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
     description: 'text-gray-600 dark:text-gray-400 mb-4 line-clamp-3',
@@ -61,12 +61,14 @@ const episodeUrl = getEpisodeUrl(episode);
     class="block"
     aria-describedby={`episode-${episode.id || episode.slug}-meta`}
   >
-    <div class="aspect-w-16 aspect-h-9 overflow-hidden">
-      <EpisodeImage 
-        imageUrl={episode.data.imageUrl} 
-        alt={`Cover art for episode: ${episode.data.title}`}
-        class={classes.image}
-      />
+    <div class="relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div class={classes.imageContainer}>
+        <EpisodeImage 
+          imageUrl={episode.data.imageUrl} 
+          alt={`Cover art for episode: ${episode.data.title}`}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
     </div>
     <div class={classes.padding}>
       <!-- Episode metadata (season/episode or badge + language) -->

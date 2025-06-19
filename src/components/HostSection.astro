@@ -1,0 +1,139 @@
+---
+import HostImage from './HostImage.astro';
+import type { Language } from '../types';
+
+export interface Props {
+  hosts: any[];
+  language: Language;
+  title: string;
+  subtitle?: string;
+}
+
+const { hosts, language, title, subtitle } = Astro.props;
+
+// Helper function to get LinkedIn URL
+function getLinkedInUrl(host: any): string | null {
+  // First check the direct linkedin field
+  if (host.data.linkedin) {
+    const linkedin = host.data.linkedin;
+    return linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`;
+  }
+  // Then check socialLinks array
+  if (host.data.socialLinks) {
+    const linkedinLink = host.data.socialLinks.find((link: any) => link.platform === 'linkedin');
+    return linkedinLink ? linkedinLink.url : null;
+  }
+  return null;
+}
+
+// Helper function to get host URL
+function getHostUrl(host: any): string {
+  const slug = host.data.slug || host.slug;
+  return `/hosts/${slug}/`;
+}
+
+// Helper function to get host image URL
+function getHostImageUrl(host: any): string {
+  if (host.data.imageUrl) return host.data.imageUrl;
+  if (host.data.image) return host.data.image;
+  
+  // Use the utility function as fallback
+  const slug = host.data.slug || host.slug;
+  return `/images/hosts/${slug}.webp`;
+}
+---
+
+{hosts.length > 0 && (
+  <section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {title}
+        </h2>
+        {subtitle && (
+          <p class="text-lg text-gray-600 dark:text-gray-300">
+            {subtitle}
+          </p>
+        )}
+      </div>
+      
+      <div class={`grid gap-8 ${hosts.length === 1 ? 'grid-cols-1 max-w-2xl mx-auto' : 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto'}`}>
+        {hosts.map((host) => {
+          const linkedInUrl = getLinkedInUrl(host);
+          const imageUrl = getHostImageUrl(host);
+          
+          return (
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <div class="flex flex-col items-center text-center">
+                <!-- Host Image -->
+                <a 
+                  href={getHostUrl(host)}
+                  class="block mb-6 hover:opacity-80 transition-opacity"
+                  aria-label={`View ${host.data.name}'s profile`}
+                >
+                  <HostImage 
+                    imageUrl={imageUrl} 
+                    alt={`Photo of ${host.data.name}, host`}
+                    class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-600 shadow-lg"
+                  />
+                </a>
+                
+                <!-- Host Info -->
+                <div class="flex-1">
+                  <!-- Host Name -->
+                  <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                    <a 
+                      href={getHostUrl(host)}
+                      class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
+                    >
+                      {host.data.name}
+                    </a>
+                  </h3>
+                  
+                  <!-- Role -->
+                  {host.data.role && (
+                    <p class="text-lg text-primary-600 dark:text-primary-400 font-medium mb-4">
+                      {host.data.role}
+                    </p>
+                  )}
+                  
+                  <!-- Bio -->
+                  {host.data.bio && (
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                      {host.data.bio}
+                    </p>
+                  )}
+                  
+                  <!-- Links -->
+                  <div class="flex justify-center gap-4">
+                    <a 
+                      href={getHostUrl(host)}
+                      class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:text-gray-900 dark:hover:bg-primary-500 transition-colors"
+                    >
+                      View Profile
+                    </a>
+                    
+                    {linkedInUrl && (
+                      <a 
+                        href={linkedInUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center px-4 py-2 border border-primary-600 dark:border-primary-400 text-primary-600 dark:text-primary-400 rounded-md hover:bg-primary-50 dark:hover:bg-gray-600 transition-colors"
+                        aria-label={`${host.data.name} on LinkedIn`}
+                      >
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+)}
