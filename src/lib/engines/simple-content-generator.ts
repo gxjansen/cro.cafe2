@@ -6,6 +6,7 @@ import { DeletionTracker } from './deletion-tracker.js'
 /**
  * Simple Content Generation Engine for GitHub Actions
  * Uses direct NocoDB API calls instead of MCP
+ * Includes improved deduplication for hosts/guests
  */
 
 interface ContentGenerationConfig {
