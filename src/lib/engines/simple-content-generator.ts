@@ -390,6 +390,7 @@ export class SimpleContentGenerator {
 
   private async generateGuestsWithTracking(guests: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('👥 Generating guests...')
+    console.log(`🔍 Processing ${guests.length} guests from NocoDB`)
 
     for (const guest of guests) {
       try {
@@ -429,7 +430,7 @@ export class SimpleContentGenerator {
 
   private generateGuestFrontmatter(guest: any, slug: string): string {
     // Debug logging for first few guests to understand data structure
-    if (this.stats.guestsGenerated < 3) {
+    if (this.stats.guestsGenerated < 5) {
       console.log(`🔍 Debug guest #${this.stats.guestsGenerated + 1} data:`, JSON.stringify({
         name: guest.name,
         slug: guest.slug,
@@ -438,7 +439,17 @@ export class SimpleContentGenerator {
       }, null, 2))
     }
     
-    const episodes = Array.isArray(guest.Episodes) ? guest.Episodes.map((e: any) => e.slug || e.Id) : []
+    // Also log if this is specifically the amber-taal guest
+    if (guest.name && guest.name.toLowerCase().includes('amber')) {
+      console.log(`🔍 DEBUG AMBER TAAL guest data:`, JSON.stringify(guest, null, 2))
+    }
+    
+    // Filter episodes to only include published ones
+    const allEpisodes = Array.isArray(guest.Episodes) ? guest.Episodes : []
+    const publishedEpisodes = allEpisodes.filter((e: any) => e.status === 'published' || !e.status) // Default to published if no status
+    const episodes = publishedEpisodes.map((e: any) => e.slug || e.Id)
+    const episodeCount = publishedEpisodes.length
+    
     const languages = Array.isArray(guest.Language) ? guest.Language : [this.config.defaultLanguage]
     
     // Create social links array from individual fields
@@ -453,7 +464,7 @@ export class SimpleContentGenerator {
       `bio: "${this.escapeYaml(guest.ai_bio || guest.bio || '')}"`,
       guest.company ? `company: "${this.escapeYaml(guest.company)}"` : '',
       guest.role ? `role: "${this.escapeYaml(guest.role)}"` : '',
-      `episodeCount: ${guest.episode_count || 0}`,
+      `episodeCount: ${episodeCount}`,
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
       `languages: [${languages.map((l: string) => `"${l}"`).join(', ')}]`,
       this.getGuestImageUrl(guest.image_url),

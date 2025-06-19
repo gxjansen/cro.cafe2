@@ -97,6 +97,20 @@ const getDateLocale = (lang: Language) => {
   };
   return locales[lang];
 };
+
+// Get LinkedIn URL from socialLinks
+function getLinkedInUrl(guest: any): string | null {
+  if (guest.data.linkedin) {
+    return guest.data.linkedin;
+  }
+  if (guest.data.socialLinks) {
+    const linkedinLink = guest.data.socialLinks.find((link: any) => link.platform === 'linkedin');
+    return linkedinLink ? linkedinLink.url : null;
+  }
+  return null;
+}
+
+const linkedInUrl = getLinkedInUrl(guest);
 ---
 
 <BaseLayout 
@@ -131,9 +145,9 @@ const getDateLocale = (lang: Language) => {
               {guest.data.name}
             </h1>
             
-            {guest.data.title && guest.data.company && (
+            {(guest.data.role || guest.data.title) && guest.data.company && (
               <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
-                {guest.data.title} at {guest.data.company}
+                {guest.data.role || guest.data.title} at {guest.data.company}
               </p>
             )}
             
@@ -167,9 +181,9 @@ const getDateLocale = (lang: Language) => {
                 </a>
               )}
               
-              {guest.data.linkedin && (
+              {linkedInUrl && (
                 <a 
-                  href={guest.data.linkedin} 
+                  href={linkedInUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   class="flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"

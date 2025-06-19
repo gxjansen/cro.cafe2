@@ -1,0 +1,20 @@
+{
+  "id": 3,
+  "name": "Google Podcasts",
+  "slug": "google-podcasts",
+  "iconUrl": "/images/platforms/google-podcasts.png",
+  "websiteUrl": "https://podcasts.google.com",
+  "urls": {
+    "en": "https://podcasts.google.com/feed/aHR0cHM6Ly9leGFtcGxlLmNvbS9lbg",
+    "nl": "https://podcasts.google.com/feed/aHR0cHM6Ly9leGFtcGxlLmNvbS9ubA",
+    "de": "https://podcasts.google.com/feed/aHR0cHM6Ly9leGFtcGxlLmNvbS9kZQ",
+    "es": "https://podcasts.google.com/feed/aHR0cHM6Ly9leGFtcGxlLmNvbS9lcw"
+  },
+  "displayOrder": 3,
+  "isActive": true,
+  "featured": true,
+  "order": 3,
+  "category": "podcast",
+  "createdAt": "2024-06-19T00:00:00.000Z",
+  "updatedAt": "2024-06-19T00:00:00.000Z"
+}

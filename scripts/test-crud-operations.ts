@@ -128,6 +128,7 @@ async function testCRUDOperations() {
           slug: 'john-doe',
           name: 'John Doe',
           bio: 'Expert in CRO',
+          image_url: 'john-doe.jpeg',
           episode_count: 1,
           CreatedAt: new Date('2024-01-01'),
           UpdatedAt: new Date('2024-01-01')
@@ -203,6 +204,7 @@ async function testCRUDOperations() {
           slug: 'john-doe',
           name: 'John Doe',
           bio: 'Senior Expert in CRO',  // Updated
+          image_url: 'john-doe.jpeg',
           episode_count: 2,  // Updated
           CreatedAt: new Date('2024-01-01'),
           UpdatedAt: new Date('2024-01-15')  // Updated
@@ -213,6 +215,7 @@ async function testCRUDOperations() {
           slug: 'jane-smith',
           name: 'Jane Smith',
           bio: 'Conversion Specialist',
+          image_url: 'jane-smith.jpg',
           episode_count: 1,
           CreatedAt: new Date('2024-01-15'),
           UpdatedAt: new Date('2024-01-15')
@@ -284,6 +287,7 @@ async function testCRUDOperations() {
           slug: 'jane-smith',
           name: 'Jane Smith',
           bio: 'Conversion Specialist',
+          image_url: 'jane-smith.jpg',
           episode_count: 1,
           CreatedAt: new Date('2024-01-15'),
           UpdatedAt: new Date('2024-01-15')

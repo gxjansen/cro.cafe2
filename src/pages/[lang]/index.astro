@@ -3,8 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeImage from '../../components/EpisodeImage.astro';
-import GuestImage from '../../components/GuestImage.astro';
-import { getEpisodesByLanguage, getGuestsByLanguage, getFeaturedQuotes, getPlatformsByCategoryAndLanguage, getEpisodeUrl, getGuestUrl } from '../../utils/content';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import GuestCard from '../../components/GuestCard.astro';
+import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl } from '../../utils/content';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -22,8 +23,7 @@ const episodes = await getEpisodesByLanguage(language);
 const latestEpisodes = episodes.slice(0, 3);
 const guests = await getGuestsByLanguage(language);
 const featuredGuests = guests.slice(0, 4);
-const quotes = await getFeaturedQuotes(language, 3);
-const platforms = await getPlatformsByCategoryAndLanguage('podcast', language);
+const platforms = await getValidPlatformsForLanguage(language);
 
 // Translations
 const translations = {
@@ -41,8 +41,6 @@ const translations = {
     featuredGuestsSubtitle: 'Learn from industry leaders and CRO experts',
     listen: 'Listen',
     viewProfile: 'View Profile',
-    quotesTitle: 'Inspiring Quotes',
-    quotesSubtitle: 'Wisdom from our guests',
     listenOn: 'Listen on',
     newsletterTitle: 'Stay Updated',
     newsletterSubtitle: 'Get notified about new episodes and exclusive CRO insights',
@@ -69,8 +67,6 @@ const translations = {
     featuredGuestsSubtitle: 'Leer van industrie leiders en CRO experts',
     listen: 'Luisteren',
     viewProfile: 'Bekijk Profiel',
-    quotesTitle: 'Inspirerende Quotes',
-    quotesSubtitle: 'Wijsheid van onze gasten',
     listenOn: 'Luister op',
     newsletterTitle: 'Blijf Op De Hoogte',
     newsletterSubtitle: 'Ontvang meldingen over nieuwe afleveringen en exclusieve CRO inzichten',
@@ -97,8 +93,6 @@ const translations = {
     featuredGuestsSubtitle: 'Lernen Sie von Branchenführern und CRO-Experten',
     listen: 'Anhören',
     viewProfile: 'Profil Ansehen',
-    quotesTitle: 'Inspirierende Zitate',
-    quotesSubtitle: 'Weisheit von unseren Gästen',
     listenOn: 'Hören auf',
     newsletterTitle: 'Bleiben Sie Informiert',
     newsletterSubtitle: 'Erhalten Sie Benachrichtigungen über neue Folgen und exklusive CRO-Einblicke',
@@ -125,8 +119,6 @@ const translations = {
     featuredGuestsSubtitle: 'Aprende de líderes de la industria y expertos en CRO',
     listen: 'Escuchar',
     viewProfile: 'Ver Perfil',
-    quotesTitle: 'Citas Inspiradoras',
-    quotesSubtitle: 'Sabiduría de nuestros invitados',
     listenOn: 'Escuchar en',
     newsletterTitle: 'Mantente Actualizado',
     newsletterSubtitle: 'Recibe notificaciones sobre nuevos episodios y conocimientos exclusivos de CRO',
@@ -210,32 +202,11 @@ const hreflang = {
         {latestEpisodes.length > 0 ? (
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {latestEpisodes.map((episode) => (
-              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                <EpisodeImage 
-                  imageUrl={episode.data.imageUrl}
-                  alt={episode.data.title}
-                  class="w-full h-48 object-cover"
-                />
-                <div class="p-6">
-                  <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
-                    <span>•</span>
-                    <span>{episode.data.duration}</span>
-                  </div>
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                    {episode.data.title}
-                  </h3>
-                  <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                    {episode.data.description}
-                  </p>
-                  <a 
-                    href={getEpisodeUrl(episode)}
-                    class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                  >
-                    {t.listen} →
-                  </a>
-                </div>
-              </div>
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={false}
+                size="large"
+              />
             ))}
           </div>
         ) : (
@@ -259,80 +230,13 @@ const hreflang = {
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredGuests.map((guest) => (
-              <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-                <GuestImage 
-                  imageUrl={guest.data.imageUrl || guest.data.image} 
-                  alt={guest.data.name}
-                  class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                />
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                  {guest.data.name}
-                </h3>
-                {guest.data.title && guest.data.company && (
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    {guest.data.title} at {guest.data.company}
-                  </p>
-                )}
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
-                  {guest.data.bio}
-                </p>
-                <a 
-                  href={getGuestUrl(guest, language)}
-                  class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
-                >
-                  {t.viewProfile} →
-                </a>
-              </div>
+              <GuestCard guest={guest} language={language} size="medium" />
             ))}
           </div>
         </div>
       </section>
     )}
 
-    <!-- Quotes Section -->
-    {quotes.length > 0 && (
-      <section class="py-16 bg-white dark:bg-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-              {t.quotesTitle}
-            </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300">
-              {t.quotesSubtitle}
-            </p>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {quotes.map((quote) => (
-              <blockquote class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                <p class="text-lg text-gray-700 dark:text-gray-200 italic mb-4">
-                  "{quote.data.quote}"
-                </p>
-                <footer class="flex items-center gap-3">
-                  {quote.data.guestImageUrl && (
-                    <img 
-                      src={quote.data.guestImageUrl} 
-                      alt={quote.data.guestName}
-                      class="w-10 h-10 rounded-full object-cover"
-                    />
-                  )}
-                  <div>
-                    <cite class="text-sm font-semibold text-gray-900 dark:text-white not-italic">
-                      {quote.data.guestName}
-                    </cite>
-                    {quote.data.guestTitle && (
-                      <p class="text-xs text-gray-600 dark:text-gray-400">
-                        {quote.data.guestTitle}
-                      </p>
-                    )}
-                  </div>
-                </footer>
-              </blockquote>
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
 
     <!-- Platform Section -->
     <section class="py-16 bg-gray-50 dark:bg-gray-900">

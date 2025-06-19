@@ -41,15 +41,17 @@ const guestSchema = z.object({
   name: z.string(),
   bio: z.string(),
   company: z.string().optional(),
-  title: z.string().optional(),
+  role: z.string().optional(),
+  title: z.string().optional(), // Keep for backward compatibility
   
   // Contact information
   email: z.string().email().optional(),
   website: z.string().url().optional(),
   
-  // Social media
+  // Social media - flexible format to handle both YAML arrays and JSON
   twitter: z.string().optional(),
   linkedin: z.string().url().optional(),
+  socialLinks: z.any().optional(), // Flexible array format for social links
   
   // Media
   imageUrl: z.string().url().optional(),
@@ -57,10 +59,15 @@ const guestSchema = z.object({
   // Relationships
   episodes: z.array(z.string()).default([]), // Episode slugs
   languages: z.array(z.enum(['en', 'nl', 'de', 'es'])).default(['en']),
+  episodeCount: z.number().optional(),
   
   // SEO
   slug: z.string().optional(),
   canonicalLanguage: z.enum(['en', 'nl', 'de', 'es']).default('en'),
+  
+  // Timestamps
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 // Quote schema for homepage testimonials

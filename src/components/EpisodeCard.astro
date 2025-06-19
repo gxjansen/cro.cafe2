@@ -65,7 +65,7 @@ const episodeUrl = getEpisodeUrl(episode);
       <!-- Episode metadata (season/episode + language) -->
       <div class="flex items-center justify-between mb-3">
         <span class={`font-medium text-primary-600 dark:text-primary-400 ${classes.metadata}`}>
-          S{episode.data.season}E{episode.data.episode}
+          S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}
         </span>
         {showLanguage && (
           <div class="flex items-center gap-2">

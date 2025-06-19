@@ -2,13 +2,12 @@
   "id": 1,
   "name": "Spotify",
   "slug": "spotify",
-  "iconUrl": "https://example.com/icons/spotify.png",
-  "websiteUrl": "https://spotify.com",
+  "iconUrl": "/images/platforms/spotify.png",
   "urls": {
-    "en": "https://spotify.com",
-    "nl": "https://spotify.com",
-    "de": "https://spotify.com",
-    "es": "https://spotify.com"
+    "en": "",
+    "nl": "",
+    "de": "",
+    "es": ""
   },
   "displayOrder": 0,
   "isActive": true,

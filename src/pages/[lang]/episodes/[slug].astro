@@ -207,15 +207,17 @@ const getDateLocale = (lang: Language) => {
         </div>
       </div>
 
-      <!-- Episode Description -->
+      <!-- Episode Summary -->
       <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
-        <h2>{t.description}</h2>
-        <p>{episode.data.description}</p>
-        
-        {episode.data.summary && episode.data.summary !== episode.data.description && (
+        {episode.data.summary ? (
           <>
-            <h3>{t.summary}</h3>
+            <h2>{t.summary}</h2>
             <p>{episode.data.summary}</p>
+          </>
+        ) : (
+          <>
+            <h2>{t.description}</h2>
+            <p>{episode.data.description}</p>
           </>
         )}
       </div>
