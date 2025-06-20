@@ -20,10 +20,10 @@ const languageInfo = {
   es: { name: 'Español', flag: '🇪🇸' }
 };
 
-// Size-based classes
+// Size-based classes using unified card design system
 const sizeClasses = {
   small: {
-    container: 'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
+    container: 'card card-sm card-interactive overflow-hidden',
     imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-4',
     title: 'text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
@@ -31,7 +31,7 @@ const sizeClasses = {
     metadata: 'text-xs'
   },
   medium: {
-    container: 'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
+    container: 'card card-elevated card-interactive overflow-hidden',
     imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-6',
     title: 'text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
@@ -39,7 +39,7 @@ const sizeClasses = {
     metadata: 'text-xs'
   },
   large: {
-    container: 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300',
+    container: 'card card-lg card-high card-interactive overflow-hidden',
     imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
     padding: 'p-6',
     title: 'text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
@@ -53,7 +53,8 @@ const episodeUrl = getEpisodeUrl(episode);
 ---
 
 <article 
-  class={classes.container}
+  class={`${classes.container} episode-card`}
+  data-lang={episode.data.language}
   aria-labelledby={`episode-${episode.id || episode.slug}-title`}
 >
   <a 

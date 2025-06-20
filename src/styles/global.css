@@ -135,3 +135,376 @@ textarea:focus-visible {
   border: 2px solid rgb(192, 85, 89); /* accent-500 - accessible coral */
   z-index: 9999;
 }
+
+/* Enhanced Card Design System with 3D Effect */
+/* Base card styles with multi-layer shadows for depth */
+.card {
+  @apply relative bg-white dark:bg-gray-800 rounded-lg transition-all duration-300 
+         border-2 border-gray-200 dark:border-gray-600;
+  /* Multi-layer shadow for enhanced depth */
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card hover state with sophisticated lift effect */
+.card:hover {
+  @apply border-gray-300 dark:border-gray-500;
+  transform: translateY(-4px);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode cards with subtle inner glow */
+.dark .card {
+  @apply bg-gradient-to-br from-gray-800 to-gray-800/95;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode hover with enhanced shadow */
+.dark .card:hover {
+  box-shadow: 
+    0 10px 40px 0 rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Language-specific shadow tints for visual hierarchy */
+.card-lang-en {
+  box-shadow: 
+    0 1px 3px 0 rgba(59, 130, 246, 0.1),  /* blue tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
+}
+
+.card-lang-nl {
+  box-shadow: 
+    0 1px 3px 0 rgba(249, 115, 22, 0.1),  /* orange tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(249, 115, 22, 0.05);
+}
+
+.card-lang-de {
+  box-shadow: 
+    0 1px 3px 0 rgba(20, 184, 166, 0.1),  /* teal tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(20, 184, 166, 0.05);
+}
+
+.card-lang-es {
+  box-shadow: 
+    0 1px 3px 0 rgba(239, 68, 68, 0.1),   /* red tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(239, 68, 68, 0.05);
+}
+
+/* Card sizes */
+.card-sm {
+  @apply rounded-md;
+}
+
+.card-lg {
+  @apply rounded-xl;
+}
+
+/* Enhanced elevation system with distinct depth levels */
+.card-flat {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.card-raised {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.card-elevated {
+  @apply border-gray-300 dark:border-gray-500;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.card-elevated:hover {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.card-high {
+  @apply border-gray-300 dark:border-gray-500;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+.card-high:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 12px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Special card variant for colored backgrounds */
+.card-colored {
+  @apply bg-gray-50 dark:bg-gray-700;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .card-colored {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Enhanced cards for similar backgrounds */
+.card-on-similar-bg {
+  @apply border-2 border-gray-300 dark:border-gray-500 shadow-xl;
+}
+
+/* Language-specific card accents */
+.card-accent {
+  @apply border-2;
+  border-color: rgb(var(--lang-accent-500) / 0.3);
+}
+
+.card-accent:hover {
+  border-color: rgb(var(--lang-accent-500) / 0.6);
+  @apply shadow-lg;
+}
+
+/* Interactive card with enhanced 3D perspective */
+.card-interactive {
+  @apply cursor-pointer;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) translateZ(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-interactive:hover {
+  transform: perspective(1000px) translateZ(20px) translateY(-4px) scale(1.02);
+}
+
+/* Pressed state for tactile feedback */
+.card-interactive:active {
+  transform: perspective(1000px) translateZ(10px) translateY(-2px) scale(1.01);
+  transition-duration: 0.1s;
+}
+
+/* Enhanced focus state with offset shadow */
+.card:focus-visible {
+  outline: 3px solid rgb(var(--lang-accent-500));
+  outline-offset: 4px;
+  box-shadow: 
+    0 0 0 6px rgba(var(--lang-accent-500), 0.1),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Glass morphism cards for modern look */
+.card-glass {
+  @apply backdrop-blur-sm rounded-lg;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+.dark .card-glass {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Subtle glow effect on hover */
+.card-glow:hover {
+  box-shadow: 
+    0 0 0 1px rgba(var(--lang-accent-500), 0.1),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth lift animation with reduced motion support */
+@media (prefers-reduced-motion: no-preference) {
+  .card-interactive {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .card-interactive:hover {
+    transform: perspective(1000px) translateZ(30px) translateY(-6px) scale(1.02);
+  }
+}
+
+/* Reduced motion animations */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card-interactive {
+    transition-duration: 0.01ms !important;
+  }
+  
+  .card:hover,
+  .card-interactive:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Card content padding variants */
+.card-padding-sm {
+  @apply p-4;
+}
+
+.card-padding {
+  @apply p-6;
+}
+
+.card-padding-lg {
+  @apply p-8;
+}
+
+/* Background Hierarchy System */
+/* Layer 1: Base background (body/main) */
+.bg-base {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+/* Layer 2: Section backgrounds (alternating) */
+.bg-surface {
+  @apply bg-white dark:bg-gray-800;
+}
+
+.bg-surface-alt {
+  @apply bg-gray-100 dark:bg-gray-800/50;
+}
+
+/* Layer 3: Special surface for card contrast */
+.bg-surface-raised {
+  @apply bg-white dark:bg-gray-750;
+}
+
+/* Smart Card Contrast System */
+/* Cards automatically adjust based on parent background */
+/* Use these classes on cards when placed on matching backgrounds */
+.card-on-white {
+  @apply border-gray-300 dark:border-gray-600 shadow-md;
+}
+
+.card-on-gray-50 {
+  @apply border-gray-300 dark:border-gray-600 shadow-md;
+}
+
+.card-on-gray-100 {
+  @apply border-gray-300 dark:border-gray-600 shadow-lg;
+}
+
+/* Dark mode contrast adjustments */
+.dark .card-on-gray-800 {
+  @apply border-gray-600 shadow-lg;
+}
+
+.dark .card-on-gray-900 {
+  @apply bg-gray-800 border-gray-700 shadow-lg;
+}
+
+/* Language-specific background accents */
+.hero-lang {
+  @apply bg-gradient-to-br from-gray-50 via-white to-gray-50 
+         dark:from-gray-900 dark:via-gray-800 dark:to-gray-900;
+}
+
+.section-lang-accent {
+  @apply bg-gray-50/30 dark:bg-gray-800;
+}
+
+/* Cards with language accent */
+.card-lang {
+  @apply border-l-4;
+  border-left-color: rgb(var(--lang-accent-500));
+}
+
+/* Essential Episodes specific fix */
+.essential-episodes-section {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+.essential-episodes-section .card {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md;
+}
+
+/* Episode cards with language-specific enhancements */
+.episode-card[data-lang="en"] {
+  @apply card-lang-en;
+}
+
+.episode-card[data-lang="nl"] {
+  @apply card-lang-nl;
+}
+
+.episode-card[data-lang="de"] {
+  @apply card-lang-de;
+}
+
+.episode-card[data-lang="es"] {
+  @apply card-lang-es;
+}
+
+/* Episode cards on matching blue backgrounds */
+.episode-card-on-blue {
+  @apply card-glass;
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .episode-card-on-blue {
+  background: rgba(30, 58, 138, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    @apply border-4 border-black dark:border-white;
+  }
+  
+  .card:focus-visible {
+    outline: 4px solid;
+    outline-offset: 2px;
+  }
+}
+
+/* Touch target compliance */
+.card-touch {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Loading state animation */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.card-loading {
+  background: linear-gradient(90deg, 
+    rgba(0,0,0,0.03) 0%, 
+    rgba(0,0,0,0.06) 50%, 
+    rgba(0,0,0,0.03) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient border cards */
+.card-gradient-border {
+  position: relative;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+  border: 2px solid transparent;
+}

@@ -54,7 +54,9 @@ export default {
           500: '#4b5563',   // Better contrast for body text
           600: '#374151',   // Preferred for important text
           700: '#1f2937',
+          750: '#1a2332',   // New shade for better card contrast
           800: '#111827',
+          850: '#0c1118',   // New shade between 800-900
           900: '#030712',
         }
       },
