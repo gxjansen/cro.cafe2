@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import GuestCard from '../../../components/GuestCard.astro';
+import { getGuestsByLanguage } from '../../../utils/content';
+
+const language = 'en';
+const guests = await getGuestsByLanguage(language);
+
+const translations = {
+  title: 'All Guests - CRO.CAFE Podcast',
+  description: 'Meet all the expert guests who have appeared on the CRO.CAFE podcast. Learn from industry leaders in conversion rate optimization and experimentation.',
+  heading: 'All Guests',
+  subheading: 'Meet the CRO experts, experimenters, and digital growth leaders who have shared their insights on our podcast.',
+  noGuests: 'No guests featured yet. Check back soon!'
+};
+---
+
+<BaseLayout 
+  title={translations.title}
+  description={translations.description}
+  language={language}
+  canonical="https://cro.cafe/en/guests/"
+>
+  <Header language={language} currentPath="/en/guests/" />
+  <Breadcrumb language={language} currentPath="/en/guests/" />
+  
+  <main id="main-content" class="flex-1 py-16" tabindex="-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {translations.heading}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          {translations.subheading}
+        </p>
+      </div>
+
+      <!-- Guests Grid -->
+      {guests.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {guests.map((guest) => (
+            <GuestCard guest={guest} language={language} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400 text-lg">
+            {translations.noGuests}
+          </p>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>

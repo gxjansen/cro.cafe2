@@ -1,13 +1,20 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getCollection } from 'astro:content';
 
-// Get all episodes and guests for global search index
-const episodes = await getCollection('episodes');
-const guests = await getCollection('guests');
+// Get English episodes and guests only
+const allEpisodes = await getCollection('episodes');
+const allGuests = await getCollection('guests');
 
-// Create search index data for all languages
+// Filter for English content only
+const episodes = allEpisodes.filter(episode => episode.data.language === 'en');
+const guests = allGuests.filter(guest => 
+  guest.data.languages && guest.data.languages.includes('en')
+);
+
+// Create search index data for English content
 const searchData = {
   episodes: episodes.map(episode => ({
     slug: episode.slug,
@@ -31,31 +38,45 @@ const searchData = {
   }))
 };
 
-// Languages for filter options
-const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'nl', name: 'Nederlands' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'es', name: 'Español' }
-];
+const translations = {
+  title: 'Search - CRO.CAFE Podcast',
+  description: 'Search through episodes and guests of the CRO.CAFE English podcast',
+  searchTitle: 'Search',
+  searchSubtitle: 'Find episodes and guests in English',
+  placeholder: 'Search episodes, guests, topics...',
+  quickSearches: 'Quick searches:',
+  resultsFor: 'Found {count} result{plural} for "{query}"',
+  episodes: 'Episodes',
+  guests: 'Guests',
+  listenNow: 'Listen now',
+  episodeCount: '{count} episode{plural}',
+  startSearchTitle: 'Start your search',
+  startSearchSubtitle: 'Enter keywords to find episodes and guests from the English CRO.CAFE podcast',
+  noResultsTitle: 'No results found',
+  noResultsSubtitle: 'Try adjusting your search terms or browse our episodes and guests pages'
+};
+
+const quickSearchTerms = ['experimentation', 'conversion optimization', 'analytics'];
 ---
 
 <BaseLayout 
-  title="Global Search - CRO.CAFE Podcast"
-  description="Search through episodes and guests across all languages of the CRO.CAFE Podcast"
-  canonical="https://cro.cafe/search/"
+  title={translations.title}
+  description={translations.description}
+  language="en"
+  canonical="https://cro.cafe/en/search/"
 >
-  <Header currentPath="/search/" />
+  <Header language="en" currentPath="/en/search/" />
+  <Breadcrumb language="en" currentPath="/en/search/" />
   
   <main id="main-content" class="flex-1 py-16" tabindex="-1">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Search Header -->
       <div class="text-center mb-12">
         <h1 class="text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-          Global Search
+          {translations.searchTitle}
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300">
-          Find episodes and guests across all languages of CRO.CAFE
+          {translations.searchSubtitle}
         </p>
       </div>
 
@@ -71,7 +92,7 @@ const languages = [
             type="text"
             id="search-input"
             class="block w-full pl-10 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="Search episodes, guests, topics across all languages..."
+            placeholder={translations.placeholder}
             autocomplete="off"
           />
         </div>
@@ -87,26 +108,11 @@ const languages = [
                   All Content
                 </button>
                 <button id="filter-episodes" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  Episodes Only
+                  {translations.episodes} Only
                 </button>
                 <button id="filter-guests" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  Guests Only
+                  {translations.guests} Only
                 </button>
-              </div>
-            </div>
-
-            <!-- Language Filter -->
-            <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Language:</span>
-              <div class="flex gap-1">
-                <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
-                  All Languages
-                </button>
-                {languages.map(lang => (
-                  <button id={`lang-${lang.code}`} class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                    {lang.name}
-                  </button>
-                ))}
               </div>
             </div>
 
@@ -119,16 +125,12 @@ const languages = [
 
         <!-- Quick Searches -->
         <div class="flex flex-wrap gap-2">
-          <span class="text-sm text-gray-500 dark:text-gray-400">Quick searches:</span>
-          <button class="search-tag px-3 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-query="experimentation">
-            Experimentation
-          </button>
-          <button class="search-tag px-3 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-query="conversion optimization">
-            Conversion Optimization
-          </button>
-          <button class="search-tag px-3 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-query="analytics">
-            Analytics
-          </button>
+          <span class="text-sm text-gray-500 dark:text-gray-400">{translations.quickSearches}</span>
+          {quickSearchTerms.map(term => (
+            <button class="search-tag px-3 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-query={term}>
+              {term}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -143,14 +145,14 @@ const languages = [
 
         <!-- Episodes Results -->
         <div id="episodes-section" class="mb-12 hidden">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Episodes</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">{translations.episodes}</h3>
           <div id="episodes-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           </div>
         </div>
 
         <!-- Guests Results -->
         <div id="guests-section" class="mb-12 hidden">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Guests</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">{translations.guests}</h3>
           <div id="guests-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           </div>
         </div>
@@ -161,9 +163,9 @@ const languages = [
         <svg class="mx-auto h-24 w-24 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Start your search</h3>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{translations.startSearchTitle}</h3>
         <p class="text-gray-500 dark:text-gray-400">
-          Enter keywords to find episodes and guests from the CRO.CAFE podcast
+          {translations.startSearchSubtitle}
         </p>
       </div>
 
@@ -172,20 +174,19 @@ const languages = [
         <svg class="mx-auto h-24 w-24 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291.94-5.709 2.291M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No results found</h3>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{translations.noResultsTitle}</h3>
         <p class="text-gray-500 dark:text-gray-400">
-          Try adjusting your search terms or browse our episodes and guests pages
+          {translations.noResultsSubtitle}
         </p>
       </div>
     </div>
   </main>
 </BaseLayout>
 
-<script define:vars={{ searchData, languages }}>
+<script define:vars={{ searchData, translations }}>
   // Search state
   let currentFilters = {
-    contentType: 'all', // 'all', 'episodes', 'guests'
-    language: 'all' // 'all', 'en', 'nl', 'de', 'es'
+    contentType: 'all' // 'all', 'episodes', 'guests'
   };
 
   // Simple fuzzy search function
@@ -219,14 +220,6 @@ const languages = [
       filteredEpisodes = [];
     }
 
-    // Language filter
-    if (currentFilters.language !== 'all') {
-      filteredEpisodes = filteredEpisodes.filter(ep => ep.language === currentFilters.language);
-      filteredGuests = filteredGuests.filter(guest => 
-        guest.languages && guest.languages.includes(currentFilters.language)
-      );
-    }
-
     return { episodes: filteredEpisodes, guests: filteredGuests };
   }
 
@@ -243,18 +236,23 @@ const languages = [
       activeContentBtn.classList.add('active', 'bg-primary-600', 'text-white');
       activeContentBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
     }
+  }
 
-    // Language filters
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.classList.remove('active', 'bg-primary-600', 'text-white');
-      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    });
-    
-    const activeLangBtn = document.getElementById(currentFilters.language === 'all' ? 'lang-all' : `lang-${currentFilters.language}`);
-    if (activeLangBtn) {
-      activeLangBtn.classList.add('active', 'bg-primary-600', 'text-white');
-      activeLangBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    }
+  // Format results count text
+  function formatResultsText(count, query) {
+    const plural = count !== 1 ? 's' : '';
+    return translations.resultsFor
+      .replace('{count}', count)
+      .replace('{plural}', plural)
+      .replace('{query}', query);
+  }
+
+  // Format episode count text
+  function formatEpisodeCount(count) {
+    const plural = count !== 1 ? 's' : '';
+    return translations.episodeCount
+      .replace('{count}', count)
+      .replace('{plural}', plural);
   }
 
   // Search function
@@ -302,7 +300,7 @@ const languages = [
     noResults.classList.add('hidden');
     resultsContainer.classList.remove('hidden');
     
-    resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`;
+    resultsCount.textContent = formatResultsText(totalResults, query);
 
     // Display episodes
     const episodesSection = document.getElementById('episodes-section');
@@ -321,7 +319,7 @@ const languages = [
             </span>
           </div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            <a href="/${episode.language}/episodes/${episode.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            <a href="/en/episodes/${episode.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${episode.title}
             </a>
           </h3>
@@ -329,10 +327,10 @@ const languages = [
             ${episode.description}
           </p>
           <a 
-            href="/${episode.language}/episodes/${episode.slug}/" 
+            href="/en/episodes/${episode.slug}/" 
             class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
           >
-            Listen now
+            ${translations.listenNow}
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
@@ -360,14 +358,14 @@ const languages = [
             />
           </div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            <a href="/all/guests/${guest.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            <a href="/en/guests/${guest.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${guest.name}
             </a>
           </h3>
           ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${guest.company}</p>` : ''}
           ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${guest.role}</p>` : ''}
           <div class="text-xs text-gray-500 dark:text-gray-400">
-            ${guest.episodeCount} episode${guest.episodeCount !== 1 ? 's' : ''}
+            ${formatEpisodeCount(guest.episodeCount)}
           </div>
         </article>
       `).join('');
@@ -424,26 +422,10 @@ const languages = [
       });
     });
 
-    // Handle language filter buttons
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const langId = btn.id === 'lang-all' ? 'all' : btn.id.replace('lang-', '');
-        currentFilters.language = langId;
-        updateFilterButtons();
-        
-        // Re-run search with new filters
-        const currentQuery = searchInput.value;
-        if (currentQuery && currentQuery.trim().length >= 2) {
-          performSearch(currentQuery);
-        }
-      });
-    });
-
     // Handle clear filters
     document.getElementById('clear-filters').addEventListener('click', () => {
       currentFilters = {
-        contentType: 'all',
-        language: 'all'
+        contentType: 'all'
       };
       updateFilterButtons();
       

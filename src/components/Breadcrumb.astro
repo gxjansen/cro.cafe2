@@ -50,7 +50,7 @@ const generateBreadcrumbs = (path: string, lang: Language) => {
   if (isGlobalContext && path.startsWith('/all/')) {
     // We're on an all-languages page, no language-specific breadcrumb needed
   } else if (isEnglishContext) {
-    breadcrumbs.push({ label: '🇺🇸 English', href: '/en/' });
+    breadcrumbs.push({ label: '🇬🇧 English', href: '/en/' });
   } else if (!isGlobalContext) {
     const langInfo = { 
       nl: { name: 'Nederlands', flag: '🇳🇱' }, 

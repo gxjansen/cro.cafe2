@@ -10,8 +10,8 @@ export interface Props {
 
 const { language = 'en', currentPath = '/' } = Astro.props;
 
-// Check if we're in global mode (on root page or all-languages pages)
-const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/');
+// Check if we're in global mode (on root page, all-languages pages, or global search)
+const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/search/';
 
 // Navigation items based on language and mode
 const getNavItems = (lang: Language, isGlobal: boolean) => {
@@ -107,7 +107,7 @@ const navItems = getNavItems(language, isGlobalMode);
       <div class="flex items-center space-x-4">
         <!-- Search Button -->
         <a
-          href="/search/"
+          href={isGlobalMode ? '/search/' : `/${language}/search/`}
           class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors"
           aria-label="Search episodes and guests"
         >
@@ -117,7 +117,7 @@ const navItems = getNavItems(language, isGlobalMode);
         </a>
 
         <!-- Language Switcher -->
-        <LanguageSwitcher currentLanguage={language} currentPath={currentPath} />
+        <LanguageSwitcher currentLanguage={isGlobalMode ? undefined : language} currentPath={currentPath} />
 
         <!-- Theme Toggle -->
         <ThemeToggle />

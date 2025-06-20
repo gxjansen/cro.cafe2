@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import EpisodeCard from '../../../components/EpisodeCard.astro';
+import GuestImage from '../../../components/GuestImage.astro';
+import { getGuestBySlug, getGuestEpisodes } from '../../../utils/content';
+
+export async function getStaticPaths() {
+  const { getCollection } = await import('astro:content');
+  const guests = await getCollection('guests');
+  
+  // Generate paths for guests who appear in English episodes
+  const englishGuests = guests.filter(guest => 
+    guest.data.languages && guest.data.languages.includes('en')
+  );
+  
+  return englishGuests.map(guest => ({
+    params: { slug: guest.data.slug || guest.slug },
+    props: { guest }
+  }));
+}
+
+const { guest } = Astro.props;
+const language = 'en';
+
+// Get guest data
+const guestData = await getGuestBySlug(guest.slug);
+if (!guestData) {
+  return Astro.redirect('/en/guests/', 404);
+}
+
+// Get episodes featuring this guest in English
+const episodes = await getGuestEpisodes(guestData.slug, language);
+
+const title = `${guestData.data.name} - CRO.CAFE Podcast Guest`;
+const description = guestData.data.bio || `Learn from ${guestData.data.name} on the CRO.CAFE podcast.`;
+---
+
+<BaseLayout 
+  title={title}
+  description={description}
+  language={language}
+  canonical={`https://cro.cafe/en/guests/${guestData.slug}/`}
+>
+  <Header language={language} currentPath={`/en/guests/${guestData.slug}/`} />
+  <Breadcrumb language={language} currentPath={`/en/guests/${guestData.slug}/`} />
+  
+  <main id="main-content" class="flex-1 py-16" tabindex="-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Guest Header -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+        <div class="lg:col-span-1">
+          <div class="text-center">
+            <GuestImage 
+              guest={guestData}
+              class="w-48 h-48 mx-auto rounded-full object-cover mb-6"
+            />
+            
+            <h1 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-2">
+              {guestData.data.name}
+            </h1>
+            
+            {guestData.data.role && (
+              <p class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                {guestData.data.role}
+              </p>
+            )}
+            
+            {guestData.data.company && (
+              <p class="text-primary-600 dark:text-primary-400 font-medium mb-4">
+                {guestData.data.company}
+              </p>
+            )}
+            
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              {episodes.length} episode{episodes.length !== 1 ? 's' : ''} in English
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:col-span-2">
+          {guestData.data.bio && (
+            <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
+              <h2>About {guestData.data.name}</h2>
+              <p>{guestData.data.bio}</p>
+            </div>
+          )}
+          
+          {/* Guest links/social media could go here if we have them */}
+        </div>
+      </div>
+
+      <!-- Episodes Section -->
+      {episodes.length > 0 && (
+        <div>
+          <h2 class="text-2xl font-heading font-bold text-gray-900 dark:text-white mb-8">
+            Episodes featuring {guestData.data.name}
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {episodes.map((episode) => (
+              <EpisodeCard episode={episode} showLanguage={false} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>

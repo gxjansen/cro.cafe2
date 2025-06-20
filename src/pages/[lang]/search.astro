@@ -174,41 +174,26 @@ const quickSearchTerms = {
 
         <!-- Filters -->
         <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
-          <div class="flex flex-wrap items-center gap-4">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
-            
+          <div class="flex flex-wrap items-center gap-6">
             <!-- Content Type Filter -->
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">Content:</span>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{language === 'en' ? 'Show:' : language === 'nl' ? 'Tonen:' : language === 'de' ? 'Zeigen:' : 'Mostrar:'}</span>
               <div class="flex gap-1">
                 <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
-                  All
+                  {language === 'en' ? 'All Content' : language === 'nl' ? 'Alle inhoud' : language === 'de' ? 'Alle Inhalte' : 'Todo el contenido'}
                 </button>
                 <button id="filter-episodes" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  {t.episodes}
+                  {t.episodes} {language === 'en' ? 'Only' : language === 'nl' ? 'alleen' : language === 'de' ? 'nur' : 'solamente'}
                 </button>
                 <button id="filter-guests" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  {t.guests}
-                </button>
-              </div>
-            </div>
-
-            <!-- Language Filter (for global search) -->
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">Language:</span>
-              <div class="flex gap-1">
-                <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
-                  Current ({language.toUpperCase()})
-                </button>
-                <button id="lang-other" class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  All Languages
+                  {t.guests} {language === 'en' ? 'Only' : language === 'nl' ? 'alleen' : language === 'de' ? 'nur' : 'solamente'}
                 </button>
               </div>
             </div>
 
             <!-- Clear Filters -->
             <button id="clear-filters" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline">
-              Clear filters
+              {language === 'en' ? 'Reset filters' : language === 'nl' ? 'Filters wissen' : language === 'de' ? 'Filter zurücksetzen' : 'Restablecer filtros'}
             </button>
           </div>
         </div>
@@ -278,8 +263,7 @@ const quickSearchTerms = {
 
   // Search state
   let currentFilters = {
-    contentType: 'all', // 'all', 'episodes', 'guests'
-    language: 'current' // 'current', 'all'
+    contentType: 'all' // 'all', 'episodes', 'guests'
   };
 
   // Simple fuzzy search function
@@ -313,12 +297,6 @@ const quickSearchTerms = {
       filteredEpisodes = [];
     }
 
-    // Language filter (for when "All Languages" is selected)
-    if (currentFilters.language === 'all') {
-      // Would need access to all episodes/guests across languages
-      // For now, we'll keep current language data
-    }
-
     return { episodes: filteredEpisodes, guests: filteredGuests };
   }
 
@@ -334,18 +312,6 @@ const quickSearchTerms = {
     if (activeContentBtn) {
       activeContentBtn.classList.add('active', 'bg-primary-600', 'text-white');
       activeContentBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    }
-
-    // Language filters
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.classList.remove('active', 'bg-primary-600', 'text-white');
-      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    });
-    
-    const activeLangBtn = document.getElementById(currentFilters.language === 'current' ? 'lang-all' : 'lang-other');
-    if (activeLangBtn) {
-      activeLangBtn.classList.add('active', 'bg-primary-600', 'text-white');
-      activeLangBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
     }
   }
 
@@ -533,26 +499,10 @@ const quickSearchTerms = {
       });
     });
 
-    // Handle language filter buttons
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const langId = btn.id === 'lang-all' ? 'current' : 'all';
-        currentFilters.language = langId;
-        updateFilterButtons();
-        
-        // Re-run search with new filters
-        const currentQuery = searchInput.value;
-        if (currentQuery && currentQuery.trim().length >= 2) {
-          performSearch(currentQuery);
-        }
-      });
-    });
-
     // Handle clear filters
     document.getElementById('clear-filters').addEventListener('click', () => {
       currentFilters = {
-        contentType: 'all',
-        language: 'current'
+        contentType: 'all'
       };
       updateFilterButtons();
       

@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import SchemaPodcastSeries from '../../components/schema/SchemaPodcastSeries.astro';
+import EpisodeImage from '../../components/EpisodeImage.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import GuestCard from '../../components/GuestCard.astro';
+import TestimonialsSection from '../../components/TestimonialsSection.astro';
+import BrandLogoBar from '../../components/BrandLogoBar.astro';
+import HostSection from '../../components/HostSection.astro';
+import NotableGuestsSection from '../../components/NotableGuestsSection.astro';
+import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage, getHostsByLanguage } from '../../utils/content';
+import { getCollection } from 'astro:content';
+
+const language = 'en';
+
+// Get English content
+const episodes = await getEpisodesByLanguage(language);
+const latestEpisodes = episodes.slice(0, 3);
+const guests = await getGuestsByLanguage(language);
+
+// Get hosts for English
+const allHosts = await getCollection('hosts');
+const hosts = allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'); // Guido hosts English
+
+// Get popular episodes based on downloads
+const popularEpisodes = episodes
+  .filter(ep => ep.data.downloads_total && ep.data.downloads_total > 0)
+  .sort((a, b) => (b.data.downloads_total || 0) - (a.data.downloads_total || 0))
+  .slice(0, 3);
+
+const platforms = await getValidPlatformsForLanguage(language);
+
+// Get statistics
+const totalEpisodes = episodes.length;
+const totalGuests = guests.length;
+const totalHours = await getTotalDurationByLanguage(language);
+
+const translations = {
+  title: 'CRO.CAFE Podcast - The English CRO & Experimentation Podcast',
+  description: 'Listen to the CRO.CAFE Podcast - in-depth conversations with leaders in conversion rate optimization, experimentation, and digital growth. Hosted by Guido X Jansen.',
+  heroTitle: 'Welcome to CRO.CAFE',
+  heroSubtitle: 'Join 14K+ CRO professionals getting raw, unfiltered insights from industry leaders',
+  heroDescription: 'Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.',
+  browseEpisodes: 'Browse episodes',
+  subscribeNow: 'Start listening for free →',
+  latestEpisodesTitle: 'Latest Episodes',
+  latestEpisodesSubtitle: 'Listen to our newest conversations about CRO and experimentation',
+  featuredGuestsTitle: 'Featured Guests',
+  featuredGuestsSubtitle: 'Learn from industry leaders and CRO experts',
+  listen: 'Listen',
+  viewProfile: 'View Profile',
+  listenOn: 'Listen on',
+  newsletterTitle: 'Stay Updated',
+  newsletterSubtitle: 'Get notified about new episodes and exclusive CRO insights',
+  emailPlaceholder: 'Your email address',
+  subscribe: 'Subscribe',
+  season: 'Season',
+  episode: 'Episode',
+  noEpisodes: 'New episodes coming soon!',
+  footerDescription: 'The leading podcast for conversion rate optimization professionals. Expert insights in English.',
+  languages: 'Languages',
+  subscribeOn: 'Subscribe on',
+  statsEpisodes: 'Episodes',
+  statsGuests: 'Expert Guests',
+  statsHours: 'Hours of Content',
+  statsSubtitle: 'Join our growing community of CRO professionals',
+  popularEpisodesTitle: 'Popular Episodes',
+  popularEpisodesSubtitle: 'Most listened to episodes from our community',
+  hostSectionTitle: 'Your Host',
+  hostSectionSubtitle: 'Meet the expert bringing you insights from the CRO industry'
+};
+---
+
+<BaseLayout 
+  title={translations.title}
+  description={translations.description}
+  language={language}
+  canonical="https://cro.cafe/en/"
+  hreflang={{
+    en: "https://cro.cafe/en/",
+    nl: "https://cro.cafe/nl/",
+    de: "https://cro.cafe/de/",
+    es: "https://cro.cafe/es/"
+  }}
+>
+  <Header language={language} currentPath="/en/" />
+  <Breadcrumb language={language} currentPath="/en/" />
+  
+  <main id="main-content" class="flex-1" tabindex="-1">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-2">
+            {translations.heroTitle}
+          </h1>
+          <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-4">
+            🇬🇧 English Podcast
+          </p>
+          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto">
+            {translations.heroSubtitle}
+          </p>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+            {translations.heroDescription}
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/en/episodes/" 
+              class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {translations.browseEpisodes}
+            </a>
+            <a 
+              href="/en/subscribe/" 
+              class="inline-flex items-center px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {translations.subscribeNow}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+          <p class="text-lg text-gray-600 dark:text-gray-300">
+            {translations.statsSubtitle}
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="text-4xl font-bold text-primary-600 dark:text-primary-300 mb-2">
+              {totalEpisodes}
+            </div>
+            <div class="text-lg font-medium text-gray-900 dark:text-white">
+              {translations.statsEpisodes}
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-4xl font-bold text-primary-600 dark:text-primary-300 mb-2">
+              {totalGuests}
+            </div>
+            <div class="text-lg font-medium text-gray-900 dark:text-white">
+              {translations.statsGuests}
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-4xl font-bold text-primary-600 dark:text-primary-300 mb-2">
+              {Math.round(totalHours)}
+            </div>
+            <div class="text-lg font-medium text-gray-900 dark:text-white">
+              {translations.statsHours}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest Episodes Section -->
+    {latestEpisodes.length > 0 && (
+      <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              {translations.latestEpisodesTitle}
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              {translations.latestEpisodesSubtitle}
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {latestEpisodes.map((episode) => (
+              <EpisodeCard episode={episode} showLanguage={false} />
+            ))}
+          </div>
+          
+          <div class="text-center">
+            <a 
+              href="/en/episodes/" 
+              class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {translations.browseEpisodes}
+              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Popular Episodes Section -->
+    {popularEpisodes.length > 0 && (
+      <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              {translations.popularEpisodesTitle}
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              {translations.popularEpisodesSubtitle}
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {popularEpisodes.map((episode) => (
+              <EpisodeCard episode={episode} showLanguage={false} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Host Section -->
+    {hosts.length > 0 && (
+      <HostSection 
+        hosts={hosts} 
+        language={language}
+        title={translations.hostSectionTitle}
+        subtitle={translations.hostSectionSubtitle}
+      />
+    )}
+
+    <!-- Featured Guests Section -->
+    <NotableGuestsSection 
+      language={language}
+      title={translations.featuredGuestsTitle}
+      subtitle={translations.featuredGuestsSubtitle}
+    />
+
+    <!-- Brand Logos -->
+    <BrandLogoBar language={language} />
+
+    <!-- Testimonials -->
+    <TestimonialsSection language={language} />
+  </main>
+
+  <SchemaPodcastSeries language={language} />
+</BaseLayout>

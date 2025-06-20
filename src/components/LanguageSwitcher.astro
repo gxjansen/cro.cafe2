@@ -3,7 +3,7 @@ import type { Language } from '../types';
 import { getLanguageCounts } from '../utils/content';
 
 export interface Props {
-  currentLanguage: Language;
+  currentLanguage?: Language;
   currentPath: string;
 }
 
@@ -25,7 +25,7 @@ const languages = [
     code: 'en' as Language, 
     name: 'English', 
     nativeName: 'English', 
-    flag: '🇺🇸',
+    flag: '🇬🇧',
     episodes: counts.en.episodes,
     guests: counts.en.guests
   },
@@ -55,8 +55,8 @@ const languages = [
   },
 ];
 
-// Check if we're on a global/all-languages page (root page, /all/ pages, and /subscribe)
-const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/';
+// Check if we're on a global/all-languages page (root page, /all/ pages, /subscribe, and /search/)
+const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/' || currentPath === '/search/';
 const currentLang = isGlobal ? languages[0] : languages.find(lang => lang.code === currentLanguage) || languages[1];
 
 // Generate language URLs - try to preserve current path structure
@@ -90,6 +90,9 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     if (basePath.includes('/subscribe')) {
       return '/subscribe/';
     }
+    if (basePath.includes('/search')) {
+      return '/search/';
+    }
     // Otherwise go to homepage
     return '/';
   }
@@ -104,22 +107,24 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     return langCode === 'en' ? '/en/' : `/${langCode}/`;
   }
   
-  // Handle episode, guest, and subscribe pages (both detail and listing pages)
-  if (basePath.includes('/episodes') || basePath.includes('/guests') || basePath.includes('/subscribe')) {
+  // Handle episode, guest, subscribe, and search pages (both detail and listing pages)
+  if (basePath.includes('/episodes') || basePath.includes('/guests') || basePath.includes('/subscribe') || basePath.includes('/search')) {
     // For detail pages, redirect to the listing page for that language
     if (langCode === 'en') {
-      if (basePath.includes('/episodes')) return '/episodes/';
-      if (basePath.includes('/guests')) return '/guests/';
+      if (basePath.includes('/episodes')) return '/en/episodes/';
+      if (basePath.includes('/guests')) return '/en/guests/';
       if (basePath.includes('/subscribe')) return '/en/subscribe/';
+      if (basePath.includes('/search')) return '/en/search/';
     }
     if (basePath.includes('/episodes')) return `/${langCode}/episodes/`;
     if (basePath.includes('/guests')) return `/${langCode}/guests/`;
     if (basePath.includes('/subscribe')) return `/${langCode}/subscribe/`;
+    if (basePath.includes('/search')) return `/${langCode}/search/`;
   }
   
   // For English, go to the dedicated English homepage or pages
   if (langCode === 'en') {
-    return basePath === '/' ? '/en/' : basePath;
+    return basePath === '/' ? '/en/' : `/en${basePath}`;
   }
   
   // For other languages, add the language prefix

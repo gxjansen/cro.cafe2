@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Breadcrumb from '../../components/Breadcrumb.astro';
-import { getPlatformCountsByLanguage } from '../../utils/content';
-import type { Language } from '../../types';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getPlatformCountsByLanguage } from '../../../utils/content';
+import type { Language } from '../../../types';
 
 const language: Language = 'en';
 
@@ -47,10 +47,10 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
   title={title}
   description={description}
   language={language}
-  canonical="https://cro.cafe/subscribe/"
+  canonical="https://cro.cafe/en/subscribe/"
 >
-  <Header language={language} currentPath="/subscribe/" />
-  <Breadcrumb language={language} currentPath="/subscribe/" />
+  <Header language={language} currentPath="/en/subscribe/" />
+  <Breadcrumb language={language} currentPath="/en/subscribe/" />
   
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

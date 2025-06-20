@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import EpisodeImage from '../../../components/EpisodeImage.astro';
+import EpisodeCard from '../../../components/EpisodeCard.astro';
+import { getEpisodesByLanguage, getEpisodeUrl, formatDuration } from '../../../utils/content';
+
+const language = 'en';
+const episodes = await getEpisodesByLanguage(language);
+
+const translations = {
+  title: 'All Episodes - CRO.CAFE Podcast',
+  description: 'Browse all episodes of the CRO.CAFE podcast. Listen to conversations about CRO, experimentation, and digital optimization with industry leaders.',
+  heading: 'All Episodes',
+  subheading: 'Dive into our complete collection of conversations about CRO, experimentation, and digital optimization.',
+  guests: 'Guests',
+  noEpisodes: 'No episodes available yet. Check back soon!'
+};
+---
+
+<BaseLayout 
+  title={translations.title}
+  description={translations.description}
+  language={language}
+  canonical="https://cro.cafe/en/episodes/"
+>
+  <Header language={language} currentPath="/en/episodes/" />
+  <Breadcrumb language={language} currentPath="/en/episodes/" />
+  
+  <main id="main-content" class="flex-1 py-16" tabindex="-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {translations.heading}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          {translations.subheading}
+        </p>
+      </div>
+
+      <!-- Episodes Grid -->
+      {episodes.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {episodes.map((episode) => (
+            <EpisodeCard episode={episode} showLanguage={false} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400 text-lg">
+            {translations.noEpisodes}
+          </p>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>
