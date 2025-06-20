@@ -280,15 +280,36 @@ export async function getLanguageCounts() {
     }
   }
 
-  // Count guests - avoiding duplicates for global count
+  // Count guests - ensuring we count unique guests per language
   const uniqueGuestSlugs = new Set<string>();
+  const guestsByLanguage: Record<Language, Set<string>> = {
+    en: new Set(),
+    nl: new Set(),
+    de: new Set(),
+    es: new Set()
+  };
+  
   for (const guest of guests) {
-    uniqueGuestSlugs.add(guest.data.slug || guest.slug);
-    for (const lang of guest.data.languages) {
-      counts[lang].guests++;
+    const guestSlug = guest.data.slug || guest.slug;
+    
+    // Only count guests that have episodes
+    if (guest.data.episodes && guest.data.episodes.length > 0) {
+      uniqueGuestSlugs.add(guestSlug);
+      
+      // Get unique languages for this guest (avoiding duplicates)
+      const uniqueLanguages = new Set(guest.data.languages);
+      
+      for (const lang of uniqueLanguages) {
+        guestsByLanguage[lang].add(guestSlug);
+      }
     }
   }
+  
+  // Set the counts from the unique sets
   counts.global.guests = uniqueGuestSlugs.size;
+  for (const lang of languages) {
+    counts[lang].guests = guestsByLanguage[lang].size;
+  }
 
   return counts;
 }

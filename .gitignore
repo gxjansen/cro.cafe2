@@ -159,3 +159,4 @@ docs/
 # Misc
 *.tgz
 *.tar.gz
+missing-guest-images.md

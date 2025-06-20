@@ -31,6 +31,10 @@ Sitemap: https://cro.cafe/sitemap-en.xml
 Sitemap: https://cro.cafe/sitemap-nl.xml
 Sitemap: https://cro.cafe/sitemap-de.xml
 Sitemap: https://cro.cafe/sitemap-es.xml
+Sitemap: https://cro.cafe/sitemap-en.xml
+Sitemap: https://cro.cafe/sitemap-nl.xml
+Sitemap: https://cro.cafe/sitemap-de.xml
+Sitemap: https://cro.cafe/sitemap-es.xml
 
 # Block test and demo pages
 Disallow: /color-test
