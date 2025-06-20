@@ -294,12 +294,12 @@ const hreflang = {
   
   <main id="main-content" class="flex-1" tabindex="-1">
     <!-- Hero Section with Featured Player -->
-    <section class="bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
+    <section class="bg-gradient-to-br from-lang-50 via-white to-lang-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
           <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-6">
             {t.heroTitle.split('CRO.CAFE')[0]}
-            <span class="text-primary-600 dark:text-primary-200">CRO.CAFE</span>
+            <span class="text-lang-600 dark:text-lang-200">CRO.CAFE</span>
           </h1>
           <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             {t.heroSubtitle}
@@ -311,7 +311,7 @@ const hreflang = {
           <div class="max-w-4xl mx-auto mb-10">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8">
               <div class="flex items-center gap-2 mb-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200 uppercase">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-lang-100 text-lang-700 dark:bg-lang-900 dark:text-lang-200 uppercase">
                   {t.newEpisode}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">
@@ -331,7 +331,7 @@ const hreflang = {
               <div class="flex flex-col sm:flex-row gap-4 items-center">
                 <a 
                   href={getEpisodeUrl(featuredEpisode, language)}
-                  class="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-full transition-colors shadow-lg group"
+                  class="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
                 >
                   <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
@@ -361,7 +361,7 @@ const hreflang = {
                   ))}
                   <a 
                     href={`/${language}/subscribe/`}
-                    class="text-primary-600 dark:text-primary-300 hover:underline"
+                    class="text-lang-600 dark:text-lang-300 hover:underline"
                   >
                     +{platforms.length - 2} more
                   </a>
@@ -426,7 +426,7 @@ const hreflang = {
             <div class="text-center">
               <a 
                 href={`/${language}/episodes/`}
-                class="inline-flex items-center px-6 py-3 text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200 font-medium text-lg group"
+                class="inline-flex items-center px-6 py-3 text-lang-600 dark:text-lang-300 hover:text-lang-700 dark:hover:text-lang-200 font-medium text-lg group"
               >
                 {t.viewAllEpisodes}
                 <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

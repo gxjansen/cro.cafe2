@@ -74,11 +74,23 @@ const episodeUrl = getEpisodeUrl(episode);
       <!-- Episode metadata (season/episode or badge + language) -->
       <div class="flex items-center justify-between mb-3">
         {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
-          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 uppercase`}>
+          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase ${showLanguage ? 
+            episode.data.language === 'en' ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' :
+            episode.data.language === 'nl' ? 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200' :
+            episode.data.language === 'de' ? 'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200' :
+            episode.data.language === 'es' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+            'bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200'
+          : 'bg-lang-100 dark:bg-lang-900 text-lang-800 dark:text-lang-200'}`}>
             {episode.data.episode_type}
           </span>
         ) : (
-          <span class={`font-medium text-primary-600 dark:text-primary-200 ${classes.metadata}`}>
+          <span class={`font-medium ${classes.metadata} ${showLanguage ? 
+            episode.data.language === 'en' ? 'text-blue-600 dark:text-blue-200' :
+            episode.data.language === 'nl' ? 'text-orange-600 dark:text-orange-200' :
+            episode.data.language === 'de' ? 'text-teal-600 dark:text-teal-200' :
+            episode.data.language === 'es' ? 'text-red-600 dark:text-red-200' :
+            'text-primary-600 dark:text-primary-200'
+          : 'text-lang-600 dark:text-lang-200'}`}>
             <span class="sr-only">Season {episode.data.season}, Episode {episode.data.episode}</span>
             <span aria-hidden="true">S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}</span>
           </span>

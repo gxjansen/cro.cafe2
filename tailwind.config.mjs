@@ -31,6 +31,19 @@ export default {
           800: '#722629',  // high contrast
           900: '#581719',  // highest contrast
         },
+        // Language-specific accent colors using CSS variables
+        lang: {
+          50: 'var(--lang-accent-50)',
+          100: 'var(--lang-accent-100)',
+          200: 'var(--lang-accent-200)',
+          300: 'var(--lang-accent-300)',
+          400: 'var(--lang-accent-400)',
+          500: 'var(--lang-accent-500)',
+          600: 'var(--lang-accent-600)',
+          700: 'var(--lang-accent-700)',
+          800: 'var(--lang-accent-800)',
+          900: 'var(--lang-accent-900)',
+        },
         // Neutral grays for UI elements - optimized for WCAG AA compliance
         gray: {
           50: '#f9fafb',

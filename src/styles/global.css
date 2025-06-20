@@ -1,3 +1,60 @@
+/* Language-specific Accent Colors */
+:root {
+  /* Default/English colors (blue) */
+  --lang-accent-50: #eff6ff;
+  --lang-accent-100: #dbeafe;
+  --lang-accent-200: #bfdbfe;
+  --lang-accent-300: #93c5fd;
+  --lang-accent-400: #60a5fa;
+  --lang-accent-500: #3b82f6;
+  --lang-accent-600: #2563eb;
+  --lang-accent-700: #1d4ed8;
+  --lang-accent-800: #1e40af;
+  --lang-accent-900: #1e3a8a;
+}
+
+/* Dutch accent colors (orange) */
+[data-lang="nl"] {
+  --lang-accent-50: #fff7ed;
+  --lang-accent-100: #ffedd5;
+  --lang-accent-200: #fed7aa;
+  --lang-accent-300: #fdba74;
+  --lang-accent-400: #fb923c;
+  --lang-accent-500: #f97316;
+  --lang-accent-600: #ea580c;
+  --lang-accent-700: #c2410c;
+  --lang-accent-800: #9a3412;
+  --lang-accent-900: #7c2d12;
+}
+
+/* German accent colors (teal) */
+[data-lang="de"] {
+  --lang-accent-50: #f0fdfa;
+  --lang-accent-100: #ccfbf1;
+  --lang-accent-200: #99f6e4;
+  --lang-accent-300: #5eead4;
+  --lang-accent-400: #2dd4bf;
+  --lang-accent-500: #14b8a6;
+  --lang-accent-600: #0d9488;
+  --lang-accent-700: #0f766e;
+  --lang-accent-800: #115e59;
+  --lang-accent-900: #134e4a;
+}
+
+/* Spanish accent colors (red) */
+[data-lang="es"] {
+  --lang-accent-50: #fef2f2;
+  --lang-accent-100: #fee2e2;
+  --lang-accent-200: #fecaca;
+  --lang-accent-300: #fca5a5;
+  --lang-accent-400: #f87171;
+  --lang-accent-500: #ef4444;
+  --lang-accent-600: #dc2626;
+  --lang-accent-700: #b91c1c;
+  --lang-accent-800: #991b1b;
+  --lang-accent-900: #7f1d1d;
+}
+
 /* Global Focus Indicators for Accessibility */
 
 /* Remove default outline for all elements */

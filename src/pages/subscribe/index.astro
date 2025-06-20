@@ -69,7 +69,12 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
         {Object.entries(languageInfo).map(([lang, info]) => (
           <a 
             href={info.url}
-            class="group flex flex-col items-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 border-transparent hover:border-primary-200 dark:hover:border-primary-700"
+            class={`group flex flex-col items-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 border-transparent ${
+              lang === 'en' ? 'hover:border-blue-200 dark:hover:border-blue-700' :
+              lang === 'nl' ? 'hover:border-orange-200 dark:hover:border-orange-700' :
+              lang === 'de' ? 'hover:border-teal-200 dark:hover:border-teal-700' :
+              'hover:border-red-200 dark:hover:border-red-700'
+            }`}
           >
             <!-- Flag and Language Name -->
             <div class="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -80,11 +85,26 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
             </h3>
             
             <!-- Platform Count -->
-            <div class="flex items-center gap-2 mb-4 px-3 py-1 bg-primary-100 dark:bg-primary-900/30 rounded-full">
-              <svg class="w-4 h-4 text-primary-600 dark:text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+            <div class={`flex items-center gap-2 mb-4 px-3 py-1 rounded-full ${
+              lang === 'en' ? 'bg-blue-100 dark:bg-blue-900/30' :
+              lang === 'nl' ? 'bg-orange-100 dark:bg-orange-900/30' :
+              lang === 'de' ? 'bg-teal-100 dark:bg-teal-900/30' :
+              'bg-red-100 dark:bg-red-900/30'
+            }`}>
+              <svg class={`w-4 h-4 ${
+                lang === 'en' ? 'text-blue-600 dark:text-blue-400' :
+                lang === 'nl' ? 'text-orange-600 dark:text-orange-400' :
+                lang === 'de' ? 'text-teal-600 dark:text-teal-400' :
+                'text-red-600 dark:text-red-400'
+              }`} fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-sm font-medium text-primary-700 dark:text-primary-300">
+              <span class={`text-sm font-medium ${
+                lang === 'en' ? 'text-blue-700 dark:text-blue-300' :
+                lang === 'nl' ? 'text-orange-700 dark:text-orange-300' :
+                lang === 'de' ? 'text-teal-700 dark:text-teal-300' :
+                'text-red-700 dark:text-red-300'
+              }`}>
                 {platformCounts[lang as Language]} platforms
               </span>
             </div>
@@ -96,7 +116,12 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
             
             <!-- Subscribe Button -->
             <div class="mt-auto w-full">
-              <div class="px-6 py-3 bg-primary-600 group-hover:bg-primary-700 text-white rounded-lg font-medium transition-colors text-center">
+              <div class={`px-6 py-3 text-white rounded-lg font-medium transition-colors text-center ${
+                lang === 'en' ? 'bg-blue-600 group-hover:bg-blue-700' :
+                lang === 'nl' ? 'bg-orange-600 group-hover:bg-orange-700' :
+                lang === 'de' ? 'bg-teal-600 group-hover:bg-teal-700' :
+                'bg-red-600 group-hover:bg-red-700'
+              }`}>
                 Subscribe Now
               </div>
             </div>
