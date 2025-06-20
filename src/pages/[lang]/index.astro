@@ -54,6 +54,42 @@ const totalEpisodes = episodes.length;
 const totalGuests = guests.length;
 const totalHours = await getTotalDurationByLanguage(language);
 
+// Get the latest episode for featured player
+const featuredEpisode = latestEpisodes[0];
+
+// Create essential episodes - mix of latest and popular
+// Start with the second and third latest episodes (first is featured)
+const essentialEpisodes = [];
+const usedSlugs = new Set([featuredEpisode?.slug]); // Track featured episode to avoid duplicates
+
+// Add latest episodes (excluding featured)
+for (let i = 1; i < latestEpisodes.length && essentialEpisodes.length < 6; i++) {
+  if (!usedSlugs.has(latestEpisodes[i].slug)) {
+    essentialEpisodes.push(latestEpisodes[i]);
+    usedSlugs.add(latestEpisodes[i].slug);
+  }
+}
+
+// Add popular episodes (excluding already added)
+for (let i = 0; i < popularEpisodes.length && essentialEpisodes.length < 6; i++) {
+  if (!usedSlugs.has(popularEpisodes[i].slug)) {
+    essentialEpisodes.push(popularEpisodes[i]);
+    usedSlugs.add(popularEpisodes[i].slug);
+  }
+}
+
+// If still not enough, add more episodes from the full list
+if (essentialEpisodes.length < 6) {
+  for (let i = 0; i < episodes.length && essentialEpisodes.length < 6; i++) {
+    if (!usedSlugs.has(episodes[i].slug)) {
+      essentialEpisodes.push(episodes[i]);
+      usedSlugs.add(episodes[i].slug);
+    }
+  }
+}
+
+const displayEpisodes = essentialEpisodes;
+
 // Translations
 const translations = {
   en: {
@@ -64,6 +100,11 @@ const translations = {
     heroDescription: 'Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.',
     browseEpisodes: 'Browse episodes',
     subscribeNow: 'Start listening for free →',
+    playLatestEpisode: 'Play latest episode',
+    newEpisode: 'NEW EPISODE',
+    listenNow: 'Listen now',
+    orSubscribeOn: 'or subscribe on',
+    minutesShort: 'min',
     latestEpisodesTitle: 'Latest Episodes',
     latestEpisodesSubtitle: 'Listen to our newest conversations about CRO and experimentation',
     featuredGuestsTitle: 'Industry Leaders',
@@ -87,6 +128,9 @@ const translations = {
     statsSubtitle: 'Join our growing community of CRO professionals',
     popularEpisodesTitle: 'Popular Episodes',
     popularEpisodesSubtitle: 'Most listened to episodes from our community',
+    essentialEpisodesTitle: 'Essential Episodes',
+    essentialEpisodesSubtitle: 'Start here - our latest releases and most popular conversations',
+    viewAllEpisodes: 'View all episodes →',
     hostSectionTitle: 'Your Host',
     hostSectionSubtitle: 'Meet the expert bringing you insights from the CRO industry'
   },
@@ -98,6 +142,11 @@ const translations = {
     heroDescription: 'Gesprekken die verder gaan dan de oppervlakte. Echte experimenten, echte mislukkingen, echte doorbraken in CRO, experimenteren en digitale groei.',
     browseEpisodes: 'Bekijk afleveringen',
     subscribeNow: 'Start met luisteren (gratis) →',
+    playLatestEpisode: 'Speel laatste aflevering',
+    newEpisode: 'NIEUWE AFLEVERING',
+    listenNow: 'Luister nu',
+    orSubscribeOn: 'of abonneer via',
+    minutesShort: 'min',
     latestEpisodesTitle: 'Laatste Afleveringen',
     latestEpisodesSubtitle: 'Luister naar onze nieuwste gesprekken over CRO en experimentatie',
     featuredGuestsTitle: 'Industrie Leiders',
@@ -121,6 +170,9 @@ const translations = {
     statsSubtitle: 'Sluit je aan bij onze groeiende community van CRO professionals',
     popularEpisodesTitle: 'Populaire Afleveringen',
     popularEpisodesSubtitle: 'Meest beluisterde afleveringen van onze community',
+    essentialEpisodesTitle: 'Essentiële Afleveringen',
+    essentialEpisodesSubtitle: 'Begin hier - onze nieuwste releases en populairste gesprekken',
+    viewAllEpisodes: 'Bekijk alle afleveringen →',
     hostSectionTitle: 'Je Host',
     hostSectionSubtitle: 'Ontmoet de expert die je inzichten brengt uit de CRO industrie'
   },
@@ -132,6 +184,11 @@ const translations = {
     heroDescription: 'Gespräche, die unter die Oberfläche gehen. Echte Experimente, echte Fehlschläge, echte Durchbrüche in CRO, Experimentation und digitalem Wachstum.',
     browseEpisodes: 'Folgen ansehen',
     subscribeNow: 'Jetzt kostenlos anhören →',
+    playLatestEpisode: 'Neueste Folge abspielen',
+    newEpisode: 'NEUE FOLGE',
+    listenNow: 'Jetzt anhören',
+    orSubscribeOn: 'oder abonnieren auf',
+    minutesShort: 'Min',
     latestEpisodesTitle: 'Neueste Folgen',
     latestEpisodesSubtitle: 'Hören Sie unsere neuesten Gespräche über CRO und Experimentation',
     featuredGuestsTitle: 'Branchenführer',
@@ -155,6 +212,9 @@ const translations = {
     statsSubtitle: 'Treten Sie unserer wachsenden Community von CRO-Experten bei',
     popularEpisodesTitle: 'Beliebte Folgen',
     popularEpisodesSubtitle: 'Die meistgehörten Folgen unserer Community',
+    essentialEpisodesTitle: 'Wichtige Folgen',
+    essentialEpisodesSubtitle: 'Beginnen Sie hier - unsere neuesten Veröffentlichungen und beliebtesten Gespräche',
+    viewAllEpisodes: 'Alle Folgen ansehen →',
     hostSectionTitle: 'Ihr Moderator',
     hostSectionSubtitle: 'Lernen Sie den Experten kennen, der Ihnen Einblicke aus der CRO-Branche bringt'
   },
@@ -166,6 +226,11 @@ const translations = {
     heroDescription: 'Conversaciones que van más allá de lo superficial. Experimentos reales, fracasos reales, avances reales en CRO, experimentación y crecimiento digital.',
     browseEpisodes: 'Ver episodios',
     subscribeNow: 'Empieza a escuchar gratis →',
+    playLatestEpisode: 'Reproducir último episodio',
+    newEpisode: 'NUEVO EPISODIO',
+    listenNow: 'Escuchar ahora',
+    orSubscribeOn: 'o suscribirse en',
+    minutesShort: 'min',
     latestEpisodesTitle: 'Últimos Episodios',
     latestEpisodesSubtitle: 'Escucha nuestras conversaciones más recientes sobre CRO y experimentación',
     featuredGuestsTitle: 'Líderes de la Industria',
@@ -189,6 +254,9 @@ const translations = {
     statsSubtitle: 'Únete a nuestra creciente comunidad de profesionales CRO',
     popularEpisodesTitle: 'Episodios Populares',
     popularEpisodesSubtitle: 'Los episodios más escuchados de nuestra comunidad',
+    essentialEpisodesTitle: 'Episodios Esenciales',
+    essentialEpisodesSubtitle: 'Comienza aquí - nuestros últimos lanzamientos y conversaciones más populares',
+    viewAllEpisodes: 'Ver todos los episodios →',
     hostSectionTitle: 'Tu Presentador',
     hostSectionSubtitle: 'Conoce al experto que te trae conocimientos de la industria CRO'
   }
@@ -225,91 +293,104 @@ const hreflang = {
   <Breadcrumb language={language} currentPath={`/${language}/`} />
   
   <main id="main-content" class="flex-1" tabindex="-1">
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
+    <!-- Hero Section with Featured Player -->
+    <section class="bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
+        <div class="text-center mb-10">
           <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-6">
             {t.heroTitle.split('CRO.CAFE')[0]}
             <span class="text-primary-600 dark:text-primary-200">CRO.CAFE</span>
           </h1>
-          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto">
+          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             {t.heroSubtitle}
           </p>
-          <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            {t.heroDescription}
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href={`/${language}/episodes/`}
-              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-accent-500 hover:bg-accent-600 dark:bg-accent-200 dark:text-gray-900 dark:hover:bg-accent-300 transition-colors shadow-lg"
-            >
-              {t.browseEpisodes}
-            </a>
-            <a 
-              href={`/${language}/subscribe/`}
-              class="inline-flex items-center px-8 py-3 border border-primary-600 dark:border-primary-200 text-base font-medium rounded-md text-primary-600 dark:text-primary-200 bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
-            >
-              {t.subscribeNow}
-            </a>
-          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-12 bg-gray-50 dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
-          <p class="text-base text-gray-600 dark:text-gray-400">
-            {t.statsSubtitle}
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <!-- Episodes Stat -->
-          <div class="text-center">
-            <div class="flex justify-center mb-3">
-              <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-primary-600 dark:text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                </svg>
+        
+        {featuredEpisode && (
+          <!-- Featured Episode Player -->
+          <div class="max-w-4xl mx-auto mb-10">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200 uppercase">
+                  {t.newEpisode}
+                </span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">
+                  {new Date(featuredEpisode.data.pubDate).toLocaleDateString(language === 'en' ? 'en-US' : language === 'nl' ? 'nl-NL' : language === 'de' ? 'de-DE' : 'es-ES', { month: 'short', day: 'numeric' })}
+                </span>
+              </div>
+              
+              <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                {featuredEpisode.data.title}
+              </h2>
+              
+              <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2">
+                {featuredEpisode.data.summary || featuredEpisode.data.description}
+              </p>
+              
+              <!-- Player Controls -->
+              <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <a 
+                  href={getEpisodeUrl(featuredEpisode, language)}
+                  class="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-full transition-colors shadow-lg group"
+                >
+                  <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                  </svg>
+                  {t.listenNow}
+                  {featuredEpisode.data.duration && (
+                    <span class="ml-2 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
+                  )}
+                </a>
+                
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <span>{t.orSubscribeOn}:</span>
+                  {platforms.slice(0, 2).map((platform) => (
+                    <a 
+                      href={platform.data.urls[language] || platform.data.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:opacity-80 transition-opacity"
+                      aria-label={`Subscribe on ${platform.data.name}`}
+                    >
+                      <img 
+                        src={platform.data.iconUrl} 
+                        alt={platform.data.name}
+                        class="h-6 w-auto"
+                      />
+                    </a>
+                  ))}
+                  <a 
+                    href={`/${language}/subscribe/`}
+                    class="text-primary-600 dark:text-primary-300 hover:underline"
+                  >
+                    +{platforms.length - 2} more
+                  </a>
+                </div>
               </div>
             </div>
-            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalEpisodes}</div>
+          </div>
+        )}
+        
+        <!-- Stats Bar -->
+        <div class="flex flex-wrap justify-center gap-8 text-center">
+          <div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white">{totalEpisodes}</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsEpisodes}</div>
           </div>
-          
-          <!-- Guests Stat -->
-          <div class="text-center">
-            <div class="flex justify-center mb-3">
-              <div class="w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-accent-600 dark:text-accent-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalGuests}+</div>
+          <div class="text-gray-300 dark:text-gray-700 self-center">•</div>
+          <div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white">{totalGuests}+</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsGuests}</div>
           </div>
-          
-          <!-- Hours Stat -->
-          <div class="text-center">
-            <div class="flex justify-center mb-3">
-              <div class="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-secondary-600 dark:text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{totalHours}+</div>
+          <div class="text-gray-300 dark:text-gray-700 self-center">•</div>
+          <div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white">{totalHours}+</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">{t.statsHours}</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Brand Logo Bar -->
-    <BrandLogoBar />
 
     <!-- Host Section -->
     <HostSection 
@@ -319,65 +400,55 @@ const hreflang = {
       subtitle={t.hostSectionSubtitle}
     />
 
-    <!-- Latest Episodes -->
+    <!-- Essential Episodes -->
     <section class="py-16 bg-white dark:bg-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-            {t.latestEpisodesTitle}
+            {t.essentialEpisodesTitle}
           </h2>
           <p class="text-lg text-gray-600 dark:text-gray-300">
-            {t.latestEpisodesSubtitle}
+            {t.essentialEpisodesSubtitle}
           </p>
         </div>
         
-        {latestEpisodes.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {latestEpisodes.map((episode) => (
-              <EpisodeCard 
-                episode={episode} 
-                showLanguage={false}
-                size="large"
-              />
-            ))}
-          </div>
+        {displayEpisodes.length > 0 ? (
+          <>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {displayEpisodes.map((episode) => (
+                <EpisodeCard 
+                  episode={episode} 
+                  showLanguage={false}
+                  size="large"
+                />
+              ))}
+            </div>
+            <div class="text-center">
+              <a 
+                href={`/${language}/episodes/`}
+                class="inline-flex items-center px-6 py-3 text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200 font-medium text-lg group"
+              >
+                {t.viewAllEpisodes}
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </>
         ) : (
           <p class="text-center text-gray-500 dark:text-gray-400">{t.noEpisodes}</p>
         )}
       </div>
     </section>
 
-    <!-- Popular Episodes -->
-    {popularEpisodes.length > 0 && (
-      <section class="py-16 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-              {t.popularEpisodesTitle}
-            </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300">
-              {t.popularEpisodesSubtitle}
-            </p>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {popularEpisodes.map((episode) => (
-              <EpisodeCard 
-                episode={episode} 
-                showLanguage={false}
-                size="large"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
-
     <!-- Featured Guests -->
     <NotableGuestsSection language={language} limit={6} />
 
     <!-- Testimonials -->
     <TestimonialsSection language={language} limit={3} />
+
+    <!-- Brand Logo Bar -->
+    <BrandLogoBar />
 
     <!-- Platform Section -->
     <section class="py-16 bg-gray-50 dark:bg-gray-900">
