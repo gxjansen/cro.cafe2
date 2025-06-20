@@ -6,8 +6,12 @@
 
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
-import { NocdbClient } from '../src/lib/services/nocodb-service'
+import { config } from 'dotenv'
+import { NocoDBWorkingClient } from '../src/lib/services/nocodb-working-client'
 import { DeletionTracker } from '../src/lib/engines/deletion-tracker'
+
+// Load environment variables
+config()
 
 interface PlatformGenerationStats {
   platformsGenerated: number
@@ -18,11 +22,11 @@ interface PlatformGenerationStats {
 }
 
 class PlatformGenerator {
-  private client: NocdbClient
+  private client: NocoDBWorkingClient
   private outputDir: string
   private stats: PlatformGenerationStats
 
-  constructor(client: NocdbClient) {
+  constructor(client: NocoDBWorkingClient) {
     this.client = client
     this.outputDir = 'src/content/platforms'
     this.stats = {
@@ -143,6 +147,10 @@ class PlatformGenerator {
     }
 
     console.log(`📝 Creating platform: ${slug}`)
+    console.log(`   - URLs: EN: ${urls.en ? '✓' : '✗'}, NL: ${urls.nl ? '✓' : '✗'}, DE: ${urls.de ? '✓' : '✗'}, ES: ${urls.es ? '✓' : '✗'}`)
+    if (slug === 'rss') {
+      console.log(`   - RSS NL URL: ${urls.nl}`)
+    }
 
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
     
@@ -196,7 +204,7 @@ async function main() {
       throw new Error('Missing required environment variables: NOCODB_API_KEY, NOCODB_BASE_URL, NOCODB_BASE_ID')
     }
 
-    const client = new NocdbClient({
+    const client = new NocoDBWorkingClient({
       apiKey,
       baseUrl,
       baseId
@@ -217,6 +225,4 @@ async function main() {
 }
 
 // Run if called directly
-if (require.main === module) {
-  main()
-}
+main()
