@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import HostImage from '../../components/HostImage.astro';
 import { getHostBySlug, getHostLanguages, getHostImageUrl } from '../../utils/content';
 import type { Language } from '../../types';
@@ -118,6 +119,11 @@ const pageDescription = `${text[pageLanguage].meet} ${host.data.name}, ${host.da
   currentPath={`/hosts/${hostSlug}/`}
 >
   <Header language={pageLanguage} currentPath={`/hosts/${hostSlug}/`} />
+  <Breadcrumb 
+    language={pageLanguage} 
+    currentPath={`/hosts/${hostSlug}/`}
+    hostName={host.data.name}
+  />
   
   <main class="flex-1">
     <!-- Host Hero Section -->

@@ -1,0 +1,64 @@
+---
+import EpisodeCard from './EpisodeCard.astro';
+import { getRelatedEpisodes } from '../utils/content';
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../types';
+
+export interface Props {
+  episode: CollectionEntry<'episodes'>;
+  language: Language;
+  limit?: number;
+}
+
+const { episode, language, limit = 3 } = Astro.props;
+
+// Get related episodes
+const relatedEpisodes = await getRelatedEpisodes(episode, language, limit);
+
+// Translations
+const translations = {
+  en: {
+    title: 'Related Episodes',
+    subtitle: 'More episodes you might enjoy'
+  },
+  nl: {
+    title: 'Gerelateerde Afleveringen',
+    subtitle: 'Meer afleveringen die je misschien leuk vindt'
+  },
+  de: {
+    title: 'Ähnliche Folgen',
+    subtitle: 'Weitere Folgen, die Ihnen gefallen könnten'
+  },
+  es: {
+    title: 'Episodios Relacionados',
+    subtitle: 'Más episodios que te pueden gustar'
+  }
+};
+
+const t = translations[language];
+---
+
+{relatedEpisodes.length > 0 && (
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">
+          {t.title}
+        </h2>
+        <p class="mt-2 text-gray-600 dark:text-gray-400">
+          {t.subtitle}
+        </p>
+      </div>
+      
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {relatedEpisodes.map((relatedEpisode) => (
+          <EpisodeCard 
+            episode={relatedEpisode} 
+            showLanguage={false}
+            size="medium"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+)}

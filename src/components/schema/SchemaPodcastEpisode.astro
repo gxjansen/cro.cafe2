@@ -1,0 +1,103 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../../types';
+
+export interface Props {
+  episode: CollectionEntry<'episodes'>;
+  language: Language;
+  seriesUrl: string;
+  hosts?: CollectionEntry<'hosts'>[];
+  guests?: CollectionEntry<'guests'>[];
+}
+
+const { episode, language, seriesUrl, hosts = [], guests = [] } = Astro.props;
+
+// Language mappings
+const languageMap = {
+  en: 'en-US',
+  nl: 'nl-NL', 
+  de: 'de-DE',
+  es: 'es-ES'
+};
+
+// Build actors array (hosts + guests)
+const actors = [
+  ...hosts.map(host => ({
+    "@type": "Person",
+    "name": host.data.name,
+    "url": `https://cro.cafe/about/`
+  })),
+  ...guests.map(guest => ({
+    "@type": "Person", 
+    "name": guest.data.name,
+    "url": `https://cro.cafe/all/guests/${guest.data.slug || guest.slug}/`
+  }))
+];
+
+// Convert duration from seconds to ISO 8601 format
+const formatDurationISO = (seconds: string | number): string => {
+  const totalSeconds = typeof seconds === 'string' ? parseInt(seconds, 10) : seconds;
+  if (isNaN(totalSeconds)) return '';
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  
+  let duration = 'PT';
+  if (hours > 0) duration += `${hours}H`;
+  if (minutes > 0) duration += `${minutes}M`;
+  if (secs > 0) duration += `${secs}S`;
+  
+  // If duration is just "PT", it means 0 seconds
+  return duration === 'PT' ? 'PT0S' : duration;
+};
+
+// Audio object for the episode
+const audioObject = episode.data.audioUrl ? {
+  "@type": "AudioObject",
+  "contentUrl": episode.data.audioUrl,
+  "duration": episode.data.duration ? formatDurationISO(episode.data.duration) : undefined,
+  "encodingFormat": "audio/mpeg",
+  "downloadUrl": episode.data.audioUrl // Allow direct download
+} : undefined;
+
+// Video object if YouTube URL exists
+const videoObject = episode.data.youtubeUrl ? {
+  "@type": "VideoObject",
+  "name": episode.data.title,
+  "description": episode.data.description,
+  "contentUrl": episode.data.youtubeUrl,
+  "embedUrl": episode.data.youtubeUrl.replace('watch?v=', 'embed/'),
+  "uploadDate": episode.data.pubDate.toISOString(),
+  "duration": episode.data.duration ? formatDurationISO(episode.data.duration) : undefined
+} : undefined;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "PodcastEpisode",
+  "name": episode.data.title,
+  "description": episode.data.description,
+  "url": `https://cro.cafe/${language}/episodes/${episode.slug}/`,
+  "datePublished": episode.data.pubDate.toISOString(),
+  "inLanguage": languageMap[language],
+  "episodeNumber": episode.data.episode,
+  "seasonNumber": episode.data.season,
+  "duration": episode.data.duration ? formatDurationISO(episode.data.duration) : undefined,
+  "partOfSeries": {
+    "@type": "PodcastSeries",
+    "name": `CRO.CAFE Podcast ${language === 'en' ? 'English' : language === 'nl' ? 'Nederlands' : language === 'de' ? 'Deutsch' : 'Español'}`,
+    "url": seriesUrl
+  },
+  "actor": actors,
+  "associatedMedia": audioObject,
+  "video": videoObject,
+  "keywords": episode.data.keywords || [],
+  "transcript": episode.data.transcript || undefined,
+  "audio": audioObject // Also include audio as a direct property
+};
+
+// Remove undefined properties
+const cleanSchema = JSON.parse(JSON.stringify(schema, (key, value) => value === undefined ? undefined : value));
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(cleanSchema)} />

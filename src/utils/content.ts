@@ -129,7 +129,9 @@ export async function getValidPlatformsForLanguage(language: Language) {
 export async function getEpisodeBySlug(slug: string, language: Language) {
   const episodes = await getCollection('episodes');
   return episodes.find(episode => 
-    episode.data.slug === slug && episode.data.language === language && episode.data.status === 'published'
+    (episode.data.slug === slug || episode.slug === slug) && 
+    episode.data.language === language && 
+    episode.data.status === 'published'
   );
 }
 
@@ -443,4 +445,105 @@ export async function getTotalDurationByLanguage(language: Language): Promise<nu
   const totalHours = Math.round((totalSeconds / 3600) * 10) / 10;
   
   return totalHours;
+}
+
+// Get related episodes based on shared guests or keywords
+export async function getRelatedEpisodes(
+  currentEpisode: any,
+  language: Language,
+  limit = 3
+) {
+  const episodes = await getEpisodesByLanguage(language);
+  
+  // Score episodes based on relevance
+  const scoredEpisodes = episodes
+    .filter(ep => ep.data.slug !== currentEpisode.data.slug && ep.slug !== currentEpisode.slug)
+    .map(ep => {
+      let score = 0;
+      
+      // Score based on shared guests (higher weight)
+      const sharedGuests = ep.data.guests.filter(g => 
+        currentEpisode.data.guests.includes(g)
+      ).length;
+      score += sharedGuests * 3;
+      
+      // Score based on shared keywords (lower weight)
+      const sharedKeywords = ep.data.keywords?.filter(k => 
+        currentEpisode.data.keywords?.includes(k)
+      ).length || 0;
+      score += sharedKeywords;
+      
+      // Small boost for recency
+      const daysDiff = Math.abs(
+        (new Date(ep.data.pubDate).getTime() - new Date(currentEpisode.data.pubDate).getTime()) 
+        / (1000 * 60 * 60 * 24)
+      );
+      if (daysDiff < 30) score += 0.5;
+      
+      return { episode: ep, score };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(item => item.episode);
+  
+  return scoredEpisodes;
+}
+
+// Get other episodes featuring the same guest
+export async function getGuestOtherEpisodes(
+  guestSlug: string,
+  currentEpisodeSlug: string,
+  language: Language,
+  limit = 5
+) {
+  const episodes = await getGuestEpisodes(guestSlug, language);
+  return episodes
+    .filter(ep => ep.data.slug !== currentEpisodeSlug && ep.slug !== currentEpisodeSlug)
+    .slice(0, limit);
+}
+
+// Get guests from the same company
+export async function getGuestsFromSameCompany(
+  company: string,
+  currentGuestSlug: string,
+  limit = 4
+) {
+  if (!company) return [];
+  
+  const guests = await getCollection('guests');
+  return guests
+    .filter(guest => 
+      guest.data.company === company && 
+      (guest.data.slug || guest.slug) !== currentGuestSlug
+    )
+    .slice(0, limit);
+}
+
+// Get episodes by keyword/topic
+export async function getEpisodesByKeyword(
+  keyword: string,
+  language: Language,
+  limit?: number
+) {
+  const episodes = await getEpisodesByLanguage(language);
+  const filtered = episodes.filter(ep => 
+    ep.data.keywords?.includes(keyword)
+  );
+  
+  return limit ? filtered.slice(0, limit) : filtered;
+}
+
+// Get all unique keywords for a language
+export async function getAllKeywords(language: Language): Promise<string[]> {
+  const episodes = await getEpisodesByLanguage(language);
+  const keywordSet = new Set<string>();
+  
+  episodes.forEach(episode => {
+    episode.data.keywords?.forEach(keyword => {
+      keywordSet.add(keyword);
+    });
+  });
+  
+  return Array.from(keywordSet).sort();
 }

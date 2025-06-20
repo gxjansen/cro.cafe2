@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && npm run generate-sitemaps",
+    "generate-sitemaps": "tsx scripts/generate-language-sitemaps.ts",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
@@ -21,7 +22,10 @@
     "sync-content": "npm run generate-content-simple && npm run validate-content",
     "validate-content": "tsx scripts/validate-content.ts",
     "check-links": "node scripts/check-links.js",
-    "build:check": "npm run build && npm run check-links"
+    "build:check": "npm run build && npm run check-links",
+    "optimize-seo": "tsx scripts/optimize-episode-seo.ts",
+    "demo-seo": "tsx scripts/demo-seo-optimization.ts",
+    "validate-schema": "tsx scripts/validate-schema.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -53,6 +57,7 @@
     "chalk": "^5.4.0",
     "eslint": "^9.18.0",
     "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",

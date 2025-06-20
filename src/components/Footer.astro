@@ -16,22 +16,46 @@ const translations = {
   en: {
     footerDescription: 'The world\'s leading podcast for conversion rate optimization professionals. Expert insights in English, Dutch, German, and Spanish.',
     languages: 'Shows',
-    subscribeOn: 'Subscribe'
+    subscribeOn: 'Subscribe',
+    browse: 'Browse',
+    episodes: 'Episodes',
+    guests: 'Guests',
+    hosts: 'Hosts',
+    subscribe: 'Subscribe',
+    about: 'About'
   },
   nl: {
     footerDescription: 'De toonaangevende podcast voor conversion rate optimization professionals. Expert inzichten in het Nederlands.',
     languages: 'Shows',
-    subscribeOn: 'Abonneer op'
+    subscribeOn: 'Abonneer op',
+    browse: 'Bladeren',
+    episodes: 'Afleveringen',
+    guests: 'Gasten',
+    hosts: 'Hosts',
+    subscribe: 'Abonneren',
+    about: 'Over'
   },
   de: {
     footerDescription: 'Der führende Podcast für Conversion Rate Optimization Profis. Experteneinblicke auf Deutsch.',
     languages: 'Shows',
-    subscribeOn: 'Abonnieren'
+    subscribeOn: 'Abonnieren',
+    browse: 'Durchsuchen',
+    episodes: 'Folgen',
+    guests: 'Gäste',
+    hosts: 'Hosts',
+    subscribe: 'Abonnieren',
+    about: 'Über'
   },
   es: {
     footerDescription: 'El podcast líder para profesionales de optimización de tasa de conversión. Perspectivas de expertos en español.',
     languages: 'Shows',
-    subscribeOn: 'Suscríbete'
+    subscribeOn: 'Suscríbete',
+    browse: 'Explorar',
+    episodes: 'Episodios',
+    guests: 'Invitados',
+    hosts: 'Hosts',
+    subscribe: 'Suscribirse',
+    about: 'Acerca de'
   }
 };
 
@@ -46,7 +70,7 @@ const footerDescription = isGlobalMode
 
 <footer class="bg-gray-900 text-white py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
       <div class="col-span-1 md:col-span-2">
         <div class="flex items-center space-x-2 mb-4">
           <img 
@@ -58,6 +82,27 @@ const footerDescription = isGlobalMode
         <p class="text-gray-300 mb-4">
           {footerDescription}
         </p>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">{t.browse}</h3>
+        <ul class="space-y-2">
+          {isGlobalMode ? (
+            <>
+              <li><a href="/all/episodes/" class="text-gray-300 hover:text-white transition-colors">{t.episodes}</a></li>
+              <li><a href="/all/guests/" class="text-gray-300 hover:text-white transition-colors">{t.guests}</a></li>
+              <li><a href="/hosts/" class="text-gray-300 hover:text-white transition-colors">{t.hosts}</a></li>
+              <li><a href="/subscribe/" class="text-gray-300 hover:text-white transition-colors">{t.subscribe}</a></li>
+            </>
+          ) : (
+            <>
+              <li><a href={`/${language}/episodes/`} class="text-gray-300 hover:text-white transition-colors">{t.episodes}</a></li>
+              <li><a href={`/${language}/guests/`} class="text-gray-300 hover:text-white transition-colors">{t.guests}</a></li>
+              <li><a href="/hosts/" class="text-gray-300 hover:text-white transition-colors">{t.hosts}</a></li>
+              <li><a href={`/${language}/subscribe/`} class="text-gray-300 hover:text-white transition-colors">{t.subscribe}</a></li>
+            </>
+          )}
+        </ul>
       </div>
       
       <div>
@@ -84,7 +129,7 @@ const footerDescription = isGlobalMode
       </div>
       
       <div>
-        <h3 class="text-lg font-semibold mb-4">About</h3>
+        <h3 class="text-lg font-semibold mb-4">{t.about}</h3>
         <ul class="space-y-2">
           <li><a href="/about/" class="text-gray-300 hover:text-white transition-colors">About CRO.CAFE</a></li>
           <li><a href="https://gui.do" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors">Founder: Guido X Jansen</a></li>

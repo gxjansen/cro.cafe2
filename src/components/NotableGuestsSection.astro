@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import { getGuestUrl, getGuestImageUrl } from '../utils/content';
 import type { Language } from '../types';
 
@@ -96,11 +97,15 @@ const t = translations[language];
               class="group text-center hover:transform hover:scale-105 transition-all duration-300"
             >
               <div class="relative mb-4">
-                <img 
+                <Image 
                   src={imageUrl} 
-                  alt={guest.data.name}
+                  alt={`${guest.data.name} - CRO.CAFE notable guest`}
+                  width={128}
+                  height={128}
                   class="w-32 h-32 mx-auto rounded-full object-cover shadow-md group-hover:shadow-xl transition-shadow"
                   loading="lazy"
+                  format="webp"
+                  quality={85}
                 />
                 {guest.data.isFeatured && (
                   <div class="absolute -top-1 -right-1 w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">

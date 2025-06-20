@@ -1,0 +1,47 @@
+---
+export interface Props {
+  name: string;
+  url: string;
+  logo: string;
+  description: string;
+  foundedBy?: string;
+  socialProfiles?: string[];
+}
+
+const { 
+  name, 
+  url, 
+  logo, 
+  description, 
+  foundedBy = "Guido X Jansen",
+  socialProfiles = [
+    "https://linkedin.com/company/cro-cafe",
+    "https://twitter.com/crocafe", 
+    "https://youtube.com/@crocafe"
+  ]
+} = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": name,
+  "url": url,
+  "logo": {
+    "@type": "ImageObject",
+    "url": logo
+  },
+  "description": description,
+  "founder": {
+    "@type": "Person",
+    "name": foundedBy
+  },
+  "sameAs": socialProfiles,
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "email": "crocafe@gui.do"
+  }
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

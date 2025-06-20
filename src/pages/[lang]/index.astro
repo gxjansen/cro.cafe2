@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import SchemaPodcastSeries from '../../components/schema/SchemaPodcastSeries.astro';
 import EpisodeImage from '../../components/EpisodeImage.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestCard from '../../components/GuestCard.astro';
@@ -197,7 +198,7 @@ const t = translations[language];
 
 // Generate hreflang URLs
 const hreflang = {
-  en: 'https://cro.cafe/',
+  en: 'https://cro.cafe/en/',
   nl: 'https://cro.cafe/nl/',
   de: 'https://cro.cafe/de/',
   es: 'https://cro.cafe/es/'
@@ -211,6 +212,15 @@ const hreflang = {
   canonical={`https://cro.cafe/${language}/`}
   hreflang={hreflang}
 >
+  <!-- Language-specific PodcastSeries Schema -->
+  <SchemaPodcastSeries 
+    language={language}
+    name={t.title.split(' - ')[1] || t.title}
+    description={t.description}
+    url={`https://cro.cafe/${language}/`}
+    websiteUrl={`https://cro.cafe/${language}/`}
+    totalEpisodes={totalEpisodes}
+  />
   <Header language={language} currentPath={`/${language}/`} />
   <Breadcrumb language={language} currentPath={`/${language}/`} />
   

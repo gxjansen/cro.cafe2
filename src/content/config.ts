@@ -36,6 +36,8 @@ const episodeSchema = z.object({
   // SEO optimization
   summary: z.string().optional(), // For meta description
   transcript: z.string().optional(),
+  seoTitle: z.string().optional(), // SEO-optimized title
+  metaDescription: z.string().optional(), // SEO-optimized meta description
 });
 
 // Guest schema for podcast participants

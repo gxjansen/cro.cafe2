@@ -1,9 +1,13 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
 import GuestCard from '../../../components/GuestCard.astro';
 import HostCard from '../../../components/HostCard.astro';
+import SchemaPodcastEpisode from '../../../components/schema/SchemaPodcastEpisode.astro';
+import RelatedEpisodes from '../../../components/RelatedEpisodes.astro';
+import EpisodeNavigation from '../../../components/EpisodeNavigation.astro';
 import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -144,15 +148,15 @@ const translations = {
 const t = translations[language];
 
 // SEO metadata
-const title = `${episode.data.title} - CRO.CAFE Podcast`;
-const description = episode.data.summary || episode.data.description.substring(0, 160);
+const title = episode.data.seoTitle || `${episode.data.title} - CRO.CAFE Podcast`;
+const description = episode.data.metaDescription || episode.data.summary || episode.data.description.substring(0, 160);
 
-// Generate hreflang URLs for other languages
-const hreflang = {
-  en: `https://cro.cafe/episodes/${episode.data.slug}`,
-  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}`,
-  de: `https://cro.cafe/de/episodes/${episode.data.slug}`,
-  es: `https://cro.cafe/es/episodes/${episode.data.slug}`
+// Generate hreflang URLs for other languages (only include if episode exists in those languages)
+const hreflang: Record<Language, string> = {
+  en: `https://cro.cafe/en/episodes/${episode.data.slug}/`,
+  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}/`,
+  de: `https://cro.cafe/de/episodes/${episode.data.slug}/`,
+  es: `https://cro.cafe/es/episodes/${episode.data.slug}/`
 };
 
 // Get locale-specific date formatting
@@ -175,7 +179,20 @@ const getDateLocale = (lang: Language) => {
   hreflang={hreflang}
   ogImage={episode.data.imageUrl}
 >
+  <!-- PodcastEpisode Schema -->
+  <SchemaPodcastEpisode 
+    episode={episode}
+    language={language}
+    seriesUrl={`https://cro.cafe/${language}/`}
+    hosts={hostDetails}
+    guests={guestDetails}
+  />
   <Header language={language} currentPath={`/${language}/episodes/`} />
+  <Breadcrumb 
+    language={language} 
+    currentPath={`/${language}/episodes/${episode.data.slug || episode.slug}/`}
+    episodeTitle={episode.data.title}
+  />
   
   <main class="flex-grow">
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -391,7 +408,13 @@ const getDateLocale = (lang: Language) => {
           </div>
         </div>
       )}
+      
+      <!-- Episode Navigation -->
+      <EpisodeNavigation currentEpisode={episode} language={language} />
     </article>
+
+    <!-- Related Episodes -->
+    <RelatedEpisodes episode={episode} language={language} />
 
     <!-- Call to Action -->
     <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">

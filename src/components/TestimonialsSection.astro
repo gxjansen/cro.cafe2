@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import type { Language } from '../types';
 
 export interface Props {
@@ -77,11 +78,15 @@ const t = translations[language];
             <!-- Author info -->
             <div class="flex items-center">
               {quote.data.authorImage && (
-                <img 
+                <Image 
                   src={quote.data.authorImage} 
-                  alt={quote.data.author}
+                  alt={`${quote.data.author} - CRO.CAFE testimonial`}
+                  width={48}
+                  height={48}
                   class="w-12 h-12 rounded-full object-cover mr-4"
                   loading="lazy"
+                  format="webp"
+                  quality={85}
                 />
               )}
               <div>

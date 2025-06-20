@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { Image } from 'astro:assets';
 import { getPlatformsByMediaTypeAndLanguage } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -159,10 +160,15 @@ const rssFeedUrl = getRssFeedUrl(language);
                 rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                <img 
+                <Image 
                   src={platform.data.iconUrl} 
-                  alt={platform.data.name}
+                  alt={`${platform.data.name} - Listen to CRO.CAFE podcast`}
+                  width={64}
+                  height={64}
                   class="w-16 h-16 mb-3 object-contain"
+                  loading="lazy"
+                  format="webp"
+                  quality={85}
                 />
                 <span class="text-gray-900 dark:text-white font-medium text-center">
                   {platform.data.name}
@@ -187,10 +193,15 @@ const rssFeedUrl = getRssFeedUrl(language);
                 rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                <img 
+                <Image 
                   src={platform.data.iconUrl} 
-                  alt={platform.data.name}
+                  alt={`${platform.data.name} - Listen to CRO.CAFE podcast`}
+                  width={64}
+                  height={64}
                   class="w-16 h-16 mb-3 object-contain"
+                  loading="lazy"
+                  format="webp"
+                  quality={85}
                 />
                 <span class="text-gray-900 dark:text-white font-medium text-center">
                   {platform.data.name}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRO.CAFE Deutsch - Website Umgezogen</title>
+    <meta name="description" content="Der deutsche CRO.CAFE Podcast ist zu cro.cafe/de/ umgezogen">
+    
+    <!-- Canonical and Redirects -->
+    <link rel="canonical" href="https://cro.cafe/de/">
+    
+    <!-- Immediate JavaScript redirect -->
+    <script>
+        // Parse current URL and redirect to new structure
+        const currentPath = window.location.pathname;
+        const currentSearch = window.location.search;
+        let newUrl = 'https://cro.cafe';
+        
+        // Map old German URLs to new structure
+        if (currentPath === '/' || currentPath === '') {
+            newUrl += '/de/';
+        } else if (currentPath.startsWith('/podcast/')) {
+            // German podcast episodes to new structure
+            const episodeSlug = currentPath.replace('/podcast/', '');
+            newUrl += '/de/episodes/' + episodeSlug + '/';
+        } else if (currentPath.startsWith('/guest/')) {
+            // German guest profiles
+            const guestSlug = currentPath.replace('/guest/', '');
+            newUrl += '/all/guests/' + guestSlug + '/';
+        } else if (currentPath === '/subscribe' || currentPath === '/subscribe/') {
+            newUrl += '/de/subscribe/';
+        } else {
+            // Fallback for other paths
+            newUrl += '/de' + currentPath;
+        }
+        
+        // Add query parameters if present
+        if (currentSearch) {
+            newUrl += currentSearch;
+        }
+        
+        // Perform redirect
+        window.location.replace(newUrl);
+    </script>
+    
+    <!-- Meta refresh as backup -->
+    <meta http-equiv="refresh" content="0; url=https://cro.cafe/de/">
+    
+    <!-- SEO and Social Meta -->
+    <meta property="og:title" content="CRO.CAFE Deutsch - Umgezogen">
+    <meta property="og:description" content="Der deutsche CRO.CAFE Podcast ist zu cro.cafe/de/ umgezogen">
+    <meta property="og:url" content="https://cro.cafe/de/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://cro.cafe/images/crocafe-social.jpg">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CRO.CAFE Deutsch - Umgezogen">
+    <meta name="twitter:description" content="Der deutsche CRO.CAFE Podcast ist zu cro.cafe/de/ umgezogen">
+    <meta name="twitter:image" content="https://cro.cafe/images/crocafe-social.jpg">
+    
+    <!-- Prevent indexing of redirect page -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+        }
+        .logo {
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .redirect-button {
+            background: #c05559;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .redirect-button:hover {
+            background: #a04449;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #c05559;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://cro.cafe/images/crocafe-logo.svg" alt="CRO.CAFE Logo" class="logo">
+        <h1>Website Umgezogen</h1>
+        <p>Der deutsche CRO.CAFE Podcast ist zu unserer neuen Website umgezogen.</p>
+        <p><span class="loading"></span>Sie werden automatisch weitergeleitet...</p>
+        <p>Falls Sie nicht automatisch weitergeleitet werden, klicken Sie bitte auf die Schaltfläche unten:</p>
+        <a href="https://cro.cafe/de/" class="redirect-button">Zur neuen Website</a>
+    </div>
+    
+    <!-- Google Analytics or tracking code if needed -->
+    <script>
+        // Track redirect in analytics if needed
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'redirect', {
+                'event_category': 'subdomain_migration',
+                'event_label': 'de.cro.cafe to cro.cafe/de',
+                'transport_type': 'beacon'
+            });
+        }
+    </script>
+</body>
+</html>

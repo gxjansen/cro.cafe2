@@ -2,6 +2,9 @@
 import type { Language } from '../types';
 import Footer from '../components/Footer.astro';
 import SkipLink from '../components/SkipLink.astro';
+import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
+import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
+import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
 
 export interface Props {
   title: string;
@@ -11,6 +14,8 @@ export interface Props {
   hreflang?: Record<Language, string>;
   ogImage?: string;
   currentPath?: string;
+  breadcrumbs?: Array<{name: string; url: string}>;
+  isHomepage?: boolean;
 }
 
 const { 
@@ -20,7 +25,9 @@ const {
   canonical, 
   hreflang,
   ogImage = '/images/og-default.jpg',
-  currentPath = Astro.url.pathname
+  currentPath = Astro.url.pathname,
+  breadcrumbs = [],
+  isHomepage = false
 } = Astro.props;
 
 const siteUrl = 'https://cro.cafe';
@@ -62,25 +69,49 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <meta property="twitter:site" content="@crocafe" />
     
     <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/images/crocafe-logo.svg" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/crocafe-icon.png" />
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/images/crocafe-icon-256.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preload critical font variants -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
-    <!-- RSS Feeds: Disabled - using NocoDB data flow instead of direct Transistor feeds -->
-    <!-- Future: Generate RSS feeds from NocoDB content if needed -->
-    <!-- 
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE English" href="/rss/en.xml" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Nederlands" href="/rss/nl.xml" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Deutsch" href="/rss/de.xml" />
-    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Español" href="/rss/es.xml" />
-    -->
+    <!-- RSS Feeds - Language-specific Transistor feeds -->
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE English" href="https://feeds.transistor.fm/cro-cafe" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Nederlands" href="https://feeds.transistor.fm/cro-cafe-nl" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Deutsch" href="https://feeds.transistor.fm/cro-cafe-deutsch" />
+    <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Español" href="https://feeds.transistor.fm/cro-cafe-es" />
     
     <title>{fullTitle}</title>
+    
+    <!-- Schema.org Structured Data -->
+    <!-- Organization Schema - appears on all pages -->
+    <SchemaOrganization 
+      name="CRO.CAFE"
+      url={siteUrl}
+      logo={`${siteUrl}/images/crocafe-logo.svg`}
+      description="The leading podcast for conversion rate optimization professionals. Expert insights in English, Dutch, German, and Spanish."
+    />
+    
+    <!-- Website Schema - appears on homepage and main pages -->
+    {isHomepage && (
+      <SchemaWebsite 
+        name="CRO.CAFE Podcast"
+        url={siteUrl}
+        searchUrl={`${siteUrl}/search/`}
+      />
+    )}
+    
+    <!-- Breadcrumb Schema - appears when breadcrumbs are present -->
+    {breadcrumbs.length > 0 && (
+      <SchemaBreadcrumbList items={breadcrumbs} language={language} />
+    )}
     
     <!-- Global Styles for Accessibility -->
     <style>

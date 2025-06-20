@@ -4,6 +4,7 @@ import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
 import EpisodeCard from '../../../components/EpisodeCard.astro';
+import SEOEpisodeCard from '../../../components/SEOEpisodeCard.astro';
 import { getEpisodesByLanguage, getEpisodeUrl, formatDuration } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -92,10 +93,12 @@ const getDateLocale = (lang: Language) => {
       <!-- Episodes Grid -->
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {episodes.map((episode) => (
-          <EpisodeCard 
+          <SEOEpisodeCard 
             episode={episode} 
             showLanguage={false}
             size="large"
+            useSEOTitle={false}
+            useSEODescription={false}
           />
         ))}
       </div>

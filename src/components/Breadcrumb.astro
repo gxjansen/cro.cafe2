@@ -5,9 +5,12 @@ export interface Props {
   language: Language;
   currentPath: string;
   items?: { label: string; href: string }[];
+  episodeTitle?: string;
+  guestName?: string;
+  hostName?: string;
 }
 
-const { language, currentPath, items } = Astro.props;
+const { language, currentPath, items, episodeTitle, guestName, hostName } = Astro.props;
 
 // Generate breadcrumb items based on current path if not provided
 const generateBreadcrumbs = (path: string, lang: Language) => {
@@ -112,6 +115,17 @@ const generateBreadcrumbs = (path: string, lang: Language) => {
 };
 
 const breadcrumbItems = items || generateBreadcrumbs(currentPath, language);
+
+// Add detail page names if provided
+if (episodeTitle && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: episodeTitle, href: currentPath });
+}
+if (guestName && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: guestName, href: currentPath });
+}
+if (hostName && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: hostName, href: currentPath });
+}
 ---
 
 {breadcrumbItems.length > 1 && (

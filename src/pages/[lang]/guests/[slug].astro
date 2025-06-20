@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeCard from '../../../components/EpisodeCard.astro';
 import GuestImage from '../../../components/GuestImage.astro';
+import SchemaPerson from '../../../components/schema/SchemaPerson.astro';
+import GuestOtherCompany from '../../../components/GuestOtherCompany.astro';
 import { getGuestBySlug, getGuestEpisodes } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -95,12 +98,12 @@ const languageNames = {
 const title = `${guest.data.name} - CRO.CAFE Podcast`;
 const description = guest.data.bio.substring(0, 160);
 
-// Generate hreflang URLs
+// Generate hreflang URLs for languages where guest appears
 const hreflang: Record<Language, string> = {
-  en: `https://cro.cafe/guests/${guestSlug}`,
-  nl: `https://cro.cafe/nl/guests/${guestSlug}`,
-  de: `https://cro.cafe/de/guests/${guestSlug}`,
-  es: `https://cro.cafe/es/guests/${guestSlug}`
+  en: `https://cro.cafe/en/guests/${guestSlug}/`,
+  nl: `https://cro.cafe/nl/guests/${guestSlug}/`,
+  de: `https://cro.cafe/de/guests/${guestSlug}/`,
+  es: `https://cro.cafe/es/guests/${guestSlug}/`
 };
 
 // Get LinkedIn URL from socialLinks
@@ -126,7 +129,18 @@ const linkedInUrl = getLinkedInUrl(guest);
   hreflang={hreflang}
   ogImage={guest.data.imageUrl}
 >
+  <!-- Person Schema for Guest -->
+  <SchemaPerson 
+    person={guest}
+    type="guest"
+    url={`https://cro.cafe/${language}/guests/${guestSlug}/`}
+  />
   <Header language={language} currentPath={`/${language}/guests/`} />
+  <Breadcrumb 
+    language={language} 
+    currentPath={`/${language}/guests/${guestSlug}/`}
+    guestName={guest.data.name}
+  />
   
   <main class="flex-grow">
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -209,6 +223,9 @@ const linkedInUrl = getLinkedInUrl(guest);
         <h2>{t.about} {guest.data.name}</h2>
         <p>{guest.data.bio}</p>
       </div>
+
+      <!-- Other Guests from Same Company -->
+      <GuestOtherCompany guest={guest} language={language} />
 
       <!-- Episodes Section -->
       {guestEpisodes.length > 0 && (

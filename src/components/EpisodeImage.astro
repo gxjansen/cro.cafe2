@@ -1,22 +1,39 @@
 ---
+import { Image } from 'astro:assets';
+
 export interface Props {
   imageUrl?: string;
   alt: string;
   class?: string;
+  width?: number;
+  height?: number;
 }
 
-const { imageUrl, alt, class: className = '' } = Astro.props;
+const { 
+  imageUrl, 
+  alt, 
+  class: className = '',
+  width = 400,
+  height = 400
+} = Astro.props;
 
 // Fallback gradient background for episodes without images
 const fallbackGradient = `bg-gradient-to-br from-primary-400 to-accent-500`;
+
+// Standardized alt text format for episodes
+const standardizedAlt = alt && alt.includes('CRO.CAFE') ? alt : `${alt || 'Episode'} - CRO.CAFE podcast episode`;
 ---
 
 {imageUrl ? (
-  <img 
+  <Image 
     src={imageUrl} 
-    alt={alt}
+    alt={standardizedAlt}
+    width={width}
+    height={height}
     class={className}
     loading="lazy"
+    format="webp"
+    quality={85}
     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
   />
   <div class={`hidden items-center justify-center ${fallbackGradient} ${className}`}>

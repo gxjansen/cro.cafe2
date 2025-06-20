@@ -158,8 +158,7 @@ export default defineConfig({
     '/youtube': 'https://youtube.com/@crocafe',
     
     // Webflow-specific redirects
-    '/sitemap.xml': '/sitemap-index.xml',
-    '/robots.txt': '/robots.txt'
+    '/sitemap.xml': '/sitemap-index.xml'
   },
   image: {
     // Allow external images from common podcast/CDN sources
