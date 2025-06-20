@@ -2,7 +2,7 @@
   "id": 12,
   "name": "Player FM",
   "slug": "player-fm",
-  "iconUrl": "/images/platforms/playerfm.png",
+  "iconUrl": "/images/platforms/player-fm.png",
   "urls": {
     "en": "https://player.fm/series/the-cro-podcast-crocafe",
     "nl": "https://player.fm/series/crocafe-nederlands",
