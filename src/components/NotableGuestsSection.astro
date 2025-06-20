@@ -46,26 +46,26 @@ function getGuestImage(guest: any): string {
 // Translations
 const translations = {
   en: {
-    title: 'Featured Conversations',
-    subtitle: 'Learn from industry leaders and CRO experts',
+    title: 'Industry Leaders',
+    subtitle: 'Learn directly from the experts shaping CRO today',
     viewProfile: 'View Profile',
     episodes: 'episodes'
   },
   nl: {
-    title: 'Uitgelichte Gesprekken',
-    subtitle: 'Leer van industry leaders en CRO experts',
+    title: 'Industrie Leiders',
+    subtitle: 'Leer direct van de experts die CRO vandaag vormgeven',
     viewProfile: 'Bekijk Profiel',
     episodes: 'afleveringen'
   },
   de: {
-    title: 'Ausgewählte Gespräche',
-    subtitle: 'Lernen Sie von Branchenführern und CRO-Experten',
+    title: 'Branchenführer',
+    subtitle: 'Lernen Sie direkt von den Experten, die CRO heute prägen',
     viewProfile: 'Profil Ansehen',
     episodes: 'Folgen'
   },
   es: {
-    title: 'Conversaciones Destacadas',
-    subtitle: 'Aprende de líderes de la industria y expertos en CRO',
+    title: 'Líderes de la Industria',
+    subtitle: 'Aprende directamente de los expertos que están dando forma al CRO hoy',
     viewProfile: 'Ver Perfil',
     episodes: 'episodios'
   }
@@ -120,15 +120,15 @@ const t = translations[language];
                 {guest.data.name}
               </h3>
               
-              {guest.data.company && (
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {guest.data.company}
+              {(guest.data.role || guest.data.title) && (
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1 font-medium">
+                  {guest.data.role || guest.data.title}
                 </p>
               )}
               
-              {guest.data.episodeCount && guest.data.episodeCount > 0 && (
-                <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                  {guest.data.episodeCount} {t.episodes}
+              {guest.data.company && (
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {guest.data.company}
                 </p>
               )}
             </a>

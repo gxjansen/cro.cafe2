@@ -2,7 +2,7 @@
   "id": 18,
   "name": "RadioGuide FM",
   "slug": "radioguide-fm",
-  "iconUrl": "/images/platforms/radioguidefm.png",
+  "iconUrl": "/images/platforms/radioguide-fm.png",
   "urls": {
     "en": "https://www.radioguide.fm/internet-radio-nederland/crocafe-english",
     "nl": "",
