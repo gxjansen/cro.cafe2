@@ -62,21 +62,28 @@ const t = translations[language];
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {quotes.map((quote) => (
-          <div class="card card-elevated p-6 relative flex flex-col min-h-[320px]">
+          <div class="card card-elevated card-testimonial p-6 relative flex flex-col min-h-[320px] group">
+            
             <!-- Quote mark -->
-            <div class="absolute top-4 left-4 text-6xl text-primary-200 dark:text-primary-800 font-serif leading-none">
+            <div class="absolute top-4 left-4 text-6xl text-primary-200 dark:text-primary-800 font-serif leading-none opacity-50">
               "
             </div>
             
-            <!-- Quote content - flex-grow to take available space -->
-            <div class="relative z-10 flex-grow">
-              <div class="text-gray-700 dark:text-gray-300 italic text-lg leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+            <!-- Top spacer for balanced vertical distribution -->
+            <div class="flex-1 min-h-[1rem]"></div>
+            
+            <!-- Quote content - centered in available space -->
+            <div class="relative z-10 flex-shrink-0">
+              <div class="testimonial-content text-gray-700 dark:text-gray-300 italic text-lg leading-relaxed prose prose-sm dark:prose-invert max-w-none">
                 <quote.Content />
               </div>
             </div>
             
-            <!-- Author info - mt-auto pushes it to bottom -->
-            <div class="flex items-center mt-auto pt-6">
+            <!-- Bottom spacer - takes up twice the space of top for visual balance -->
+            <div class="flex-[2] min-h-[1.5rem]"></div>
+            
+            <!-- Author info - anchored at bottom -->
+            <div class="flex items-center flex-shrink-0 pt-4">
               {quote.data.authorImage && (
                 <Image 
                   src={quote.data.authorImage} 

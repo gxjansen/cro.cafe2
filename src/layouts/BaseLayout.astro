@@ -5,6 +5,7 @@ import SkipLink from '../components/SkipLink.astro';
 import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
+import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
 
 export interface Props {
   title: string;
@@ -71,8 +72,14 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/images/crocafe-logo.svg" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="256x256" href="/images/crocafe-icon-256.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href={`/manifest${language === 'en' ? '' : `-${language}`}.json`} />
+    <meta name="theme-color" content="#FF6B35" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -146,6 +153,9 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
       <Footer language={language} currentPath={currentPath} />
     </div>
     
+    <!-- PWA Install Prompt -->
+    <PWAInstallPrompt language={language} />
+    
     <!-- Analytics and external scripts would go here -->
     <script>
       // Theme toggle functionality
@@ -164,6 +174,27 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
       
       // Make toggleTheme available globally
       window.toggleTheme = toggleTheme;
+    </script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        import('virtual:pwa-register').then(({ registerSW }) => {
+          registerSW({
+            immediate: true,
+            onRegisteredSW(swScriptUrl) {
+              console.log('SW registered:', swScriptUrl);
+            },
+            onOfflineReady() {
+              console.log('PWA application ready to work offline');
+            },
+            onNeedRefresh() {
+              // Optionally prompt user to refresh for updates
+              console.log('New content available, refresh to update');
+            }
+          });
+        });
+      }
     </script>
   </body>
 </html>

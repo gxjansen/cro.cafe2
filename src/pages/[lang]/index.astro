@@ -10,6 +10,7 @@ import TestimonialsSection from '../../components/TestimonialsSection.astro';
 import BrandLogoBar from '../../components/BrandLogoBar.astro';
 import HostSection from '../../components/HostSection.astro';
 import NotableGuestsSection from '../../components/NotableGuestsSection.astro';
+import LiveEventsSection from '../../components/LiveEventsSection.astro';
 import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage, getHostsByLanguage } from '../../utils/content';
 import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
@@ -446,6 +447,9 @@ const hreflang = {
 
     <!-- Testimonials -->
     <TestimonialsSection language={language} limit={3} />
+
+    <!-- Live Events Section -->
+    <LiveEventsSection language={language} />
 
     <!-- Brand Logo Bar -->
     <BrandLogoBar language={language} />
