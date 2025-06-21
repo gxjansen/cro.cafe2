@@ -127,7 +127,7 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
           return 'dark';
         }
-        return 'light';
+        return 'dark'; // Default to dark mode
       })();
       
       if (theme === 'light') {
