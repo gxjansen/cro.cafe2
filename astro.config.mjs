@@ -74,6 +74,37 @@ export default defineConfig({
                 statuses: [0, 200]
               }
             }
+          },
+          // PWA-optimized caching strategy
+          {
+            urlPattern: /\/(episodes|guests)\/.*$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'content-cache',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 3 // 3 days
+              },
+              networkTimeoutSeconds: 5,
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Marketing content - different strategy for PWA vs Browser
+          {
+            urlPattern: /\/(about|subscribe|privacy-policy).*$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'marketing-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
           }
         ]
       },

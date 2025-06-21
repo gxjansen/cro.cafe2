@@ -6,19 +6,22 @@ export interface Props {
   episodes?: Episode[];
   autoInitialize?: boolean;
   className?: string;
+  isPWAMode?: boolean;
 }
 
 const { 
   episodes = [], 
   autoInitialize = false,
-  className = ''
+  className = '',
+  isPWAMode = false
 } = Astro.props;
 ---
 
-<div id="sticky-audio-player" class={`sticky-audio-player ${className}`}>
+<div id="sticky-audio-player" class={`sticky-audio-player ${className} ${isPWAMode ? 'pwa-mode' : 'browser-mode'}`} data-pwa-mode={isPWAMode}>
   <AudioPlayerCore 
     episodes={episodes}
     autoInitialize={autoInitialize}
+    isPWAMode={isPWAMode}
     client:load
   />
 </div>
@@ -84,10 +87,19 @@ const {
   /* Ensure the audio player persists across view transitions */
   ::view-transition-group(audio-player) {
     animation-duration: 0ms;
+    isolation: isolate;
   }
   
   ::view-transition-group(audio-element) {
     animation-duration: 0ms;
+    isolation: isolate;
+  }
+  
+  /* Prevent audio interruption during transitions */
+  ::view-transition-old(audio-element),
+  ::view-transition-new(audio-element) {
+    animation-duration: 0ms;
+    mix-blend-mode: normal;
   }
 </style>
 
