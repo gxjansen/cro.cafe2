@@ -43,11 +43,8 @@ export default defineConfig({
     // ============================================================================
     
     // English domain (www.cro.cafe) redirects to new structure
-    '/podcast/': '/en/episodes/',
     '/podcast': '/en/episodes/',
-    '/guest/': '/en/guests/',
     '/guest': '/en/guests/',
-    '/event/': '/en/events/',
     '/event': '/en/events/',
     // Remove subscribe redirects - /subscribe/ is now global
     
@@ -106,51 +103,43 @@ export default defineConfig({
     // ============================================================================
     
     // Legacy paths without language prefix now redirect to global pages
-    '/events/': '/en/events/',
+    '/events': '/en/events/',
     
     // SEO-friendly redirects for common variations
-    '/shows/': '/en/episodes/',
     '/shows': '/en/episodes/',
-    '/hosts/': '/about/',
     '/hosts': '/about/',
-    '/contact/': '/about/',
     '/contact': '/about/',
     
     // Newsletter and subscription variations
-    '/newsletter/': '/en/subscribe/',
     '/newsletter': '/en/subscribe/',
-    '/signup/': '/en/subscribe/',
     '/signup': '/en/subscribe/',
     
     // RSS feed redirects (if moving from Webflow feeds)
     '/feed.xml': '/rss.xml',
-    '/rss/': '/rss.xml',
-    '/feeds/': '/rss.xml',
+    '/rss': '/rss.xml',
+    '/feeds': '/rss.xml',
     
     // About page variations
-    '/about-us/': '/about/',
     '/about-us': '/about/',
-    '/team/': '/about/',
     '/team': '/about/',
     
     // Privacy and legal redirects
-    '/privacy/': '/privacy-policy/',
-    '/terms/': '/terms-of-service/',
-    '/legal/': '/privacy-policy/',
+    '/privacy': '/privacy-policy/',
+    '/terms': '/terms-of-service/',
+    '/legal': '/privacy-policy/',
     
     // Search variations
-    '/find/': '/search/',
     '/find': '/search/',
-    '/search-episodes/': '/search/',
-    '/search-guests/': '/search/',
+    '/search-episodes': '/search/',
+    '/search-guests': '/search/',
     
     // Common typos and variations
-    '/podcast-episodes/': '/en/episodes/',
-    '/all-episodes/': '/all/episodes/',
-    '/all-guests/': '/all/guests/',
-    '/guest-profiles/': '/all/guests/',
-    '/speaker/': '/all/guests/',
-    '/speakers/': '/all/guests/',
+    '/podcast-episodes': '/en/episodes/',
+    '/all-episodes': '/all/episodes/',
+    '/all-guests': '/all/guests/',
+    '/guest-profiles': '/all/guests/',
+    '/speaker': '/all/guests/',
+    '/speakers': '/all/guests/',
     
     // Social and external redirects (if needed)
     '/linkedin': 'https://linkedin.com/company/cro-cafe',
