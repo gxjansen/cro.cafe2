@@ -3,11 +3,13 @@ import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import AstroPWA from '@vite-pwa/astro';
+import react from '@astrojs/react';
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
     tailwind(),
+    react(),
     mdx(),
     AstroPWA({
       mode: 'production',

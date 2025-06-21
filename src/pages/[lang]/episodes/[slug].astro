@@ -8,8 +8,10 @@ import HostCard from '../../../components/HostCard.astro';
 import SchemaPodcastEpisode from '../../../components/schema/SchemaPodcastEpisode.astro';
 import RelatedEpisodes from '../../../components/RelatedEpisodes.astro';
 import EpisodeNavigation from '../../../components/EpisodeNavigation.astro';
+import PlayButton from '../../../components/AudioPlayer/PlayButton';
 import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug } from '../../../utils/content';
 import type { Language } from '../../../types';
+import type { Episode } from '../../../stores/audioPlayerStore';
 
 export async function getStaticPaths() {
   const { getCollection } = await import('astro:content');
@@ -147,6 +149,18 @@ const translations = {
 
 const t = translations[language];
 
+// Convert episode data to audio player format
+const audioPlayerEpisode: Episode = {
+  id: episode.id,
+  title: episode.data.title,
+  audioUrl: episode.data.audioUrl,
+  duration: episode.data.duration,
+  description: episode.data.description,
+  publishDate: episode.data.pubDate.toISOString(),
+  imageUrl: episode.data.imageUrl,
+  slug: episode.data.slug || episode.slug,
+};
+
 // SEO metadata
 const title = episode.data.seoTitle || `${episode.data.title} - CRO.CAFE Podcast`;
 const description = episode.data.metaDescription || episode.data.summary || episode.data.description.substring(0, 160);
@@ -245,14 +259,33 @@ const getDateLocale = (lang: Language) => {
       <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-xl p-6">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t.listenTo}</h2>
         
-        <!-- Embedded player if available -->
-        {episode.data.embedHtml ? (
-          <div set:html={episode.data.embedHtml} class="transistor-embed" />
-        ) : (
-          <audio controls class="w-full">
-            <source src={episode.data.audioUrl} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
+        <!-- Custom Audio Player -->
+        <div class="flex items-center gap-4 mb-6">
+          <PlayButton 
+            episode={audioPlayerEpisode}
+            size="lg"
+            variant="primary"
+            className="flex-shrink-0"
+            client:load
+          >
+            <span class="text-lg font-medium">Play Episode</span>
+          </PlayButton>
+          
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Click play to start listening. Audio will continue playing as you browse other pages.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Fallback: Embedded player if available -->
+        {episode.data.embedHtml && (
+          <details class="mb-4">
+            <summary class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
+              Alternative Player
+            </summary>
+            <div set:html={episode.data.embedHtml} class="transistor-embed mt-2" />
+          </details>
         )}
         
         <!-- Subscribe options -->

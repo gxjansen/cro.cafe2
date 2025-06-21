@@ -6,6 +6,7 @@ import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
 import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
+import AudioPlayer from '../components/AudioPlayer/AudioPlayer.astro';
 
 export interface Props {
   title: string;
@@ -155,6 +156,9 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- PWA Install Prompt -->
     <PWAInstallPrompt language={language} />
+    
+    <!-- Sticky Audio Player -->
+    <AudioPlayer autoInitialize={true} />
     
     <!-- Analytics and external scripts would go here -->
     <script>

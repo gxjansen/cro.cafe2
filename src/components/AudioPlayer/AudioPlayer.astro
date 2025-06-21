@@ -1,0 +1,122 @@
+---
+import AudioPlayerCore from './AudioPlayerCore';
+import type { Episode } from '../../stores/audioPlayerStore';
+
+export interface Props {
+  episodes?: Episode[];
+  autoInitialize?: boolean;
+  className?: string;
+}
+
+const { 
+  episodes = [], 
+  autoInitialize = false,
+  className = ''
+} = Astro.props;
+---
+
+<div id="sticky-audio-player" class={`sticky-audio-player ${className}`}>
+  <AudioPlayerCore 
+    episodes={episodes}
+    autoInitialize={autoInitialize}
+    client:load
+  />
+</div>
+
+<style>
+  .sticky-audio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sticky-audio-player.hidden {
+    transform: translateY(100%);
+  }
+
+  .sticky-audio-player.minimized {
+    /* Styles for minimized state will be handled by React component */
+  }
+
+  /* Ensure content doesn't overlap with sticky player */
+  :global(body) {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Add bottom padding when player is active */
+  :global(body.audio-player-active) {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  :global(body.audio-player-active.audio-player-minimized) {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .sticky-audio-player {
+      /* Dark mode styles will be handled by Tailwind in React component */
+    }
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 640px) {
+    .sticky-audio-player {
+      /* Mobile optimizations */
+    }
+  }
+
+  /* Handle safe areas for mobile devices */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .sticky-audio-player {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+</style>
+
+<script>
+  // Initialize audio player state management and global listeners
+  import { loadPlayerState, audioPlayerStore } from '../../stores/audioPlayerStore';
+
+  // Load saved state on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPlayerState();
+    
+    // Add body classes based on player state
+    const updateBodyClasses = () => {
+      const state = audioPlayerStore.get();
+      const body = document.body;
+      
+      if (state.currentEpisode) {
+        body.classList.add('audio-player-active');
+      } else {
+        body.classList.remove('audio-player-active');
+      }
+      
+      if (state.isMinimized) {
+        body.classList.add('audio-player-minimized');
+      } else {
+        body.classList.remove('audio-player-minimized');
+      }
+    };
+
+    // Subscribe to store changes
+    audioPlayerStore.subscribe(updateBodyClasses);
+    
+    // Initial update
+    updateBodyClasses();
+  });
+
+  // Handle navigation - persist player across page loads
+  document.addEventListener('astro:page-load', () => {
+    loadPlayerState();
+  });
+
+  // Handle page navigation cleanup
+  document.addEventListener('astro:before-preparation', () => {
+    // Player state is automatically saved via store subscription
+  });
+</script>
