@@ -60,18 +60,19 @@ const gridClass = {
   )}
   
   {variant === 'carousel' && (
-    <div class="photo-carousel relative overflow-hidden" data-carousel>
-      <div class="flex gap-4 transition-transform duration-300" data-carousel-track>
-        {images.map((image, index) => (
-          <div class="photo-carousel__item flex-shrink-0 w-80 sm:w-96">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              loading={index < 3 ? 'eager' : 'lazy'}
-              decoding="async"
-              width={600}
-              height={400}
-              class="w-full h-64 object-cover rounded-lg"
+    <div class="photo-carousel relative" data-carousel>
+      <div class="carousel-container overflow-x-auto overflow-y-hidden scrollbar-hide">
+        <div class="flex gap-4 transition-transform duration-300 pb-2" data-carousel-track>
+          {images.map((image, index) => (
+            <div class="photo-carousel__item flex-shrink-0 w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)]">
+              <Image
+                src={image.src}
+                alt={image.alt}
+                loading={index < 4 ? 'eager' : 'lazy'}
+                decoding="async"
+                width={600}
+                height={400}
+                class="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg"
             />
             {image.event && (
               <div class="mt-2">
@@ -83,9 +84,10 @@ const gridClass = {
             )}
           </div>
         ))}
+        </div>
       </div>
       <button 
-        class="carousel-nav carousel-nav--prev absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+        class="carousel-nav carousel-nav--prev absolute left-2 top-[40%] -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg opacity-0 hover:opacity-100 transition-opacity disabled:opacity-0"
         data-carousel-prev
         aria-label="Previous image"
       >
@@ -94,7 +96,7 @@ const gridClass = {
         </svg>
       </button>
       <button 
-        class="carousel-nav carousel-nav--next absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+        class="carousel-nav carousel-nav--next absolute right-2 top-[40%] -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 rounded-full p-2 shadow-lg opacity-0 hover:opacity-100 transition-opacity disabled:opacity-0"
         data-carousel-next
         aria-label="Next image"
       >
@@ -139,51 +141,116 @@ const gridClass = {
     position: relative;
   }
   
-  .photo-gallery--carousel:hover .carousel-nav {
+  .photo-gallery--carousel:hover .carousel-nav:not(:disabled) {
     opacity: 1;
   }
   
-  .photo-carousel {
+  .carousel-container {
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  .scrollbar-hide {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
   
-  .photo-carousel::-webkit-scrollbar {
+  .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+  
+  @media (max-width: 640px) {
+    .carousel-nav {
+      display: none;
+    }
   }
 </style>
 
 <script>
-  // Simple carousel functionality
+  // Enhanced carousel functionality with smooth scrolling
   document.addEventListener('DOMContentLoaded', () => {
     const carousels = document.querySelectorAll('[data-carousel]');
     
     carousels.forEach(carousel => {
+      const container = carousel.querySelector('.carousel-container');
       const track = carousel.querySelector('[data-carousel-track]');
       const prevBtn = carousel.querySelector('[data-carousel-prev]');
       const nextBtn = carousel.querySelector('[data-carousel-next]');
       
-      if (!track || !prevBtn || !nextBtn) return;
+      if (!track || !container || !prevBtn || !nextBtn) return;
       
-      let currentIndex = 0;
-      const items = track.children;
-      const itemWidth = items[0]?.offsetWidth || 0;
-      
-      const updateCarousel = () => {
-        const offset = -currentIndex * (itemWidth + 16); // 16px gap
-        track.style.transform = `translateX(${offset}px)`;
+      const updateButtons = () => {
+        const scrollLeft = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        
+        prevBtn.disabled = scrollLeft <= 0;
+        nextBtn.disabled = scrollLeft >= maxScroll - 1;
       };
       
-      prevBtn.addEventListener('click', () => {
-        currentIndex = Math.max(0, currentIndex - 1);
-        updateCarousel();
-      });
+      const scrollToIndex = (direction) => {
+        const containerWidth = container.clientWidth;
+        const currentScroll = container.scrollLeft;
+        const items = track.children;
+        let targetScroll = currentScroll;
+        
+        if (direction === 'next') {
+          // Find the first item that's partially out of view
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const itemLeft = item.offsetLeft;
+            const itemRight = itemLeft + item.offsetWidth;
+            
+            if (itemRight > currentScroll + containerWidth + 10) {
+              targetScroll = Math.min(itemLeft, container.scrollWidth - containerWidth);
+              break;
+            }
+          }
+        } else {
+          // Find the first item that's partially out of view on the left
+          for (let i = items.length - 1; i >= 0; i--) {
+            const item = items[i];
+            const itemLeft = item.offsetLeft;
+            
+            if (itemLeft < currentScroll - 10) {
+              targetScroll = itemLeft;
+              break;
+            }
+          }
+        }
+        
+        container.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+      };
       
-      nextBtn.addEventListener('click', () => {
-        currentIndex = Math.min(items.length - 1, currentIndex + 1);
-        updateCarousel();
-      });
+      prevBtn.addEventListener('click', () => scrollToIndex('prev'));
+      nextBtn.addEventListener('click', () => scrollToIndex('next'));
+      container.addEventListener('scroll', updateButtons);
+      
+      // Initial button state
+      updateButtons();
+      
+      // Touch/swipe support for mobile
+      let touchStartX = 0;
+      let touchEndX = 0;
+      
+      container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      
+      container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            scrollToIndex('next');
+          } else {
+            scrollToIndex('prev');
+          }
+        }
+      }, { passive: true });
     });
   });
 </script>
