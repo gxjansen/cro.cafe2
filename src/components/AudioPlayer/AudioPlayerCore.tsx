@@ -195,21 +195,32 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
         <div className="flex items-center gap-4 p-4 h-full">
           {/* Episode Info */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            {episode.imageUrl && (
-              <img
-                src={episode.imageUrl}
-                alt={episode.title}
-                className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
-              />
-            )}
-            <div className="min-w-0 flex-1">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white truncate">
-                {episode.title}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
-                CRO.CAFE Podcast
-              </p>
-            </div>
+            <a 
+              href={`/${episode.language || 'en'}/episodes/${episode.slug}/`}
+              className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+              title={`Go to episode: ${episode.title}`}
+            >
+              {episode.imageUrl && (
+                <img
+                  src={episode.imageUrl}
+                  alt={episode.title}
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
+                />
+              )}
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white truncate">
+                  {episode.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+                  {episode.guests && episode.guests.length > 0 
+                    ? episode.guests.length === 1 
+                      ? `with ${episode.guests[0]}` 
+                      : `with ${episode.guests[0]} +${episode.guests.length - 1} more`
+                    : 'CRO.CAFE Podcast'
+                  }
+                </p>
+              </div>
+            </a>
           </div>
 
           {/* Main Controls */}
@@ -305,11 +316,15 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
             )}
           </button>
 
-          <div className="flex-1 min-w-0">
+          <a 
+            href={`/${episode.language || 'en'}/episodes/${episode.slug}/`}
+            className="flex-1 min-w-0 hover:opacity-80 transition-opacity"
+            title={`Go to episode: ${episode.title}`}
+          >
             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
               {episode.title}
             </p>
-          </div>
+          </a>
 
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <span>{formatTime(time)}</span>

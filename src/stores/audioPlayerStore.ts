@@ -9,6 +9,8 @@ export interface Episode {
   publishDate?: string;
   imageUrl?: string;
   slug?: string;
+  guests?: string[];
+  language?: string;
 }
 
 export interface AudioPlayerState {

@@ -159,6 +159,8 @@ const audioPlayerEpisode: Episode = {
   publishDate: episode.data.pubDate.toISOString(),
   imageUrl: episode.data.imageUrl,
   slug: episode.data.slug || episode.slug,
+  guests: guestDetails.map(guest => guest?.data?.name).filter(Boolean),
+  language: language,
 };
 
 // SEO metadata
