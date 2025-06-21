@@ -14,6 +14,7 @@ import {
   isMinimized,
   type Episode,
 } from '../../stores/audioPlayerStore';
+import { globalAudioManager } from '../../lib/audioManager';
 
 interface AudioPlayerCoreProps {
   episodes?: Episode[];
@@ -24,7 +25,6 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
   episodes = [],
   autoInitialize = false,
 }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -39,132 +39,11 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
   const loading = useStore(isLoading);
   const minimized = useStore(isMinimized);
 
-  // Handle view transitions to maintain playback
+  // Initialize global audio manager when component mounts
   useEffect(() => {
-    const handleBeforeSwap = () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      
-      // Store the current playing state and time before navigation
-      if (!audio.paused) {
-        sessionStorage.setItem('audio-was-playing', 'true');
-        sessionStorage.setItem('audio-current-time', audio.currentTime.toString());
-      }
-    };
-
-    const handleAfterSwap = () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      
-      // Restore playing state after navigation
-      const wasPlaying = sessionStorage.getItem('audio-was-playing') === 'true';
-      const savedTime = sessionStorage.getItem('audio-current-time');
-      
-      if (wasPlaying && episode) {
-        if (savedTime) {
-          audio.currentTime = parseFloat(savedTime);
-        }
-        audio.play().catch(console.error);
-        sessionStorage.removeItem('audio-was-playing');
-        sessionStorage.removeItem('audio-current-time');
-      }
-    };
-
-    // Listen for Astro view transition events
-    document.addEventListener('astro:before-swap', handleBeforeSwap);
-    document.addEventListener('astro:after-swap', handleAfterSwap);
-
-    return () => {
-      document.removeEventListener('astro:before-swap', handleBeforeSwap);
-      document.removeEventListener('astro:after-swap', handleAfterSwap);
-    };
-  }, [episode]);
-
-  // Audio element event handlers
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handleLoadedMetadata = () => {
-      audioPlayerActions.setDuration(audio.duration);
-      audioPlayerActions.setLoading(false);
-    };
-
-    const handleTimeUpdate = () => {
-      if (!isDragging) {
-        audioPlayerActions.setCurrentTime(audio.currentTime);
-      }
-    };
-
-    const handleEnded = () => {
-      audioPlayerActions.pause();
-      audioPlayerActions.nextEpisode();
-    };
-
-    const handleLoadStart = () => {
-      audioPlayerActions.setLoading(true);
-    };
-
-    const handleCanPlay = () => {
-      audioPlayerActions.setLoading(false);
-    };
-
-    const handleError = () => {
-      audioPlayerActions.setLoading(false);
-      console.error('Audio playback error');
-    };
-
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('error', handleError);
-
-    return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('error', handleError);
-    };
-  }, [isDragging]);
-
-  // Sync audio element with store state
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (playing) {
-      audio.play().catch(console.error);
-    } else {
-      audio.pause();
-    }
-  }, [playing]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.playbackRate = rate;
-  }, [rate]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.volume = vol;
-  }, [vol]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || isDragging) return;
-
-    if (Math.abs(audio.currentTime - time) > 1) {
-      audio.currentTime = time;
-    }
-  }, [time, isDragging]);
+    // The global audio manager handles all audio operations
+    console.log('AudioPlayerCore mounted - using global audio manager');
+  }, []);
 
   // Format time for display
   const formatTime = (seconds: number) => {
@@ -222,28 +101,7 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
         audio-player-core bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 
         shadow-lg transition-all duration-300 ${minimized ? 'h-16' : 'h-20 sm:h-24'}
       `}
-      style={{ viewTransitionName: 'audio-player' }}
     >
-      <audio
-        ref={audioRef}
-        src={episode.audioUrl}
-        preload="metadata"
-        style={{ viewTransitionName: 'audio-element' }}
-        onLoadedMetadata={() => {
-          // Restore playing state if we have saved data
-          const wasPlaying = sessionStorage.getItem('audio-was-playing') === 'true';
-          const savedTime = sessionStorage.getItem('audio-current-time');
-          
-          if (wasPlaying && audioRef.current) {
-            if (savedTime) {
-              audioRef.current.currentTime = parseFloat(savedTime);
-            }
-            audioRef.current.play().catch(console.error);
-            sessionStorage.removeItem('audio-was-playing');
-            sessionStorage.removeItem('audio-current-time');
-          }
-        }}
-      />
 
       {/* Full Player View */}
       {!minimized && (

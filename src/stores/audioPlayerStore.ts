@@ -1,4 +1,5 @@
 import { atom, computed } from 'nanostores';
+import { globalAudioManager } from '../lib/audioManager';
 
 export interface Episode {
   id: string;
@@ -60,6 +61,7 @@ export const isMinimized = computed(audioPlayerStore, state => state.isMinimized
 export const audioPlayerActions = {
   // Episode management
   loadEpisode: (episode: Episode) => {
+    globalAudioManager.loadEpisode(episode);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       currentEpisode: episode,
@@ -70,30 +72,38 @@ export const audioPlayerActions = {
   },
 
   // Playback controls
-  play: () => {
-    audioPlayerStore.set({
-      ...audioPlayerStore.get(),
-      isPlaying: true,
-    });
+  play: async () => {
+    const success = await globalAudioManager.play();
+    if (success) {
+      audioPlayerStore.set({
+        ...audioPlayerStore.get(),
+        isPlaying: true,
+      });
+    }
   },
 
   pause: () => {
+    globalAudioManager.pause();
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       isPlaying: false,
     });
   },
 
-  togglePlayPause: () => {
+  togglePlayPause: async () => {
     const state = audioPlayerStore.get();
-    audioPlayerStore.set({
-      ...state,
-      isPlaying: !state.isPlaying,
-    });
+    const success = await globalAudioManager.togglePlayPause();
+    if (success) {
+      audioPlayerStore.set({
+        ...state,
+        isPlaying: !state.isPlaying,
+      });
+    }
   },
 
   // Time controls
   setCurrentTime: (time: number) => {
+    globalAudioManager.setCurrentTime(time);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       currentTime: Math.max(0, time),
@@ -108,6 +118,7 @@ export const audioPlayerActions = {
   },
 
   skipForward: (seconds: number = 30) => {
+    globalAudioManager.skip(seconds);
     const state = audioPlayerStore.get();
     const newTime = Math.min(state.currentTime + seconds, state.duration);
     audioPlayerStore.set({
@@ -117,6 +128,7 @@ export const audioPlayerActions = {
   },
 
   skipBackward: (seconds: number = 15) => {
+    globalAudioManager.skip(-seconds);
     const state = audioPlayerStore.get();
     const newTime = Math.max(state.currentTime - seconds, 0);
     audioPlayerStore.set({
@@ -129,6 +141,7 @@ export const audioPlayerActions = {
   setPlaybackRate: (rate: number) => {
     const validRates = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const clampedRate = validRates.includes(rate) ? rate : 1;
+    globalAudioManager.setPlaybackRate(clampedRate);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       playbackRate: clampedRate,
@@ -137,9 +150,11 @@ export const audioPlayerActions = {
 
   // Volume
   setVolume: (volume: number) => {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    globalAudioManager.setVolume(clampedVolume);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
-      volume: Math.max(0, Math.min(1, volume)),
+      volume: clampedVolume,
     });
   },
 
@@ -256,3 +271,63 @@ audioPlayerStore.subscribe((state) => {
     (window as any).__audioPlayerSaveTimeout = setTimeout(savePlayerState, 1000);
   }
 });
+
+// Initialize global audio manager event listeners
+if (typeof window !== 'undefined') {
+  // Sync global audio manager events with store
+  window.addEventListener('audioTimeUpdate', (e: any) => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      currentTime: e.detail.currentTime,
+    });
+  });
+
+  window.addEventListener('audioDurationChange', (e: any) => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      duration: e.detail.duration,
+      isLoading: false,
+    });
+  });
+
+  window.addEventListener('audioPlay', () => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isPlaying: true,
+    });
+  });
+
+  window.addEventListener('audioPause', () => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isPlaying: false,
+    });
+  });
+
+  window.addEventListener('audioLoadStart', () => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isLoading: true,
+    });
+  });
+
+  window.addEventListener('audioCanPlay', () => {
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isLoading: false,
+    });
+  });
+
+  window.addEventListener('audioEnded', () => {
+    audioPlayerActions.nextEpisode();
+  });
+
+  window.addEventListener('audioError', (e: any) => {
+    console.error('Global audio error:', e.detail);
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isLoading: false,
+      isPlaying: false,
+    });
+  });
+}

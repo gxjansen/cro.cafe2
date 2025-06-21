@@ -83,24 +83,6 @@ const {
   @view-transition {
     navigation: auto;
   }
-  
-  /* Ensure the audio player persists across view transitions */
-  ::view-transition-group(audio-player) {
-    animation-duration: 0ms;
-    isolation: isolate;
-  }
-  
-  ::view-transition-group(audio-element) {
-    animation-duration: 0ms;
-    isolation: isolate;
-  }
-  
-  /* Prevent audio interruption during transitions */
-  ::view-transition-old(audio-element),
-  ::view-transition-new(audio-element) {
-    animation-duration: 0ms;
-    mix-blend-mode: normal;
-  }
 </style>
 
 <script>
