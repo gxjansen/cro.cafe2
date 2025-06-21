@@ -176,14 +176,18 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
   }
 
   return (
-    <div className={`
-      audio-player-core bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 
-      shadow-lg transition-all duration-300 ${minimized ? 'h-16' : 'h-20 sm:h-24'}
-    `}>
+    <div 
+      className={`
+        audio-player-core bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 
+        shadow-lg transition-all duration-300 ${minimized ? 'h-16' : 'h-20 sm:h-24'}
+      `}
+      style={{ viewTransitionName: 'audio-player' }}
+    >
       <audio
         ref={audioRef}
         src={episode.audioUrl}
         preload="metadata"
+        style={{ viewTransitionName: 'audio-element' }}
       />
 
       {/* Full Player View */}

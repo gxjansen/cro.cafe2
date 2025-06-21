@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import type { Language } from '../types';
 import Footer from '../components/Footer.astro';
 import SkipLink from '../components/SkipLink.astro';
@@ -97,6 +98,9 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <link rel="alternate" type="application/rss+xml" title="CRO.CAFE Español" href="https://feeds.transistor.fm/cro-cafe-es" />
     
     <title>{fullTitle}</title>
+    
+    <!-- View Transitions for seamless navigation -->
+    <ViewTransitions />
     
     <!-- Schema.org Structured Data -->
     <!-- Organization Schema - appears on all pages -->

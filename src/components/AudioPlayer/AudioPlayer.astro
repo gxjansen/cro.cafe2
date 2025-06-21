@@ -75,6 +75,20 @@ const {
       padding-bottom: env(safe-area-inset-bottom);
     }
   }
+
+  /* View Transitions - Keep audio player persistent */
+  @view-transition {
+    navigation: auto;
+  }
+  
+  /* Ensure the audio player persists across view transitions */
+  ::view-transition-group(audio-player) {
+    animation-duration: 0ms;
+  }
+  
+  ::view-transition-group(audio-element) {
+    animation-duration: 0ms;
+  }
 </style>
 
 <script>
@@ -110,13 +124,37 @@ const {
     updateBodyClasses();
   });
 
-  // Handle navigation - persist player across page loads
+  // Handle view transitions - persist player across page loads
   document.addEventListener('astro:page-load', () => {
     loadPlayerState();
+    updateBodyClasses();
   });
 
-  // Handle page navigation cleanup
+  // Handle before navigation - save current state
   document.addEventListener('astro:before-preparation', () => {
     // Player state is automatically saved via store subscription
+    // Additional manual save to ensure we don't lose anything
+    import('../../stores/audioPlayerStore').then(({ savePlayerState }) => {
+      savePlayerState();
+    });
+  });
+
+  // Handle after navigation swap - maintain player visibility
+  document.addEventListener('astro:after-swap', () => {
+    // Ensure the audio player remains visible and functional
+    updateBodyClasses();
+    
+    // Re-initialize if needed
+    const playerElement = document.getElementById('sticky-audio-player');
+    if (playerElement) {
+      // Force a re-render of the audio player if it exists
+      import('../../stores/audioPlayerStore').then(({ audioPlayerStore }) => {
+        const state = audioPlayerStore.get();
+        if (state.currentEpisode) {
+          // Player should remain visible
+          updateBodyClasses();
+        }
+      });
+    }
   });
 </script>
