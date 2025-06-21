@@ -62,21 +62,21 @@ const t = translations[language];
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {quotes.map((quote) => (
-          <div class="card card-elevated p-6 relative">
+          <div class="card card-elevated p-6 relative flex flex-col min-h-[320px]">
             <!-- Quote mark -->
             <div class="absolute top-4 left-4 text-6xl text-primary-200 dark:text-primary-800 font-serif leading-none">
               "
             </div>
             
-            <!-- Quote content -->
-            <div class="relative z-10 mb-6">
+            <!-- Quote content - flex-grow to take available space -->
+            <div class="relative z-10 flex-grow">
               <div class="text-gray-700 dark:text-gray-300 italic text-lg leading-relaxed prose prose-sm dark:prose-invert max-w-none">
                 <quote.Content />
               </div>
             </div>
             
-            <!-- Author info -->
-            <div class="flex items-center">
+            <!-- Author info - mt-auto pushes it to bottom -->
+            <div class="flex items-center mt-auto pt-6">
               {quote.data.authorImage && (
                 <Image 
                   src={quote.data.authorImage} 
