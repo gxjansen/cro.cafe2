@@ -6,8 +6,7 @@
   NODE_VERSION = "18"
   NETLIFY_SITE_ID = "5a20ec24-b427-4971-a742-f3f5c443143e"
 
-[[plugins]]
-  package = "@netlify/plugin-sitemap"
+# Removed @netlify/plugin-sitemap - using Astro's sitemap integration instead
 
 [dev]
   command = "npm run dev"

@@ -160,3 +160,6 @@ docs/
 *.tgz
 *.tar.gz
 missing-guest-images.md
+
+# Local Netlify folder
+.netlify

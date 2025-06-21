@@ -147,7 +147,7 @@ export default defineConfig({
     '/youtube': 'https://youtube.com/@crocafe',
     
     // Webflow-specific redirects
-    '/sitemap.xml': '/sitemap-index.xml'
+    // Removed sitemap redirect - Astro's sitemap integration handles this automatically
   },
   image: {
     // Allow external images from common podcast/CDN sources
