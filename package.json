@@ -52,6 +52,7 @@
     "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "@vite-pwa/astro": "^1.1.0",
     "@vitest/coverage-v8": "^2.1.9",
     "@vitest/ui": "^2.1.8",
     "chalk": "^5.4.0",
@@ -60,9 +61,11 @@
     "gray-matter": "^4.0.3",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
+    "sharp": "^0.34.2",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "workbox-window": "^7.3.0"
   }
 }

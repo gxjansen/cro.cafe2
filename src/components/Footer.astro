@@ -1,5 +1,6 @@
 ---
 import type { Language } from '../types';
+import FooterPhotoGrid from './FooterPhotoGrid.astro';
 
 export interface Props {
   language?: Language;
@@ -68,8 +69,10 @@ const footerDescription = isGlobalMode
   : t.footerDescription;
 ---
 
-<footer class="bg-gray-900 text-white py-12">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<footer class="bg-gray-900 text-white">
+  <FooterPhotoGrid language={language} />
+  <div class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
       <div class="col-span-1 md:col-span-2">
         <div class="flex items-center space-x-2 mb-4">
@@ -144,6 +147,7 @@ const footerDescription = isGlobalMode
       <p class="text-gray-400 text-sm">
         We only use local storage, no cookies or tracking. <a href="/privacy-policy/" class="text-gray-300 hover:text-white underline transition-colors">Privacy Policy</a>
       </p>
+    </div>
     </div>
   </div>
 </footer>

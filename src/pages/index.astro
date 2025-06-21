@@ -8,6 +8,7 @@ import BrandLogoBar from '../components/BrandLogoBar.astro';
 import TestimonialsSection from '../components/TestimonialsSection.astro';
 import NotableGuestsSection from '../components/NotableGuestsSection.astro';
 import AnimatedCounter from '../components/AnimatedCounter.astro';
+import LiveEventsSection from '../components/LiveEventsSection.astro';
 import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl, getPopularEpisodeFromEachLanguage, getTotalDurationByLanguage, getTotalGuestCount, getGuestImageUrl } from '../utils/content';
 
 // Get latest episodes for all languages for the unified homepage
@@ -444,6 +445,9 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
 
     <!-- Testimonials -->
     <TestimonialsSection language="en" limit={3} />
+
+    <!-- Live Events Section -->
+    <LiveEventsSection language={null} />
 
     <!-- Newsletter Signup -->
     <!--

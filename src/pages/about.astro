@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import HostCard from '../components/HostCard.astro';
+import AboutEventGallery from '../components/AboutEventGallery.astro';
 import { getAllHosts } from '../utils/content';
 
 const pageTitle = "About CRO.CAFE";
@@ -51,6 +52,14 @@ const sortedHosts = hostOrder
         </div>
       </section>
       
+      <!-- Close the container div to allow full-width event gallery -->
+    </div>
+    
+    <!-- Event Gallery Section -->
+    <AboutEventGallery />
+    
+    <!-- Reopen container for remaining content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <article class="prose prose-lg dark:prose-invert max-w-none">
         <h2>Our Vision</h2>
         
@@ -109,6 +118,7 @@ const sortedHosts = hostOrder
           <p>Email us at: <a href="mailto:crocafe@gui.do" class="text-primary-600 dark:text-primary-200 hover:underline">crocafe@gui.do</a></p>
         </div>
       </article>
+    </div>
     </div>
   </main>
 </BaseLayout>

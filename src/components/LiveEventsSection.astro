@@ -1,0 +1,189 @@
+---
+import PhotoGallery from './PhotoGallery.astro';
+import EventPhotoSchema from './EventPhotoSchema.astro';
+import type { Language } from '../types';
+
+export interface Props {
+  language?: Language | null;
+}
+
+const { language } = Astro.props;
+const lang = language;
+const isInternational = !lang;
+
+// Only show this section on international, English, and Dutch pages
+const showSection = isInternational || lang === 'en' || lang === 'nl';
+
+// Get featured event images for carousel
+const featuredImages = lang === 'nl' ? [
+  {
+    src: '/images/events/nl/marketing-insights-event/mie-gallery-1.jpeg',
+    alt: 'Live podcast opname met gasten bij Marketing Insights Event',
+    event: 'Marketing Insights Event 2020',
+    date: 'Februari 2020'
+  },
+  {
+    src: '/images/events/nl/dutch-cro-awards/604bf7e0b36c35215654aac2_5de150d3d41c9b09d8ba3323_FB_IMG_1570131602666-min.jpeg',
+    alt: 'Guido X Jansen presenteert bij Dutch CRO Awards',
+    event: 'Dutch CRO Awards 2019',
+    date: 'Oktober 2019'
+  },
+  {
+    src: '/images/events/shared/cro-cafe-unconference/604bf772333c590548ad407e_DSC08342_lightbox.jpeg',
+    alt: 'Interactieve sessie tijdens CRO Cafe Unconference',
+    event: 'CRO Cafe Unconference',
+    date: 'Juli 2019'
+  },
+  {
+    src: '/images/events/nl/marketing-insights-event/mie-gallery-2.jpeg',
+    alt: 'Netwerken na live podcast opname',
+    event: 'Marketing Insights Event 2020',
+    date: 'Februari 2020'
+  },
+  {
+    src: '/images/events/shared/emerce-conversion/conversion-gallery-1.jpeg',
+    alt: 'Panel discussie bij Emerce Engage',
+    event: 'Emerce Engage 2019',
+    date: 'November 2019'
+  }
+] : [
+  {
+    src: '/images/events/en/conversion-hotel/604bf8dc80e38107060ac3c1_191123-14h22m50s-IMG_0308-CH19-SO.jpeg',
+    alt: 'Live podcast recording with industry experts at Conversion Hotel',
+    event: 'Conversion Hotel 2019',
+    date: 'November 2019'
+  },
+  {
+    src: '/images/events/en/conversion-hotel/604bf8dc80e3811ac20ac318_191122-20h45m22s-IMG_9692-CH19-SO.jpeg',
+    alt: 'Engaged audience during live CRO Cafe recording',
+    event: 'Conversion Hotel 2019', 
+    date: 'November 2019'
+  },
+  {
+    src: '/images/events/shared/emerce-conversion/conversion-gallery-3.jpeg',
+    alt: 'Panel discussion at Emerce Conversion event',
+    event: 'Emerce Conversion 2019',
+    date: 'April 2019'
+  },
+  {
+    src: '/images/events/nl/digital-analytics-congres/dac-gallery-1.jpeg',
+    alt: 'Interactive session at Digital Analytics Congress',
+    event: 'Digital Analytics Congress',
+    date: '2019'
+  },
+  {
+    src: '/images/events/en/conversion-hotel-2021/61c5025154d0ca45e4ed6f6f_Image_3_.jpg',
+    alt: 'Recording setup at Conversion Hotel 2021',
+    event: 'Conversion Hotel 2021',
+    date: 'November 2021'
+  }
+];
+
+const ctaLink = lang === 'nl' ? '/nl/episodes/?recorded=live' : 
+                lang === 'en' ? '/en/episodes/?recorded=live' :
+                '/episodes/?recorded=live';
+
+const content = {
+  nl: {
+    heading: 'Live Opnames & Community Events',
+    subheading: 'Ontmoet ons bij industrie-evenementen waar we live podcasts opnemen met thought leaders en innovators',
+    cta: 'Luister naar Live Afleveringen',
+    imageAlt: 'Live podcast opname bij'
+  },
+  en: {
+    heading: 'Live Recordings & Community Events',
+    subheading: 'Join us at industry events where we record live podcasts with thought leaders and innovators',
+    cta: 'Listen to Live Episodes',
+    imageAlt: 'Live podcast recording at'
+  }
+};
+
+const text = lang === 'nl' ? content.nl : content.en;
+---
+
+{showSection && (
+  <>
+    <EventPhotoSchema 
+      images={featuredImages}
+      eventName={text.heading}
+      eventDescription={text.subheading}
+    />
+  <section class="live-events-section py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-transparent via-gray-50/50 to-transparent dark:from-transparent dark:via-gray-900/20 dark:to-transparent" aria-labelledby="live-events-heading">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-10 sm:mb-12">
+        <h2 id="live-events-heading" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          {text.heading}
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          {text.subheading}
+        </p>
+      </div>
+      
+      <div class="mb-10 sm:mb-12">
+        <PhotoGallery
+          images={featuredImages}
+          variant="carousel"
+          className="live-events-carousel"
+        />
+      </div>
+      
+      <div class="text-center">
+        <a 
+          href={ctaLink}
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+          </svg>
+          {text.cta}
+        </a>
+      </div>
+    </div>
+  </section>
+  </>
+)}
+
+<style>
+  .live-events-carousel :global(.photo-carousel__item img) {
+    height: 16rem;
+  }
+  
+  @media (min-width: 640px) {
+    .live-events-carousel :global(.photo-carousel__item img) {
+      height: 20rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .live-events-carousel :global(.photo-carousel__item img) {
+      height: 24rem;
+    }
+  }
+  
+  .live-events-section {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .live-events-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 20% 50%, rgba(var(--lang-accent-500), 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  
+  .live-events-section::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 80% 50%, rgba(var(--lang-accent-600), 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+</style>
