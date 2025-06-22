@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import HostImage from '../../components/HostImage.astro';
-import { getHostBySlug, getHostLanguages, getHostImageUrl } from '../../utils/content';
+import { getHostBySlug, getHostLanguages, getHostImageUrl, getHostStatistics } from '../../utils/content';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -32,6 +32,9 @@ if (!host) {
 
 // Get languages this host appears in
 const hostLanguages = await getHostLanguages(hostSlug);
+
+// Get host statistics
+const hostStats = await getHostStatistics(hostSlug);
 
 // Language names for display
 const languageNames: Record<Language, { name: string; flag: string; path: string }> = {
@@ -65,7 +68,10 @@ const text = {
     discoverMore: 'Discover More CRO Insights',
     exploreAll: 'Explore all episodes and learn from industry experts',
     browseAll: 'Browse All Episodes',
-    meetGuests: 'Meet Our Guests'
+    meetGuests: 'Meet Our Guests',
+    episodes: 'Episodes',
+    guests: 'Guests Interviewed',
+    acrossLanguages: 'across all languages'
   },
   de: {
     hostAt: 'Moderator bei CRO.CAFE',
@@ -84,7 +90,10 @@ const text = {
     discoverMore: 'Entdecken Sie mehr CRO Einblicke',
     exploreAll: 'Entdecken Sie alle Folgen und lernen Sie von Branchenexperten',
     browseAll: 'Alle Folgen durchsuchen',
-    meetGuests: 'Unsere Gäste kennenlernen'
+    meetGuests: 'Unsere Gäste kennenlernen',
+    episodes: 'Folgen',
+    guests: 'Interviewte Gäste',
+    acrossLanguages: 'sprachübergreifend'
   },
   es: {
     hostAt: 'Presentador en CRO.CAFE',
@@ -103,7 +112,10 @@ const text = {
     discoverMore: 'Descubre más perspectivas de CRO',
     exploreAll: 'Explora todos los episodios y aprende de expertos de la industria',
     browseAll: 'Ver todos los episodios',
-    meetGuests: 'Conoce a nuestros invitados'
+    meetGuests: 'Conoce a nuestros invitados',
+    episodes: 'Episodios',
+    guests: 'Invitados Entrevistados',
+    acrossLanguages: 'en todos los idiomas'
   }
 };
 
@@ -143,8 +155,31 @@ const pageDescription = `${text[pageLanguage].meet} ${host.data.name}, ${host.da
           <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
             {host.data.name}
           </h1>
-          <p class="text-xl md:text-2xl text-primary-600 dark:text-primary-300 mb-6 font-medium">
+          <p class="text-xl md:text-2xl text-primary-600 dark:text-primary-300 mb-8 font-medium">
             {host.data.role}
+          </p>
+          
+          <!-- Host Statistics -->
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-4 shadow-md border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                {hostStats.totalEpisodes}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 uppercase tracking-wide">
+                {text[pageLanguage].episodes}
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-4 shadow-md border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                {hostStats.totalGuests}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 uppercase tracking-wide">
+                {text[pageLanguage].guests}
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+            {text[pageLanguage].acrossLanguages}
           </p>
         </div>
       </div>

@@ -568,3 +568,67 @@ export async function getAllKeywords(language: Language): Promise<string[]> {
   
   return Array.from(keywordSet).sort();
 }
+
+// Get host statistics across all languages
+export async function getHostStatistics(hostSlug: string): Promise<{
+  totalEpisodes: number;
+  totalGuests: number;
+  episodesByLanguage: Record<Language, number>;
+  uniqueGuestsByLanguage: Record<Language, string[]>;
+}> {
+  const [allEpisodes, allGuests] = await Promise.all([
+    getCollection('episodes'),
+    getCollection('guests')
+  ]);
+
+  // Filter episodes for this host (only published)
+  const hostEpisodes = allEpisodes.filter(episode => 
+    episode.data.hosts.includes(hostSlug) && episode.data.status === 'published'
+  );
+
+  // Count episodes by language
+  const episodesByLanguage: Record<Language, number> = {
+    en: 0,
+    nl: 0,
+    de: 0,
+    es: 0
+  };
+
+  // Track unique guests by language
+  const uniqueGuestsByLanguage: Record<Language, string[]> = {
+    en: [],
+    nl: [],
+    de: [],
+    es: []
+  };
+
+  // Process each episode to count episodes and collect unique guests per language
+  hostEpisodes.forEach(episode => {
+    const language = episode.data.language;
+    episodesByLanguage[language]++;
+    
+    // Add guests for this episode to the language-specific list
+    episode.data.guests.forEach(guestSlug => {
+      if (!uniqueGuestsByLanguage[language].includes(guestSlug)) {
+        uniqueGuestsByLanguage[language].push(guestSlug);
+      }
+    });
+  });
+
+  // Calculate totals across all languages
+  const totalEpisodes = Object.values(episodesByLanguage).reduce((sum, count) => sum + count, 0);
+  
+  // Get unique guests across all languages
+  const allUniqueGuests = new Set<string>();
+  Object.values(uniqueGuestsByLanguage).forEach(guestList => {
+    guestList.forEach(guestSlug => allUniqueGuests.add(guestSlug));
+  });
+  const totalGuests = allUniqueGuests.size;
+
+  return {
+    totalEpisodes,
+    totalGuests,
+    episodesByLanguage,
+    uniqueGuestsByLanguage
+  };
+}
