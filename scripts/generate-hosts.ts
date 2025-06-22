@@ -119,6 +119,12 @@ class HostGenerator {
     const slug = host.slug || host.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const hostPath = join(this.outputDir, `${slug}.mdx`)
 
+    // Debug: Log all field names for the gxjansen host
+    if (slug === 'gxjansen') {
+      console.log('🔍 DEBUG: gxjansen host fields:', Object.keys(host))
+      console.log('🔍 DEBUG: gxjansen host data:', JSON.stringify(host, null, 2))
+    }
+
     const frontmatter = this.generateHostFrontmatter(host, slug)
     const content = host.bio || ''
     const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
@@ -154,16 +160,27 @@ class HostGenerator {
       socialLinks.push({ platform: 'linkedin', url: linkedinValue })
     }
 
-    // Handle image URL
+    // Handle image URL - check multiple possible field names
     let imageUrlField = ''
-    if (host.image_url) {
-      if (this.isValidUrl(host.image_url)) {
-        imageUrlField = `imageUrl: "${host.image_url}"`
-      } else if (host.image_url && typeof host.image_url === 'string') {
-        if (host.image_url.startsWith('/images/hosts/')) {
-          imageUrlField = `imageUrl: "${host.image_url}"`
+    const imageUrlValue = host.image_url || host.imageUrl || host.ImageUrl || host.Image_Url || host.imageurl
+    
+    if (slug === 'gxjansen') {
+      console.log('🔍 DEBUG: image_url field value:', host.image_url)
+      console.log('🔍 DEBUG: imageUrl field value:', host.imageUrl)
+      console.log('🔍 DEBUG: ImageUrl field value:', host.ImageUrl)
+      console.log('🔍 DEBUG: Image_Url field value:', host.Image_Url)
+      console.log('🔍 DEBUG: imageurl field value:', host.imageurl)
+      console.log('🔍 DEBUG: selected imageUrlValue:', imageUrlValue)
+    }
+    
+    if (imageUrlValue) {
+      if (this.isValidUrl(imageUrlValue)) {
+        imageUrlField = `imageUrl: "${imageUrlValue}"`
+      } else if (imageUrlValue && typeof imageUrlValue === 'string') {
+        if (imageUrlValue.startsWith('/images/hosts/')) {
+          imageUrlField = `imageUrl: "${imageUrlValue}"`
         } else {
-          imageUrlField = `imageUrl: "/images/hosts/${host.image_url}"`
+          imageUrlField = `imageUrl: "/images/hosts/${imageUrlValue}"`
         }
       }
     }
