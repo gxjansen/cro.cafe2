@@ -57,6 +57,17 @@ class HostGenerator {
       console.log('📥 Fetching hosts from NocoDB...')
       const hosts = await this.client.getHosts({ limit: 100 })
       console.log(`📊 Found ${hosts.length} hosts in NocoDB`)
+      
+      // Always debug gxjansen host regardless of changes
+      const gxjansenHost = hosts.find(h => h.slug === 'gxjansen' || h.name?.toLowerCase().includes('guido'))
+      if (gxjansenHost) {
+        console.log('🔍 DEBUG: gxjansen host found!')
+        console.log('🔍 DEBUG: gxjansen image_url value:', gxjansenHost.image_url)
+        console.log('🔍 DEBUG: gxjansen UpdatedAt:', gxjansenHost.UpdatedAt)
+        console.log('🔍 DEBUG: gxjansen all fields:', Object.keys(gxjansenHost))
+      } else {
+        console.log('🔍 DEBUG: gxjansen host NOT found in NocoDB response')
+      }
 
       // Generate host files
       const generatedFiles = new Set<string>()
