@@ -64,6 +64,7 @@ class HostGenerator {
         console.log('🔍 DEBUG: gxjansen host found!')
         console.log('🔍 DEBUG: gxjansen image_url value:', gxjansenHost.image_url)
         console.log('🔍 DEBUG: gxjansen UpdatedAt:', gxjansenHost.UpdatedAt)
+        console.log('🔍 DEBUG: gxjansen nocodb_last_modified:', gxjansenHost.nocodb_last_modified)
         console.log('🔍 DEBUG: gxjansen all fields:', Object.keys(gxjansenHost))
       } else {
         console.log('🔍 DEBUG: gxjansen host NOT found in NocoDB response')
@@ -135,6 +136,7 @@ class HostGenerator {
       console.log('🔍 DEBUG: gxjansen host fields:', Object.keys(host))
       console.log('🔍 DEBUG: gxjansen image_url value:', host.image_url)
       console.log('🔍 DEBUG: gxjansen UpdatedAt:', host.UpdatedAt)
+      console.log('🔍 DEBUG: gxjansen nocodb_last_modified:', host.nocodb_last_modified)
       console.log('🔍 DEBUG: gxjansen full data:', JSON.stringify(host, null, 2))
     }
 
@@ -199,7 +201,7 @@ class HostGenerator {
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
-      `updatedAt: ${new Date(host.UpdatedAt || Date.now()).toISOString()}`
+      `updatedAt: ${new Date(host.nocodb_last_modified || host.UpdatedAt || Date.now()).toISOString()}`
     ].filter(Boolean).join('\n')
   }
 
