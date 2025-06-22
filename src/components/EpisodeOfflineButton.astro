@@ -1,0 +1,52 @@
+---
+// Component for episode offline download button
+export interface Props {
+  episode: {
+    id: string;
+    title: string;
+    audioUrl: string;
+    duration?: number;
+    description?: string;
+    publishDate?: string;
+    imageUrl?: string;
+    slug?: string;
+    guests?: string[];
+    language?: string;
+  };
+  className?: string;
+}
+
+const { episode, className = '' } = Astro.props;
+---
+
+<div 
+  id={`offline-button-${episode.id}`} 
+  class={`episode-offline-button ${className}`}
+  data-episode={JSON.stringify(episode)}
+>
+  <!-- React component will be mounted here -->
+</div>
+
+<script>
+  import OfflineEpisodeCard from '../components/OfflineEpisodeCard';
+  import React from 'react';
+  import ReactDOM from 'react-dom/client';
+
+  // Mount React components for offline buttons
+  document.addEventListener('DOMContentLoaded', () => {
+    const offlineButtons = document.querySelectorAll('.episode-offline-button');
+    
+    offlineButtons.forEach((container) => {
+      const episodeData = container.getAttribute('data-episode');
+      if (episodeData) {
+        try {
+          const episode = JSON.parse(episodeData);
+          const root = ReactDOM.createRoot(container);
+          root.render(React.createElement(OfflineEpisodeCard, { episode }));
+        } catch (error) {
+          console.error('Failed to parse episode data:', error);
+        }
+      }
+    });
+  });
+</script>

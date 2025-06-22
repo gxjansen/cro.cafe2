@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Dropdown Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: white;
+            border-radius: 3px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Language Dropdown Test Instructions</h1>
+    
+    <div class="test-section">
+        <h2>Testing Procedure</h2>
+        <ol>
+            <li>Open the built site at <code>http://localhost:3000</code> or <code>npm run preview</code></li>
+            <li>Navigate to any page (e.g., /en/episodes/)</li>
+            <li>Click on an episode to play it (audio player should appear at bottom)</li>
+            <li>While audio is playing, navigate to another page using the navigation links</li>
+            <li>Try to click the language dropdown button in the header</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Expected Behavior</h2>
+        <div class="status success">
+            ✅ Language dropdown button should be clickable on all pages
+        </div>
+        <div class="status success">
+            ✅ Dropdown menu should appear when button is clicked
+        </div>
+        <div class="status success">
+            ✅ Language options should be clickable and navigate correctly
+        </div>
+        <div class="status success">
+            ✅ Dropdown should work even when audio player is visible
+        </div>
+        <div class="status success">
+            ✅ Dropdown should work after navigating between pages
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Fixes Applied</h2>
+        <ul>
+            <li><strong>View Transition Support:</strong> Added <code>transition:name="language-switcher"</code> and <code>transition:animate="none"</code> to keep dropdown in transition layer</li>
+            <li><strong>Event Delegation:</strong> Using document-level event listeners with capture phase for reliability</li>
+            <li><strong>Z-Index Management:</strong> Dynamic z-index boosting when dropdown is active (z-index: 9999)</li>
+            <li><strong>Isolation Context:</strong> Added <code>isolation: isolate</code> to create proper stacking context</li>
+            <li><strong>Touch Support:</strong> Added touchstart event handling for mobile devices</li>
+            <li><strong>Post-Navigation Fix:</strong> Automatic z-index correction after View Transitions complete</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>Browser Console Commands</h2>
+        <p>Use these commands in the browser console to debug:</p>
+        <pre>
+// Check if language switcher manager is initialized
+console.log(window.__languageSwitcherManager);
+
+// Check z-index of dropdown elements
+document.querySelectorAll('.language-switcher-container').forEach(el => {
+    console.log('Container z-index:', getComputedStyle(el).zIndex);
+});
+
+// Check if event delegation is working
+document.querySelector('[data-language-button]').click();
+
+// Force fix z-index issues
+window.__languageSwitcherManager?.fixZIndexAfterTransition();
+        </pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Common Issues and Solutions</h2>
+        
+        <div class="status warning">
+            <strong>Issue:</strong> Dropdown not clickable after navigation<br>
+            <strong>Solution:</strong> View Transitions create new stacking contexts. We've added transition attributes to include the dropdown in the transition layer.
+        </div>
+        
+        <div class="status warning">
+            <strong>Issue:</strong> Click events not firing<br>
+            <strong>Solution:</strong> Using event delegation with capture phase and stopImmediatePropagation to ensure events are caught.
+        </div>
+        
+        <div class="status warning">
+            <strong>Issue:</strong> Z-index conflicts with audio player<br>
+            <strong>Solution:</strong> Dynamic z-index boosting when dropdown is active (9998/9999) ensures it stays above everything.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Testing Checklist</h2>
+        <form id="test-checklist">
+            <label><input type="checkbox"> Language dropdown works on initial page load</label><br>
+            <label><input type="checkbox"> Language dropdown works after playing audio</label><br>
+            <label><input type="checkbox"> Language dropdown works after navigating to another page</label><br>
+            <label><input type="checkbox"> Dropdown menu appears above audio player</label><br>
+            <label><input type="checkbox"> Language selection navigates correctly</label><br>
+            <label><input type="checkbox"> Keyboard navigation (Escape, Arrow keys) works</label><br>
+            <label><input type="checkbox"> Mobile touch events work correctly</label><br>
+            <label><input type="checkbox"> No console errors related to language switcher</label><br>
+        </form>
+    </div>
+
+    <script>
+        // Save checklist state
+        document.getElementById('test-checklist').addEventListener('change', (e) => {
+            const checkboxes = document.querySelectorAll('#test-checklist input[type="checkbox"]');
+            const state = Array.from(checkboxes).map(cb => cb.checked);
+            localStorage.setItem('language-dropdown-test', JSON.stringify(state));
+        });
+
+        // Restore checklist state
+        const savedState = localStorage.getItem('language-dropdown-test');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            const checkboxes = document.querySelectorAll('#test-checklist input[type="checkbox"]');
+            checkboxes.forEach((cb, i) => {
+                cb.checked = state[i] || false;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Playback Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #log {
+            background: #f4f4f4;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px;
+        }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Audio Playback Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Direct Audio Element Test</h2>
+        <p>This tests the audio playback directly without any framework interference.</p>
+        
+        <audio id="testAudio" controls style="width: 100%;">
+            <source src="https://media.transistor.fm/61f6a663/7f4fd273.mp3" type="audio/mpeg">
+        </audio>
+        
+        <div style="margin-top: 10px;">
+            <button onclick="playAudio()">Play</button>
+            <button onclick="pauseAudio()">Pause</button>
+            <button onclick="checkBuffering()">Check Buffering</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Debug Log</h2>
+        <div id="log"></div>
+    </div>
+    
+    <script>
+        const audio = document.getElementById('testAudio');
+        const log = document.getElementById('log');
+        let playStartTime = null;
+        
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function clearLog() {
+            log.innerHTML = '';
+        }
+        
+        // Set up audio event listeners
+        audio.addEventListener('play', () => {
+            playStartTime = Date.now();
+            addLog('▶️ Play event fired', 'success');
+        });
+        
+        audio.addEventListener('pause', () => {
+            if (playStartTime) {
+                const duration = ((Date.now() - playStartTime) / 1000).toFixed(1);
+                addLog(`⏸️ Pause event fired after ${duration}s`, 'warning');
+                console.trace('Pause stack trace');
+            } else {
+                addLog('⏸️ Pause event fired', 'warning');
+            }
+        });
+        
+        audio.addEventListener('timeupdate', () => {
+            const time = audio.currentTime.toFixed(1);
+            if (Math.floor(audio.currentTime) === 4 && audio.currentTime < 4.1) {
+                addLog(`🔍 4-second mark reached: time=${time}s, paused=${audio.paused}`, 'info');
+                checkBuffering();
+            }
+        });
+        
+        audio.addEventListener('stalled', () => {
+            addLog('🚨 Stalled - network stalled while fetching', 'error');
+        });
+        
+        audio.addEventListener('suspend', () => {
+            addLog('⚠️ Suspend - browser stopped fetching', 'warning');
+        });
+        
+        audio.addEventListener('waiting', () => {
+            addLog('⏳ Waiting - playback stopped, buffering', 'warning');
+        });
+        
+        audio.addEventListener('error', (e) => {
+            addLog(`❌ Error: ${e.message || 'Unknown error'}`, 'error');
+        });
+        
+        audio.addEventListener('loadstart', () => {
+            addLog('📡 Load start', 'info');
+        });
+        
+        audio.addEventListener('canplay', () => {
+            addLog('✅ Can play', 'success');
+        });
+        
+        audio.addEventListener('canplaythrough', () => {
+            addLog('✅ Can play through', 'success');
+        });
+        
+        function playAudio() {
+            addLog('🎮 Play button clicked', 'info');
+            audio.play().catch(e => {
+                addLog(`❌ Play failed: ${e.message}`, 'error');
+            });
+        }
+        
+        function pauseAudio() {
+            addLog('🎮 Pause button clicked', 'info');
+            audio.pause();
+        }
+        
+        function checkBuffering() {
+            const buffered = audio.buffered;
+            if (buffered.length > 0) {
+                for (let i = 0; i < buffered.length; i++) {
+                    const start = buffered.start(i).toFixed(1);
+                    const end = buffered.end(i).toFixed(1);
+                    addLog(`📊 Buffered range ${i}: ${start}s - ${end}s`, 'info');
+                }
+            } else {
+                addLog('📊 No buffered ranges', 'warning');
+            }
+            
+            addLog(`🔍 Current time: ${audio.currentTime.toFixed(1)}s`, 'info');
+            addLog(`🔍 Duration: ${audio.duration.toFixed(1)}s`, 'info');
+            addLog(`🔍 Ready state: ${audio.readyState} (0=HAVE_NOTHING, 1=HAVE_METADATA, 2=HAVE_CURRENT_DATA, 3=HAVE_FUTURE_DATA, 4=HAVE_ENOUGH_DATA)`, 'info');
+            addLog(`🔍 Network state: ${audio.networkState} (0=NETWORK_EMPTY, 1=NETWORK_IDLE, 2=NETWORK_LOADING, 3=NETWORK_NO_SOURCE)`, 'info');
+        }
+        
+        // Initial log
+        addLog('🚀 Audio debug test ready', 'success');
+        addLog(`🎵 Audio source: ${audio.src}`, 'info');
+        
+        // Set crossOrigin
+        audio.crossOrigin = 'anonymous';
+        addLog('🔐 Set crossOrigin to anonymous', 'info');
+        
+        // Check every 5 seconds if playing
+        setInterval(() => {
+            if (!audio.paused) {
+                const time = audio.currentTime.toFixed(1);
+                addLog(`⏱️ Status check: playing at ${time}s`, 'info');
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

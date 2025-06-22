@@ -4,6 +4,7 @@
  */
 
 import type { Episode } from '../stores/audioPlayerStore';
+import { offlineAudioManager } from './offlineAudioManager';
 
 class GlobalAudioManager {
   private audio: HTMLAudioElement | null = null;
@@ -43,8 +44,11 @@ class GlobalAudioManager {
       // Create a persistent audio element
       this.audio = document.createElement('audio');
       this.audio.id = 'global-persistent-audio';
-      this.audio.preload = 'metadata';
+      this.audio.preload = 'auto'; // Changed from 'metadata' to 'auto' for better buffering
       this.audio.style.display = 'none';
+      
+      // Set crossOrigin to handle CORS issues
+      this.audio.crossOrigin = 'anonymous';
       
       // Store it on window to persist across view transitions
       (window as any).__persistentAudio = this.audio;
@@ -77,6 +81,20 @@ class GlobalAudioManager {
       },
       timeupdate: () => {
         if (this.audio) {
+          // Log every 4 seconds to debug the stopping issue
+          if (Math.floor(this.audio.currentTime) === 4 && this.audio.currentTime < 4.1) {
+            console.log('🔍 4-second mark reached:', {
+              paused: this.audio.paused,
+              currentTime: this.audio.currentTime,
+              buffered: this.audio.buffered.length > 0 ? {
+                start: this.audio.buffered.start(0),
+                end: this.audio.buffered.end(0)
+              } : 'No buffered ranges',
+              readyState: this.audio.readyState,
+              networkState: this.audio.networkState
+            });
+          }
+          
           window.dispatchEvent(new CustomEvent('audioTimeUpdate', {
             detail: { currentTime: this.audio.currentTime }
           }));
@@ -96,6 +114,13 @@ class GlobalAudioManager {
       },
       pause: () => {
         console.log('🎵 Audio pause event');
+        console.log('🎵 Pause triggered - currentTime:', this.audio?.currentTime);
+        console.log('🎵 Pause triggered - duration:', this.audio?.duration);
+        console.log('🎵 Pause triggered - networkState:', this.audio?.networkState);
+        console.log('🎵 Pause triggered - readyState:', this.audio?.readyState);
+        console.log('🎵 Pause triggered - error:', this.audio?.error);
+        // Log stack trace to see what triggered the pause
+        console.trace('🎵 Pause stack trace');
         window.dispatchEvent(new CustomEvent('audioPause'));
       },
       loadstart: () => {
@@ -121,6 +146,27 @@ class GlobalAudioManager {
     this.audio.addEventListener('loadstart', this.boundEventHandlers.loadstart);
     this.audio.addEventListener('canplay', this.boundEventHandlers.canplay);
     this.audio.addEventListener('error', this.boundEventHandlers.error);
+    
+    // Add additional event listeners for debugging
+    this.audio.addEventListener('stalled', () => {
+      console.log('🚨 Audio stalled - network stalled while fetching media data');
+      console.log('🚨 Current time:', this.audio?.currentTime);
+      console.log('🚨 Buffered ranges:', this.audio?.buffered.length);
+    });
+    
+    this.audio.addEventListener('suspend', () => {
+      console.log('⚠️ Audio suspend - browser is intentionally not getting media data');
+    });
+    
+    this.audio.addEventListener('waiting', () => {
+      console.log('⏳ Audio waiting - playback stopped due to lack of data');
+      console.log('⏳ Current time:', this.audio?.currentTime);
+      console.log('⏳ Buffered:', this.audio?.buffered.length);
+    });
+    
+    this.audio.addEventListener('abort', () => {
+      console.log('❌ Audio abort - fetching process aborted');
+    });
     
     console.log('🎵 Event listeners attached to audio element');
   }
@@ -160,7 +206,7 @@ class GlobalAudioManager {
   }
 
   // Load a new episode
-  loadEpisode(episode: Episode) {
+  async loadEpisode(episode: Episode) {
     this.ensureInitialized();
     
     if (!this.audio) {
@@ -171,12 +217,31 @@ class GlobalAudioManager {
     // Always set the episode, even if it's the same one (handles refresh cases)
     this.currentEpisode = episode;
     
+    // Check if episode is available offline
+    let audioUrl = episode.audioUrl;
+    const isOffline = await offlineAudioManager.isEpisodeOffline(episode.id);
+    
+    if (isOffline) {
+      console.log('🎵 Loading offline version of episode');
+      const offlineUrl = await offlineAudioManager.getOfflineAudioUrl(episode.id);
+      if (offlineUrl) {
+        audioUrl = offlineUrl;
+        console.log('🎵 Using offline audio URL');
+      }
+    }
+    
     // Check if we need to reload the audio source
-    if (this.audio.src !== episode.audioUrl) {
-      this.audio.src = episode.audioUrl;
+    if (this.audio.src !== audioUrl) {
+      // Clean up any existing blob URLs to prevent memory leaks
+      if (this.audio.src.startsWith('blob:')) {
+        URL.revokeObjectURL(this.audio.src);
+      }
+      
+      this.audio.src = audioUrl;
       this.audio.load();
       console.log('🎵 Loaded episode:', episode.title);
-      console.log('🎵 Audio URL:', episode.audioUrl);
+      console.log('🎵 Audio URL:', audioUrl);
+      console.log('🎵 Is offline:', isOffline);
       console.log('🎵 Audio element src:', this.audio.src);
     } else {
       console.log('🎵 Episode already loaded:', episode.title);
@@ -209,8 +274,25 @@ class GlobalAudioManager {
     console.log('🎵 Audio network state:', this.audio.networkState);
     
     try {
+      // Store start time for debugging
+      const playStartTime = Date.now();
+      console.log('🎵 Starting playback at:', new Date().toISOString());
+      
       await this.audio.play();
       console.log('🎵 Audio playing successfully');
+      
+      // Set up a timer to check if audio is still playing after 4 seconds
+      setTimeout(() => {
+        const elapsedTime = (Date.now() - playStartTime) / 1000;
+        console.log(`🔍 Audio check after ${elapsedTime.toFixed(1)}s:`, {
+          paused: this.audio?.paused,
+          currentTime: this.audio?.currentTime,
+          readyState: this.audio?.readyState,
+          networkState: this.audio?.networkState,
+          error: this.audio?.error
+        });
+      }, 4500);
+      
       return true;
     } catch (error) {
       console.error('🚨 Failed to play audio:', error);
@@ -299,8 +381,16 @@ class GlobalAudioManager {
 
   // Cleanup (usually not needed since audio should persist)
   destroy() {
-    if (this.audio && this.audio.parentNode) {
-      this.audio.parentNode.removeChild(this.audio);
+    if (this.audio) {
+      // Clean up blob URLs if any
+      if (this.audio.src.startsWith('blob:')) {
+        URL.revokeObjectURL(this.audio.src);
+      }
+      
+      if (this.audio.parentNode) {
+        this.audio.parentNode.removeChild(this.audio);
+      }
+      
       this.audio = null;
       this.initialized = false;
     }

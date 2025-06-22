@@ -220,7 +220,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
       this.log('Initializing LanguageSwitcherManager');
       this.isInitialized = true;
 
-      // Use event delegation on document body for maximum reliability
+      // Use event delegation on document for maximum reliability
       this.setupEventDelegation();
 
       // Set up observers for DOM changes
@@ -229,13 +229,17 @@ const getLanguageUrl = (langCode: Language | 'global') => {
       // Listen for navigation events
       this.setupNavigationListeners();
 
+      // Fix z-index issues after View Transitions
+      this.fixZIndexAfterTransition();
+
       this.log('Initialization complete');
     }
 
     setupEventDelegation() {
       // Remove any existing delegated handlers
       if (window.__languageSwitcherDelegateHandler) {
-        document.body.removeEventListener('click', window.__languageSwitcherDelegateHandler, true);
+        document.removeEventListener('click', window.__languageSwitcherDelegateHandler, true);
+        document.removeEventListener('touchstart', window.__languageSwitcherDelegateHandler, true);
       }
 
       // Create the delegated click handler
@@ -246,6 +250,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
           this.log('Language button clicked via delegation');
           event.preventDefault();
           event.stopPropagation();
+          event.stopImmediatePropagation(); // Stop all propagation
           this.toggleDropdown(button);
           return;
         }
@@ -270,7 +275,9 @@ const getLanguageUrl = (langCode: Language | 'global') => {
       };
 
       // Add the handler with capture phase to catch events early
-      document.body.addEventListener('click', delegateHandler, true);
+      // Use both click and touchstart for better mobile support
+      document.addEventListener('click', delegateHandler, true);
+      document.addEventListener('touchstart', delegateHandler, { capture: true, passive: false });
       window.__languageSwitcherDelegateHandler = delegateHandler;
 
       this.log('Event delegation set up');
@@ -299,9 +306,12 @@ const getLanguageUrl = (langCode: Language | 'global') => {
         menu.classList.remove('hidden');
         button.setAttribute('aria-expanded', 'true');
         
-        // Ensure dropdown is visible above audio player
-        menu.style.zIndex = '100';
-        container.style.zIndex = '60';
+        // Force high z-index to ensure visibility above audio player and view transitions
+        menu.style.zIndex = '9999';
+        container.style.zIndex = '9998';
+        
+        // Add temporary class to boost z-index during transitions
+        container.classList.add('dropdown-active');
         
         this.log('Dropdown opened');
         
@@ -315,8 +325,13 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     closeDropdown(menu, button = null) {
       menu.classList.add('hidden');
       
+      const container = menu.closest('.language-switcher-container');
+      if (container) {
+        container.classList.remove('dropdown-active');
+      }
+      
       if (!button) {
-        button = menu.closest('.language-switcher-container')?.querySelector('[data-language-button]');
+        button = container?.querySelector('[data-language-button]');
       }
       
       if (button) {
@@ -416,13 +431,16 @@ const getLanguageUrl = (langCode: Language | 'global') => {
       // Listen for Astro navigation events
       document.addEventListener('astro:page-load', () => {
         this.log('Page load event detected');
-        // Event delegation continues to work, no need to re-initialize
+        // Re-fix z-index after page load
+        this.fixZIndexAfterTransition();
       });
 
       document.addEventListener('astro:after-swap', () => {
         this.log('After swap event detected');
         // Close any open dropdowns after navigation
         this.closeAllDropdowns();
+        // Fix z-index issues
+        this.fixZIndexAfterTransition();
       });
 
       // Listen for View Transitions API events
@@ -434,9 +452,40 @@ const getLanguageUrl = (langCode: Language | 'global') => {
 
         document.addEventListener('pagereveal', () => {
           this.log('Page reveal detected (View Transitions)');
-          // Event delegation continues to work
+          // Fix z-index after transition completes
+          requestAnimationFrame(() => {
+            this.fixZIndexAfterTransition();
+          });
         });
       }
+    }
+
+    fixZIndexAfterTransition() {
+      // Ensure language switcher maintains proper z-index after view transitions
+      const containers = document.querySelectorAll('.language-switcher-container');
+      containers.forEach(container => {
+        // Force the container to be above the audio player
+        container.style.position = 'relative';
+        container.style.zIndex = '60';
+        
+        // Ensure button is clickable
+        const button = container.querySelector('[data-language-button]');
+        if (button) {
+          button.style.position = 'relative';
+          button.style.zIndex = '61';
+          button.style.pointerEvents = 'auto';
+        }
+        
+        // Ensure menu will be above everything when opened
+        const menu = container.querySelector('[data-language-menu]');
+        if (menu) {
+          menu.style.position = 'absolute';
+          menu.style.zIndex = '100';
+          menu.style.pointerEvents = 'auto';
+        }
+      });
+      
+      this.log('Fixed z-index after transition');
     }
   }
 
@@ -451,22 +500,58 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   .language-switcher-container {
     position: relative;
     z-index: 60 !important;
+    isolation: isolate; /* Create new stacking context */
+  }
+
+  /* Boost z-index when dropdown is active */
+  .language-switcher-container.dropdown-active {
+    z-index: 9998 !important;
   }
 
   .language-switcher-button {
     position: relative;
     z-index: 61 !important;
     cursor: pointer;
+    pointer-events: auto !important;
+    /* Ensure button is clickable even during transitions */
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .language-switcher-menu {
     position: absolute;
     z-index: 100 !important;
     pointer-events: auto !important;
+    /* Ensure menu is above view transition layer */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* When dropdown is active, ensure it's above everything */
+  .dropdown-active .language-switcher-menu {
+    z-index: 9999 !important;
   }
 
   /* Prevent any interference from other elements */
   .language-switcher-container * {
     pointer-events: auto !important;
+  }
+
+  /* Fix for view transitions */
+  :global(::view-transition-group(language-switcher)) {
+    z-index: 9999 !important;
+  }
+
+  :global(::view-transition-old(language-switcher)),
+  :global(::view-transition-new(language-switcher)) {
+    mix-blend-mode: normal;
+    z-index: 9999 !important;
+  }
+
+  /* Ensure proper stacking during transitions */
+  @supports (view-transition-name: language-switcher) {
+    .language-switcher-container {
+      view-transition-name: language-switcher;
+    }
   }
 </style>

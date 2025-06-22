@@ -1,6 +1,28 @@
 /* Import language dropdown fixes */
 @import './language-dropdown-fix.css';
 
+/* View Transition fixes for language dropdown */
+/* Ensure language switcher stays above view transitions */
+::view-transition {
+  z-index: 10000;
+}
+
+::view-transition-group(root) {
+  z-index: 10000;
+}
+
+/* Ensure interactive elements remain clickable during transitions */
+.language-switcher-container {
+  contain: layout style;
+}
+
+/* Override view transition defaults for dropdown */
+::view-transition-old(language-switcher),
+::view-transition-new(language-switcher) {
+  animation: none;
+  opacity: 1;
+}
+
 /* Language-specific Accent Colors */
 :root {
   /* Default/English colors (blue) */

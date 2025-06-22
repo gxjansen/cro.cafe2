@@ -47,18 +47,14 @@ export default defineConfig({
         globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
+          // Audio files - use NetworkOnly to prevent caching issues with streaming
+          // Audio streaming doesn't work well with service worker caching
           {
             urlPattern: /^https:\/\/media\.transistor\.fm\/.*/i,
-            handler: 'CacheFirst',
+            handler: 'NetworkOnly',
             options: {
-              cacheName: 'audio-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
+              // No caching for audio to prevent playback issues
+              // Audio files are too large and streaming doesn't work well with cache
             }
           },
           {
