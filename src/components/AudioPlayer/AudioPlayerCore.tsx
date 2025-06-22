@@ -19,11 +19,13 @@ import { globalAudioManager } from '../../lib/audioManager';
 interface AudioPlayerCoreProps {
   episodes?: Episode[];
   autoInitialize?: boolean;
+  isPWAMode?: boolean;
 }
 
 const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
   episodes = [],
   autoInitialize = false,
+  isPWAMode = false,
 }) => {
   const progressRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -205,6 +207,24 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
               <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd"/>
             </svg>
           </button>
+
+          {/* Close */}
+          <button
+            onClick={() => {
+              // If playing, pause before closing
+              if (playing) {
+                audioPlayerActions.pause();
+              }
+              // Clear the player state and close
+              audioPlayerActions.clearPlayer();
+            }}
+            className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            title="Close player"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+            </svg>
+          </button>
         </div>
       )}
 
@@ -252,6 +272,24 @@ const AudioPlayerCore: React.FC<AudioPlayerCoreProps> = ({
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+            </svg>
+          </button>
+
+          {/* Close */}
+          <button
+            onClick={() => {
+              // If playing, pause before closing
+              if (playing) {
+                audioPlayerActions.pause();
+              }
+              // Clear the player state and close
+              audioPlayerActions.clearPlayer();
+            }}
+            className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors flex-shrink-0"
+            title="Close player"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
             </svg>
           </button>
         </div>

@@ -1,3 +1,6 @@
+/* Import language dropdown fixes */
+@import './language-dropdown-fix.css';
+
 /* Language-specific Accent Colors */
 :root {
   /* Default/English colors (blue) */

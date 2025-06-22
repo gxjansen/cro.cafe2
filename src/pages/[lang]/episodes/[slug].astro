@@ -262,19 +262,24 @@ const getDateLocale = (lang: Language) => {
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t.listenTo}</h2>
         
         <!-- Custom Audio Player -->
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-center mb-6">
           <PlayButton 
             episode={audioPlayerEpisode}
             size="lg"
             variant="primary"
-            className="flex-shrink-0"
+            className="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
             client:load
           >
-            <span class="text-lg font-medium">Play Episode</span>
+            <span class="inline-flex items-center">
+              <span class="group-hover:scale-110 transition-transform">{t.listenTo}</span>
+              {episode.data.duration && (
+                <span class="ml-4 text-sm opacity-90">({Math.round(episode.data.duration / 60)} min)</span>
+              )}
+            </span>
           </PlayButton>
           
-          <div class="flex-1 min-w-0">
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+          <div class="flex-1 min-w-0 text-sm text-gray-600 dark:text-gray-400">
+            <p>
               Click play to start listening. Audio will continue playing as you browse other pages.
             </p>
           </div>

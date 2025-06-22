@@ -168,58 +168,107 @@ const navItems = getNavItems(language, isGlobalMode);
 </header>
 
 <script>
-  // Mobile menu toggle
-  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const menuIcon = document.getElementById('menu-icon');
-  const closeIcon = document.getElementById('close-icon');
+  // Function to initialize mobile menu
+  function initializeMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-  if (mobileMenuToggle && mobileMenu && menuIcon && closeIcon) {
-    mobileMenuToggle.addEventListener('click', () => {
+    if (!mobileMenuToggle || !mobileMenu || !menuIcon || !closeIcon) {
+      return;
+    }
+
+    // Remove any existing event listeners by cloning
+    const newToggle = mobileMenuToggle.cloneNode(true) as HTMLElement;
+    mobileMenuToggle.parentNode?.replaceChild(newToggle, mobileMenuToggle);
+
+    // Store references for cleanup
+    let toggleHandler: (() => void) | null = null;
+    let documentClickHandler: ((event: MouseEvent) => void) | null = null;
+    let keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+
+    // Toggle menu handler
+    toggleHandler = () => {
       const isHidden = mobileMenu.classList.contains('hidden');
       
       if (isHidden) {
         mobileMenu.classList.remove('hidden');
         menuIcon.classList.add('hidden');
         closeIcon.classList.remove('hidden');
-        mobileMenuToggle.setAttribute('aria-expanded', 'true');
-        mobileMenuToggle.setAttribute('aria-label', 'Close main menu');
+        newToggle.setAttribute('aria-expanded', 'true');
+        newToggle.setAttribute('aria-label', 'Close main menu');
         // Focus first menu item
         const firstLink = mobileMenu.querySelector('a');
-        if (firstLink) firstLink.focus();
+        if (firstLink) (firstLink as HTMLElement).focus();
       } else {
         mobileMenu.classList.add('hidden');
         menuIcon.classList.remove('hidden');
         closeIcon.classList.add('hidden');
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileMenuToggle.setAttribute('aria-label', 'Open main menu');
+        newToggle.setAttribute('aria-expanded', 'false');
+        newToggle.setAttribute('aria-label', 'Open main menu');
       }
-    });
-  }
+    };
+    newToggle.addEventListener('click', toggleHandler);
 
-  // Close mobile menu when clicking outside
-  document.addEventListener('click', (event) => {
-    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-      const target = event.target as Element;
-      if (!mobileMenuToggle?.contains(target) && !mobileMenu.contains(target)) {
+    // Close mobile menu when clicking outside
+    documentClickHandler = (event: MouseEvent) => {
+      if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        const target = event.target as Element;
+        if (!newToggle.contains(target) && !mobileMenu.contains(target)) {
+          mobileMenu.classList.add('hidden');
+          menuIcon?.classList.remove('hidden');
+          closeIcon?.classList.add('hidden');
+          newToggle.setAttribute('aria-expanded', 'false');
+          newToggle.setAttribute('aria-label', 'Open main menu');
+        }
+      }
+    };
+    document.addEventListener('click', documentClickHandler);
+    
+    // Handle Escape key
+    keydownHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
         mobileMenu.classList.add('hidden');
         menuIcon?.classList.remove('hidden');
         closeIcon?.classList.add('hidden');
-        mobileMenuToggle?.setAttribute('aria-expanded', 'false');
-        mobileMenuToggle?.setAttribute('aria-label', 'Open main menu');
+        newToggle.setAttribute('aria-expanded', 'false');
+        newToggle.setAttribute('aria-label', 'Open main menu');
+        newToggle.focus();
       }
+    };
+    document.addEventListener('keydown', keydownHandler);
+
+    // Store cleanup function
+    if (typeof window !== 'undefined') {
+      window.__mobileMenuCleanup = () => {
+        if (toggleHandler) newToggle.removeEventListener('click', toggleHandler);
+        if (documentClickHandler) document.removeEventListener('click', documentClickHandler);
+        if (keydownHandler) document.removeEventListener('keydown', keydownHandler);
+      };
     }
+  }
+
+  // Initialize on first load
+  initializeMobileMenu();
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Clean up old event listeners
+    if (typeof window !== 'undefined' && window.__mobileMenuCleanup) {
+      window.__mobileMenuCleanup();
+    }
+    // Re-initialize
+    initializeMobileMenu();
   });
-  
-  // Handle Escape key
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
-      mobileMenu.classList.add('hidden');
-      menuIcon?.classList.remove('hidden');
-      closeIcon?.classList.add('hidden');
-      mobileMenuToggle?.setAttribute('aria-expanded', 'false');
-      mobileMenuToggle?.setAttribute('aria-label', 'Open main menu');
-      mobileMenuToggle?.focus();
+
+  // Also handle after-swap event
+  document.addEventListener('astro:after-swap', () => {
+    // Clean up old event listeners
+    if (typeof window !== 'undefined' && window.__mobileMenuCleanup) {
+      window.__mobileMenuCleanup();
     }
+    // Re-initialize
+    initializeMobileMenu();
   });
 </script>

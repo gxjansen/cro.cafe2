@@ -61,6 +61,7 @@ export const isMinimized = computed(audioPlayerStore, state => state.isMinimized
 export const audioPlayerActions = {
   // Episode management
   loadEpisode: (episode: Episode) => {
+    console.log('🎵 Store: Loading episode', episode.title);
     globalAudioManager.loadEpisode(episode);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
@@ -73,7 +74,9 @@ export const audioPlayerActions = {
 
   // Playback controls
   play: async () => {
+    console.log('🎵 Store: Play requested');
     const success = await globalAudioManager.play();
+    console.log('🎵 Store: Play result:', success);
     if (success) {
       audioPlayerStore.set({
         ...audioPlayerStore.get(),
@@ -223,7 +226,14 @@ export const audioPlayerActions = {
 
   // Clear/reset
   clearPlayer: () => {
+    // Stop any playing audio
+    globalAudioManager.pause();
+    // Reset store to initial state
     audioPlayerStore.set(initialState);
+    // Clear from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('cro-cafe-audio-player');
+    }
   },
 };
 
@@ -250,15 +260,30 @@ export const loadPlayerState = () => {
       if (saved) {
         const parsedState = JSON.parse(saved);
         const currentState = audioPlayerStore.get();
-        audioPlayerStore.set({
-          ...currentState,
-          ...parsedState,
-          isPlaying: false, // Never auto-play on load
-          isLoading: false,
-        });
+        
+        // Only restore state if we have a valid episode
+        if (parsedState.currentEpisode && parsedState.currentEpisode.audioUrl) {
+          audioPlayerStore.set({
+            ...currentState,
+            ...parsedState,
+            isPlaying: false, // Never auto-play on load
+            isLoading: false,
+          });
+          
+          // Re-initialize the audio element with the saved episode
+          if (parsedState.currentEpisode) {
+            globalAudioManager.loadEpisode(parsedState.currentEpisode);
+          }
+        } else {
+          // Clear invalid state
+          audioPlayerStore.set(initialState);
+        }
       }
     } catch (error) {
       console.error('Failed to load audio player state:', error);
+      // Clear corrupted state
+      localStorage.removeItem('cro-cafe-audio-player');
+      audioPlayerStore.set(initialState);
     }
   }
 };

@@ -31,13 +31,13 @@ const PlayButton: React.FC<PlayButtonProps> = ({
   };
 
   const sizeClasses = {
-    sm: 'p-1.5 text-sm',
-    md: 'p-2 text-base',
-    lg: 'p-3 text-lg',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
   };
 
   const variantClasses = {
-    primary: 'bg-primary-600 hover:bg-primary-700 text-white',
+    primary: '',
     secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
     ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300',
   };
@@ -55,15 +55,12 @@ const PlayButton: React.FC<PlayButtonProps> = ({
         ${sizeClasses[size]} 
         ${variantClasses[variant]} 
         ${className}
-        rounded-full transition-all duration-200 
-        hover:scale-105 active:scale-95
         focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-        flex items-center justify-center gap-2
       `}
       title={`Play ${episode.title}`}
     >
       <svg 
-        className={iconSizes[size]} 
+        className={`${iconSizes[size]} flex-shrink-0`} 
         fill="currentColor" 
         viewBox="0 0 20 20"
       >
@@ -73,7 +70,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({
           clipRule="evenodd"
         />
       </svg>
-      {children}
+      {children && <span className="ml-3">{children}</span>}
     </button>
   );
 };

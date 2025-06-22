@@ -63,6 +63,7 @@ const hostsByLanguage = {
   es: allHosts.filter(h => (h.data.slug || h.slug) === 'ricardotayar') // Ricardo hosts Spanish
 };
 
+
 const pageTitle = "CRO.CAFE - Conversion Rate Optimization Podcast";
 const pageDescription = "The leading podcast for conversion rate optimization professionals. Episodes in English, Dutch, German, and Spanish covering CRO strategies, case studies, and expert insights.";
 ---
@@ -158,29 +159,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <!-- English -->
-          <div class="card card-colored card-interactive hover:border-blue-500 p-6 flex flex-col h-full">
+          <div class="card card-colored hover:border-blue-500 p-6 flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇬🇧</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE English</h3>
               <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Learn from CRO leaders worldwide</p>
               
               <!-- Host Information -->
-              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
                 {hostsByLanguage.en.length > 0 ? (
                   <>
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Hosted by</h4>
-                    <div class="flex justify-center">
-                      {hostsByLanguage.en.slice(0, 2).map((host) => (
-                        <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                          <HostImage 
-                            imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
-                            alt={host.data.name}
-                            class="w-16 h-16 rounded-full object-cover mx-auto mb-2 shadow-md"
-                          />
-                          <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
-                          <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
-                        </a>
-                      ))}
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('gxjansen')}
+                          alt="Guido X Jansen"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 px-2 py-1 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                      >
+                        Guido X Jansen
+                      </a>
                     </div>
                   </>
                 ) : (
@@ -215,29 +221,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           </div>
 
           <!-- Dutch -->
-          <div class="card card-colored card-interactive hover:border-orange-500 p-6 flex flex-col h-full">
+          <div class="card card-colored hover:border-orange-500 p-6 flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇳🇱</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Nederlands</h3>
               <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Join the Netherlands' active CRO community</p>
               
               <!-- Host Information -->
-              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
                 {hostsByLanguage.nl.length > 0 ? (
                   <>
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Gehost door</h4>
-                    <div class="flex justify-center">
-                      {hostsByLanguage.nl.slice(0, 2).map((host) => (
-                        <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                          <HostImage 
-                            imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
-                            alt={host.data.name}
-                            class="w-16 h-16 rounded-full object-cover mx-auto mb-2 shadow-md"
-                          />
-                          <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
-                          <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
-                        </a>
-                      ))}
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('gxjansen')}
+                          alt="Guido X Jansen"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 px-2 py-1 hover:text-orange-600 dark:hover:text-orange-400 hover:underline transition-colors"
+                      >
+                        Guido X Jansen
+                      </a>
                     </div>
                   </>
                 ) : (
@@ -272,29 +283,53 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           </div>
 
           <!-- German -->
-          <div class="card card-colored card-interactive hover:border-teal-500 p-6 flex flex-col h-full">
+          <div class="card card-colored hover:border-teal-500 p-6 flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇩🇪</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Deutsch</h3>
               <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Master systematic optimization approaches</p>
               
               <!-- Host Information -->
-              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
                 {hostsByLanguage.de.length > 0 ? (
                   <>
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Moderiert von</h4>
-                    <div class="flex justify-center gap-4">
-                      {hostsByLanguage.de.slice(0, 2).map((host) => (
-                        <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                          <HostImage 
-                            imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
-                            alt={host.data.name}
-                            class="w-16 h-16 rounded-full object-cover mx-auto mb-2 shadow-md"
-                          />
-                          <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
-                          <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
-                        </a>
-                      ))}
+                    <div class="flex items-center justify-center gap-4 mb-2">
+                      <a 
+                        href="/hosts/michaelwitzenleiter/"
+                        class="inline-block relative z-20 hover:opacity-90 transition-opacity"
+                      >
+                        <img 
+                          src={getHostImageUrl('michaelwitzenleiter')}
+                          alt="Michael Witzenleiter"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/yvonneteufel/"
+                        class="inline-block relative z-20 hover:opacity-90 transition-opacity"
+                      >
+                        <img 
+                          src={getHostImageUrl('yvonneteufel')}
+                          alt="Yvonne Teufel"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                    </div>
+                    <div class="text-center">
+                      <a 
+                        href="/hosts/michaelwitzenleiter/"
+                        class="inline-block relative z-20 px-2 py-1 -m-1 hover:text-teal-600 dark:hover:text-teal-400 hover:underline transition-colors"
+                      >
+                        Michael Witzenleiter
+                      </a>
+                      <span class="text-gray-600 dark:text-gray-400 mx-2">&amp;</span>
+                      <a 
+                        href="/hosts/yvonneteufel/"
+                        class="inline-block relative z-20 px-2 py-1 -m-1 hover:text-teal-600 dark:hover:text-teal-400 hover:underline transition-colors"
+                      >
+                        Yvonne Teufel
+                      </a>
                     </div>
                   </>
                 ) : (
@@ -329,29 +364,34 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
           </div>
 
           <!-- Spanish -->
-          <div class="card card-colored card-interactive hover:border-red-500 p-6 flex flex-col h-full">
+          <div class="card card-colored hover:border-red-500 p-6 flex flex-col h-full">
             <div class="text-center flex flex-col flex-grow">
               <div class="text-4xl mb-4">🇪🇸</div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Español</h3>
               <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Discover growth strategies across Latin markets</p>
               
               <!-- Host Information -->
-              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center">
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
                 {hostsByLanguage.es.length > 0 ? (
                   <>
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Presentado por</h4>
-                    <div class="flex justify-center">
-                      {hostsByLanguage.es.slice(0, 2).map((host) => (
-                        <a href={getHostUrl(host.data.slug || host.slug)} class="text-center hover:opacity-80 transition-opacity">
-                          <HostImage 
-                            imageUrl={getHostImageUrl(host.data.slug || host.slug)} 
-                            alt={host.data.name}
-                            class="w-16 h-16 rounded-full object-cover mx-auto mb-2 shadow-md"
-                          />
-                          <div class="text-sm font-medium text-gray-800 dark:text-gray-100">{host.data.name}</div>
-                          <div class="text-xs text-gray-600 dark:text-gray-300">{host.data.role}</div>
-                        </a>
-                      ))}
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/ricardotayar/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('ricardotayar')}
+                          alt="Ricardo Tayar"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/ricardotayar/"
+                        class="relative z-20 px-2 py-1 hover:text-red-600 dark:hover:text-red-400 hover:underline transition-colors"
+                      >
+                        Ricardo Tayar
+                      </a>
                     </div>
                   </>
                 ) : (
@@ -492,5 +532,32 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  
+  /* Fix for card hover interference with links */
+  .card-colored {
+    /* Disable transform on the card to prevent click issues */
+    transform: none !important;
+  }
+  
+  .card-colored:hover {
+    /* Use only shadow for hover effect, no transform */
+    transform: none !important;
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -4px rgba(0, 0, 0, 0.1),
+      0 20px 25px -5px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  /* Ensure links in cards are always clickable */
+  .card-colored a {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+  }
+  
+  /* Prevent any parent from blocking link clicks */
+  .card-colored * {
+    pointer-events: auto;
   }
 </style>

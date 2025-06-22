@@ -1,0 +1,66 @@
+/* Language Dropdown Fix - Ensure it's always clickable */
+
+/* Ensure language dropdown is above audio player */
+.language-switcher-container {
+  position: relative !important;
+  z-index: 60 !important;
+}
+
+.language-switcher-button {
+  position: relative !important;
+  z-index: 61 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.language-switcher-menu {
+  position: absolute !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure all children are clickable */
+.language-switcher-container *,
+.language-switcher-button *,
+.language-switcher-menu * {
+  pointer-events: auto !important;
+}
+
+/* Prevent audio player from blocking header interactions */
+.sticky-audio-player {
+  z-index: 40 !important; /* Lower than header */
+  pointer-events: none !important;
+}
+
+.sticky-audio-player > * {
+  pointer-events: auto !important;
+}
+
+/* Ensure header stays on top */
+header {
+  z-index: 50 !important;
+  position: relative !important;
+}
+
+/* Fix for any overlays that might interfere */
+.audio-player-overlay,
+.modal-overlay {
+  pointer-events: none !important;
+}
+
+/* Debug helper - add this class to see element boundaries */
+.debug-borders .language-switcher-container {
+  border: 2px solid red !important;
+}
+
+.debug-borders .language-switcher-button {
+  border: 2px solid blue !important;
+}
+
+.debug-borders .language-switcher-menu {
+  border: 2px solid green !important;
+}
+
+.debug-borders .sticky-audio-player {
+  border: 2px solid orange !important;
+}

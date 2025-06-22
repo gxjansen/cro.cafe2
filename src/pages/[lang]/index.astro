@@ -365,25 +365,24 @@ const hreflang = {
                     className="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
                     client:load
                   >
-                    <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
-                    {t.listenNow}
-                    {featuredEpisode.data.duration && (
-                      <span class="ml-2 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
-                    )}
+                    <span class="inline-flex items-center">
+                      <span class="group-hover:scale-110 transition-transform">{t.listenNow}</span>
+                      {featuredEpisode.data.duration && (
+                        <span class="ml-4 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
+                      )}
+                    </span>
                   </PlayButton>
                 ) || (
                   <a 
                     href={getEpisodeUrl(featuredEpisode, language)}
                     class="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
                   >
-                    <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
-                    {t.listenNow}
+                    <span class="group-hover:scale-110 transition-transform">{t.listenNow}</span>
                     {featuredEpisode.data.duration && (
-                      <span class="ml-2 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
+                      <span class="ml-4 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
                     )}
                   </a>
                 )}

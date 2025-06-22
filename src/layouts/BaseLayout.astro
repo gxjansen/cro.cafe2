@@ -132,22 +132,67 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- Theme Script (inline to prevent flash) -->
     <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
+      // Theme initialization function
+      function initTheme() {
+        const theme = (() => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme');
+          }
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+          }
+          return 'dark'; // Default to dark mode
+        })();
+        
+        if (theme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
         }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        return 'dark'; // Default to dark mode
-      })();
-      
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
+        window.__theme = theme;
+        return theme;
       }
-      window.__theme = theme;
+      
+      // Initialize theme immediately
+      initTheme();
+      
+      // Store the function globally for View Transitions
+      window.__initTheme = initTheme;
+    </script>
+    
+    <!-- Preserve audio state across view transitions -->
+    <script is:inline>
+      // This runs immediately and preserves audio state
+      if (typeof window !== 'undefined') {
+        // Preserve audio element and manager across transitions
+        document.addEventListener('astro:before-swap', () => {
+          // Store audio state before swap
+          if (window.__persistentAudio && !window.__persistentAudio.paused) {
+            window.__audioWasPlaying = true;
+            window.__audioCurrentTime = window.__persistentAudio.currentTime;
+            console.log('🎵 Preserving audio state: playing at', window.__audioCurrentTime);
+          }
+        });
+        
+        document.addEventListener('astro:after-swap', () => {
+          // Restore audio element to DOM if needed
+          if (window.__persistentAudio && !document.body.contains(window.__persistentAudio)) {
+            document.body.appendChild(window.__persistentAudio);
+            console.log('🎵 Re-attached audio element to DOM');
+          }
+          
+          // Resume playback if it was playing
+          if (window.__audioWasPlaying && window.__persistentAudio) {
+            window.__persistentAudio.currentTime = window.__audioCurrentTime || 0;
+            window.__persistentAudio.play().then(() => {
+              console.log('🎵 Resumed playback after navigation');
+              window.__audioWasPlaying = false;
+            }).catch(err => {
+              console.error('🚨 Failed to resume playback:', err);
+            });
+          }
+        });
+      }
     </script>
   </head>
   
@@ -164,7 +209,7 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <!-- Sticky Audio Player -->
     <AudioPlayer autoInitialize={true} />
     
-    <!-- Analytics and external scripts would go here -->
+    <!-- Theme management and View Transitions -->
     <script>
       // Theme toggle functionality
       function toggleTheme() {
@@ -178,10 +223,56 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
           element.classList.add('dark');
           localStorage.setItem('theme', 'dark');
         }
+        
+        // Update global theme reference
+        window.__theme = isDark ? 'light' : 'dark';
       }
       
       // Make toggleTheme available globally
       window.toggleTheme = toggleTheme;
+      
+      // View Transitions event handlers for theme persistence
+      document.addEventListener('astro:before-preparation', () => {
+        // Store current theme state before navigation
+        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        sessionStorage.setItem('currentTheme', currentTheme);
+      });
+      
+      document.addEventListener('astro:after-swap', () => {
+        // Restore theme state after navigation
+        const savedTheme = sessionStorage.getItem('currentTheme') || localStorage.getItem('theme') || 'dark';
+        
+        if (savedTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+        
+        // Re-initialize theme if the global function is available
+        if (typeof window.__initTheme === 'function') {
+          window.__initTheme();
+        }
+        
+        // Clean up session storage
+        sessionStorage.removeItem('currentTheme');
+      });
+      
+      // Also handle page load for non-transition navigation
+      document.addEventListener('astro:page-load', () => {
+        // Ensure theme is properly set on direct page loads
+        if (typeof window.__initTheme === 'function') {
+          window.__initTheme();
+        }
+      });
+      
+      // Handle DOMContentLoaded as a fallback
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          if (typeof window.__initTheme === 'function') {
+            window.__initTheme();
+          }
+        });
+      }
     </script>
     
     <!-- PWA Service Worker Registration -->
