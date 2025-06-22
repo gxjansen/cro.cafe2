@@ -144,10 +144,32 @@ export async function getGuestBySlug(slug: string) {
 // Get related episodes for a guest
 export async function getGuestEpisodes(guestSlug: string, language: Language) {
   const episodes = await getCollection('episodes');
-  return episodes
+  
+  // First try the standard approach: check if episode has this guest in its guests array
+  const episodesWithGuest = episodes
     .filter(episode => 
       episode.data.language === language && 
       episode.data.guests.includes(guestSlug) &&
+      episode.data.status === 'published'
+    )
+    .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+  // If we found episodes, return them
+  if (episodesWithGuest.length > 0) {
+    return episodesWithGuest;
+  }
+
+  // Otherwise, try the reverse approach: get the guest and find episodes by their IDs
+  const guest = await getGuestBySlug(guestSlug);
+  if (!guest || !guest.data.episodes || guest.data.episodes.length === 0) {
+    return [];
+  }
+
+  // Filter episodes by transistorId that match the guest's episode IDs and language
+  return episodes
+    .filter(episode => 
+      episode.data.language === language &&
+      guest.data.episodes.includes(episode.data.transistorId) &&
       episode.data.status === 'published'
     )
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());

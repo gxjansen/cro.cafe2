@@ -270,10 +270,10 @@ const getDateLocale = (lang: Language) => {
             className="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
             client:load
           >
-            <span class="inline-flex items-center">
+            <span class="inline-flex items-center whitespace-nowrap">
               <span class="group-hover:scale-110 transition-transform">{t.listenTo}</span>
               {episode.data.duration && (
-                <span class="ml-4 text-sm opacity-90">({Math.round(episode.data.duration / 60)} min)</span>
+                <span class="ml-2 text-sm opacity-90 whitespace-nowrap">({Math.round(episode.data.duration / 60)} min)</span>
               )}
             </span>
           </PlayButton>

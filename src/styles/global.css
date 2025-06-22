@@ -1,6 +1,64 @@
 /* Import language dropdown fixes */
 @import './language-dropdown-fix.css';
 
+/* Mobile Navigation Responsive Utilities */
+/* Extra small screens (below 475px) */
+@media (max-width: 474px) {
+  .xs\:hidden {
+    display: none !important;
+  }
+}
+
+@media (min-width: 475px) {
+  .xs\:block {
+    display: block !important;
+  }
+}
+
+/* Scrollbar hide utility for horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile header spacing fixes */
+@media (max-width: 640px) {
+  .language-switcher-container {
+    max-width: 120px;
+  }
+  
+  .language-switcher-menu {
+    right: 0;
+    left: auto;
+    transform: translateX(0);
+  }
+}
+
+/* Prevent mobile viewport overflow */
+.mobile-safe {
+  max-width: calc(100vw - 2rem);
+  overflow-wrap: break-word;
+}
+
+/* Text truncation for mobile */
+.truncate-mobile {
+  @apply truncate;
+  max-width: 150px;
+}
+
+@media (min-width: 640px) {
+  .truncate-mobile {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
 /* View Transition fixes for language dropdown */
 /* Ensure language switcher stays above view transitions */
 ::view-transition {

@@ -4,6 +4,15 @@
 .language-switcher-container {
   position: relative !important;
   z-index: 60 !important;
+  /* Mobile-first responsive width */
+  width: auto !important;
+  max-width: 120px;
+}
+
+@media (min-width: 640px) {
+  .language-switcher-container {
+    max-width: none;
+  }
 }
 
 .language-switcher-button {
@@ -11,12 +20,19 @@
   z-index: 61 !important;
   cursor: pointer !important;
   pointer-events: auto !important;
+  /* Ensure button doesn't overflow */
+  min-width: 0 !important;
+  overflow: hidden !important;
 }
 
 .language-switcher-menu {
   position: absolute !important;
   z-index: 100 !important;
   pointer-events: auto !important;
+  /* Prevent menu from causing horizontal scroll */
+  right: 0 !important;
+  left: auto !important;
+  max-width: calc(100vw - 2rem) !important;
 }
 
 /* Ensure all children are clickable */

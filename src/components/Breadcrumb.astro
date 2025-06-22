@@ -131,29 +131,32 @@ if (hostName && breadcrumbItems.length > 0) {
 {breadcrumbItems.length > 1 && (
   <nav aria-label="Breadcrumb" class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-      <ol class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-        {breadcrumbItems.map((item, index) => (
-          <li class="flex items-center">
-            {index > 0 && (
-              <svg class="w-4 h-4 mx-2 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            )}
-            {index === breadcrumbItems.length - 1 ? (
-              <span class="font-medium text-gray-900 dark:text-white" aria-current="page">
-                {item.label}
-              </span>
-            ) : (
-              <a 
-                href={item.href} 
-                class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors font-medium"
-              >
-                {item.label}
-              </a>
-            )}
-          </li>
-        ))}
-      </ol>
+      <div class="overflow-x-auto scrollbar-hide">
+        <ol class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 min-w-max">
+          {breadcrumbItems.map((item, index) => (
+            <li class="flex items-center flex-shrink-0">
+              {index > 0 && (
+                <svg class="w-4 h-4 mx-1 sm:mx-2 text-gray-400 dark:text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              )}
+              {index === breadcrumbItems.length - 1 ? (
+                <span class="font-medium text-gray-900 dark:text-white truncate max-w-[200px] sm:max-w-none" aria-current="page" title={item.label}>
+                  {item.label}
+                </span>
+              ) : (
+                <a 
+                  href={item.href} 
+                  class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors font-medium truncate max-w-[120px] sm:max-w-none"
+                  title={item.label}
+                >
+                  {item.label}
+                </a>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   </nav>
 )}
