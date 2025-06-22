@@ -70,7 +70,8 @@ class HostGenerator {
         console.log('🔍 DEBUG: gxjansen host NOT found in NocoDB response')
       }
 
-      // Generate host files
+      // Always regenerate all host files (only 4 records, no need for change detection)
+      console.log('🔄 Force regenerating all host files...')
       const generatedFiles = new Set<string>()
       for (const host of hosts) {
         try {
@@ -78,6 +79,7 @@ class HostGenerator {
           if (filePath) {
             generatedFiles.add(filePath)
             this.stats.hostsGenerated++
+            console.log(`✅ Generated/updated: ${host.name || host.slug}`)
           }
         } catch (error) {
           const errorMsg = `Failed to generate host ${host.Id}: ${error instanceof Error ? error.message : String(error)}`
@@ -144,7 +146,7 @@ class HostGenerator {
     const content = host.bio || ''
     const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
 
-    console.log(`📝 Creating host: ${slug}`)
+    console.log(`📝 Force updating host: ${slug}`)
 
     await fs.writeFile(hostPath, mdxContent, 'utf8')
     
@@ -201,7 +203,8 @@ class HostGenerator {
       `episodes: [${episodes.map((e: string) => `"${e}"`).join(', ')}]`,
       `socialLinks: ${JSON.stringify(socialLinks)}`,
       `createdAt: ${new Date(host.CreatedAt || Date.now()).toISOString()}`,
-      `updatedAt: ${new Date(host.nocodb_last_modified || host.UpdatedAt || Date.now()).toISOString()}`
+      `updatedAt: ${new Date(host.nocodb_last_modified || host.UpdatedAt || Date.now()).toISOString()}`,
+      `syncedAt: ${new Date().toISOString()}`
     ].filter(Boolean).join('\n')
   }
 
@@ -283,6 +286,6 @@ async function main() {
 }
 
 // Run if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }
