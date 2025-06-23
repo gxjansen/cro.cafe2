@@ -1,17 +1,407 @@
 ---
-// Redirect to English guest page
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import GuestProfilePicture from '../../components/GuestProfilePicture.astro';
+import LinkedInBadge from '../../components/LinkedInBadge.astro';
+import ThenNowCard from '../../components/ThenNowCard.astro';
+import SchemaPerson from '../../components/schema/SchemaPerson.astro';
+import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
+import { getGuestEpisodes, getGuestWithLinkedIn } from '../../utils/content';
+import { getLinkedInSyncStatus } from '../../types/linkedin';
+import type { Language } from '../../types';
+
 export async function getStaticPaths() {
   const { getCollection } = await import('astro:content');
   const guests = await getCollection('guests');
   
-  // Get all guest slugs for redirect
-  return guests
-    .filter(guest => guest.data.languages.includes('en'))
-    .map(guest => ({
-      params: { slug: guest.data.slug || guest.slug }
-    }));
+  // Generate a single path for each guest
+  return guests.map(guest => ({
+    params: { slug: guest.data.slug || guest.slug },
+    props: { guest }
+  }));
 }
 
-const { slug } = Astro.params;
-return Astro.redirect(`/en/guests/${slug}/`, 301);
+const { guest } = Astro.props;
+const guestSlug = guest.data.slug || guest.slug;
+
+// Detect language from URL parameter or default to English
+const urlLang = Astro.url.searchParams.get('lang') as Language;
+const validLanguages: Language[] = ['en', 'nl', 'de', 'es'];
+const language: Language = (urlLang && validLanguages.includes(urlLang)) ? urlLang : 'en';
+
+// Get guest data with LinkedIn enrichment
+const guestWithLinkedIn = await getGuestWithLinkedIn(guestSlug);
+
+// DEBUG: Log LinkedIn data to understand what's happening
+console.log('=== LINKEDIN DEBUG ===');
+console.log('guestSlug:', guestSlug);
+console.log('guestWithLinkedIn:', guestWithLinkedIn);
+console.log('linkedInData:', guestWithLinkedIn?.linkedInData);
+console.log('linkedInRaw:', guestWithLinkedIn?.linkedInRaw);
+
+// Get LinkedIn sync status
+const linkedInStatus = getLinkedInSyncStatus(guestWithLinkedIn?.linkedInData);
+console.log('linkedInStatus:', linkedInStatus);
+console.log('=== END DEBUG ===');
+
+// Get all episodes featuring this guest from ALL languages
+const guestEpisodes = await getGuestEpisodes(guestSlug);
+
+// Group episodes by language
+const episodesByLanguage = guestEpisodes.reduce((acc, episode) => {
+  const lang = episode.data.language;
+  if (!acc[lang]) acc[lang] = [];
+  acc[lang].push(episode);
+  return acc;
+}, {} as Record<Language, typeof guestEpisodes>);
+
+// Language display names
+const languageDisplayNames = {
+  en: { en: 'English', nl: 'Engels', de: 'Englisch', es: 'Inglés' },
+  nl: { en: 'Dutch', nl: 'Nederlands', de: 'Niederländisch', es: 'Neerlandés' },
+  de: { en: 'German', nl: 'Duits', de: 'Deutsch', es: 'Alemán' },
+  es: { en: 'Spanish', nl: 'Spaans', de: 'Spanisch', es: 'Español' }
+};
+
+// Translations
+const translations = {
+  en: {
+    backToGuests: '← Back to All Guests',
+    about: 'About',
+    episodesWith: 'Episodes with',
+    episodesIn: 'Episodes in',
+    availableLanguages: 'Available in other languages',
+    viewIn: 'View in',
+    discoverMore: 'Discover More CRO Insights',
+    exploreAll: 'Explore all episodes and learn from industry experts',
+    browseAllEpisodes: 'Browse All Episodes',
+    meetMoreGuests: 'Meet More Guests'
+  },
+  nl: {
+    backToGuests: '← Terug naar Alle Gasten',
+    about: 'Over',
+    episodesWith: 'Afleveringen met',
+    episodesIn: 'Afleveringen in het',
+    availableLanguages: 'Beschikbaar in andere talen',
+    viewIn: 'Bekijk in het',
+    discoverMore: 'Ontdek Meer CRO Inzichten',
+    exploreAll: 'Verken alle afleveringen en leer van industrie experts',
+    browseAllEpisodes: 'Bekijk Alle Afleveringen',
+    meetMoreGuests: 'Ontmoet Meer Gasten'
+  },
+  de: {
+    backToGuests: '← Zurück zu Allen Gästen',
+    about: 'Über',
+    episodesWith: 'Folgen mit',
+    episodesIn: 'Folgen auf',
+    availableLanguages: 'In anderen Sprachen verfügbar',
+    viewIn: 'Ansehen auf',
+    discoverMore: 'Entdecken Sie mehr CRO Einblicke',
+    exploreAll: 'Entdecken Sie alle Folgen und lernen Sie von Branchenexperten',
+    browseAllEpisodes: 'Alle Folgen durchsuchen',
+    meetMoreGuests: 'Mehr Gäste kennenlernen'
+  },
+  es: {
+    backToGuests: '← Volver a Todos los Invitados',
+    about: 'Acerca de',
+    episodesWith: 'Episodios con',
+    episodesIn: 'Episodios en',
+    availableLanguages: 'Disponible en otros idiomas',
+    viewIn: 'Ver en',
+    discoverMore: 'Descubre más perspectivas de CRO',
+    exploreAll: 'Explora todos los episodios y aprende de expertos de la industria',
+    browseAllEpisodes: 'Ver todos los episodios',
+    meetMoreGuests: 'Conoce más invitados'
+  }
+};
+
+const t = translations[language];
+
+
+// SEO metadata - Use LinkedIn data when available
+const guestName = guestWithLinkedIn?.name || guest.data.name;
+const guestBio = guestWithLinkedIn?.linkedInData?.bio || guestWithLinkedIn?.bio || guest.data.bio;
+const profilePicUrl = guestWithLinkedIn?.linkedInData?.profilePicUrl || guest.data.imageUrl;
+
+const title = `${guestName} - CRO.CAFE Podcast`;
+const description = guestBio.substring(0, 160);
+
+// Single canonical URL for the guest
+const canonicalUrl = `https://cro.cafe/guests/${guestSlug}/`;
+
+// Get LinkedIn URL from various sources
+const linkedInUrl = guestWithLinkedIn?.linkedInData?.url || 
+                   guestWithLinkedIn?.linkedin ||
+                   guest.data.linkedin ||
+                   guest.data.socialLinks?.find((link: any) => link.platform === 'linkedin')?.url ||
+                   null;
 ---
+
+<BaseLayout 
+  title={title}
+  description={description}
+  language={language}
+  canonical={canonicalUrl}
+  currentPath={`/guests/${guestSlug}/`}
+  ogImage={profilePicUrl}
+>
+  <!-- Person Schema for Guest -->
+  <SchemaPerson 
+    person={guest}
+    type="guest"
+    url={canonicalUrl}
+  />
+  <Header language={language} currentPath={`/guests/${guestSlug}/`} />
+  <Breadcrumb 
+    language={language} 
+    currentPath={`/guests/${guestSlug}/`}
+    guestName={guest.data.name}
+  />
+  
+  <main class="flex-grow">
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Guest Header -->
+      <header class="mb-8">
+        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <a href={language === 'en' ? "/all/guests/" : `/${language}/guests/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            {t.backToGuests}
+          </a>
+        </div>
+        
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="relative">
+            <GuestProfilePicture 
+              guest={guestWithLinkedIn || guest}
+              size="lg"
+              class="w-32 h-32 rounded-full object-cover flex-shrink-0"
+              showLinkedInBadge={true}
+            />
+            {linkedInStatus.hasData && (
+              <div class="absolute -bottom-2 -right-2">
+                <LinkedInBadge 
+                  lastSync={linkedInStatus.lastSync}
+                  status={linkedInStatus.lastSync ? 'synced' : 'never'}
+                  size="sm"
+                />
+              </div>
+            )}
+          </div>
+          
+          <div class="flex-1">
+            <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-2">
+              {guestName}
+            </h1>
+            
+            {/* Current role from LinkedIn or original data */}
+            {(guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title) && 
+             (guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company) && (
+              <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
+                {guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title} at {guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company}
+              </p>
+            )}
+            
+            {/* LinkedIn headline if available */}
+            {guestWithLinkedIn?.linkedInData?.headline && (
+              <p class="text-lg text-gray-500 dark:text-gray-400 mb-4 italic">
+                {guestWithLinkedIn.linkedInData.headline}
+              </p>
+            )}
+            
+            {/* Social Links */}
+            <div class="flex gap-4 mb-6">
+              {guest.data.website && (
+                <a 
+                  href={guest.data.website} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+                  </svg>
+                  Website
+                </a>
+              )}
+              
+              {guest.data.twitter && (
+                <a 
+                  href={`https://twitter.com/${guest.data.twitter}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                  Twitter
+                </a>
+              )}
+              
+              {linkedInUrl && (
+                <a 
+                  href={linkedInUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-md hover:bg-[#005582] transition-colors font-medium"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  Connect on LinkedIn
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Bio Section -->
+      {guestBio && guestBio.trim() && (
+        <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
+          <h2>{t.about} {guestName}</h2>
+          
+          {/* LinkedIn bio if different from regular bio */}
+          {guestWithLinkedIn?.linkedInData?.bio && 
+           guestWithLinkedIn.linkedInData.bio !== guest.data.bio && (
+            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p class="text-sm text-blue-600 dark:text-blue-400 mb-2 font-medium">From LinkedIn profile:</p>
+              <p>{guestWithLinkedIn.linkedInData.bio}</p>
+            </div>
+          )}
+          
+          {/* Original bio */}
+          <p>{guest.data.bio}</p>
+        </div>
+      )}
+      
+      {/* LinkedIn Skills Section */}
+      {guestWithLinkedIn?.linkedInData?.skills && guestWithLinkedIn.linkedInData.skills.length > 0 && (
+        <div class="mb-8">
+          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Skills & Expertise</h3>
+          <div class="flex flex-wrap gap-2">
+            {guestWithLinkedIn.linkedInData.skills.map((skill: string) => (
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200">
+                {skill}
+              </span>
+            ))}
+          </div>
+          {/* Last sync info */}
+          {linkedInStatus.lastSync && (
+            <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              LinkedIn data synced: {new Intl.DateTimeFormat('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+              }).format(linkedInStatus.lastSync)}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {/* Career Progression - Then & Now Card */}
+      {guestWithLinkedIn?.linkedInData?.experiences && 
+       guestWithLinkedIn.linkedInData.experiences.length > 0 && 
+       guestEpisodes.length > 0 && (
+        <div class="mb-12">
+          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Career Journey</h3>
+          {/* Find the oldest episode to show progression */}
+          {(() => {
+            const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
+            const episodeDate = oldestEpisode.data.pubDate;
+            
+            // Find the experience at the time of the episode
+            const historicalExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => {
+              if (exp.startDate && exp.endDate) {
+                const startYear = parseInt(exp.startDate.split('-')[0]);
+                const endYear = parseInt(exp.endDate.split('-')[0]);
+                const episodeYear = episodeDate.getFullYear();
+                return episodeYear >= startYear && episodeYear <= endYear;
+              }
+              return false;
+            });
+            
+            const currentExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => exp.isCurrent);
+            
+            return (historicalExperience || guest.data.role) ? (
+              <ThenNowCard
+                historical={{
+                  role: historicalExperience?.title || guest.data.role || guest.data.title || 'Guest',
+                  company: historicalExperience?.company || guest.data.company || 'Company',
+                  date: episodeDate
+                }}
+                current={currentExperience ? {
+                  role: currentExperience.title,
+                  company: currentExperience.company,
+                  lastUpdated: linkedInStatus.lastSync || new Date()
+                } : undefined}
+                episodeId={oldestEpisode.data.slug || oldestEpisode.slug}
+                episodeTitle={oldestEpisode.data.title}
+              />
+            ) : null;
+          })()}
+        </div>
+      )}
+
+      <!-- Other Guests from Same Company -->
+      <GuestOtherCompany guest={guest} language={language} />
+
+      <!-- Episodes Section -->
+      {guestEpisodes.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+            {t.episodesWith} {guestName}
+          </h2>
+          
+          {/* Group episodes by language */}
+          {(['en', 'nl', 'de', 'es'] as Language[]).map((lang) => {
+            const langEpisodes = episodesByLanguage[lang];
+            if (!langEpisodes || langEpisodes.length === 0) return null;
+            
+            return (
+              <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                  {t.episodesIn} {languageDisplayNames[lang][language]}
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {langEpisodes.map((episode) => (
+                    <EpisodeCard episode={episode} size="medium" showLanguage={true} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+    </article>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+          {t.discoverMore}
+        </h2>
+        <p class="text-xl text-white/90 mb-8">
+          {t.exploreAll}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href={language === 'en' ? "/all/episodes/" : `/${language}/episodes/`}
+            class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-accent-600 dark:text-accent-700 bg-white hover:bg-white/90 transition-all shadow-lg"
+          >
+            {t.browseAllEpisodes}
+          </a>
+          <a 
+            href={language === 'en' ? "/all/guests/" : `/${language}/guests/`}
+            class="inline-flex items-center px-8 py-3 border-2 border-white/70 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 transition-all"
+          >
+            {t.meetMoreGuests}
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+</BaseLayout>

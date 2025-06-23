@@ -1,5 +1,11 @@
 import { getCollection } from 'astro:content';
 import type { Language } from '../types';
+import { 
+  hasLinkedInData as hasLinkedInDataTypeGuard,
+  type GuestWithLinkedIn,
+  type LinkedInDataRaw,
+  transformLinkedInData 
+} from '../types/linkedin';
 
 // Get episodes by language
 export async function getEpisodesByLanguage(language: Language) {
@@ -21,12 +27,37 @@ export async function getFeaturedEpisodes(limit = 4) {
 // Get guests by language
 export async function getGuestsByLanguage(language: Language) {
   const guests = await getCollection('guests');
+  const episodes = await getCollection('episodes');
+  
+  // Filter guests who have at least one published episode in the specified language
   return guests
-    .filter(guest => 
-      guest.data.languages.includes(language) && 
-      guest.data.episodes && 
-      guest.data.episodes.length > 0
-    )
+    .filter(guest => {
+      // Check if guest is marked for this language
+      if (!guest.data.languages.includes(language)) {
+        return false;
+      }
+      
+      const guestSlug = guest.data.slug || guest.slug;
+      
+      // Check if guest has any published episodes in this language
+      const hasPublishedEpisodes = episodes.some(episode => 
+        episode.data.language === language &&
+        episode.data.status === 'published' &&
+        episode.data.guests.includes(guestSlug)
+      );
+      
+      // If no episodes found via guest array, check if guest has episode IDs
+      if (!hasPublishedEpisodes && guest.data.episodes && guest.data.episodes.length > 0) {
+        // Check if any of the guest's episode IDs correspond to published episodes in this language
+        return episodes.some(episode => 
+          episode.data.language === language &&
+          episode.data.status === 'published' &&
+          guest.data.episodes.includes(episode.data.transistorId)
+        );
+      }
+      
+      return hasPublishedEpisodes;
+    })
     .sort((a, b) => a.data.name.localeCompare(b.data.name));
 }
 
@@ -141,17 +172,23 @@ export async function getGuestBySlug(slug: string) {
   return guests.find(guest => (guest.data.slug || guest.slug) === slug);
 }
 
-// Get related episodes for a guest
-export async function getGuestEpisodes(guestSlug: string, language: Language) {
+// Get related episodes for a guest (now returns episodes from ALL languages)
+export async function getGuestEpisodes(guestSlug: string, language?: Language) {
   const episodes = await getCollection('episodes');
   
   // First try the standard approach: check if episode has this guest in its guests array
   const episodesWithGuest = episodes
-    .filter(episode => 
-      episode.data.language === language && 
-      episode.data.guests.includes(guestSlug) &&
-      episode.data.status === 'published'
-    )
+    .filter(episode => {
+      // Check if guest is in the episode's guests array
+      const hasGuest = episode.data.guests.includes(guestSlug);
+      const isPublished = episode.data.status === 'published';
+      
+      // If language is specified, filter by it; otherwise return all languages
+      if (language) {
+        return hasGuest && isPublished && episode.data.language === language;
+      }
+      return hasGuest && isPublished;
+    })
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
   // If we found episodes, return them
@@ -165,13 +202,18 @@ export async function getGuestEpisodes(guestSlug: string, language: Language) {
     return [];
   }
 
-  // Filter episodes by transistorId that match the guest's episode IDs and language
+  // Filter episodes by transistorId that match the guest's episode IDs
   return episodes
-    .filter(episode => 
-      episode.data.language === language &&
-      guest.data.episodes.includes(episode.data.transistorId) &&
-      episode.data.status === 'published'
-    )
+    .filter(episode => {
+      const hasEpisodeId = guest.data.episodes.includes(episode.data.transistorId);
+      const isPublished = episode.data.status === 'published';
+      
+      // If language is specified, filter by it; otherwise return all languages
+      if (language) {
+        return hasEpisodeId && isPublished && episode.data.language === language;
+      }
+      return hasEpisodeId && isPublished;
+    })
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
 
@@ -205,10 +247,10 @@ export function getEpisodeUrl(episode: { data: { language: Language; slug?: stri
   return `/${language}/episodes/${slug}/`;
 }
 
-// Generate guest URL
-export function getGuestUrl(guest: { data: { slug?: string }; slug?: string }, language: Language): string {
+// Generate guest URL with optional language parameter
+export function getGuestUrl(guest: { data: { slug?: string }; slug?: string }, language?: Language): string {
   const slug = guest.data.slug || guest.slug;
-  return `/${language}/guests/${slug}/`;
+  return language ? `/guests/${slug}/?lang=${language}` : `/guests/${slug}/`;
 }
 
 // Get latest episodes across all languages for homepage
@@ -653,4 +695,240 @@ export async function getHostStatistics(hostSlug: string): Promise<{
     episodesByLanguage,
     uniqueGuestsByLanguage
   };
+}
+
+// ========== LinkedIn Data Functions ==========
+
+/**
+ * Fetch a single guest with LinkedIn data by slug
+ * @param slug - The guest slug to fetch
+ * @returns Guest with LinkedIn data or null if not found
+ */
+export async function getGuestWithLinkedIn(slug: string): Promise<GuestWithLinkedIn | null> {
+  try {
+    // Get guest from content collection
+    const guest = await getGuestBySlug(slug);
+    if (!guest) {
+      return null;
+    }
+    
+    // Extract LinkedIn data from frontmatter
+    const linkedInRaw: LinkedInDataRaw = {
+      linkedin_url: guest.data.linkedin_url,
+      linkedin_full_name: guest.data.linkedin_full_name,
+      linkedin_first_name: guest.data.linkedin_first_name,
+      linkedin_headline: guest.data.linkedin_headline,
+      linkedin_email: guest.data.linkedin_email,
+      linkedin_bio: guest.data.linkedin_bio,
+      linkedin_profile_pic: guest.data.linkedin_profile_pic,
+      linkedin_current_role: guest.data.linkedin_current_role,
+      linkedin_current_company: guest.data.linkedin_current_company,
+      linkedin_country: guest.data.linkedin_country,
+      linkedin_skills: guest.data.linkedin_skills,
+      linkedin_company_website: guest.data.linkedin_company_website,
+      linkedin_experiences: guest.data.linkedin_experiences,
+      linkedin_personal_website: guest.data.linkedin_personal_website,
+      linkedin_publications: guest.data.linkedin_publications,
+      linkedin_last_modified: guest.data.linkedin_last_modified,
+    };
+    
+    // Transform LinkedIn data if available
+    const hasLinkedInFields = linkedInRaw.linkedin_url || linkedInRaw.linkedin_headline;
+    let linkedInData: any = undefined;
+    
+    if (hasLinkedInFields) {
+      try {
+        linkedInData = transformLinkedInData(linkedInRaw);
+      } catch (error) {
+        console.error(`Error transforming LinkedIn data for guest ${slug}:`, error);
+        // Continue with undefined linkedInData rather than failing completely
+      }
+    }
+    
+    // Return guest with LinkedIn data
+    return {
+      name: guest.data.name,
+      bio: guest.data.bio,
+      company: guest.data.company,
+      role: guest.data.role,
+      email: guest.data.email,
+      website: guest.data.website,
+      linkedin: guest.data.linkedin,
+      linkedInData,
+      linkedInRaw: hasLinkedInFields ? linkedInRaw : undefined,
+    };
+  } catch (error) {
+    console.error(`Error fetching guest with LinkedIn data for slug ${slug}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get all guests with LinkedIn data for a specific language
+ * @param language - The language to filter guests by
+ * @returns Array of guests with LinkedIn data
+ */
+export async function getGuestsWithLinkedIn(language: Language): Promise<GuestWithLinkedIn[]> {
+  try {
+    // Get all guests from content collection for language filtering
+    const contentGuests = await getGuestsByLanguage(language);
+    
+    // Transform each guest to include LinkedIn data
+    const guestsWithLinkedIn = await Promise.all(
+      contentGuests.map(async (guest) => {
+        const slug = guest.data.slug || guest.slug;
+        return getGuestWithLinkedIn(slug);
+      })
+    );
+    
+    // Filter out any null results and sort by name
+    return guestsWithLinkedIn
+      .filter((guest): guest is GuestWithLinkedIn => guest !== null)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.error(`Error fetching guests with LinkedIn data for language ${language}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Get guests filtered by current LinkedIn company
+ * @param company - The company name to filter by
+ * @param language - Optional language filter
+ * @returns Array of guests from the specified company
+ */
+export async function getGuestsByCurrentCompany(
+  company: string, 
+  language?: Language
+): Promise<GuestWithLinkedIn[]> {
+  if (!company) {
+    return [];
+  }
+  
+  try {
+    // Get all guests
+    const guests = language 
+      ? await getGuestsByLanguage(language) 
+      : await getCollection('guests');
+    
+    // Transform guests and filter by company
+    const guestsWithLinkedIn = await Promise.all(
+      guests.map(async (guest) => {
+        const slug = guest.data.slug || guest.slug;
+        return getGuestWithLinkedIn(slug);
+      })
+    );
+    
+    // Filter by LinkedIn current company or regular company field
+    return guestsWithLinkedIn
+      .filter((guest): guest is GuestWithLinkedIn => {
+        if (!guest) return false;
+        // Check LinkedIn current company first, then regular company field
+        const guestCompany = guest.linkedInData?.currentCompany || guest.company;
+        return guestCompany?.toLowerCase() === company.toLowerCase();
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.error(`Error fetching guests from company ${company}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Get recently updated guests based on LinkedIn sync date
+ * @param limit - Maximum number of guests to return
+ * @returns Array of recently synced guests
+ */
+export async function getRecentlyUpdatedGuests(limit = 10): Promise<GuestWithLinkedIn[]> {
+  try {
+    // Get all guests
+    const allGuests = await getCollection('guests');
+    
+    // Transform guests and filter those with sync dates
+    const guestsWithLinkedIn = await Promise.all(
+      allGuests.map(async (guest) => {
+        const slug = guest.data.slug || guest.slug;
+        return getGuestWithLinkedIn(slug);
+      })
+    );
+    
+    // Filter guests that have LinkedIn data and sync date
+    const guestsWithSyncDate = guestsWithLinkedIn
+      .filter((guest): guest is GuestWithLinkedIn => 
+        guest !== null && guest.linkedInData?.lastSync !== undefined
+      );
+    
+    // Sort by sync date (most recent first)
+    const sortedGuests = guestsWithSyncDate.sort((a, b) => {
+      const dateA = a.linkedInData?.lastSync?.getTime() || 0;
+      const dateB = b.linkedInData?.lastSync?.getTime() || 0;
+      return dateB - dateA;
+    });
+    
+    // Return limited results
+    return sortedGuests.slice(0, limit);
+  } catch (error) {
+    console.error('Error fetching recently updated guests:', error);
+    return [];
+  }
+}
+
+/**
+ * Check if a guest has LinkedIn data
+ * @param guest - The guest object to check
+ * @returns True if guest has LinkedIn data
+ */
+export function hasLinkedInData(guest: any): boolean {
+  // Check if guest has the linkedInData property using the type guard
+  if (hasLinkedInDataTypeGuard(guest)) {
+    return true;
+  }
+  
+  // Check for LinkedIn fields in frontmatter data
+  if (guest?.data) {
+    return Boolean(
+      guest.data.linkedin_url || 
+      guest.data.linkedin_headline ||
+      guest.data.linkedin_bio ||
+      guest.data.linkedin_current_company
+    );
+  }
+  
+  // Also check for LinkedIn URL in regular guest data
+  return Boolean(guest?.data?.linkedin || guest?.linkedin);
+}
+
+/**
+ * Get guest profile picture with fallback chain
+ * @param guest - The guest object
+ * @returns Profile picture URL with fallback options
+ */
+export function getGuestProfilePicture(guest: any): string {
+  // Priority order (updated to prioritize local images):
+  // 1. Local guest image file (downloaded from LinkedIn or manually uploaded)
+  // 2. LinkedIn profile picture URL (direct fallback)
+  // 3. Default guest image
+  
+  // Extract guest slug
+  const guestSlug = guest?.data?.slug || guest?.slug || guest?.name;
+  
+  // Priority 1: Local guest image file (includes downloaded LinkedIn profile pictures)
+  if (guestSlug) {
+    const localImageUrl = getGuestImageUrl(guestSlug);
+    // For now, always try local first. The image component will handle 404s.
+    // This ensures downloaded LinkedIn images are used when available.
+    return localImageUrl;
+  }
+  
+  // Priority 2: LinkedIn profile picture URL (if no guest slug for local image)
+  if (guest?.data?.linkedin_profile_pic) {
+    return guest.data.linkedin_profile_pic;
+  }
+  
+  if (guest?.linkedInData?.profilePicUrl) {
+    return guest.linkedInData.profilePicUrl;
+  }
+  
+  // Priority 3: Default fallback
+  return '/images/default-guest.jpg';
 }

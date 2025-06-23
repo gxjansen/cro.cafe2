@@ -33,6 +33,11 @@ on:
         required: false
         default: true
         type: boolean
+      sync_linkedin_pictures:
+        description: 'Sync LinkedIn profile pictures'
+        required: false
+        default: false
+        type: boolean
       languages:
         description: 'Languages to sync for episodes (comma-separated: en,nl,de,es or "all")'
         required: false
@@ -88,6 +93,16 @@ jobs:
       NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
       NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
   
+  # Sync LinkedIn profile pictures after guests (optional)
+  sync-linkedin-pictures:
+    needs: sync-guests
+    if: |
+      always() && 
+      github.event.inputs.sync_linkedin_pictures == 'true' &&
+      (needs.sync-guests.result == 'success' || needs.sync-guests.result == 'skipped')
+    uses: ./.github/workflows/sync-linkedin-profile-pictures.yml
+    secrets: inherit
+  
   # Sync images after episodes
   sync-images:
     needs: sync-episodes
@@ -102,7 +117,7 @@ jobs:
   summary:
     name: Create Summary
     runs-on: ubuntu-latest
-    needs: [sync-platforms, sync-hosts, sync-guests, sync-episodes, sync-images]
+    needs: [sync-platforms, sync-hosts, sync-guests, sync-episodes, sync-images, sync-linkedin-pictures]
     if: always()
     
     steps:
@@ -157,6 +172,15 @@ jobs:
             echo "⏭️ **Images**: Skipped" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Images**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # LinkedIn Profile Pictures
+          if [ "${{ needs.sync-linkedin-pictures.result }}" = "success" ]; then
+            echo "✅ **LinkedIn Pictures**: ${{ needs.sync-linkedin-pictures.outputs.images-downloaded || '0' }} downloaded" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.sync-linkedin-pictures.result }}" = "skipped" ]; then
+            echo "⏭️ **LinkedIn Pictures**: Skipped" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **LinkedIn Pictures**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
