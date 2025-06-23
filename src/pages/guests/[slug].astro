@@ -4,12 +4,10 @@ import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestProfilePicture from '../../components/GuestProfilePicture.astro';
-import LinkedInBadge from '../../components/LinkedInBadge.astro';
 import ThenNowCard from '../../components/ThenNowCard.astro';
 import SchemaPerson from '../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
 import { getGuestEpisodes, getGuestWithLinkedIn } from '../../utils/content';
-import { getLinkedInSyncStatus } from '../../types/linkedin';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -41,9 +39,6 @@ console.log('guestWithLinkedIn:', guestWithLinkedIn);
 console.log('linkedInData:', guestWithLinkedIn?.linkedInData);
 console.log('linkedInRaw:', guestWithLinkedIn?.linkedInRaw);
 
-// Get LinkedIn sync status
-const linkedInStatus = getLinkedInSyncStatus(guestWithLinkedIn?.linkedInData);
-console.log('linkedInStatus:', linkedInStatus);
 console.log('=== END DEBUG ===');
 
 // Get all episodes featuring this guest from ALL languages
@@ -176,17 +171,8 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               guest={guestWithLinkedIn || guest}
               size="lg"
               class="w-32 h-32 rounded-full object-cover flex-shrink-0"
-              showLinkedInBadge={true}
+              showLinkedInBadge={false}
             />
-            {linkedInStatus.hasData && (
-              <div class="absolute -bottom-2 -right-2">
-                <LinkedInBadge 
-                  lastSync={linkedInStatus.lastSync}
-                  status={linkedInStatus.lastSync ? 'synced' : 'never'}
-                  size="sm"
-                />
-              </div>
-            )}
           </div>
           
           <div class="flex-1">
@@ -287,16 +273,6 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               </span>
             ))}
           </div>
-          {/* Last sync info */}
-          {linkedInStatus.lastSync && (
-            <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
-              LinkedIn data synced: {new Intl.DateTimeFormat('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              }).format(linkedInStatus.lastSync)}
-            </p>
-          )}
         </div>
       )}
       
@@ -334,7 +310,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
                 current={currentExperience ? {
                   role: currentExperience.title,
                   company: currentExperience.company,
-                  lastUpdated: linkedInStatus.lastSync || new Date()
+                  lastUpdated: guestWithLinkedIn?.linkedInData?.lastSync || new Date()
                 } : undefined}
                 episodeId={oldestEpisode.data.slug || oldestEpisode.slug}
                 episodeTitle={oldestEpisode.data.title}

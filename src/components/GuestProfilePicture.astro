@@ -21,6 +21,13 @@ const {
 // Get the profile picture URL with fallback chain
 const profilePictureUrl = getGuestProfilePicture(guest);
 
+// Debug logging
+console.log('=== GUEST PROFILE PICTURE DEBUG ===');
+console.log('Guest slug:', guest?.data?.slug || guest?.slug);
+console.log('Guest imageUrl:', guest?.data?.imageUrl);
+console.log('Generated profilePictureUrl:', profilePictureUrl);
+console.log('=== END DEBUG ===');
+
 // Check if this guest has LinkedIn data (for badge display)
 const hasLinkedInData = Boolean(guest?.data?.linkedin_profile_pic || guest?.linkedInData?.profilePicUrl);
 const isLinkedInPicture = hasLinkedInData;
@@ -84,15 +91,13 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 
   <!-- Main image -->
   {profilePictureUrl && profilePictureUrl !== '/images/default-guest.jpg' ? (
-    <Image 
+    <img 
       src={profilePictureUrl}
       alt={altText}
       width={imageSizes[size]}
       height={imageSizes[size]}
-      class="absolute inset-0 w-full h-full object-cover grayscale opacity-0 transition-opacity duration-500"
+      class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
       loading={loading}
-      format="webp"
-      quality={85}
       data-image={instanceId}
       onload={`
         const img = event.target;
@@ -108,7 +113,7 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
         
         // Local image failed - remove image and show placeholder (NO LINKEDIN FALLBACK)
-        console.log('Local image failed, showing placeholder');
+        console.log('Local image failed, showing placeholder for:', img.src);
         img.remove();
         if (placeholder) {
           placeholder.classList.remove('blur-sm', 'animate-pulse');
