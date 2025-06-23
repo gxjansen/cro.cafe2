@@ -81,20 +81,16 @@ export class NocoDBWorkingClient {
     const { limit = 1000 } = options
     const tableId = await this.getTableId('Guests')
     
-    // Include all fields including LinkedIn fields
-    const fields = [
-      'Id', 'name', 'bio', 'company', 'role', 'email', 'website', 'linkedin', 'slug',
-      'isFeatured', 'episodeCount', 'episodes', 'languages', 'imageUrl', 'socialLinks',
-      'CreatedAt', 'UpdatedAt',
-      // LinkedIn fields
-      'linkedin_url', 'linkedin_full_name', 'linkedin_first_name', 'linkedin_headline',
-      'linkedin_email', 'linkedin_bio', 'linkedin_profile_pic', 'linkedin_current_role',
-      'linkedin_current_company', 'linkedin_country', 'linkedin_skills',
-      'linkedin_company_website', 'linkedin_experiences', 'linkedin_personal_website',
-      'linkedin_publications', 'last_linkedin_sync'
-    ].join(',')
+    // Don't specify fields to get all available fields and avoid 404 errors
+    // This will help us debug what fields are actually available
+    console.log('📋 Fetching guests from table:', tableId)
+    const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
     
-    const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0&fields=${fields}`)
+    // Debug: log available fields from first record
+    if (response.list && response.list.length > 0) {
+      console.log('🔍 Available fields in NocoDB:', Object.keys(response.list[0]))
+    }
+    
     return response.list || []
   }
 
