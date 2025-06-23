@@ -21,12 +21,9 @@ const {
 // Get the profile picture URL with fallback chain
 const profilePictureUrl = getGuestProfilePicture(guest);
 
-// Check if this is a LinkedIn profile picture (either local or remote)
+// Check if this guest has LinkedIn data (for badge display)
 const hasLinkedInData = Boolean(guest?.data?.linkedin_profile_pic || guest?.linkedInData?.profilePicUrl);
 const isLinkedInPicture = hasLinkedInData;
-
-// Get LinkedIn fallback URL for error handling
-const linkedInFallbackUrl = guest?.data?.linkedin_profile_pic || guest?.linkedInData?.profilePicUrl;
 
 // Size mappings
 const sizeClasses = {
@@ -110,14 +107,8 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
         const img = event.target;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
         
-        // Try LinkedIn fallback URL if available and this isn't already the fallback
-        if ('${linkedInFallbackUrl}' && img.src !== '${linkedInFallbackUrl}' && !img.src.includes('default-guest')) {
-          console.log('Local image failed, trying LinkedIn URL fallback');
-          img.src = '${linkedInFallbackUrl}';
-          return;
-        }
-        
-        // If LinkedIn fallback also fails or isn't available, remove image and show placeholder
+        // Local image failed - remove image and show placeholder (NO LINKEDIN FALLBACK)
+        console.log('Local image failed, showing placeholder');
         img.remove();
         if (placeholder) {
           placeholder.classList.remove('blur-sm', 'animate-pulse');

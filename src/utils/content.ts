@@ -904,10 +904,11 @@ export function hasLinkedInData(guest: any): boolean {
  * @returns Profile picture URL with fallback options
  */
 export function getGuestProfilePicture(guest: any): string {
-  // Priority order (updated to prioritize local images):
+  // Priority order (NO LIVE LINKEDIN CALLS):
   // 1. Local guest image file (downloaded from LinkedIn or manually uploaded)
-  // 2. LinkedIn profile picture URL (direct fallback)
-  // 3. Default guest image
+  // 2. Default guest image placeholder
+  // 
+  // NOTE: Never return LinkedIn URLs - only local files to avoid runtime calls
   
   // Extract guest slug
   const guestSlug = guest?.data?.slug || guest?.slug || guest?.name;
@@ -915,20 +916,10 @@ export function getGuestProfilePicture(guest: any): string {
   // Priority 1: Local guest image file (includes downloaded LinkedIn profile pictures)
   if (guestSlug) {
     const localImageUrl = getGuestImageUrl(guestSlug);
-    // For now, always try local first. The image component will handle 404s.
-    // This ensures downloaded LinkedIn images are used when available.
+    // Always return local path. Component will handle 404s gracefully with placeholder.
     return localImageUrl;
   }
   
-  // Priority 2: LinkedIn profile picture URL (if no guest slug for local image)
-  if (guest?.data?.linkedin_profile_pic) {
-    return guest.data.linkedin_profile_pic;
-  }
-  
-  if (guest?.linkedInData?.profilePicUrl) {
-    return guest.linkedInData.profilePicUrl;
-  }
-  
-  // Priority 3: Default fallback
+  // Priority 2: Default fallback (no LinkedIn URLs ever)
   return '/images/default-guest.jpg';
 }
