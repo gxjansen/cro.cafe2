@@ -81,7 +81,20 @@ export class NocoDBWorkingClient {
     const { limit = 1000 } = options
     const tableId = await this.getTableId('Guests')
     
-    const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
+    // Include all fields including LinkedIn fields
+    const fields = [
+      'Id', 'name', 'bio', 'company', 'role', 'email', 'website', 'linkedin', 'slug',
+      'isFeatured', 'episodeCount', 'episodes', 'languages', 'imageUrl', 'socialLinks',
+      'CreatedAt', 'UpdatedAt',
+      // LinkedIn fields
+      'linkedin_url', 'linkedin_full_name', 'linkedin_first_name', 'linkedin_headline',
+      'linkedin_email', 'linkedin_bio', 'linkedin_profile_pic', 'linkedin_current_role',
+      'linkedin_current_company', 'linkedin_country', 'linkedin_skills',
+      'linkedin_company_website', 'linkedin_experiences', 'linkedin_personal_website',
+      'linkedin_publications', 'last_linkedin_sync'
+    ].join(',')
+    
+    const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0&fields=${fields}`)
     return response.list || []
   }
 

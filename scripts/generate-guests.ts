@@ -61,6 +61,15 @@ class GuestGenerator {
       if (guests.length > 0) {
         console.log('📋 Sample guest data structure:')
         console.log(JSON.stringify(guests[0], null, 2))
+        
+        // Debug: Check for LinkedIn fields specifically
+        const guest = guests[0]
+        console.log('🔍 LinkedIn field check:')
+        console.log('- linkedin_url:', guest.linkedin_url)
+        console.log('- linkedin_full_name:', guest.linkedin_full_name)
+        console.log('- linkedin_headline:', guest.linkedin_headline)
+        console.log('- linkedin_current_company:', guest.linkedin_current_company)
+        console.log('- last_linkedin_sync:', guest.last_linkedin_sync)
       }
       
       for (const guest of guests) {
@@ -176,6 +185,23 @@ class GuestGenerator {
       `languages: [${languages.map((l: string) => `"${l}"`).join(', ')}]`,
       this.getGuestImageUrl(imageValue),
       `socialLinks: ${JSON.stringify(socialLinks)}`,
+      // LinkedIn fields (include even if empty for debugging)
+      `linkedin_url: "${this.escapeYaml(guest.linkedin_url || '')}"`,
+      `linkedin_full_name: "${this.escapeYaml(guest.linkedin_full_name || '')}"`,
+      `linkedin_first_name: "${this.escapeYaml(guest.linkedin_first_name || '')}"`,
+      `linkedin_headline: "${this.escapeYaml(guest.linkedin_headline || '')}"`,
+      `linkedin_email: "${this.escapeYaml(guest.linkedin_email || '')}"`,
+      `linkedin_bio: "${this.escapeYaml(guest.linkedin_bio || '')}"`,
+      `linkedin_profile_pic: "${this.escapeYaml(guest.linkedin_profile_pic || '')}"`,
+      `linkedin_current_role: "${this.escapeYaml(guest.linkedin_current_role || '')}"`,
+      `linkedin_current_company: "${this.escapeYaml(guest.linkedin_current_company || '')}"`,
+      `linkedin_country: "${this.escapeYaml(guest.linkedin_country || '')}"`,
+      `linkedin_skills: "${this.escapeYaml(guest.linkedin_skills || '')}"`,
+      `linkedin_company_website: "${this.escapeYaml(guest.linkedin_company_website || '')}"`,
+      `linkedin_experiences: "${this.escapeYaml(guest.linkedin_experiences || '')}"`,
+      `linkedin_personal_website: "${this.escapeYaml(guest.linkedin_personal_website || '')}"`,
+      `linkedin_publications: "${this.escapeYaml(guest.linkedin_publications || '')}"`,
+      `last_linkedin_sync: "${this.escapeYaml(guest.last_linkedin_sync || '')}"`,
       `createdAt: ${new Date(guest.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(guest.UpdatedAt || Date.now()).toISOString()}`
     ].filter(line => line !== null && line !== '').join('\n')
