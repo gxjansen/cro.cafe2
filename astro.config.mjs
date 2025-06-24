@@ -12,7 +12,7 @@ export default defineConfig({
     react(),
     mdx(),
     AstroPWA({
-      mode: 'production',
+      mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
       base: '/',
       scope: '/',
       includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml'],
@@ -44,7 +44,9 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: '/',
-        globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}'],
+        globPatterns: process.env.NODE_ENV === 'production' 
+          ? ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}']
+          : ['**/*.{js,css}'], // Simplified patterns for development
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
           // Audio files - use NetworkOnly to prevent caching issues with streaming
