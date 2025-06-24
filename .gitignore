@@ -165,10 +165,3 @@ missing-guest-images.md
 
 # Local Netlify folder
 .netlify
-
-# Additional local files not in GitHub repo
-server.pid
-dev-server.log
-test-*.html
-test-jitter-fix.html
-test-audio-flow.html

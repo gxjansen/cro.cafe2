@@ -1,31 +1,6 @@
 // Re-export Content Collection types
 export type { Episode, Guest, Quote, Brand, Platform } from '../content/config';
 
-// Re-export LinkedIn types
-export type {
-  LinkedInExperience,
-  LinkedInWebsite,
-  LinkedInPublication,
-  LinkedInDataRaw,
-  LinkedInData,
-  GuestWithLinkedIn,
-  PartialLinkedInUpdate,
-  LinkedInSyncStatus
-} from './linkedin';
-
-// Re-export LinkedIn utilities and type guards
-export {
-  isLinkedInExperience,
-  isLinkedInWebsite,
-  isLinkedInPublication,
-  hasLinkedInData,
-  safeJsonParse,
-  parseSkills,
-  transformLinkedInData,
-  mergeGuestWithLinkedIn,
-  getLinkedInSyncStatus
-} from './linkedin';
-
 // Language and utility types
 export type Language = 'en' | 'nl' | 'de' | 'es';
 

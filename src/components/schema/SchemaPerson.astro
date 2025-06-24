@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  person: CollectionEntry<'hosts'> | CollectionEntry<'guests'>;
+  type: 'host' | 'guest';
+  url: string;
+}
+
+const { person, type, url } = Astro.props;
+
+// Build the schema based on available data
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": person.data.name,
+  "url": url,
+  "image": person.data.imageUrl || (person.data.image ? `https://cro.cafe${person.data.image}` : undefined),
+  "jobTitle": person.data.role || person.data.title,
+  "description": person.data.bio,
+  "worksFor": person.data.company ? {
+    "@type": "Organization",
+    "name": person.data.company
+  } : undefined,
+  "sameAs": [
+    person.data.linkedin,
+    person.data.twitter,
+    person.data.website
+  ].filter(Boolean),
+  "alumniOf": person.data.education ? {
+    "@type": "EducationalOrganization",
+    "name": person.data.education
+  } : undefined,
+  "nationality": person.data.nationality,
+  "knowsLanguage": person.data.languages || []
+};
+
+// Remove undefined properties
+const cleanSchema = JSON.parse(JSON.stringify(schema, (key, value) => value === undefined ? undefined : value));
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(cleanSchema)} />

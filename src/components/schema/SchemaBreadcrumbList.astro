@@ -1,0 +1,31 @@
+---
+import type { Language } from '../../types';
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export interface Props {
+  items: BreadcrumbItem[];
+  language?: Language;
+}
+
+const { items, language } = Astro.props;
+
+// Generate breadcrumb list items with position
+const listItems = items.map((item, index) => ({
+  "@type": "ListItem",
+  "position": index + 1,
+  "name": item.name,
+  "item": item.url
+}));
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": listItems
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

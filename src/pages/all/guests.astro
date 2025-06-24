@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import GuestCard from '../../components/GuestCard.astro';
+import { getCollection } from 'astro:content';
+import type { Language } from '../../types';
+
+// Get all guests and filter out those with zero episodes
+const allGuests = await getCollection('guests');
+const guestsWithEpisodes = allGuests.filter(guest => 
+  guest.data.episodes && guest.data.episodes.length > 0
+);
+
+// Sort guests alphabetically
+const sortedGuests = guestsWithEpisodes.sort((a, b) => 
+  a.data.name.localeCompare(b.data.name)
+);
+
+// Group guests by their languages
+const guestsByLanguage: Record<Language, typeof allGuests> = {
+  en: [],
+  nl: [],
+  de: [],
+  es: []
+};
+
+// Distribute guests to language groups
+sortedGuests.forEach(guest => {
+  guest.data.languages.forEach(lang => {
+    guestsByLanguage[lang].push(guest);
+  });
+});
+
+const languageInfo = {
+  en: { name: 'English', flag: '🇬🇧' },
+  nl: { name: 'Nederlands', flag: '🇳🇱' },
+  de: { name: 'Deutsch', flag: '🇩🇪' },
+  es: { name: 'Español', flag: '🇪🇸' }
+};
+
+// Helper function to get guest URL for a specific language
+function getGuestUrl(guest: any, language: Language): string {
+  const slug = guest.data.slug || guest.slug;
+  return language === 'en' ? `/guests/${slug}/` : `/${language}/guests/${slug}/`;
+}
+
+// Get the first available language for a guest
+function getDefaultGuestUrl(guest: any): string {
+  const firstLang = guest.data.languages[0];
+  return getGuestUrl(guest, firstLang);
+}
+---
+
+<BaseLayout 
+  title="All Guests - CRO.CAFE"
+  description="Browse all CRO.CAFE podcast guests from all language editions"
+  language="en"
+  canonical="https://cro.cafe/all/guests/"
+>
+  <Header language="en" currentPath="/all/guests/" />
+  <Breadcrumb language="en" currentPath="/all/guests/" />
+  
+  <main class="flex-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          All Guests
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Explore all {sortedGuests.length} expert guests who have shared their CRO insights
+        </p>
+      </div>
+
+      <!-- All guests grid -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+          Complete Guest Directory
+        </h2>
+        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {sortedGuests.map((guest) => (
+            <GuestCard guest={guest} size="medium" showEpisodeCount={true} />
+          ))}
+        </div>
+      </section>
+
+      <!-- Guests by language -->
+      {(Object.keys(guestsByLanguage) as Language[]).map((lang) => (
+        guestsByLanguage[lang].length > 0 && (
+          <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white flex items-center gap-3">
+                <span class="text-3xl">{languageInfo[lang].flag}</span>
+{languageInfo[lang].name}-language Guests
+                <span class="text-base font-normal text-gray-500 dark:text-gray-400">
+                  ({guestsByLanguage[lang].length})
+                </span>
+              </h2>
+              <a 
+                href={lang === 'en' ? '/guests/' : `/${lang}/guests/`}
+                class="text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 font-medium transition-colors"
+              >
+                View all →
+              </a>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {guestsByLanguage[lang].slice(0, 6).map((guest) => (
+                <GuestCard guest={guest} language={lang} size="small" />
+              ))}
+            </div>
+          </section>
+        )
+      ))}
+    </div>
+  </main>
+</BaseLayout>

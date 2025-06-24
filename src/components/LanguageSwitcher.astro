@@ -55,8 +55,8 @@ const languages = [
   },
 ];
 
-// Check if we're on a global/all-languages page (root page, /all/ pages, /subscribe, /search/, /guests/, and /hosts/)
-const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/' || currentPath === '/search/' || currentPath.startsWith('/guests/') || currentPath.startsWith('/hosts/');
+// Check if we're on a global/all-languages page (root page, /all/ pages, /subscribe, and /search/)
+const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/' || currentPath === '/search/';
 const currentLang = isGlobal ? languages[0] : languages.find(lang => lang.code === currentLanguage) || languages[1];
 
 // Generate language URLs - try to preserve current path structure

@@ -10,8 +10,8 @@ export interface Props {
 
 const { language = 'en', currentPath = '/' } = Astro.props;
 
-// Check if we're in global mode (on root page, all-languages pages, global search, or individual guest/host pages)
-const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/search/' || currentPath.startsWith('/guests/') || currentPath.startsWith('/hosts/');
+// Check if we're in global mode (on root page, all-languages pages, or global search)
+const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/search/';
 
 // Navigation items based on language and mode
 const getNavItems = (lang: Language, isGlobal: boolean) => {

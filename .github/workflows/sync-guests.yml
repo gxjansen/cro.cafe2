@@ -1,0 +1,91 @@
+name: Sync Guests from NocoDB
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger from main sync workflow
+  workflow_call:
+    secrets:
+      NOCODB_API_KEY:
+        required: true
+      NOCODB_BASE_URL:
+        required: true
+      NOCODB_BASE_ID:
+        required: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  sync-guests:
+    name: Sync Guests
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    outputs:
+      guests-generated: ${{ steps.generate.outputs.guests-generated }}
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create guest directories
+        run: mkdir -p src/content/guests
+      
+      - name: Generate guests
+        id: generate
+        run: |
+          npx tsx scripts/generate-guests.ts 2>&1 | tee guest-generation.log
+          
+          # Extract statistics
+          GUESTS_GENERATED=$(grep "✅ Generated" guest-generation.log | grep -oE '[0-9]+ guests' | grep -oE '[0-9]+' || echo "0")
+          echo "guests-generated=$GUESTS_GENERATED" >> $GITHUB_OUTPUT
+        env:
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain src/content/guests/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Guest changes detected"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No guest changes detected, but forcing update for debugging"
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Force update timestamp to ensure git detects changes
+          touch src/content/guests/*.mdx
+          git add src/content/guests/
+          
+          COMMIT_MSG="Update guest content from NocoDB (DEBUG MODE)
+          
+          Guests: ${{ steps.generate.outputs.guests-generated }} generated
+          Forced update to debug LinkedIn field integration"
+          
+          git commit -m "$COMMIT_MSG" || echo "No changes to commit"
+          git push

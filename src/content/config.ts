@@ -60,24 +60,6 @@ const guestSchema = z.object({
   // Media - allow both full URLs and relative paths
   imageUrl: z.string().optional(),
   
-  // LinkedIn integration fields
-  linkedin_url: z.string().optional(),
-  linkedin_full_name: z.string().optional(),
-  linkedin_first_name: z.string().optional(),
-  linkedin_headline: z.string().optional(),
-  linkedin_email: z.string().optional(),
-  linkedin_bio: z.string().optional(),
-  linkedin_profile_pic: z.string().optional(),
-  linkedin_current_role: z.string().optional(),
-  linkedin_current_company: z.string().optional(),
-  linkedin_country: z.string().optional(),
-  linkedin_skills: z.string().optional(), // JSON string of skills array
-  linkedin_company_website: z.string().optional(),
-  linkedin_experiences: z.string().optional(), // JSON string of experiences array
-  linkedin_personal_website: z.string().optional(), // JSON string of websites array
-  linkedin_publications: z.string().optional(), // JSON string of publications array
-  last_linkedin_sync: z.string().optional(),
-  
   // Relationships
   episodes: z.array(z.string()).default([]), // Episode slugs
   languages: z.array(z.enum(['en', 'nl', 'de', 'es'])).default(['en']),

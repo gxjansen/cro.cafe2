@@ -1,0 +1,69 @@
+---
+import type { Language } from '../../types';
+
+export interface Props {
+  language: Language;
+  name: string;
+  description: string;
+  url: string;
+  websiteUrl: string;
+  totalEpisodes: number;
+  dateCreated?: string;
+  rssUrl?: string;
+}
+
+const { 
+  language,
+  name, 
+  description, 
+  url,
+  websiteUrl,
+  totalEpisodes,
+  dateCreated = "2019-01-01",
+  rssUrl
+} = Astro.props;
+
+// Language-specific RSS feed URLs
+const rssFeeds = {
+  en: "https://feeds.transistor.fm/cro-cafe",
+  nl: "https://feeds.transistor.fm/cro-cafe-nl",
+  de: "https://feeds.transistor.fm/cro-cafe-deutsch",
+  es: "https://feeds.transistor.fm/cro-cafe-es"
+};
+
+const feedUrl = rssUrl || rssFeeds[language];
+
+// Language mappings for inLanguage property
+const languageMap = {
+  en: 'en-US',
+  nl: 'nl-NL',
+  de: 'de-DE', 
+  es: 'es-ES'
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "PodcastSeries",
+  "name": name,
+  "description": description,
+  "url": url,
+  "mainEntityOfPage": websiteUrl,
+  "inLanguage": languageMap[language],
+  "genre": ["Business", "Technology", "Marketing", "Conversion Rate Optimization"],
+  "creator": {
+    "@type": "Organization",
+    "name": "CRO.CAFE",
+    "url": "https://cro.cafe"
+  },
+  "publisher": {
+    "@type": "Organization", 
+    "name": "CRO.CAFE",
+    "url": "https://cro.cafe"
+  },
+  "dateCreated": dateCreated,
+  "numberOfEpisodes": totalEpisodes,
+  "webFeed": feedUrl
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

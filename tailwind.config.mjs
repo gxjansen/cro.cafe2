@@ -44,58 +44,6 @@ export default {
           800: 'var(--lang-accent-800)',
           900: 'var(--lang-accent-900)',
         },
-        // LinkedIn brand colors
-        linkedin: {
-          50: '#E8F4F8',    // Light background tint
-          100: '#D1E9F1',   // Lighter variations
-          200: '#A3D3E3',   // Light accent
-          300: '#74BDD5',   // Medium light
-          400: '#46A7C7',   // Medium
-          500: '#0077B5',   // Primary LinkedIn blue
-          600: '#005885',   // Hover state
-          700: '#004264',   // Pressed state
-          800: '#002C43',   // Dark variant
-          900: '#001621',   // Darkest variant
-        },
-        // Sync status colors for LinkedIn integration
-        sync: {
-          success: {
-            50: '#f0fdf4',
-            100: '#dcfce7',
-            200: '#bbf7d0',
-            300: '#86efac',
-            400: '#4ade80',
-            500: '#22c55e',   // Primary success
-            600: '#16a34a',
-            700: '#15803d',
-            800: '#166534',
-            900: '#14532d',
-          },
-          pending: {
-            50: '#fefce8',
-            100: '#fef9c3',
-            200: '#fef08a',
-            300: '#fde047',
-            400: '#facc15',
-            500: '#eab308',   // Primary pending/warning
-            600: '#ca8a04',
-            700: '#a16207',
-            800: '#854d0e',
-            900: '#713f12',
-          },
-          error: {
-            50: '#fef2f2',
-            100: '#fee2e2',
-            200: '#fecaca',
-            300: '#fca5a5',
-            400: '#f87171',
-            500: '#ef4444',   // Primary error
-            600: '#dc2626',
-            700: '#b91c1c',
-            800: '#991b1b',
-            900: '#7f1d1d',
-          },
-        },
         // Neutral grays for UI elements - optimized for WCAG AA compliance
         gray: {
           50: '#f9fafb',
@@ -135,27 +83,6 @@ export default {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-      },
-      // Shadow utilities for LinkedIn cards
-      boxShadow: {
-        'linkedin': '0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'linkedin-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'linkedin-active': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        'sync-pending': '0 0 0 3px rgba(234, 179, 8, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08)',
-        'sync-success': '0 0 0 3px rgba(34, 197, 94, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08)',
-        'sync-error': '0 0 0 3px rgba(239, 68, 68, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08)',
-      },
-      // Transition utilities for smooth interactions
-      transitionProperty: {
-        'shadow': 'box-shadow',
-        'colors': 'color, background-color, border-color',
-      },
-      transitionDuration: {
-        '250': '250ms',
-        '350': '350ms',
-      },
-      transitionTimingFunction: {
-        'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
     },
   },

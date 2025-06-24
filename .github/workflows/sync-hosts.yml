@@ -1,0 +1,87 @@
+name: Sync Hosts from NocoDB
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger from main sync workflow
+  workflow_call:
+    secrets:
+      NOCODB_API_KEY:
+        required: true
+      NOCODB_BASE_URL:
+        required: true
+      NOCODB_BASE_ID:
+        required: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  sync-hosts:
+    name: Sync Hosts
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    outputs:
+      hosts-generated: ${{ steps.generate.outputs.hosts-generated }}
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create host directories
+        run: mkdir -p src/content/hosts
+      
+      - name: Generate hosts
+        id: generate
+        run: |
+          npx tsx scripts/generate-hosts.ts 2>&1 | tee host-generation.log
+          
+          # Extract statistics
+          HOSTS_GENERATED=$(grep "✅ Generated" host-generation.log | grep -oE '[0-9]+ hosts' | grep -oE '[0-9]+' || echo "0")
+          echo "hosts-generated=$HOSTS_GENERATED" >> $GITHUB_OUTPUT
+        env:
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain src/content/hosts/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Host changes detected"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No host changes"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add src/content/hosts/
+          
+          COMMIT_MSG="Update host content from NocoDB
+          
+          Hosts: ${{ steps.generate.outputs.hosts-generated }} generated"
+          
+          git commit -m "$COMMIT_MSG"
+          git push

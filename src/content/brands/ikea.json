@@ -1,0 +1,9 @@
+{
+  "name": "IKEA",
+  "logoUrl": "/images/brands/ikea.png",
+  "websiteUrl": "https://www.ikea.com",
+  "featured": true,
+  "order": 7,
+  "industry": "",
+  "description": ""
+}

@@ -1,0 +1,17 @@
+---
+// Redirect to English episode page
+export async function getStaticPaths() {
+  const { getCollection } = await import('astro:content');
+  const episodes = await getCollection('episodes');
+  
+  // Only get published English episodes for redirect
+  return episodes
+    .filter(episode => episode.data.language === 'en' && episode.data.status === 'published')
+    .map(episode => ({
+      params: { slug: episode.data.slug || episode.slug }
+    }));
+}
+
+const { slug } = Astro.params;
+return Astro.redirect(`/en/episodes/${slug}/`, 301);
+---

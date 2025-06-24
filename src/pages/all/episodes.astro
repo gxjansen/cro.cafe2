@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import EpisodeImage from '../../components/EpisodeImage.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import { getCollection } from 'astro:content';
+import { getEpisodeUrl } from '../../utils/content';
+import type { Language } from '../../types';
+
+// Get all published episodes from all languages
+const allEpisodes = await getCollection('episodes');
+
+// Filter for published episodes only and sort by date (newest first)
+const sortedEpisodes = allEpisodes
+  .filter(episode => episode.data.status === 'published')
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+// Group episodes by language
+const episodesByLanguage = sortedEpisodes.reduce((acc, episode) => {
+  const lang = episode.data.language;
+  if (!acc[lang]) acc[lang] = [];
+  acc[lang].push(episode);
+  return acc;
+}, {} as Record<Language, typeof allEpisodes>);
+
+const languageInfo = {
+  en: { name: 'English', flag: '🇬🇧' },
+  nl: { name: 'Nederlands', flag: '🇳🇱' },
+  de: { name: 'Deutsch', flag: '🇩🇪' },
+  es: { name: 'Español', flag: '🇪🇸' }
+};
+
+---
+
+<BaseLayout 
+  title="All Episodes - CRO.CAFE"
+  description="Browse all CRO.CAFE podcast episodes in all languages"
+  language="en"
+  canonical="https://cro.cafe/all/episodes/"
+>
+  <Header language="en" currentPath="/all/episodes/" />
+  <Breadcrumb language="en" currentPath="/all/episodes/" />
+  
+  <main class="flex-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          All Episodes
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Browse all {sortedEpisodes.length} episodes from our multilingual podcast collection
+        </p>
+      </div>
+
+      <!-- Recent episodes across all languages -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+          Recent Episodes
+        </h2>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {sortedEpisodes.slice(0, 9).map((episode) => (
+            <EpisodeCard 
+              episode={episode} 
+              showLanguage={true}
+              size="large"
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- Episodes by language -->
+      {(Object.keys(episodesByLanguage) as Language[]).map((lang) => (
+        <section class="mb-12">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white flex items-center gap-3">
+              <span class="text-3xl">{languageInfo[lang].flag}</span>
+              {languageInfo[lang].name} Episodes
+              <span class="text-base font-normal text-gray-500 dark:text-gray-400">
+                ({episodesByLanguage[lang].length})
+              </span>
+            </h2>
+            <a 
+              href={lang === 'en' ? '/episodes/' : `/${lang}/episodes/`}
+              class="text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 font-medium transition-colors"
+            >
+              View all →
+            </a>
+          </div>
+          <div class="grid gap-6 md:grid-cols-3">
+            {episodesByLanguage[lang].slice(0, 3).map((episode) => (
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={false}
+                size="medium"
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

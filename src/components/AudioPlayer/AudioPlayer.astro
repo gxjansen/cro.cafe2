@@ -1,0 +1,151 @@
+---
+import AudioPlayerCore from './AudioPlayerCore';
+import type { Episode } from '../../stores/audioPlayerStore';
+
+export interface Props {
+  episodes?: Episode[];
+  autoInitialize?: boolean;
+  className?: string;
+  isPWAMode?: boolean;
+}
+
+const { 
+  episodes = [], 
+  autoInitialize = false,
+  className = '',
+  isPWAMode = false
+} = Astro.props;
+---
+
+<div 
+  id="sticky-audio-player" 
+  class={`sticky-audio-player ${className} ${isPWAMode ? 'pwa-mode' : 'browser-mode'}`} 
+  data-pwa-mode={isPWAMode}
+>
+  <AudioPlayerCore 
+    episodes={episodes}
+    autoInitialize={autoInitialize}
+    isPWAMode={isPWAMode}
+    client:only="react"
+  />
+</div>
+
+<style>
+  .sticky-audio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40; /* Lower than header (z-50) to prevent dropdown conflicts */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sticky-audio-player.hidden {
+    transform: translateY(100%);
+  }
+
+  .sticky-audio-player.minimized {
+    /* Styles for minimized state will be handled by React component */
+  }
+
+  /* Ensure content doesn't overlap with sticky player */
+  :global(body) {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Add bottom padding when player is active */
+  :global(body.audio-player-active) {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  :global(body.audio-player-active.audio-player-minimized) {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .sticky-audio-player {
+      /* Dark mode styles will be handled by Tailwind in React component */
+    }
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 640px) {
+    .sticky-audio-player {
+      /* Mobile optimizations */
+    }
+  }
+
+  /* Handle safe areas for mobile devices */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .sticky-audio-player {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
+  /* View Transitions - Keep audio player persistent */
+  @view-transition {
+    navigation: auto;
+  }
+</style>
+
+<script>
+  // Initialize audio player state management and global listeners
+  import { loadPlayerState, audioPlayerStore, savePlayerState } from '../../stores/audioPlayerStore';
+  import { globalAudioManager } from '../../lib/audioManager';
+
+  // Add body classes based on player state
+  const updateBodyClasses = () => {
+    const state = audioPlayerStore.get();
+    const body = document.body;
+    
+    if (state.currentEpisode) {
+      body.classList.add('audio-player-active');
+    } else {
+      body.classList.remove('audio-player-active');
+    }
+    
+    if (state.isMinimized) {
+      body.classList.add('audio-player-minimized');
+    } else {
+      body.classList.remove('audio-player-minimized');
+    }
+  };
+
+  // Initialize once on first load
+  if (typeof window !== 'undefined' && !window.__audioPlayerInitialized) {
+    window.__audioPlayerInitialized = true;
+    
+    // Load saved state
+    loadPlayerState();
+    
+    // Subscribe to store changes
+    audioPlayerStore.subscribe(updateBodyClasses);
+    
+    // Initial update
+    updateBodyClasses();
+    
+    // Clear invalid states on page load
+    const state = audioPlayerStore.get();
+    if (state.currentEpisode && !state.currentEpisode.audioUrl) {
+      console.log('🎵 AudioPlayer: Clearing invalid episode state');
+      audioPlayerActions.clearPlayer();
+    }
+    
+    console.log('🎵 AudioPlayer: Initial setup complete');
+  }
+
+  // Handle page navigation events
+  document.addEventListener('astro:page-load', () => {
+    console.log('🎵 AudioPlayer: Page load event');
+    
+    // Update body classes for new page
+    updateBodyClasses();
+  });
+
+  // Save state before navigation
+  document.addEventListener('astro:before-preparation', () => {
+    console.log('🎵 AudioPlayer: Saving state before navigation');
+    savePlayerState();
+  });
+</script>

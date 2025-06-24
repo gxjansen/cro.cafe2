@@ -1,0 +1,23 @@
+---
+export interface Props {
+  url: string;
+  name: string;
+  searchUrl?: string;
+}
+
+const { url, name, searchUrl = `${url}/search/` } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": name,
+  "url": url,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${searchUrl}?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

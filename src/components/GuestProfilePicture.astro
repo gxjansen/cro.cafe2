@@ -96,16 +96,15 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
       alt={altText}
       width={imageSizes[size]}
       height={imageSizes[size]}
-      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+      class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
       loading={loading}
       data-image={instanceId}
       onload={`
-        console.log('Image loaded successfully:', event.target.src);
         const img = event.target;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
-        img.style.opacity = '1';
         if (placeholder) {
-          placeholder.style.opacity = '0';
+          img.classList.remove('opacity-0');
+          placeholder.classList.add('opacity-0');
           setTimeout(() => placeholder.remove(), 500);
         }
       `}
@@ -113,17 +112,8 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
         const img = event.target;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
         
-        console.error('Image failed to load:', img.src);
-        console.error('Image error details:', event);
-        
-        // Try to fetch the image to see what the actual error is
-        fetch(img.src).then(response => {
-          console.log('Fetch test response:', response.status, response.statusText);
-        }).catch(error => {
-          console.error('Fetch test failed:', error);
-        });
-        
-        // Show placeholder
+        // Local image failed - remove image and show placeholder (NO LINKEDIN FALLBACK)
+        console.log('Local image failed, showing placeholder for:', img.src);
         img.remove();
         if (placeholder) {
           placeholder.classList.remove('blur-sm', 'animate-pulse');

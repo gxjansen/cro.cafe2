@@ -1,0 +1,280 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import HostImage from '../../components/HostImage.astro';
+import { getHostBySlug, getHostLanguages, getHostImageUrl, getHostStatistics } from '../../utils/content';
+import type { Language } from '../../types';
+
+export async function getStaticPaths() {
+  // Define all host slugs and their details
+  const hosts = [
+    { slug: 'gxjansen', name: 'Guido X Jansen' },
+    { slug: 'michaelwitzenleiter', name: 'Michael Witzenleiter' },
+    { slug: 'ricardotayar', name: 'Ricardo Tayar' },
+    { slug: 'yvonneteufel', name: 'Yvonne Teufel' }
+  ];
+
+  return hosts.map(host => ({
+    params: { slug: host.slug },
+    props: { hostSlug: host.slug, hostName: host.name }
+  }));
+}
+
+const { slug } = Astro.params;
+const { hostSlug, hostName } = Astro.props;
+
+// Get host data
+const host = await getHostBySlug(slug);
+if (!host) {
+  return Astro.redirect('/404');
+}
+
+// Get languages this host appears in
+const hostLanguages = await getHostLanguages(hostSlug);
+
+// Get host statistics
+const hostStats = await getHostStatistics(hostSlug);
+
+// Language names for display
+const languageNames: Record<Language, { name: string; flag: string; path: string }> = {
+  en: { name: 'English', flag: '🇬🇧', path: '/episodes/' },
+  nl: { name: 'Nederlands', flag: '🇳🇱', path: '/nl/episodes/' },
+  de: { name: 'Deutsch', flag: '🇩🇪', path: '/de/episodes/' },
+  es: { name: 'Español', flag: '🇪🇸', path: '/es/episodes/' }
+};
+
+// Determine page language and text based on host
+const isGerman = hostSlug === 'michaelwitzenleiter' || hostSlug === 'yvonneteufel';
+const isSpanish = hostSlug === 'ricardotayar';
+const pageLanguage = isGerman ? 'de' : isSpanish ? 'es' : 'en';
+
+// Localized text
+const text = {
+  en: {
+    hostAt: 'Host at CRO.CAFE',
+    meet: 'Meet',
+    showsHosted: 'Shows Hosted by',
+    explore: 'Explore the different language editions of CRO.CAFE',
+    international: 'English-language CRO insights and strategies',
+    dutch: 'Dutch-language CRO inzichten en strategieën',
+    german: 'German-language CRO Einblicke und Strategien',
+    spanish: 'Spanish-language perspectivas y estrategias de CRO',
+    viewEpisodes: 'View Episodes',
+    viewEpisodesDutch: 'Bekijk Afleveringen',
+    viewEpisodesGerman: 'Folgen Ansehen',
+    viewEpisodesSpanish: 'Ver Episodios',
+    noShows: 'No shows found for this host.',
+    discoverMore: 'Discover More CRO Insights',
+    exploreAll: 'Explore all episodes and learn from industry experts',
+    browseAll: 'Browse All Episodes',
+    meetGuests: 'Meet Our Guests',
+    episodes: 'Episodes',
+    guests: 'Guests Interviewed',
+    acrossLanguages: 'across all languages'
+  },
+  de: {
+    hostAt: 'Moderator bei CRO.CAFE',
+    meet: 'Lernen Sie',
+    showsHosted: 'Shows moderiert von',
+    explore: 'Entdecken Sie die verschiedenen Sprachausgaben von CRO.CAFE',
+    international: 'English-language CRO Einblicke und Strategien',
+    dutch: 'Dutch-language CRO inzichten en strategieën',
+    german: 'German-language CRO Einblicke und Strategien',
+    spanish: 'Spanish-language perspectivas y estrategias de CRO',
+    viewEpisodes: 'View Episodes',
+    viewEpisodesDutch: 'Bekijk Afleveringen',
+    viewEpisodesGerman: 'Folgen Ansehen',
+    viewEpisodesSpanish: 'Ver Episodios',
+    noShows: 'Keine Shows für diesen Moderator gefunden.',
+    discoverMore: 'Entdecken Sie mehr CRO Einblicke',
+    exploreAll: 'Entdecken Sie alle Folgen und lernen Sie von Branchenexperten',
+    browseAll: 'Alle Folgen durchsuchen',
+    meetGuests: 'Unsere Gäste kennenlernen',
+    episodes: 'Folgen',
+    guests: 'Interviewte Gäste',
+    acrossLanguages: 'sprachübergreifend'
+  },
+  es: {
+    hostAt: 'Presentador en CRO.CAFE',
+    meet: 'Conoce a',
+    showsHosted: 'Shows presentados por',
+    explore: 'Explora las diferentes ediciones de idiomas de CRO.CAFE',
+    international: 'English-language perspectivas y estrategias de CRO',
+    dutch: 'Dutch-language CRO inzichten en strategieën',
+    german: 'German-language CRO Einblicke und Strategien',
+    spanish: 'Spanish-language perspectivas y estrategias de CRO',
+    viewEpisodes: 'View Episodes',
+    viewEpisodesDutch: 'Bekijk Afleveringen',
+    viewEpisodesGerman: 'Folgen Ansehen',
+    viewEpisodesSpanish: 'Ver Episodios',
+    noShows: 'No se encontraron shows para este presentador.',
+    discoverMore: 'Descubre más perspectivas de CRO',
+    exploreAll: 'Explora todos los episodios y aprende de expertos de la industria',
+    browseAll: 'Ver todos los episodios',
+    meetGuests: 'Conoce a nuestros invitados',
+    episodes: 'Episodios',
+    guests: 'Invitados Entrevistados',
+    acrossLanguages: 'en todos los idiomas'
+  }
+};
+
+const pageTitle = `${host.data.name} - ${text[pageLanguage].hostAt}`;
+const pageDescription = `${text[pageLanguage].meet} ${host.data.name}, ${host.data.role}. ${host.data.bio}`;
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language={pageLanguage}
+  canonical={`https://cro.cafe/hosts/${hostSlug}/`}
+  currentPath={`/hosts/${hostSlug}/`}
+>
+  <Header language={pageLanguage} currentPath={`/hosts/${hostSlug}/`} />
+  <Breadcrumb 
+    language={pageLanguage} 
+    currentPath={`/hosts/${hostSlug}/`}
+    hostName={host.data.name}
+  />
+  
+  <main class="flex-1">
+    <!-- Host Hero Section -->
+    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <!-- Host Image -->
+          <div class="mb-8">
+            <HostImage 
+              imageUrl={getHostImageUrl(hostSlug)} 
+              alt={host.data.name}
+              class="w-32 h-32 rounded-full mx-auto object-cover shadow-lg"
+            />
+          </div>
+          
+          <!-- Host Info -->
+          <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+            {host.data.name}
+          </h1>
+          <p class="text-xl md:text-2xl text-primary-600 dark:text-primary-300 mb-8 font-medium">
+            {host.data.role}
+          </p>
+          
+          <!-- Host Statistics -->
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-4 shadow-md border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                {hostStats.totalEpisodes}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 uppercase tracking-wide">
+                {text[pageLanguage].episodes}
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-4 shadow-md border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                {hostStats.totalGuests}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 uppercase tracking-wide">
+                {text[pageLanguage].guests}
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+            {text[pageLanguage].acrossLanguages}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Host Bio Section -->
+    <section class="py-16 bg-white dark:bg-gray-800">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="prose prose-lg dark:prose-invert mx-auto text-center">
+          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+            {host.data.bio}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shows Hosted Section -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+            {text[pageLanguage].showsHosted} {host.data.name}
+          </h2>
+          <p class="text-lg text-gray-600 dark:text-gray-300">
+            {text[pageLanguage].explore}
+          </p>
+        </div>
+        
+        {hostLanguages.length > 0 ? (
+          <div class="grid gap-6 max-w-2xl mx-auto">
+            {hostLanguages.map((language) => (
+              <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="text-3xl">
+                      {languageNames[language].flag}
+                    </div>
+                    <div>
+                      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                        CRO.CAFE {languageNames[language].name}
+                      </h3>
+                      <p class="text-gray-600 dark:text-gray-300 text-sm">
+                        {language === 'en' ? text[pageLanguage].international :
+                         language === 'nl' ? text[pageLanguage].dutch :
+                         language === 'de' ? text[pageLanguage].german :
+                         text[pageLanguage].spanish}
+                      </p>
+                    </div>
+                  </div>
+                  <a 
+                    href={languageNames[language].path}
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 dark:bg-primary-400 dark:hover:bg-primary-500 dark:text-gray-900 transition-colors text-sm font-medium"
+                  >
+                    {language === 'en' ? text[pageLanguage].viewEpisodes :
+                     language === 'nl' ? text[pageLanguage].viewEpisodesDutch :
+                     language === 'de' ? text[pageLanguage].viewEpisodesGerman :
+                     text[pageLanguage].viewEpisodesSpanish}
+                    →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-gray-500 dark:text-gray-400">
+            {text[pageLanguage].noShows}
+          </p>
+        )}
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-primary-600 dark:bg-primary-700">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+          {text[pageLanguage].discoverMore}
+        </h2>
+        <p class="text-xl text-primary-100 mb-8">
+          {text[pageLanguage].exploreAll}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/episodes/"
+            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-gray-50 transition-colors"
+          >
+            {text[pageLanguage].browseAll}
+          </a>
+          <a 
+            href="/guests/"
+            class="inline-flex items-center px-8 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-primary-500 transition-colors"
+          >
+            {text[pageLanguage].meetGuests}
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

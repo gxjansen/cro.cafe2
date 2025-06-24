@@ -1,5 +1,5 @@
 import { atom, computed } from 'nanostores';
-import { simpleAudioManager } from '../lib/simpleAudioManager';
+import { globalAudioManager } from '../lib/audioManager';
 
 export interface Episode {
   id: string;
@@ -61,32 +61,21 @@ export const isMinimized = computed(audioPlayerStore, state => state.isMinimized
 export const audioPlayerActions = {
   // Episode management
   loadEpisode: (episode: Episode) => {
-    console.log('🎵 Store: Loading episode', {
-      title: episode.title,
-      audioUrl: episode.audioUrl,
-      hasAudioManager: !!simpleAudioManager,
-      episode: episode
+    console.log('🎵 Store: Loading episode', episode.title);
+    globalAudioManager.loadEpisode(episode);
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      currentEpisode: episode,
+      isLoading: true,
+      currentTime: 0,
+      duration: 0,
     });
-    
-    try {
-      simpleAudioManager.loadEpisode(episode);
-      audioPlayerStore.set({
-        ...audioPlayerStore.get(),
-        currentEpisode: episode,
-        isLoading: true,
-        currentTime: 0,
-        duration: 0,
-      });
-      console.log('🎵 Store: Episode loaded successfully, store updated');
-    } catch (error) {
-      console.error('❌ Store: Failed to load episode', error);
-    }
   },
 
   // Playback controls
   play: async () => {
     console.log('🎵 Store: Play requested');
-    const success = await simpleAudioManager.play();
+    const success = await globalAudioManager.play();
     console.log('🎵 Store: Play result:', success);
     if (success) {
       audioPlayerStore.set({
@@ -97,7 +86,7 @@ export const audioPlayerActions = {
   },
 
   pause: () => {
-    simpleAudioManager.pause();
+    globalAudioManager.pause();
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       isPlaying: false,
@@ -106,7 +95,7 @@ export const audioPlayerActions = {
 
   togglePlayPause: async () => {
     const state = audioPlayerStore.get();
-    const success = await simpleAudioManager.togglePlayPause();
+    const success = await globalAudioManager.togglePlayPause();
     if (success) {
       audioPlayerStore.set({
         ...state,
@@ -117,7 +106,7 @@ export const audioPlayerActions = {
 
   // Time controls
   setCurrentTime: (time: number) => {
-    simpleAudioManager.setCurrentTime(time);
+    globalAudioManager.setCurrentTime(time);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       currentTime: Math.max(0, time),
@@ -132,7 +121,7 @@ export const audioPlayerActions = {
   },
 
   skipForward: (seconds: number = 30) => {
-    simpleAudioManager.skipForward(seconds);
+    globalAudioManager.skip(seconds);
     const state = audioPlayerStore.get();
     const newTime = Math.min(state.currentTime + seconds, state.duration);
     audioPlayerStore.set({
@@ -142,7 +131,7 @@ export const audioPlayerActions = {
   },
 
   skipBackward: (seconds: number = 15) => {
-    simpleAudioManager.skipBackward(seconds);
+    globalAudioManager.skip(-seconds);
     const state = audioPlayerStore.get();
     const newTime = Math.max(state.currentTime - seconds, 0);
     audioPlayerStore.set({
@@ -155,7 +144,7 @@ export const audioPlayerActions = {
   setPlaybackRate: (rate: number) => {
     const validRates = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     const clampedRate = validRates.includes(rate) ? rate : 1;
-    simpleAudioManager.setPlaybackRate(clampedRate);
+    globalAudioManager.setPlaybackRate(clampedRate);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       playbackRate: clampedRate,
@@ -165,7 +154,7 @@ export const audioPlayerActions = {
   // Volume
   setVolume: (volume: number) => {
     const clampedVolume = Math.max(0, Math.min(1, volume));
-    simpleAudioManager.setVolume(clampedVolume);
+    globalAudioManager.setVolume(clampedVolume);
     audioPlayerStore.set({
       ...audioPlayerStore.get(),
       volume: clampedVolume,
@@ -237,38 +226,14 @@ export const audioPlayerActions = {
 
   // Clear/reset
   clearPlayer: () => {
-    console.log('🎵 Store: Clearing player...');
-    
     // Stop any playing audio
-    simpleAudioManager.pause();
-    
+    globalAudioManager.pause();
     // Reset store to initial state
     audioPlayerStore.set(initialState);
-    
     // Clear from localStorage
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cro-cafe-audio-player');
     }
-    
-    // Clear the audio source to prevent further events
-    // Use setTimeout to ensure the store reset happens first
-    setTimeout(() => {
-      if (simpleAudioManager.audio) {
-        simpleAudioManager.audio.src = '';
-        simpleAudioManager.audio.load(); // Reset the audio element
-      }
-      
-      // Ensure final state is correct after any delayed events
-      setTimeout(() => {
-        const currentState = audioPlayerStore.get();
-        if (!currentState.currentEpisode && (currentState.isLoading || currentState.isPlaying)) {
-          console.log('🎵 Store: Final cleanup - ensuring cleared state');
-          audioPlayerStore.set({
-            ...initialState
-          });
-        }
-      }, 200);
-    }, 50);
   },
 };
 
@@ -307,7 +272,7 @@ export const loadPlayerState = () => {
           
           // Re-initialize the audio element with the saved episode
           if (parsedState.currentEpisode) {
-            simpleAudioManager.loadEpisode(parsedState.currentEpisode);
+            globalAudioManager.loadEpisode(parsedState.currentEpisode);
           }
         } else {
           // Clear invalid state
@@ -334,11 +299,6 @@ audioPlayerStore.subscribe((state) => {
 
 // Initialize global audio manager event listeners
 if (typeof window !== 'undefined') {
-  // Debounce variables for preventing rapid state changes
-  let playStateDebounceTimeout: NodeJS.Timeout | null = null;
-  let pauseStateDebounceTimeout: NodeJS.Timeout | null = null;
-  let lastKnownPlayingState: boolean | null = null;
-
   // Sync global audio manager events with store
   window.addEventListener('audioTimeUpdate', (e: any) => {
     audioPlayerStore.set({
@@ -356,89 +316,31 @@ if (typeof window !== 'undefined') {
   });
 
   window.addEventListener('audioPlay', () => {
-    // Clear any pending pause state updates
-    if (pauseStateDebounceTimeout) {
-      clearTimeout(pauseStateDebounceTimeout);
-      pauseStateDebounceTimeout = null;
-    }
-
-    // Only process if state is actually changing
-    if (lastKnownPlayingState === true) {
-      console.log('🎵 Store: Ignoring duplicate play event');
-      return;
-    }
-
-    // Debounce the play state update
-    if (playStateDebounceTimeout) {
-      clearTimeout(playStateDebounceTimeout);
-    }
-
-    playStateDebounceTimeout = setTimeout(() => {
-      const currentState = audioPlayerStore.get();
-      if (!currentState.isPlaying) {
-        console.log('🎵 Store: Audio play event - updating isPlaying to true');
-        audioPlayerStore.set({
-          ...currentState,
-          isPlaying: true,
-        });
-        lastKnownPlayingState = true;
-      }
-      playStateDebounceTimeout = null;
-    }, 150); // 150ms debounce
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isPlaying: true,
+    });
   });
 
   window.addEventListener('audioPause', () => {
-    // Clear any pending play state updates
-    if (playStateDebounceTimeout) {
-      clearTimeout(playStateDebounceTimeout);
-      playStateDebounceTimeout = null;
-    }
-
-    // Only process if state is actually changing
-    if (lastKnownPlayingState === false) {
-      console.log('🎵 Store: Ignoring duplicate pause event');
-      return;
-    }
-
-    // Debounce the pause state update
-    if (pauseStateDebounceTimeout) {
-      clearTimeout(pauseStateDebounceTimeout);
-    }
-
-    pauseStateDebounceTimeout = setTimeout(() => {
-      const currentState = audioPlayerStore.get();
-      if (currentState.isPlaying) {
-        console.log('🎵 Store: Audio pause event - updating isPlaying to false');
-        audioPlayerStore.set({
-          ...currentState,
-          isPlaying: false,
-        });
-        lastKnownPlayingState = false;
-      }
-      pauseStateDebounceTimeout = null;
-    }, 150); // 150ms debounce
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isPlaying: false,
+    });
   });
 
   window.addEventListener('audioLoadStart', () => {
-    const currentState = audioPlayerStore.get();
-    // Only set loading if we have a current episode
-    if (currentState.currentEpisode) {
-      audioPlayerStore.set({
-        ...currentState,
-        isLoading: true,
-      });
-    }
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isLoading: true,
+    });
   });
 
   window.addEventListener('audioCanPlay', () => {
-    const currentState = audioPlayerStore.get();
-    // Only update loading state if we have a current episode
-    if (currentState.currentEpisode) {
-      audioPlayerStore.set({
-        ...currentState,
-        isLoading: false,
-      });
-    }
+    audioPlayerStore.set({
+      ...audioPlayerStore.get(),
+      isLoading: false,
+    });
   });
 
   window.addEventListener('audioEnded', () => {

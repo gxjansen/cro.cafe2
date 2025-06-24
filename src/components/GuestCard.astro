@@ -1,7 +1,5 @@
 ---
-import GuestProfilePicture from './GuestProfilePicture.astro';
-import LinkedInBadge from './LinkedInBadge.astro';
-import { hasLinkedInData } from '../utils/content';
+import GuestImage from './GuestImage.astro';
 import type { Language } from '../types';
 
 export interface Props {
@@ -13,10 +11,15 @@ export interface Props {
 
 const { guest, language, size = 'medium', showEpisodeCount = false } = Astro.props;
 
-// Helper function to get guest URL with optional language parameter
-function getGuestUrl(guest: any, currentLanguage?: Language): string {
+// Helper function to get guest URL for a specific language
+function getGuestUrl(guest: any, lang?: Language): string {
   const slug = guest.data.slug || guest.slug;
-  return currentLanguage ? `/guests/${slug}/?lang=${currentLanguage}` : `/guests/${slug}/`;
+  if (!lang) {
+    // Use the first available language for the guest
+    const firstLang = guest.data.languages[0];
+    return firstLang === 'en' ? `/guests/${slug}/` : `/${firstLang}/guests/${slug}/`;
+  }
+  return lang === 'en' ? `/guests/${slug}/` : `/${lang}/guests/${slug}/`;
 }
 
 // Get LinkedIn URL from socialLinks
@@ -31,63 +34,59 @@ function getLinkedInUrl(guest: any): string | null {
   return null;
 }
 
-// Check if guest has LinkedIn data
-const hasLinkedIn = hasLinkedInData(guest);
+// Get guest image URL
+function getGuestImageUrl(guest: any): string | undefined {
+  if (guest.data.imageUrl) return guest.data.imageUrl;
+  if (guest.data.image) return guest.data.image;
+  
+  // Construct image path from slug
+  const slug = guest.data.slug || guest.slug;
+  return `/images/guests/${slug}.webp`;
+}
+
 const linkedInUrl = getLinkedInUrl(guest);
-
-// Get LinkedIn sync status
-const linkedInSyncStatus = guest?.linkedInData?.lastSync ? 'synced' : 'never';
-const lastSyncDate = guest?.linkedInData?.lastSync ? new Date(guest.linkedInData.lastSync) : undefined;
-
-// Get current role/company from LinkedIn data (for hover effect)
-const currentRole = guest?.linkedInData?.headline || guest?.data?.role;
-const currentCompany = guest?.linkedInData?.currentCompany || guest?.data?.company;
+const imageUrl = getGuestImageUrl(guest);
 
 // Size-specific classes
 const sizeClasses = {
   small: {
     container: 'p-4',
-    image: 'sm', // GuestProfilePicture size
+    image: 'w-12 h-12',
     title: 'text-sm font-semibold',
     subtitle: 'text-xs',
-    linkedin: 'w-4 h-4',
-    badge: 'sm'
+    linkedin: 'w-4 h-4'
   },
   medium: {
     container: 'p-4',
-    image: 'md', // GuestProfilePicture size
+    image: 'w-16 h-16',
     title: 'text-base font-semibold',
     subtitle: 'text-sm',
-    linkedin: 'w-4 h-4',
-    badge: 'sm'
+    linkedin: 'w-4 h-4'
   },
   large: {
     container: 'p-6',
-    image: 'lg', // GuestProfilePicture size
+    image: 'w-20 h-20',
     title: 'text-lg font-semibold',
     subtitle: 'text-base',
-    linkedin: 'w-5 h-5',
-    badge: 'md'
+    linkedin: 'w-5 h-5'
   }
 };
 
 const classes = sizeClasses[size];
 ---
 
-<div class={`card card-interactive ${classes.container} group`}>
+<div class={`card card-interactive ${classes.container}`}>
   <div class="flex items-start gap-4">
-    <!-- Guest Profile Picture with LinkedIn indicator -->
+    <!-- Guest Image -->
     <a 
       href={getGuestUrl(guest, language)} 
-      class="relative flex-shrink-0 hover:opacity-80 transition-opacity"
+      class="flex-shrink-0 hover:opacity-80 transition-opacity"
       aria-label={`View ${guest.data.name}'s profile`}
     >
-      <GuestProfilePicture 
-        guest={guest}
-        size={classes.image}
-        loading="lazy"
-        class="transition-transform group-hover:scale-105"
-        showLinkedInBadge={hasLinkedIn}
+      <GuestImage 
+        imageUrl={imageUrl} 
+        alt={`Photo of ${guest.data.name}`}
+        class={`${classes.image} rounded-full object-cover`}
       />
     </a>
     
@@ -105,46 +104,18 @@ const classes = sizeClasses[size];
             </a>
           </h3>
           
-          <!-- Job Title and Company with LinkedIn hover effect -->
-          {(guest.data.role || guest.data.company || currentRole || currentCompany) && (
-            <div class="relative mb-2">
-              <a 
-                href={getGuestUrl(guest, language)} 
-                class={`${classes.subtitle} text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-300 transition-all duration-300 block`}
-              >
-                {/* Default role/company */}
-                <span class="block group-hover:opacity-0 transition-opacity duration-300">
-                  {guest.data.role && guest.data.company ? (
-                    <>{guest.data.role} at {guest.data.company}</>
-                  ) : (
-                    guest.data.role || guest.data.company
-                  )}
-                </span>
-                
-                {/* LinkedIn current role/company (shown on hover if different) */}
-                {hasLinkedIn && (currentRole !== guest.data.role || currentCompany !== guest.data.company) && (
-                  <span class={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${classes.subtitle} text-primary-600 dark:text-primary-300`}>
-                    {currentRole && currentCompany ? (
-                      <>{currentRole} at {currentCompany}</>
-                    ) : (
-                      currentRole || currentCompany
-                    )}
-                  </span>
-                )}
-              </a>
-              
-              {/* LinkedIn sync badge */}
-              {hasLinkedIn && (
-                <div class="inline-flex items-center gap-2 mt-1">
-                  <LinkedInBadge 
-                    status={linkedInSyncStatus}
-                    lastSync={lastSyncDate}
-                    size={classes.badge}
-                    class="opacity-60 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                </div>
+          <!-- Job Title and Company -->
+          {(guest.data.role || guest.data.company) && (
+            <a 
+              href={getGuestUrl(guest, language)} 
+              class={`${classes.subtitle} text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-300 transition-colors block mb-2`}
+            >
+              {guest.data.role && guest.data.company ? (
+                <>{guest.data.role} at {guest.data.company}</>
+              ) : (
+                guest.data.role || guest.data.company
               )}
-            </div>
+            </a>
           )}
           
           <!-- Episode Count (optional) -->
@@ -173,46 +144,3 @@ const classes = sizeClasses[size];
     </div>
   </div>
 </div>
-
-<style>
-  /* Smooth transitions for hover effects */
-  .group:hover .transition-opacity {
-    transition-delay: 0.1s;
-  }
-  
-  /* LinkedIn data indicator animation */
-  @keyframes linkedInPulse {
-    0%, 100% {
-      opacity: 0.6;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-  
-  /* Dark mode adjustments for LinkedIn badge */
-  :global(.dark) .group:hover .text-primary-600 {
-    color: var(--color-primary-300);
-  }
-  
-  /* Accessibility: Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .transition-opacity,
-    .transition-transform,
-    .transition-all,
-    .transition-colors {
-      transition: none !important;
-    }
-  }
-  
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .group:hover .opacity-0 {
-      opacity: 0.1;
-    }
-    .group:hover .opacity-100 {
-      opacity: 1;
-      font-weight: bold;
-    }
-  }
-</style>

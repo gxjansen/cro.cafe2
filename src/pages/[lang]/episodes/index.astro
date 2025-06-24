@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import EpisodeImage from '../../../components/EpisodeImage.astro';
+import EpisodeCard from '../../../components/EpisodeCard.astro';
+import SEOEpisodeCard from '../../../components/SEOEpisodeCard.astro';
+import { getEpisodesByLanguage, getEpisodeUrl, formatDuration } from '../../../utils/content';
+import type { Language } from '../../../types';
+
+export async function getStaticPaths() {
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  return languages.map(lang => ({
+    params: { lang },
+    props: { language: lang }
+  }));
+}
+
+const { language } = Astro.props;
+const episodes = await getEpisodesByLanguage(language);
+
+// Translations for page content
+const translations = {
+  en: {
+    title: 'All Episodes - CRO.CAFE Podcast',
+    description: 'Browse all episodes of the CRO.CAFE podcast. Listen to conversations about CRO, experimentation, and digital optimization with industry leaders.',
+    heading: 'All Episodes',
+    subheading: 'Dive into our complete collection of conversations about CRO, experimentation, and digital optimization.',
+    guests: 'Guests',
+    noEpisodes: 'No episodes available yet. Check back soon!'
+  },
+  nl: {
+    title: 'Alle Afleveringen - CRO.CAFE Podcast',
+    description: 'Bekijk alle afleveringen van de CRO.CAFE podcast. Luister naar gesprekken over CRO, experimenteren en digitale optimalisatie met marktleiders.',
+    heading: 'Alle Afleveringen',
+    subheading: 'Duik in onze complete verzameling gesprekken over CRO, experimenteren en digitale optimalisatie.',
+    guests: 'Gasten',
+    noEpisodes: 'Nog geen afleveringen beschikbaar. Check binnenkort terug!'
+  },
+  de: {
+    title: 'Alle Folgen - CRO.CAFE Podcast',
+    description: 'Durchsuchen Sie alle Folgen des CRO.CAFE Podcasts. Hören Sie Gespräche über CRO, Experimente und digitale Optimierung mit Branchenführern.',
+    heading: 'Alle Folgen',
+    subheading: 'Tauchen Sie ein in unsere vollständige Sammlung von Gesprächen über CRO, Experimente und digitale Optimierung.',
+    guests: 'Gäste',
+    noEpisodes: 'Noch keine Folgen verfügbar. Schauen Sie bald wieder vorbei!'
+  },
+  es: {
+    title: 'Todos los Episodios - CRO.CAFE Podcast',
+    description: 'Explora todos los episodios del podcast CRO.CAFE. Escucha conversaciones sobre CRO, experimentación y optimización digital con líderes de la industria.',
+    heading: 'Todos los Episodios',
+    subheading: 'Sumérgete en nuestra colección completa de conversaciones sobre CRO, experimentación y optimización digital.',
+    guests: 'Invitados',
+    noEpisodes: '¡Aún no hay episodios disponibles. Vuelve pronto!'
+  }
+};
+
+const t = translations[language];
+
+// Get locale-specific date formatting
+const getDateLocale = (lang: Language) => {
+  const locales = {
+    nl: 'nl-NL',
+    de: 'de-DE',
+    es: 'es-ES',
+    en: 'en-US'
+  };
+  return locales[lang];
+};
+---
+
+<BaseLayout 
+  title={t.title}
+  description={t.description}
+  language={language}
+  canonical={`https://cro.cafe/${language}/episodes/`}
+>
+  <Header language={language} currentPath={`/${language}/episodes/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/episodes/`} />
+  
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.heading}
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          {t.subheading}
+        </p>
+      </div>
+
+      <!-- Episodes Grid -->
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {episodes.map((episode) => (
+          <SEOEpisodeCard 
+            episode={episode} 
+            showLanguage={false}
+            size="large"
+            useSEOTitle={false}
+            useSEODescription={false}
+          />
+        ))}
+      </div>
+
+      {episodes.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400">{t.noEpisodes}</p>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

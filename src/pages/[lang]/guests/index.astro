@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import GuestCard from '../../../components/GuestCard.astro';
+import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
+import type { Language } from '../../../types';
+
+export async function getStaticPaths() {
+  const languages: Language[] = ['en', 'nl', 'de', 'es'];
+  return languages.map(lang => ({
+    params: { lang },
+    props: { language: lang }
+  }));
+}
+
+const { language } = Astro.props;
+const guests = await getGuestsByLanguage(language);
+
+// Translations
+const translations = {
+  en: {
+    title: 'All English-language Guests - CRO.CAFE Podcast',
+    description: 'Meet the experts and thought leaders who have shared their insights on the English-language CRO.CAFE podcast episodes.',
+    heading: 'All English-language Guests',
+    subheading: 'Meet the experts and thought leaders who have shared their insights on CRO, experimentation, and digital optimization in English-language episodes.',
+    episodes: 'episode',
+    episodesPlural: 'episodes',
+    noGuests: 'No guests available yet. Check back soon!'
+  },
+  nl: {
+    title: 'Alle Dutch-language Gasten - CRO.CAFE Podcast',
+    description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de Dutch-language CRO.CAFE podcast afleveringen.',
+    heading: 'Alle Dutch-language Gasten',
+    subheading: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld over CRO, experimenteren en digitale optimalisatie in Dutch-language afleveringen.',
+    episodes: 'aflevering',
+    episodesPlural: 'afleveringen',
+    noGuests: 'Nog geen gasten beschikbaar. Check binnenkort terug!'
+  },
+  de: {
+    title: 'Alle German-language Gäste - CRO.CAFE Podcast',
+    description: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse in den German-language CRO.CAFE Podcast Folgen geteilt haben.',
+    heading: 'Alle German-language Gäste',
+    subheading: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse über CRO, Experimente und digitale Optimierung in German-language Folgen geteilt haben.',
+    episodes: 'Folge',
+    episodesPlural: 'Folgen',
+    noGuests: 'Noch keine Gäste verfügbar. Schauen Sie bald wieder vorbei!'
+  },
+  es: {
+    title: 'Todos los Invitados Spanish-language - CRO.CAFE Podcast',
+    description: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos en los episodios Spanish-language del podcast CRO.CAFE.',
+    heading: 'Todos los Invitados Spanish-language',
+    subheading: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos sobre CRO, experimentación y optimización digital en episodios Spanish-language.',
+    episodes: 'episodio',
+    episodesPlural: 'episodios',
+    noGuests: '¡Aún no hay invitados disponibles. Vuelve pronto!'
+  }
+};
+
+const t = translations[language];
+---
+
+<BaseLayout 
+  title={t.title}
+  description={t.description}
+  language={language}
+  canonical={`https://cro.cafe/${language}/guests/`}
+>
+  <Header language={language} currentPath={`/${language}/guests/`} />
+  <Breadcrumb language={language} currentPath={`/${language}/guests/`} />
+  
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.heading}
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          {t.subheading}
+        </p>
+      </div>
+
+      <!-- Guests Grid -->
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {guests.map((guest) => (
+          <GuestCard guest={guest} language={language} size="large" showEpisodeCount={true} />
+        ))}
+      </div>
+
+      {guests.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400">{t.noGuests}</p>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

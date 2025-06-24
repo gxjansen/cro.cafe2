@@ -115,27 +115,16 @@ self.addEventListener('fetch', event => {
 
 // Audio request handler
 async function handleAudioRequest(request) {
-  // For external audio URLs (like Transistor.fm), don't cache and pass through directly
-  const url = new URL(request.url);
-  if (url.hostname !== self.location.hostname) {
-    // External audio - bypass service worker entirely
-    return fetch(request, {
-      mode: 'cors',
-      credentials: 'omit'
-    });
-  }
-  
-  // For local audio files, use cache
   const cache = await caches.open(AUDIO_CACHE);
   
   try {
-    // Try cache first for local audio
+    // Try cache first
     const cachedResponse = await cache.match(request);
     if (cachedResponse) return cachedResponse;
     
-    // Fetch and cache local audio
+    // Fetch and cache
     const response = await fetch(request);
-    if (response.ok && url.hostname === self.location.hostname) {
+    if (response.ok) {
       cache.put(request, response.clone());
     }
     return response;

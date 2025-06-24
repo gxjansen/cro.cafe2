@@ -46,14 +46,17 @@ export default defineConfig({
         navigateFallback: '/',
         globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-        // Exclude audio URLs from service worker completely
-        navigateFallbackDenylist: [
-          /^\/api\//,
-          /\.mp3$/,
-          /transistor\.fm/
-        ],
         runtimeCaching: [
-          // Skip audio files completely - let them bypass service worker
+          // Audio files - use NetworkOnly to prevent caching issues with streaming
+          // Audio streaming doesn't work well with service worker caching
+          {
+            urlPattern: /^https:\/\/media\.transistor\.fm\/.*/i,
+            handler: 'NetworkOnly',
+            options: {
+              // No caching for audio to prevent playback issues
+              // Audio files are too large and streaming doesn't work well with cache
+            }
+          },
           {
             urlPattern: /^https:\/\/img\.transistor\.fm\/.*/i,
             handler: 'CacheFirst',

@@ -1,0 +1,155 @@
+name: Sync LinkedIn Profile Pictures
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+    inputs:
+      max_retries:
+        description: 'Maximum retry attempts per image'
+        required: false
+        default: '3'
+        type: string
+      concurrency:
+        description: 'Number of images to process concurrently'
+        required: false
+        default: '3' 
+        type: string
+  
+  # Trigger from main sync workflow
+  workflow_call:
+  
+  # Scheduled trigger (weekly on Sundays at 2 AM UTC)
+  schedule:
+    - cron: '0 2 * * 0'
+
+env:
+  NODE_VERSION: '20'
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+jobs:
+  sync-linkedin-pictures:
+    name: Sync LinkedIn Profile Pictures
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    outputs:
+      images-downloaded: ${{ steps.sync.outputs.images-downloaded }}
+      images-failed: ${{ steps.sync.outputs.images-failed }}
+      images-skipped: ${{ steps.sync.outputs.images-skipped }}
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Pull latest changes
+        run: git pull origin main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create images directory
+        run: mkdir -p public/images/guests
+      
+      - name: Sync LinkedIn profile pictures
+        id: sync
+        run: |
+          # Build command with optional parameters
+          CMD="npx tsx scripts/sync-linkedin-profile-pictures.ts"
+          
+          if [ -n "${{ github.event.inputs.max_retries }}" ]; then
+            CMD="$CMD --max-retries ${{ github.event.inputs.max_retries }}"
+          fi
+          
+          if [ -n "${{ github.event.inputs.concurrency }}" ]; then
+            CMD="$CMD --concurrency ${{ github.event.inputs.concurrency }}"
+          fi
+          
+          echo "Running: $CMD"
+          $CMD 2>&1 | tee linkedin-sync.log
+          
+          # Extract statistics from log
+          IMAGES_DOWNLOADED=$(grep "Successful Downloads:" linkedin-profile-sync-report.md | grep -oE '[0-9]+' || echo "0")
+          IMAGES_FAILED=$(grep "Failed Downloads:" linkedin-profile-sync-report.md | grep -oE '[0-9]+' || echo "0")
+          IMAGES_SKIPPED=$(grep "Skipped:" linkedin-profile-sync-report.md | grep -oE '[0-9]+' || echo "0")
+          
+          echo "images-downloaded=$IMAGES_DOWNLOADED" >> $GITHUB_OUTPUT
+          echo "images-failed=$IMAGES_FAILED" >> $GITHUB_OUTPUT
+          echo "images-skipped=$IMAGES_SKIPPED" >> $GITHUB_OUTPUT
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      
+      - name: Check for new/updated images
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain public/images/guests/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "New or updated LinkedIn profile pictures detected"
+            CHANGED_FILES=$(git status --porcelain public/images/guests/ | wc -l)
+            echo "changed-files-count=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to LinkedIn profile pictures"
+          fi
+      
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkedin-profile-sync-report
+          path: |
+            linkedin-profile-sync-report.md
+            linkedin-sync.log
+          retention-days: 30
+      
+      - name: Commit and push images
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add public/images/guests/
+          [ -f linkedin-profile-sync-report.md ] && git add linkedin-profile-sync-report.md
+          
+          COMMIT_MSG="Update LinkedIn profile pictures
+          
+          Downloaded: ${{ steps.sync.outputs.images-downloaded }} images
+          Failed: ${{ steps.sync.outputs.images-failed }} images  
+          Skipped: ${{ steps.sync.outputs.images-skipped }} images
+          
+          🤖 Generated with [Claude Code](https://claude.ai/code)
+          
+          Co-Authored-By: Claude <noreply@anthropic.com>"
+          
+          git commit -m "$COMMIT_MSG"
+          git push
+      
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## LinkedIn Profile Picture Sync Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Downloaded:** ${{ steps.sync.outputs.images-downloaded }} images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Failed:** ${{ steps.sync.outputs.images-failed }} images" >> $GITHUB_STEP_SUMMARY  
+          echo "- **Skipped:** ${{ steps.sync.outputs.images-skipped }} images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes committed:** ${{ steps.check-changes.outputs.has-changes }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check-changes.outputs.has-changes }}" == "true" ]; then
+            echo "✅ LinkedIn profile pictures have been updated and committed to the repository." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No new or updated LinkedIn profile pictures found." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📄 Detailed sync report is available in the artifacts." >> $GITHUB_STEP_SUMMARY

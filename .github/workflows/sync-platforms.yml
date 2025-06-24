@@ -1,0 +1,87 @@
+name: Sync Platforms from NocoDB
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger from main sync workflow
+  workflow_call:
+    secrets:
+      NOCODB_API_KEY:
+        required: true
+      NOCODB_BASE_URL:
+        required: true
+      NOCODB_BASE_ID:
+        required: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  sync-platforms:
+    name: Sync Platforms
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    outputs:
+      platforms-generated: ${{ steps.generate.outputs.platforms-generated }}
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create platform directories
+        run: mkdir -p src/content/platforms
+      
+      - name: Generate platforms
+        id: generate
+        run: |
+          npx tsx scripts/generate-platforms.ts 2>&1 | tee platform-generation.log
+          
+          # Extract statistics
+          PLATFORMS_GENERATED=$(grep "✅ Generated" platform-generation.log | grep -oE '[0-9]+ platforms' | grep -oE '[0-9]+' || echo "0")
+          echo "platforms-generated=$PLATFORMS_GENERATED" >> $GITHUB_OUTPUT
+        env:
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain src/content/platforms/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Platform changes detected"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No platform changes"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add src/content/platforms/
+          
+          COMMIT_MSG="Update platform content from NocoDB
+          
+          Platforms: ${{ steps.generate.outputs.platforms-generated }} generated"
+          
+          git commit -m "$COMMIT_MSG"
+          git push
