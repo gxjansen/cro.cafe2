@@ -1,0 +1,216 @@
+---
+import { parseSkills } from '../types/linkedin';
+
+interface Props {
+  /** Skills data - can be comma-separated string, JSON array string, or string array */
+  skills?: string | string[] | null;
+  /** Maximum number of items to show initially */
+  maxItems?: number;
+  /** Size variant - affects font size and padding */
+  size?: 'sm' | 'md' | 'lg';
+  /** Whether tags are clickable */
+  clickable?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  skills,
+  maxItems = 5,
+  size = 'md',
+  clickable = false,
+  class: className = ''
+} = Astro.props;
+
+// Parse skills based on input type
+let skillsArray: string[] = [];
+if (skills) {
+  if (Array.isArray(skills)) {
+    skillsArray = skills.filter(skill => typeof skill === 'string' && skill.trim());
+  } else {
+    skillsArray = parseSkills(skills);
+  }
+}
+
+// Size classes
+const sizeClasses = {
+  sm: 'text-xs px-2 py-1',
+  md: 'text-sm px-3 py-1.5',
+  lg: 'text-base px-4 py-2'
+};
+
+const baseClasses = `
+  inline-flex items-center
+  rounded-full
+  font-medium
+  transition-all duration-200
+  ${sizeClasses[size]}
+`;
+
+// LinkedIn blue color with low opacity for background
+const tagClasses = `
+  ${baseClasses}
+  bg-[#0A66C2]/10
+  text-[#0A66C2]
+  dark:bg-[#70B5F9]/10
+  dark:text-[#70B5F9]
+  hover:bg-[#0A66C2]/20
+  dark:hover:bg-[#70B5F9]/20
+  hover:shadow-sm
+  ${clickable ? 'cursor-pointer active:scale-95' : 'cursor-default'}
+`;
+
+// Determine visible skills and whether to show "more" button
+const visibleSkills = maxItems && skillsArray.length > maxItems 
+  ? skillsArray.slice(0, maxItems)
+  : skillsArray;
+const hiddenCount = skillsArray.length - visibleSkills.length;
+const hasHiddenSkills = hiddenCount > 0;
+
+// Generate unique ID for this component instance
+const componentId = `skills-${Math.random().toString(36).substring(2, 11)}`;
+---
+
+<div class={`skills-tags-container ${className}`} data-component-id={componentId}>
+  <div class="flex flex-wrap gap-2 items-center">
+    {visibleSkills.map((skill, index) => (
+      <span 
+        class={tagClasses}
+        data-skill={skill}
+        data-clickable={clickable}
+        data-index={index}
+        role={clickable ? "button" : "presentation"}
+        tabindex={clickable ? "0" : undefined}
+      >
+        {skill}
+      </span>
+    ))}
+    
+    {hasHiddenSkills && (
+      <button
+        class={`
+          ${baseClasses}
+          show-more-btn
+          bg-gray-100/50
+          text-gray-600
+          dark:bg-gray-800/50
+          dark:text-gray-400
+          hover:bg-gray-200/70
+          dark:hover:bg-gray-700/70
+          hover:shadow-sm
+          transition-all duration-200
+          cursor-pointer
+          active:scale-95
+        `}
+        data-expanded="false"
+        aria-label={`Show ${hiddenCount} more skills`}
+      >
+        <span class="show-text">+{hiddenCount} more</span>
+        <span class="hide-text hidden">Show less</span>
+      </button>
+    )}
+  </div>
+  
+  {/* Hidden skills container */}
+  {hasHiddenSkills && (
+    <div class="hidden-skills hidden mt-2">
+      <div class="flex flex-wrap gap-2">
+        {skillsArray.slice(maxItems).map((skill, index) => (
+          <span 
+            class={tagClasses}
+            data-skill={skill}
+            data-clickable={clickable}
+            data-index={index + maxItems}
+            role={clickable ? "button" : "presentation"}
+            tabindex={clickable ? "0" : undefined}
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .skills-tags-container {
+    @apply relative;
+  }
+  
+  .hidden-skills {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .hidden-skills.hidden {
+    @apply opacity-0 max-h-0 overflow-hidden;
+  }
+  
+  .hidden-skills:not(.hidden) {
+    @apply opacity-100 max-h-[500px];
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle show more/less functionality
+    document.querySelectorAll('.skills-tags-container').forEach(container => {
+      const showMoreBtn = container.querySelector('.show-more-btn') as HTMLButtonElement;
+      const hiddenSkills = container.querySelector('.hidden-skills');
+      
+      if (showMoreBtn && hiddenSkills) {
+        const showText = showMoreBtn.querySelector('.show-text') as HTMLElement;
+        const hideText = showMoreBtn.querySelector('.hide-text') as HTMLElement;
+        
+        showMoreBtn.addEventListener('click', () => {
+          const isExpanded = showMoreBtn.dataset.expanded === 'true';
+          
+          if (isExpanded) {
+            // Collapse
+            hiddenSkills.classList.add('hidden');
+            showText.classList.remove('hidden');
+            hideText.classList.add('hidden');
+            showMoreBtn.dataset.expanded = 'false';
+            showMoreBtn.setAttribute('aria-expanded', 'false');
+          } else {
+            // Expand
+            hiddenSkills.classList.remove('hidden');
+            showText.classList.add('hidden');
+            hideText.classList.remove('hidden');
+            showMoreBtn.dataset.expanded = 'true';
+            showMoreBtn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      }
+      
+      // Handle clickable skills
+      const clickableSkills = container.querySelectorAll('[data-clickable="true"]');
+      clickableSkills.forEach(skill => {
+        const skillElement = skill as HTMLElement;
+        
+        // Add keyboard support
+        skillElement.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            skillElement.click();
+          }
+        });
+        
+        // Dispatch custom event when clicked
+        skillElement.addEventListener('click', () => {
+          const skillName = skillElement.dataset.skill;
+          const event = new CustomEvent('skill-clicked', {
+            detail: { skill: skillName },
+            bubbles: true
+          });
+          skillElement.dispatchEvent(event);
+          
+          // Visual feedback
+          skillElement.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            skillElement.style.transform = '';
+          }, 100);
+        });
+      });
+    });
+  });
+</script>

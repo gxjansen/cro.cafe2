@@ -1,0 +1,289 @@
+---
+import type { Language } from '../types';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface Props {
+  language?: Language;
+  currentPath?: string;
+}
+
+const { language = 'en', currentPath = '/' } = Astro.props;
+
+// Check if we're in global mode (on root page, all-languages pages, global search, or individual guest/host pages)
+const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/search/' || currentPath.startsWith('/guests/') || currentPath.startsWith('/hosts/');
+
+// Navigation items based on language and mode
+const getNavItems = (lang: Language, isGlobal: boolean) => {
+  // For global mode, use all-languages paths
+  if (isGlobal) {
+    return [
+      { href: '/all/episodes/', label: 'Episodes' },
+      { href: '/all/guests/', label: 'Guests' },
+      { href: '/subscribe/', label: 'Subscribe' },
+    ];
+  }
+  
+  // For language-specific mode
+  const basePath = `/${lang}`;
+  
+  const navTexts = {
+    en: {
+      episodes: 'Episodes',
+      guests: 'Guests', 
+      subscribe: 'Subscribe',
+      search: 'Search'
+    },
+    nl: {
+      episodes: 'Afleveringen',
+      guests: 'Gasten',
+      subscribe: 'Abonneren', 
+      search: 'Zoeken'
+    },
+    de: {
+      episodes: 'Folgen',
+      guests: 'Gäste',
+      subscribe: 'Abonnieren',
+      search: 'Suche'
+    },
+    es: {
+      episodes: 'Episodios',
+      guests: 'Invitados',
+      subscribe: 'Suscríbete',
+      search: 'Buscar'
+    }
+  };
+  
+  const texts = navTexts[lang];
+  
+  return [
+    { href: `${basePath}/episodes/`, label: texts.episodes },
+    { href: `${basePath}/guests/`, label: texts.guests },
+    { href: `${basePath}/subscribe/`, label: texts.subscribe },
+  ];
+};
+
+const navItems = getNavItems(language, isGlobalMode);
+---
+
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800" style="isolation: isolate;">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a 
+          href={isGlobalMode ? '/' : `/${language}/`}
+          class="flex items-center space-x-2 group"
+          aria-label="CRO.CAFE Home"
+        >
+          <img 
+            src="/images/crocafe-logo.svg" 
+            alt="CRO.CAFE Logo"
+            class="h-8 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
+          />
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          {navItems.map((item) => (
+            <a
+              href={item.href}
+              class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                currentPath.startsWith(item.href)
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200 font-medium'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800'
+              }`}
+              aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right side controls -->
+      <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4 flex-shrink-0 min-w-0">
+        <!-- Search Button - Hidden on small mobile, visible on sm+ -->
+        <a
+          href={isGlobalMode ? '/search/' : `/${language}/search/`}
+          class="hidden xs:block p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors flex-shrink-0"
+          aria-label="Search episodes and guests"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </a>
+
+        <!-- Language Switcher with responsive width -->
+        <div class="flex-shrink-0 min-w-0">
+          <LanguageSwitcher currentLanguage={isGlobalMode ? undefined : language} currentPath={currentPath} />
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="flex-shrink-0">
+          <ThemeToggle />
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="md:hidden flex-shrink-0">
+          <button
+            id="mobile-menu-toggle"
+            type="button"
+            class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors"
+            aria-label="Open main menu"
+            aria-expanded="false"
+          >
+            <svg class="w-6 h-6 block" id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg class="w-6 h-6 hidden" id="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <nav 
+      class="md:hidden hidden" 
+      id="mobile-menu"
+      aria-label="Mobile navigation"
+    >
+      <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
+        <!-- Search Link for Mobile (hidden on xs+ screens) -->
+        <a
+          href={isGlobalMode ? '/search/' : `/${language}/search/`}
+          class="xs:hidden flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          Search
+        </a>
+        
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+              currentPath.startsWith(item.href)
+                ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+            }`}
+            aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+  </nav>
+</header>
+
+<script>
+  // Function to initialize mobile menu
+  function initializeMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (!mobileMenuToggle || !mobileMenu || !menuIcon || !closeIcon) {
+      return;
+    }
+
+    // Remove any existing event listeners by cloning
+    const newToggle = mobileMenuToggle.cloneNode(true) as HTMLElement;
+    mobileMenuToggle.parentNode?.replaceChild(newToggle, mobileMenuToggle);
+
+    // Store references for cleanup
+    let toggleHandler: (() => void) | null = null;
+    let documentClickHandler: ((event: MouseEvent) => void) | null = null;
+    let keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+
+    // Toggle menu handler
+    toggleHandler = () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        newToggle.setAttribute('aria-expanded', 'true');
+        newToggle.setAttribute('aria-label', 'Close main menu');
+        // Focus first menu item
+        const firstLink = mobileMenu.querySelector('a');
+        if (firstLink) (firstLink as HTMLElement).focus();
+      } else {
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        newToggle.setAttribute('aria-expanded', 'false');
+        newToggle.setAttribute('aria-label', 'Open main menu');
+      }
+    };
+    newToggle.addEventListener('click', toggleHandler);
+
+    // Close mobile menu when clicking outside
+    documentClickHandler = (event: MouseEvent) => {
+      if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        const target = event.target as Element;
+        if (!newToggle.contains(target) && !mobileMenu.contains(target)) {
+          mobileMenu.classList.add('hidden');
+          menuIcon?.classList.remove('hidden');
+          closeIcon?.classList.add('hidden');
+          newToggle.setAttribute('aria-expanded', 'false');
+          newToggle.setAttribute('aria-label', 'Open main menu');
+        }
+      }
+    };
+    document.addEventListener('click', documentClickHandler);
+    
+    // Handle Escape key
+    keydownHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        menuIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        newToggle.setAttribute('aria-expanded', 'false');
+        newToggle.setAttribute('aria-label', 'Open main menu');
+        newToggle.focus();
+      }
+    };
+    document.addEventListener('keydown', keydownHandler);
+
+    // Store cleanup function
+    if (typeof window !== 'undefined') {
+      window.__mobileMenuCleanup = () => {
+        if (toggleHandler) newToggle.removeEventListener('click', toggleHandler);
+        if (documentClickHandler) document.removeEventListener('click', documentClickHandler);
+        if (keydownHandler) document.removeEventListener('keydown', keydownHandler);
+      };
+    }
+  }
+
+  // Initialize on first load
+  initializeMobileMenu();
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Clean up old event listeners
+    if (typeof window !== 'undefined' && window.__mobileMenuCleanup) {
+      window.__mobileMenuCleanup();
+    }
+    // Re-initialize
+    initializeMobileMenu();
+  });
+
+  // Also handle after-swap event
+  document.addEventListener('astro:after-swap', () => {
+    // Clean up old event listeners
+    if (typeof window !== 'undefined' && window.__mobileMenuCleanup) {
+      window.__mobileMenuCleanup();
+    }
+    // Re-initialize
+    initializeMobileMenu();
+  });
+</script>

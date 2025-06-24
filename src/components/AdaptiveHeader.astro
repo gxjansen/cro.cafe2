@@ -1,0 +1,245 @@
+---
+/**
+ * Adaptive Header Component
+ * Renders different header variations based on PWA vs Browser context
+ */
+import type { Language } from '../types';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface Props {
+  language: Language;
+  currentPath: string;
+  showNavigation?: boolean;
+  showLanguageSwitcher?: boolean;
+  showThemeToggle?: boolean;
+  isPWAMode?: boolean;
+}
+
+const {
+  language,
+  currentPath,
+  showNavigation = true,
+  showLanguageSwitcher = true,
+  showThemeToggle = true,
+  isPWAMode = false
+} = Astro.props;
+
+// Navigation items for browser mode
+const navigationItems = [
+  { href: `/${language}/episodes/`, label: 'Episodes', isActive: currentPath.includes('/episodes/') },
+  { href: `/${language}/guests/`, label: 'Guests', isActive: currentPath.includes('/guests/') },
+  { href: `/about/`, label: 'About', isActive: currentPath.includes('/about') },
+  { href: `/${language}/subscribe/`, label: 'Subscribe', isActive: currentPath.includes('/subscribe/') },
+];
+
+// PWA-specific navigation (minimal)
+const pwaNavigationItems = [
+  { href: `/${language}/episodes/`, label: 'Episodes', icon: 'play' },
+  { href: `/search/`, label: 'Search', icon: 'search' },
+];
+---
+
+<!-- Browser Mode Header (Full Featured) -->
+{!isPWAMode && (
+  <header class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50" transition:persist>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo and Brand -->
+        <div class="flex items-center flex-shrink-0">
+          <a href="/" class="flex items-center group" aria-label="CRO.CAFE Home">
+            <img 
+              src="/images/crocafe-logo.svg" 
+              alt="CRO.CAFE Logo" 
+              class="h-8 w-auto group-hover:scale-105 transition-transform duration-200"
+              width="32"
+              height="32"
+            />
+            <span class="ml-3 text-xl font-bold text-cro-orange dark:text-cro-orange-light">
+              CRO.CAFE
+            </span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation -->
+        {showNavigation && (
+          <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
+            {navigationItems.map((item) => (
+              <a
+                href={item.href}
+                class={`text-sm font-medium transition-colors duration-200 ${
+                  item.isActive
+                    ? 'text-cro-orange dark:text-cro-orange-light border-b-2 border-cro-orange dark:border-cro-orange-light pb-1'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-cro-orange dark:hover:text-cro-orange-light'
+                }`}
+                aria-current={item.isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        )}
+
+        <!-- Right side controls -->
+        <div class="flex items-center space-x-4">
+          {showLanguageSwitcher && (
+            <LanguageSwitcher language={language} currentPath={currentPath} />
+          )}
+          {showThemeToggle && <ThemeToggle />}
+          
+          <!-- Mobile menu button -->
+          <button
+            type="button"
+            class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-cro-orange dark:hover:text-cro-orange-light hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cro-orange"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            data-mobile-menu-button
+          >
+            <span class="sr-only">Open main menu</span>
+            <!-- Menu icon -->
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Menu -->
+      <div class="md:hidden hidden" id="mobile-menu" data-mobile-menu>
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-gray-700">
+          {navigationItems.map((item) => (
+            <a
+              href={item.href}
+              class={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                item.isActive
+                  ? 'text-cro-orange dark:text-cro-orange-light bg-cro-orange/10 dark:bg-cro-orange-light/10'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-cro-orange dark:hover:text-cro-orange-light hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+              aria-current={item.isActive ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </header>
+)}
+
+<!-- PWA Mode Header (Minimal) -->
+{isPWAMode && (
+  <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0" transition:persist>
+    <div class="px-4 py-3">
+      <div class="flex items-center justify-between">
+        <!-- Minimal Logo -->
+        <div class="flex items-center">
+          <img 
+            src="/images/crocafe-logo.svg" 
+            alt="CRO.CAFE" 
+            class="h-6 w-auto"
+            width="24"
+            height="24"
+          />
+          <span class="ml-2 text-lg font-semibold text-cro-orange dark:text-cro-orange-light">
+            CRO.CAFE
+          </span>
+        </div>
+
+        <!-- PWA Controls -->
+        <div class="flex items-center space-x-3">
+          {showThemeToggle && <ThemeToggle size="sm" />}
+          
+          <!-- PWA Menu Button -->
+          <button
+            type="button"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-cro-orange dark:hover:text-cro-orange-light focus:outline-none focus:ring-2 focus:ring-cro-orange"
+            aria-expanded="false"
+            aria-controls="pwa-menu"
+            data-pwa-menu-button
+          >
+            <span class="sr-only">Open menu</span>
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- PWA Navigation (when menu is open) -->
+      <div class="hidden mt-3" id="pwa-menu" data-pwa-menu>
+        <div class="grid grid-cols-2 gap-2">
+          {pwaNavigationItems.map((item) => (
+            <a
+              href={item.href}
+              class="flex items-center justify-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+            >
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {item.label}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </header>
+)}
+
+<!-- Header JavaScript -->
+<script>
+  // Mobile menu toggle for browser mode
+  document.addEventListener('DOMContentLoaded', () => {
+    const mobileMenuButton = document.querySelector('[data-mobile-menu-button]');
+    const mobileMenu = document.querySelector('[data-mobile-menu]');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.contains('hidden');
+        mobileMenu.classList.toggle('hidden', !isHidden);
+        mobileMenuButton.setAttribute('aria-expanded', isHidden.toString());
+      });
+    }
+
+    // PWA menu toggle
+    const pwaMenuButton = document.querySelector('[data-pwa-menu-button]');
+    const pwaMenu = document.querySelector('[data-pwa-menu]');
+    
+    if (pwaMenuButton && pwaMenu) {
+      pwaMenuButton.addEventListener('click', () => {
+        const isHidden = pwaMenu.classList.contains('hidden');
+        pwaMenu.classList.toggle('hidden', !isHidden);
+        pwaMenuButton.setAttribute('aria-expanded', isHidden.toString());
+      });
+    }
+
+    // Close menus when clicking outside
+    document.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      
+      // Close mobile menu if clicking outside
+      if (mobileMenu && !mobileMenu.contains(target) && !mobileMenuButton?.contains(target)) {
+        mobileMenu.classList.add('hidden');
+        mobileMenuButton?.setAttribute('aria-expanded', 'false');
+      }
+      
+      // Close PWA menu if clicking outside
+      if (pwaMenu && !pwaMenu.contains(target) && !pwaMenuButton?.contains(target)) {
+        pwaMenu.classList.add('hidden');
+        pwaMenuButton?.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Header specific styles */
+  header {
+    /* Support for PWA safe areas */
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  
+  /* Smooth transitions for menu states */
+  [data-mobile-menu],
+  [data-pwa-menu] {
+    transition: all 0.2s ease-in-out;
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Color System Demo">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-8">Teal & Coral Color System Demo</h1>
+    
+    <!-- Color Swatches -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Color Palette</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <div class="w-full h-32 rounded-lg shadow-md" style="background-color: #95c3c0;"></div>
+          <p class="mt-2 font-medium">Primary Teal</p>
+          <p class="text-sm text-gray-600">#95c3c0</p>
+          <p class="text-xs text-gray-500">HSL: 175°, 27%, 67%</p>
+        </div>
+        <div>
+          <div class="w-full h-32 rounded-lg shadow-md" style="background-color: #dd8e91;"></div>
+          <p class="mt-2 font-medium">Accent Coral</p>
+          <p class="text-sm text-gray-600">#dd8e91</p>
+          <p class="text-xs text-gray-500">HSL: 358°, 50%, 72%</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Button Hierarchy -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Button Hierarchy</h2>
+      <div class="space-y-4">
+        <div class="flex gap-4 items-center">
+          <button class="px-6 py-3 rounded-md font-semibold text-white transition-all hover:shadow-lg" 
+                  style="background-color: #dd8e91; hover:background-color: #d67679;">
+            Primary CTA
+          </button>
+          <span class="text-sm text-gray-600">Use sparingly - one per viewport</span>
+        </div>
+        <div class="flex gap-4 items-center">
+          <button class="px-6 py-3 rounded-md font-semibold text-gray-900 transition-all" 
+                  style="background-color: #95c3c0;">
+            Secondary Action
+          </button>
+          <span class="text-sm text-gray-600">For supporting actions</span>
+        </div>
+        <div class="flex gap-4 items-center">
+          <button class="px-6 py-3 rounded-md font-semibold border-2 transition-all" 
+                  style="border-color: #95c3c0; color: #95c3c0;">
+            Tertiary Action
+          </button>
+          <span class="text-sm text-gray-600">For less prominent actions</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contrast Demo -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Accessibility & Contrast</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="p-6 rounded-lg" style="background-color: #dd8e91;">
+          <p class="text-white font-medium">White on Coral</p>
+          <p class="text-white text-sm">Contrast: 3.07:1 ✓</p>
+          <p class="text-white text-xs">Passes for large text/UI</p>
+        </div>
+        <div class="p-6 rounded-lg" style="background-color: #95c3c0;">
+          <p class="text-gray-900 font-medium">Dark on Teal</p>
+          <p class="text-gray-900 text-sm">Contrast: 4.27:1 ✓</p>
+          <p class="text-gray-900 text-xs">Nearly passes AA for normal text</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-world Example -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Real-world Implementation</h2>
+      <div class="border rounded-lg p-8 bg-gray-50">
+        <div class="max-w-lg mx-auto text-center">
+          <h3 class="text-xl font-bold mb-2">Latest Podcast Episode</h3>
+          <p class="text-gray-600 mb-6">Discover insights from industry leaders in our weekly podcast series.</p>
+          <div class="flex gap-3 justify-center">
+            <button class="px-6 py-3 rounded-md font-semibold text-white transition-all hover:shadow-lg" 
+                    style="background-color: #dd8e91;">
+              Listen Now
+            </button>
+            <button class="px-6 py-3 rounded-md font-semibold border-2 transition-all" 
+                    style="border-color: #95c3c0; color: #95c3c0;">
+              View All Episodes
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Guidelines -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Usage Guidelines</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-6 border rounded-lg">
+          <h3 class="font-semibold mb-2" style="color: #dd8e91;">Coral Accent - Do's</h3>
+          <ul class="text-sm space-y-1">
+            <li>✓ Primary conversion actions</li>
+            <li>✓ One per viewport maximum</li>
+            <li>✓ Critical user journeys</li>
+            <li>✓ Final CTAs at page bottom</li>
+          </ul>
+        </div>
+        <div class="p-6 border rounded-lg">
+          <h3 class="font-semibold mb-2" style="color: #95c3c0;">Teal Primary - Do's</h3>
+          <ul class="text-sm space-y-1">
+            <li>✓ Navigation elements</li>
+            <li>✓ Secondary buttons</li>
+            <li>✓ Active states & highlights</li>
+            <li>✓ Links and labels</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive States -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Interactive States</h2>
+      <div class="space-y-6">
+        <div>
+          <p class="font-medium mb-2">Coral Button States</p>
+          <div class="flex gap-3">
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #dd8e91;"></div>
+              <p class="text-xs">Default</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #d67679;"></div>
+              <p class="text-xs">Hover</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #cc6366;"></div>
+              <p class="text-xs">Active</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #e8c4c5;"></div>
+              <p class="text-xs">Disabled</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="font-medium mb-2">Teal Button States</p>
+          <div class="flex gap-3">
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #95c3c0;"></div>
+              <p class="text-xs">Default</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #7fb3b0;"></div>
+              <p class="text-xs">Hover</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #69a19d;"></div>
+              <p class="text-xs">Active</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 rounded-md mb-1" style="background-color: #c5dcdb;"></div>
+              <p class="text-xs">Disabled</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

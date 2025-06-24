@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="CORS Audio Test"
+  description="Testing CORS issue with Transistor audio"
+>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">CORS Audio Test</h1>
+    
+    <div class="space-y-6">
+      <!-- Direct Transistor URL Test -->
+      <div class="bg-red-50 dark:bg-red-900 p-6 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Test 1: Direct Transistor URL (CORS Error Expected)</h2>
+        <audio id="directAudio" controls class="mb-4">
+          <source src="https://media.transistor.fm/65c88289/d9718325.mp3" type="audio/mpeg">
+        </audio>
+        <button 
+          onclick="document.getElementById('directAudio').play()" 
+          class="px-4 py-2 bg-red-500 text-white rounded"
+        >
+          Try Direct Play (Will Fail)
+        </button>
+        <div id="directResult" class="mt-4 p-4 bg-white dark:bg-gray-800 rounded"></div>
+      </div>
+
+      <!-- Proxy URL Test -->
+      <div class="bg-green-50 dark:bg-green-900 p-6 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Test 2: Proxied URL (Should Work)</h2>
+        <audio id="proxyAudio" controls class="mb-4"></audio>
+        <button 
+          onclick="testProxy()" 
+          class="px-4 py-2 bg-green-500 text-white rounded"
+        >
+          Load & Play via Proxy
+        </button>
+        <div id="proxyResult" class="mt-4 p-4 bg-white dark:bg-gray-800 rounded"></div>
+      </div>
+
+      <!-- Fetch Test -->
+      <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Test 3: Fetch API Tests</h2>
+        <button 
+          onclick="testFetch()" 
+          class="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Test Both Endpoints
+        </button>
+        <div id="fetchResult" class="mt-4 p-4 bg-white dark:bg-gray-800 rounded"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const originalUrl = 'https://media.transistor.fm/65c88289/d9718325.mp3';
+    const proxyUrl = '/api/audio-proxy?url=' + encodeURIComponent(originalUrl);
+
+    // Monitor direct audio
+    const directAudio = document.getElementById('directAudio');
+    directAudio.addEventListener('error', (e) => {
+      document.getElementById('directResult').innerHTML = `
+        <p class="text-red-600">❌ Expected CORS error occurred</p>
+        <p class="text-sm">Check console for details</p>
+      `;
+      console.error('Direct audio error:', e);
+    });
+
+    directAudio.addEventListener('loadedmetadata', () => {
+      document.getElementById('directResult').innerHTML = `
+        <p class="text-green-600">✅ Unexpected success! No CORS error</p>
+      `;
+    });
+
+    // Test proxy
+    function testProxy() {
+      const proxyAudio = document.getElementById('proxyAudio');
+      const resultDiv = document.getElementById('proxyResult');
+      
+      resultDiv.innerHTML = '<p>Loading via proxy...</p>';
+      
+      proxyAudio.src = proxyUrl;
+      
+      proxyAudio.addEventListener('loadstart', () => {
+        resultDiv.innerHTML += '<p>✅ Load started</p>';
+      });
+      
+      proxyAudio.addEventListener('loadedmetadata', () => {
+        resultDiv.innerHTML += `<p>✅ Metadata loaded! Duration: ${proxyAudio.duration}s</p>`;
+        resultDiv.innerHTML += '<p>✅ Playing audio...</p>';
+        proxyAudio.play();
+      });
+      
+      proxyAudio.addEventListener('error', (e) => {
+        resultDiv.innerHTML += `<p>❌ Proxy error: ${e.message || 'Unknown'}</p>`;
+        console.error('Proxy audio error:', e);
+      });
+      
+      proxyAudio.load();
+    }
+
+    // Test fetch
+    async function testFetch() {
+      const resultDiv = document.getElementById('fetchResult');
+      resultDiv.innerHTML = '<p>Testing fetch...</p>';
+      
+      // Test direct fetch
+      try {
+        const directResponse = await fetch(originalUrl, { method: 'HEAD' });
+        resultDiv.innerHTML += `<p>✅ Direct fetch succeeded (status: ${directResponse.status})</p>`;
+      } catch (err) {
+        resultDiv.innerHTML += `<p>❌ Direct fetch failed: ${err.message}</p>`;
+      }
+      
+      // Test proxy fetch
+      try {
+        const proxyResponse = await fetch(proxyUrl, { method: 'HEAD' });
+        resultDiv.innerHTML += `<p>✅ Proxy fetch succeeded (status: ${proxyResponse.status})</p>`;
+        resultDiv.innerHTML += `<p>Content-Type: ${proxyResponse.headers.get('Content-Type')}</p>`;
+        resultDiv.innerHTML += `<p>CORS Header: ${proxyResponse.headers.get('Access-Control-Allow-Origin')}</p>`;
+      } catch (err) {
+        resultDiv.innerHTML += `<p>❌ Proxy fetch failed: ${err.message}</p>`;
+      }
+    }
+  </script>
+</BaseLayout>

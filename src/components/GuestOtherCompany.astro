@@ -1,0 +1,67 @@
+---
+import GuestCard from './GuestCard.astro';
+import { getGuestsFromSameCompany } from '../utils/content';
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../types';
+
+export interface Props {
+  guest: CollectionEntry<'guests'>;
+  language: Language;
+  limit?: number;
+}
+
+const { guest, language, limit = 4 } = Astro.props;
+
+// Get other guests from the same company
+const companyGuests = guest.data.company 
+  ? await getGuestsFromSameCompany(
+      guest.data.company, 
+      guest.data.slug || guest.slug,
+      limit
+    )
+  : [];
+
+// Translations
+const translations = {
+  en: {
+    title: 'More from',
+    subtitle: 'Other experts from the same company'
+  },
+  nl: {
+    title: 'Meer van',
+    subtitle: 'Andere experts van hetzelfde bedrijf'
+  },
+  de: {
+    title: 'Mehr von',
+    subtitle: 'Weitere Experten aus demselben Unternehmen'
+  },
+  es: {
+    title: 'Más de',
+    subtitle: 'Otros expertos de la misma empresa'
+  }
+};
+
+const t = translations[language];
+---
+
+{companyGuests.length > 0 && (
+  <section class="mt-12 mb-12">
+    <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-2">
+      {t.title} <span class="ml-1">{guest.data.company}</span>
+    </h3>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">
+      {t.subtitle}
+    </p>
+    
+    <div class="grid gap-4 sm:grid-cols-2">
+      {companyGuests.map((companyGuest) => (
+        <GuestCard 
+          guest={companyGuest}
+          language={language}
+          size="small"
+          variant="compact"
+        />
+      ))}
+    </div>
+  </section>
+)}

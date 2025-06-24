@@ -1,0 +1,135 @@
+---
+interface Props {
+  language: 'en' | 'nl' | 'de' | 'es';
+}
+
+const { language } = Astro.props;
+
+const translations = {
+  en: {
+    install: 'Install App',
+    installPrompt: 'Install CRO.CAFE for easy access and offline listening',
+    dismiss: 'Not now',
+    description: 'Get instant access to all episodes, even offline!'
+  },
+  nl: {
+    install: 'App Installeren',
+    installPrompt: 'Installeer CRO.CAFE voor gemakkelijke toegang en offline luisteren',
+    dismiss: 'Niet nu',
+    description: 'Krijg direct toegang tot alle afleveringen, zelfs offline!'
+  },
+  de: {
+    install: 'App Installieren',
+    installPrompt: 'Installieren Sie CRO.CAFE für einfachen Zugriff und Offline-Hören',
+    dismiss: 'Nicht jetzt',
+    description: 'Erhalten Sie sofortigen Zugriff auf alle Folgen, auch offline!'
+  },
+  es: {
+    install: 'Instalar App',
+    installPrompt: 'Instala CRO.CAFE para acceso fácil y escucha sin conexión',
+    dismiss: 'Ahora no',
+    description: '¡Obtén acceso instantáneo a todos los episodios, incluso sin conexión!'
+  }
+};
+
+const t = translations[language];
+---
+
+<div id="pwa-install-prompt" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transform translate-y-full transition-transform duration-300 z-50 hidden">
+  <div class="flex items-start space-x-3">
+    <img src="/pwa-64x64.png" alt="CRO.CAFE" class="w-12 h-12 rounded-lg flex-shrink-0" />
+    <div class="flex-1">
+      <h3 class="font-semibold text-gray-900 dark:text-white">{t.installPrompt}</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{t.description}</p>
+      <div class="flex space-x-3 mt-3">
+        <button 
+          id="pwa-install-btn"
+          class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-colors"
+        >
+          {t.install}
+        </button>
+        <button 
+          id="pwa-dismiss-btn"
+          class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm font-medium transition-colors"
+        >
+          {t.dismiss}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // PWA Install Prompt
+  let deferredPrompt: any;
+  const installPrompt = document.getElementById('pwa-install-prompt');
+  const installBtn = document.getElementById('pwa-install-btn');
+  const dismissBtn = document.getElementById('pwa-dismiss-btn');
+
+  // Check if already installed
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
+                     window.navigator.standalone || 
+                     document.referrer.includes('android-app://');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Show the install prompt if not already dismissed
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    const dismissedTime = dismissed ? parseInt(dismissed) : 0;
+    const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
+    
+    if (!isInstalled && (!dismissed || daysSinceDismissed > 7)) {
+      setTimeout(() => {
+        installPrompt?.classList.remove('hidden');
+        installPrompt?.classList.remove('translate-y-full');
+      }, 2000);
+    }
+  });
+
+  installBtn?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    // Show the install prompt
+    deferredPrompt.prompt();
+    
+    // Wait for the user to respond to the prompt
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    // Clear the deferred prompt
+    deferredPrompt = null;
+    
+    // Hide the custom prompt
+    installPrompt?.classList.add('translate-y-full');
+    setTimeout(() => {
+      installPrompt?.classList.add('hidden');
+    }, 300);
+  });
+
+  dismissBtn?.addEventListener('click', () => {
+    // Remember dismissal
+    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    
+    // Hide the prompt
+    installPrompt?.classList.add('translate-y-full');
+    setTimeout(() => {
+      installPrompt?.classList.add('hidden');
+    }, 300);
+  });
+
+  // iOS specific install instructions
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS && !isInstalled) {
+    // Could show iOS-specific install instructions here
+    console.log('iOS device detected - manual install required');
+  }
+</script>

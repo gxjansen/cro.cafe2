@@ -1,0 +1,43 @@
+---
+import EpisodeCard from './EpisodeCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  episode: CollectionEntry<'episodes'>;
+  showLanguage?: boolean;
+  size?: 'small' | 'medium' | 'large';
+  variant?: 'card' | 'compact';
+  useSEOTitle?: boolean;
+  useSEODescription?: boolean;
+}
+
+const { 
+  episode, 
+  showLanguage = true, 
+  size = 'medium', 
+  variant = 'card',
+  useSEOTitle = true,
+  useSEODescription = true
+} = Astro.props;
+
+// Create enhanced episode object with SEO fields
+const enhancedEpisode = {
+  ...episode,
+  data: {
+    ...episode.data,
+    // Use SEO title if available and enabled
+    title: useSEOTitle && episode.data.seoTitle ? episode.data.seoTitle : episode.data.title,
+    // Use meta description for card if available and enabled
+    description: useSEODescription && episode.data.metaDescription 
+      ? episode.data.metaDescription 
+      : (episode.data.summary || episode.data.description.substring(0, 200))
+  }
+};
+---
+
+<EpisodeCard 
+  episode={enhancedEpisode}
+  showLanguage={showLanguage}
+  size={size}
+  variant={variant}
+/>

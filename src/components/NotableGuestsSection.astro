@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import GuestImage from './GuestImage.astro';
+import { getGuestUrl, getGuestImageUrl } from '../utils/content';
+import type { Language } from '../types';
+
+export interface Props {
+  language?: Language;
+  limit?: number;
+}
+
+const { language = 'en', limit = 6 } = Astro.props;
+
+// Get all guests
+const allGuests = await getCollection('guests');
+
+// Filter featured guests only
+let featuredGuests = allGuests.filter(guest => 
+  guest.data.isFeatured && 
+  guest.data.languages.includes(language)
+);
+
+// If no featured guests found, use guests with highest episode count as fallback
+if (featuredGuests.length === 0) {
+  console.warn(`No featured guests found for language ${language}, using top guests by episode count`);
+  featuredGuests = allGuests
+    .filter(guest => 
+      guest.data.languages.includes(language) &&
+      guest.data.episodeCount && 
+      guest.data.episodeCount > 0
+    )
+    .sort((a, b) => (b.data.episodeCount || 0) - (a.data.episodeCount || 0))
+    .slice(0, 6); // Always limit to exactly 6
+}
+
+// Randomize the selection for variety across builds and limit to exactly 6
+const shuffled = featuredGuests.sort(() => Math.random() - 0.5);
+const selectedGuests = shuffled.slice(0, 6);
+
+// Helper function to get guest image
+function getGuestImage(guest: any): string {
+  const slug = guest.data.slug || guest.slug;
+  return guest.data.imageUrl || getGuestImageUrl(slug);
+}
+
+// Translations
+const translations = {
+  en: {
+    title: 'Industry Leaders',
+    subtitle: 'Learn directly from the experts shaping CRO today',
+    viewProfile: 'View Profile',
+    episodes: 'episodes'
+  },
+  nl: {
+    title: 'Industrie Leiders',
+    subtitle: 'Leer direct van de experts die CRO vandaag vormgeven',
+    viewProfile: 'Bekijk Profiel',
+    episodes: 'afleveringen'
+  },
+  de: {
+    title: 'Branchenführer',
+    subtitle: 'Lernen Sie direkt von den Experten, die CRO heute prägen',
+    viewProfile: 'Profil Ansehen',
+    episodes: 'Folgen'
+  },
+  es: {
+    title: 'Líderes de la Industria',
+    subtitle: 'Aprende directamente de los expertos que están dando forma al CRO hoy',
+    viewProfile: 'Ver Perfil',
+    episodes: 'episodios'
+  }
+};
+
+const t = translations[language];
+---
+
+{selectedGuests.length > 0 && (
+  <section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.title}
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          {t.subtitle}
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+        {selectedGuests.map((guest) => {
+          const guestUrl = getGuestUrl(guest, language);
+          const imageUrl = getGuestImage(guest);
+          
+          return (
+            <a 
+              href={guestUrl}
+              class="group text-center hover:transform hover:scale-105 transition-all duration-300"
+            >
+              <div class="relative mb-4">
+                <GuestImage 
+                  imageUrl={imageUrl} 
+                  alt={`${guest.data.name} - CRO.CAFE notable guest`}
+                  width={128}
+                  height={128}
+                  class="w-32 h-32 mx-auto rounded-full object-cover shadow-md group-hover:shadow-xl transition-shadow"
+                />
+                {guest.data.isFeatured && (
+                  <div class="absolute -top-1 -right-1 w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              
+              <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                {guest.data.name}
+              </h3>
+              
+              {(guest.data.role || guest.data.title) && (
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1 font-medium">
+                  {guest.data.role || guest.data.title}
+                </p>
+              )}
+              
+              {guest.data.company && (
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {guest.data.company}
+                </p>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+)}

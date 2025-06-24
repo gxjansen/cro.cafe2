@@ -1,0 +1,75 @@
+---
+export interface Props {
+  target: number;
+  suffix?: string;
+  prefix?: string;
+  duration?: number;
+  animate?: boolean;
+}
+
+const { target, suffix = '', prefix = '', duration = 2000, animate = true } = Astro.props;
+const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<span id={id} class="tabular-nums" data-target={target} data-suffix={suffix} data-prefix={prefix} data-duration={duration} data-animate={animate}>
+  {prefix}{target.toLocaleString()}{suffix}
+</span>
+
+<script>
+  // Counter animation logic
+  function initCounters() {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px'
+    };
+
+    const animateCounter = (element: Element) => {
+      const shouldAnimate = element.getAttribute('data-animate') === 'true';
+      if (!shouldAnimate) return;
+      
+      const target = parseInt(element.getAttribute('data-target') || '0');
+      const suffix = element.getAttribute('data-suffix') || '';
+      const prefix = element.getAttribute('data-prefix') || '';
+      const duration = parseInt(element.getAttribute('data-duration') || '2000');
+      
+      // Start from 0 for animation
+      element.textContent = `${prefix}0${suffix}`;
+      
+      let current = 0;
+      const increment = target / (duration / 16); // 60 FPS
+      
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          element.textContent = `${prefix}${Math.floor(current).toLocaleString()}${suffix}`;
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = `${prefix}${target.toLocaleString()}${suffix}`;
+        }
+      };
+      
+      // Small delay to ensure the 0 is visible before animation starts
+      setTimeout(updateCounter, 100);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+          entry.target.classList.add('animated');
+          animateCounter(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe all counters that haven't been animated yet
+    document.querySelectorAll('[data-target]:not(.animated)').forEach(counter => {
+      observer.observe(counter);
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initCounters);
+  
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initCounters);
+</script>

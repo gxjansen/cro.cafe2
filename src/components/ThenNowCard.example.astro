@@ -1,0 +1,75 @@
+---
+// Example usage of ThenNowCard component
+import ThenNowCard from './ThenNowCard.astro';
+
+// Example with career progression
+const progressionExample = {
+  historical: {
+    role: "Senior Developer",
+    company: "StartupCo",
+    date: new Date("2023-01-15")
+  },
+  current: {
+    role: "Engineering Manager",
+    company: "TechCorp",
+    lastUpdated: new Date()
+  },
+  episodeId: "episode-001",
+  episodeTitle: "Building Great Products"
+};
+
+// Example without LinkedIn data
+const noLinkedInExample = {
+  historical: {
+    role: "Product Designer",
+    company: "DesignStudio",
+    date: new Date("2023-06-20")
+  },
+  episodeId: "episode-002",
+  episodeTitle: "Design Thinking in Practice"
+};
+
+// Example with same role (no progression)
+const sameRoleExample = {
+  historical: {
+    role: "CTO",
+    company: "InnovateTech",
+    date: new Date("2023-03-10")
+  },
+  current: {
+    role: "CTO",
+    company: "InnovateTech",
+    lastUpdated: new Date()
+  },
+  episodeId: "episode-003",
+  episodeTitle: "Leading Technical Teams"
+};
+---
+
+<div class="space-y-6 p-8 bg-gray-50 dark:bg-gray-900">
+  <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">ThenNowCard Examples</h2>
+  
+  {/* Example 1: Career Progression */}
+  <div>
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Career Progression</h3>
+    <ThenNowCard {...progressionExample} />
+  </div>
+  
+  {/* Example 2: No LinkedIn Data */}
+  <div>
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">No LinkedIn Data Available</h3>
+    <ThenNowCard {...noLinkedInExample} />
+  </div>
+  
+  {/* Example 3: Same Role */}
+  <div>
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Same Role (No Progression)</h3>
+    <ThenNowCard {...sameRoleExample} />
+  </div>
+  
+  {/* Example 4: With Custom Class */}
+  <div>
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">With Custom Styling</h3>
+    <ThenNowCard {...progressionExample} class="max-w-md mx-auto" />
+  </div>
+</div>

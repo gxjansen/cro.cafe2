@@ -1,0 +1,495 @@
+---
+import type { LinkedInExperience } from '../types/linkedin';
+import { safeJsonParse } from '../types/linkedin';
+
+export interface Props {
+  experiences: string;
+  currentRole?: string;
+  episodeDate?: string;
+}
+
+const { experiences, currentRole, episodeDate } = Astro.props;
+
+// Parse experiences from JSON string
+const parsedExperiences = safeJsonParse<LinkedInExperience[]>(experiences, []);
+
+// Sort experiences by start date (most recent first)
+const sortedExperiences = [...parsedExperiences].sort((a, b) => {
+  const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+  const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+  return dateB - dateA;
+});
+
+// Format date for display
+function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return 'Present';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+// Calculate position for episode marker
+function getEpisodePosition(): number {
+  if (!episodeDate || sortedExperiences.length === 0) return 0;
+  
+  const episodeTime = new Date(episodeDate).getTime();
+  const firstDate = sortedExperiences[sortedExperiences.length - 1].startDate;
+  const lastDate = sortedExperiences[0].endDate || new Date().toISOString();
+  
+  if (!firstDate) return 0;
+  
+  const startTime = new Date(firstDate).getTime();
+  const endTime = new Date(lastDate).getTime();
+  
+  // Calculate percentage position
+  const position = ((episodeTime - startTime) / (endTime - startTime)) * 100;
+  return Math.max(0, Math.min(100, position));
+}
+
+const episodePosition = getEpisodePosition();
+---
+
+<div class="career-timeline" data-timeline>
+  <div class="timeline-header">
+    <h3>Career Journey</h3>
+    <button 
+      class="timeline-toggle"
+      aria-label="Toggle timeline view"
+      data-timeline-toggle
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="timeline-container" data-timeline-container>
+    <div class="timeline-track"></div>
+    
+    {episodeDate && (
+      <div 
+        class="episode-marker"
+        style={`--episode-position: ${episodePosition}%`}
+        title={`Podcast recorded on ${formatDate(episodeDate)}`}
+      >
+        <div class="episode-marker-dot"></div>
+        <div class="episode-marker-label">Episode Recording</div>
+      </div>
+    )}
+
+    <div class="timeline-items">
+      {sortedExperiences.map((experience, index) => {
+        const isCurrentRole = experience.isCurrent || 
+          (currentRole && experience.title === currentRole);
+        
+        return (
+          <div 
+            class={`timeline-item ${isCurrentRole ? 'current' : ''}`}
+            data-timeline-item
+          >
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-header-content">
+                <h4 class="timeline-title">{experience.title}</h4>
+                <div class="timeline-company">
+                  {experience.companyUrl ? (
+                    <a 
+                      href={experience.companyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="company-link"
+                    >
+                      {experience.company}
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2L2 10M10 2V8M10 2H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  ) : (
+                    <span>{experience.company}</span>
+                  )}
+                </div>
+              </div>
+              
+              <div class="timeline-meta">
+                <time class="timeline-date">
+                  {formatDate(experience.startDate)} - {formatDate(experience.endDate)}
+                </time>
+                {experience.duration && (
+                  <span class="timeline-duration">{experience.duration}</span>
+                )}
+                {experience.location && (
+                  <span class="timeline-location">{experience.location}</span>
+                )}
+              </div>
+              
+              {experience.description && (
+                <p class="timeline-description">{experience.description}</p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
+
+<style>
+  .career-timeline {
+    --timeline-color: #e5e7eb;
+    --timeline-active-color: #3b82f6;
+    --timeline-dot-size: 12px;
+    --timeline-gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .timeline-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .timeline-toggle {
+    background: none;
+    border: 1px solid var(--timeline-color);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .timeline-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .timeline-toggle svg {
+    transition: transform 0.3s ease;
+  }
+
+  .career-timeline[data-collapsed] .timeline-toggle svg {
+    transform: rotate(-90deg);
+  }
+
+  .timeline-container {
+    position: relative;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    max-height: 2000px;
+  }
+
+  .career-timeline[data-collapsed] .timeline-container {
+    max-height: 0;
+  }
+
+  .timeline-track {
+    position: absolute;
+    background-color: var(--timeline-color);
+    z-index: 0;
+  }
+
+  /* Mobile: Vertical layout */
+  @media (max-width: 768px) {
+    .timeline-track {
+      left: var(--timeline-dot-size);
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+    }
+
+    .timeline-items {
+      display: flex;
+      flex-direction: column;
+      gap: var(--timeline-gap);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: calc(var(--timeline-dot-size) * 2 + 1rem);
+    }
+
+    .episode-marker {
+      position: absolute;
+      left: var(--timeline-dot-size);
+      top: var(--episode-position);
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+  }
+
+  /* Desktop: Horizontal layout */
+  @media (min-width: 769px) {
+    .timeline-track {
+      left: 0;
+      right: 0;
+      top: var(--timeline-dot-size);
+      height: 2px;
+      transform: translateY(-50%);
+    }
+
+    .timeline-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--timeline-gap);
+      padding-top: calc(var(--timeline-dot-size) * 2);
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item:nth-child(even) {
+      margin-top: 4rem;
+    }
+
+    .episode-marker {
+      position: absolute;
+      left: var(--episode-position);
+      top: var(--timeline-dot-size);
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+  }
+
+  .timeline-dot {
+    position: absolute;
+    width: var(--timeline-dot-size);
+    height: var(--timeline-dot-size);
+    background-color: white;
+    border: 2px solid var(--timeline-color);
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-dot {
+      left: var(--timeline-dot-size);
+      top: 0.5rem;
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (min-width: 769px) {
+    .timeline-dot {
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .timeline-item.current .timeline-dot {
+    background-color: var(--timeline-active-color);
+    border-color: var(--timeline-active-color);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+
+  .timeline-item:hover .timeline-dot {
+    transform: scale(1.2) translateX(-50%);
+    border-color: var(--timeline-active-color);
+  }
+
+  @media (min-width: 769px) {
+    .timeline-item:hover .timeline-dot {
+      transform: scale(1.2) translate(-50%, -50%);
+    }
+  }
+
+  .timeline-content {
+    background-color: white;
+    border: 1px solid var(--timeline-color);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-item.current .timeline-content {
+    border-color: var(--timeline-active-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .timeline-item:hover .timeline-content {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .timeline-header-content {
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-title {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .timeline-company {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .company-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .company-link:hover {
+    color: var(--timeline-active-color);
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-date {
+    font-weight: 500;
+  }
+
+  .timeline-duration {
+    padding: 0.125rem 0.5rem;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+    color: #6b7280;
+  }
+
+  .timeline-location::before {
+    content: "📍 ";
+  }
+
+  .timeline-description {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Episode Marker */
+  .episode-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .episode-marker-dot {
+    width: 20px;
+    height: 20px;
+    background-color: #dc2626;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 11;
+  }
+
+  .episode-marker-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background-color: rgba(220, 38, 38, 0.2);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .episode-marker-label {
+    background-color: #dc2626;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    70% {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .career-timeline {
+      --timeline-color: #374151;
+      --timeline-active-color: #60a5fa;
+    }
+
+    .timeline-content {
+      background-color: #1f2937;
+      border-color: var(--timeline-color);
+    }
+
+    .timeline-title {
+      color: #f9fafb;
+    }
+
+    .timeline-company,
+    .timeline-description {
+      color: #9ca3af;
+    }
+
+    .timeline-duration {
+      background-color: #374151;
+      color: #d1d5db;
+    }
+
+    .timeline-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const timelines = document.querySelectorAll('[data-timeline]');
+    
+    timelines.forEach(timeline => {
+      const toggle = timeline.querySelector('[data-timeline-toggle]');
+      const container = timeline.querySelector('[data-timeline-container]');
+      
+      if (toggle && container) {
+        toggle.addEventListener('click', () => {
+          const isCollapsed = timeline.hasAttribute('data-collapsed');
+          
+          if (isCollapsed) {
+            timeline.removeAttribute('data-collapsed');
+          } else {
+            timeline.setAttribute('data-collapsed', '');
+          }
+        });
+      }
+    });
+  });
+</script>

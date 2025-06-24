@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import HostCard from '../components/HostCard.astro';
+import AboutEventGallery from '../components/AboutEventGallery.astro';
+import { getAllHosts } from '../utils/content';
+
+const pageTitle = "About CRO.CAFE";
+const pageDescription = "Learn about CRO.CAFE - An interview-driven podcast about CRO, experimentation, user research, and digital marketing";
+
+// Get all hosts
+const allHosts = await getAllHosts();
+
+// Sort hosts in the desired order
+const hostOrder = ['gxjansen', 'ricardotayar', 'michaelwitzenleiter', 'yvonneteufel'];
+const sortedHosts = hostOrder
+  .map(slug => allHosts.find(host => host.slug === slug))
+  .filter(Boolean);
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/about/"
+  currentPath="/about/"
+>
+  <Header language="en" currentPath="/about/" />
+  
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article class="prose prose-lg dark:prose-invert max-w-none">
+        <h1>About CRO.CAFE</h1>
+        
+        <p class="lead">CRO.CAFE is an interview-driven show about conversion rate optimization (CRO), experimentation, user research, and digital marketing, available in four languages with dedicated hosts for each region.</p>
+      </article>
+      
+      <!-- Host Cards Section -->
+      <section class="mt-12 mb-12">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-8 text-center">Meet Our Hosts</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {sortedHosts.map((host, index) => (
+            <div>
+              <HostCard host={host} size="large" />
+              <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                {index === 0 ? 'Dutch & English Host' : 
+                 index === 1 ? 'Spanish Host' : 
+                 'German Host'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      <!-- Close the container div to allow full-width event gallery -->
+    </div>
+    
+    <!-- Event Gallery Section -->
+    <AboutEventGallery />
+    
+    <!-- Reopen container for remaining content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <article class="prose prose-lg dark:prose-invert max-w-none">
+        <h2>Our Vision</h2>
+        
+        <p><strong>To create a world where having a great user experience is the norm and where we have an open, healthy and powerful CRO ecosystem.</strong></p>
+        
+        <h2>Our Mission</h2>
+        
+        <p>We encourage businesses to make decisions based on customer behavioral data rather than gut feelings. Through qualitative and quantitative research, experimentation, and validation practices, we empower the global CRO community with insights, tools, and motivation.</p>
+        
+        <h2>Our Story</h2>
+        
+        <p>CRO.CAFE began when Guido X Jansen, who studied Applied Cognitive Psychology in Utrecht, Netherlands, decided to share his passion for conversion optimization with the world. What started as a Dutch podcast in January 2019 has grown into a multilingual platform:</p>
+        
+        <ul>
+          <li><strong>January 2019:</strong> Launched the Dutch podcast channel with Guido X Jansen</li>
+          <li><strong>Mid-2020:</strong> Added the English channel to reach a global audience</li>
+          <li><strong>December 2020:</strong> Expanded to Spanish with host Ricardo Tayar</li>
+          <li><strong>May 2022:</strong> Added German language episodes with hosts Michael Witzenleiter and Yvonne Teufel</li>
+        </ul>
+        
+        <h2>What We Stand For</h2>
+        
+        <p>Our culture reflects the values we believe are essential for a thriving CRO ecosystem:</p>
+        
+        <ul>
+          <li><strong>Inclusivity:</strong> We welcome and reflect all members of the CRO ecosystem</li>
+          <li><strong>Diversity:</strong> We embrace different perspectives and approaches</li>
+          <li><strong>Integrity:</strong> We act with honesty and transparency in all our content</li>
+          <li><strong>Collaboration:</strong> We encourage knowledge sharing and community building</li>
+          <li><strong>Innovation:</strong> We foster creative thinking and new methodologies</li>
+          <li><strong>Growth:</strong> We support continuous learning and adaptation</li>
+        </ul>
+        
+        <h2>What You'll Find Here</h2>
+        
+        <p>Through honest conversations with industry experts, we explore:</p>
+        
+        <ul>
+          <li>Conversion rate optimization strategies and tactics</li>
+          <li>A/B testing and experimentation methodologies</li>
+          <li>User research techniques and insights</li>
+          <li>Digital marketing trends and best practices</li>
+          <li>Psychology and behavioral economics in digital experiences</li>
+          <li>Tools, technologies, and platforms for optimization</li>
+        </ul>
+        
+        <h2>Join Our Community</h2>
+        
+        <p>Whether you're a seasoned CRO professional or just starting your journey, CRO.CAFE provides the insights, tools, and motivation you need to excel in the world of conversion optimization.</p>
+        
+        <p>Listen to our episodes in your preferred language and become part of a global community of over 14,000 CRO and digital marketing specialists dedicated to creating better user experiences through data-driven decisions.</p>
+        
+        <div class="mt-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h3 class="text-xl font-semibold mb-3">Get in Touch</h3>
+          <p>Have questions, suggestions, or want to be a guest on the show?</p>
+          <p>Email us at: <a href="mailto:crocafe@gui.do" class="text-primary-600 dark:text-primary-200 hover:underline">crocafe@gui.do</a></p>
+        </div>
+      </article>
+    </div>
+    </div>
+  </main>
+</BaseLayout>

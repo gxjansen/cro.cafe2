@@ -1,0 +1,136 @@
+---
+import EpisodeImage from './EpisodeImage.astro';
+import { getEpisodeUrl, formatDuration } from '../utils/content';
+import type { Language } from '../types';
+
+export interface Props {
+  episode: any;
+  showLanguage?: boolean;
+  size?: 'small' | 'medium' | 'large';
+  variant?: 'card' | 'compact';
+}
+
+const { episode, showLanguage = true, size = 'medium', variant = 'card' } = Astro.props;
+
+// Language info mapping
+const languageInfo = {
+  en: { name: 'English', flag: '🇬🇧' },
+  nl: { name: 'Nederlands', flag: '🇳🇱' },
+  de: { name: 'Deutsch', flag: '🇩🇪' },
+  es: { name: 'Español', flag: '🇪🇸' }
+};
+
+// Size-based classes using unified card design system
+const sizeClasses = {
+  small: {
+    container: 'card card-sm card-interactive overflow-hidden',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
+    padding: 'p-4',
+    title: 'text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
+    description: 'text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2',
+    metadata: 'text-xs'
+  },
+  medium: {
+    container: 'card card-elevated card-interactive overflow-hidden',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
+    padding: 'p-6',
+    title: 'text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
+    description: 'text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3',
+    metadata: 'text-xs'
+  },
+  large: {
+    container: 'card card-lg card-high card-interactive overflow-hidden',
+    imageContainer: 'relative pb-[56.25%]', // 16:9 aspect ratio
+    padding: 'p-6',
+    title: 'text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2',
+    description: 'text-gray-600 dark:text-gray-400 mb-4 line-clamp-3',
+    metadata: 'text-sm'
+  }
+};
+
+const classes = sizeClasses[size];
+const episodeUrl = getEpisodeUrl(episode);
+---
+
+<article 
+  class={`${classes.container} episode-card`}
+  data-lang={episode.data.language}
+  aria-labelledby={`episode-${episode.id || episode.slug}-title`}
+>
+  <a 
+    href={episodeUrl} 
+    class="block"
+    aria-describedby={`episode-${episode.id || episode.slug}-meta`}
+  >
+    <div class="relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div class={classes.imageContainer}>
+        <EpisodeImage 
+          imageUrl={episode.data.imageUrl} 
+          alt={`Cover art for episode: ${episode.data.title}`}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+    </div>
+    <div class={classes.padding}>
+      <!-- Episode metadata (season/episode or badge + language) -->
+      <div class="flex items-center justify-between mb-3">
+        {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
+          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase ${showLanguage ? 
+            episode.data.language === 'en' ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' :
+            episode.data.language === 'nl' ? 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200' :
+            episode.data.language === 'de' ? 'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200' :
+            episode.data.language === 'es' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+            'bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200'
+          : 'bg-lang-100 dark:bg-lang-900 text-lang-800 dark:text-lang-200'}`}>
+            {episode.data.episode_type}
+          </span>
+        ) : (
+          <span class={`font-medium ${classes.metadata} ${showLanguage ? 
+            episode.data.language === 'en' ? 'text-blue-600 dark:text-blue-200' :
+            episode.data.language === 'nl' ? 'text-orange-600 dark:text-orange-200' :
+            episode.data.language === 'de' ? 'text-teal-600 dark:text-teal-200' :
+            episode.data.language === 'es' ? 'text-red-600 dark:text-red-200' :
+            'text-primary-600 dark:text-primary-200'
+          : 'text-lang-600 dark:text-lang-200'}`}>
+            <span class="sr-only">Season {episode.data.season}, Episode {episode.data.episode}</span>
+            <span aria-hidden="true">S{String(episode.data.season).padStart(2, '0')}E{String(episode.data.episode).padStart(2, '0')}</span>
+          </span>
+        )}
+        {showLanguage && (
+          <div class="flex items-center gap-2">
+            <span class="text-lg" aria-hidden="true">{languageInfo[episode.data.language].flag}</span>
+            <span class={`text-gray-500 dark:text-gray-400 uppercase font-medium ${classes.metadata}`}>
+              <span class="sr-only">Language: </span>{languageInfo[episode.data.language].name}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <!-- Title -->
+      <h3 id={`episode-${episode.id || episode.slug}-title`} class={classes.title}>
+        {episode.data.title}
+      </h3>
+
+      <!-- Description -->
+      <p class={classes.description}>
+        {episode.data.description}
+      </p>
+
+      <!-- Footer metadata (date + duration) -->
+      <div id={`episode-${episode.id || episode.slug}-meta`} class={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${classes.metadata}`}>
+        <time datetime={episode.data.pubDate.toISOString()}>
+          <span class="sr-only">Published on </span>
+          {episode.data.pubDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          })}
+        </time>
+        <span>
+          <span class="sr-only">Duration: </span>
+          {formatDuration(episode.data.duration)}
+        </span>
+      </div>
+    </div>
+  </a>
+</article>

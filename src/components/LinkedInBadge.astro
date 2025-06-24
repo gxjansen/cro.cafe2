@@ -1,0 +1,84 @@
+---
+import type { LinkedInSyncStatus } from '../types/linkedin';
+import { 
+  getSyncBadgeClasses,
+  getSyncStatusIcon,
+  formatSyncTimestamp,
+  type SyncStatus
+} from '../utils/linkedinDesign';
+
+export interface Props {
+  lastSync?: Date;
+  status: 'synced' | 'pending' | 'error' | 'never';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { lastSync, status, size = 'md', class: className } = Astro.props;
+
+// Map our status to design system status
+const designStatus: SyncStatus = 
+  status === 'synced' ? 'success' :
+  status === 'pending' ? 'pending' :
+  status === 'error' ? 'error' :
+  'idle'; // for 'never'
+
+// Get appropriate classes and icon
+const badgeClasses = getSyncBadgeClasses(designStatus);
+const icon = getSyncStatusIcon(designStatus);
+
+// Size-specific classes
+const sizeClasses = {
+  sm: 'text-xs px-2 py-0.5',
+  md: 'text-sm px-2.5 py-0.5',
+  lg: 'text-base px-3 py-1'
+};
+
+// Get status label
+const statusLabel = 
+  status === 'synced' ? 'Synced' :
+  status === 'pending' ? 'Syncing...' :
+  status === 'error' ? 'Sync Failed' :
+  'Never Synced';
+
+// Get tooltip text
+const tooltipText = lastSync 
+  ? `Last synced: ${formatSyncTimestamp(lastSync)}`
+  : 'LinkedIn data has not been synced';
+
+// Combine all classes
+const combinedClasses = `${badgeClasses} ${sizeClasses[size]} ${className || ''}`.trim();
+
+// Animation class for pending state
+const animationClass = status === 'pending' ? 'animate-spin' : '';
+---
+
+<span
+  class={combinedClasses}
+  title={tooltipText}
+  role="status"
+  aria-label={`LinkedIn sync status: ${statusLabel}. ${tooltipText}`}
+>
+  <span 
+    class={`inline-block mr-1 ${animationClass}`}
+    aria-hidden="true"
+  >
+    {icon}
+  </span>
+  <span>{statusLabel}</span>
+</span>
+
+<style>
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>

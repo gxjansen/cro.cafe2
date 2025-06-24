@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import type { Language } from '../types';
+
+export interface Props {
+  language?: Language;
+  limit?: number;
+}
+
+const { language = 'en', limit = 3 } = Astro.props;
+
+// Get testimonials for the specified language
+const allQuotes = await getCollection('quotes');
+const filteredQuotes = allQuotes
+  .filter(quote => quote.data.language === language && quote.data.featured)
+  .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+  .slice(0, limit);
+
+// Render content for each quote
+const quotes = await Promise.all(
+  filteredQuotes.map(async (quote) => {
+    const { Content } = await quote.render();
+    return { ...quote, Content };
+  })
+);
+
+// Translations
+const translations = {
+  en: {
+    title: 'What Listeners Say',
+    subtitle: 'Join thousands of CRO professionals who trust CRO.CAFE for insights'
+  },
+  nl: {
+    title: 'Wat Luisteraars Zeggen',
+    subtitle: 'Sluit je aan bij duizenden CRO professionals die CRO.CAFE vertrouwen voor inzichten'
+  },
+  de: {
+    title: 'Was Hörer Sagen',
+    subtitle: 'Schließen Sie sich Tausenden von CRO-Experten an, die CRO.CAFE für Einblicke vertrauen'
+  },
+  es: {
+    title: 'Lo Que Dicen Los Oyentes',
+    subtitle: 'Únete a miles de profesionales CRO que confían en CRO.CAFE para obtener insights'
+  }
+};
+
+const t = translations[language];
+---
+
+{quotes.length > 0 && (
+  <section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          {t.title}
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          {t.subtitle}
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {quotes.map((quote) => (
+          <div class="card card-elevated card-testimonial p-6 relative flex flex-col min-h-[320px] group">
+            
+            <!-- Quote mark -->
+            <div class="absolute top-4 left-4 text-6xl text-primary-200 dark:text-primary-800 font-serif leading-none opacity-50">
+              "
+            </div>
+            
+            <!-- Top spacer for balanced vertical distribution -->
+            <div class="flex-1 min-h-[1rem]"></div>
+            
+            <!-- Quote content - centered in available space -->
+            <div class="relative z-10 flex-shrink-0">
+              <div class="testimonial-content text-gray-700 dark:text-gray-300 italic text-lg leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                <quote.Content />
+              </div>
+            </div>
+            
+            <!-- Bottom spacer - takes up twice the space of top for visual balance -->
+            <div class="flex-[2] min-h-[1.5rem]"></div>
+            
+            <!-- Author info - anchored at bottom -->
+            <div class="flex items-center flex-shrink-0 pt-4">
+              {quote.data.authorImage && (
+                <Image 
+                  src={quote.data.authorImage} 
+                  alt={`${quote.data.author} - CRO.CAFE testimonial`}
+                  width={48}
+                  height={48}
+                  class="w-12 h-12 rounded-full object-cover mr-4"
+                  loading="lazy"
+                  format="webp"
+                  quality={85}
+                />
+              )}
+              <div>
+                <div class="font-semibold text-gray-900 dark:text-white">
+                  {quote.data.author}
+                </div>
+                {quote.data.company && (
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    {quote.data.company}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

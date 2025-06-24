@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SkillsTags from '../components/SkillsTags.astro';
+
+// Test data with various skill formats
+const testSkills1 = "JavaScript, TypeScript, React, Vue.js, Angular, Node.js, Express, MongoDB, PostgreSQL, GraphQL, REST APIs, Docker, Kubernetes, AWS, CI/CD";
+const testSkills2 = ["Python", "Machine Learning", "Data Science", "TensorFlow", "PyTorch"];
+const testSkills3 = "UX Design, UI Design, Figma, Sketch, Adobe XD, Prototyping, User Research, Wireframing, Design Systems, Accessibility, Responsive Design, CSS, HTML";
+---
+
+<BaseLayout title="Skills Tags Component Test">
+  <div class="container mx-auto py-12 px-4 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-8">Skills Tags Component Examples</h1>
+    
+    <div class="space-y-8">
+      <!-- Example 1: Default with comma-separated string -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Default Size - Clickable with Max Items</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Shows first 10 skills with "+X more" button</p>
+        <SkillsTags skills={testSkills1} />
+      </section>
+
+      <!-- Example 2: Small size with array input -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Small Size - Array Input</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">All skills visible, small size</p>
+        <SkillsTags skills={testSkills2} size="sm" />
+      </section>
+
+      <!-- Example 3: Large size, non-clickable -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Large Size - Non-clickable</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Display only, no interaction</p>
+        <SkillsTags skills={testSkills3} size="lg" clickable={false} maxItems={8} />
+      </section>
+
+      <!-- Example 4: Custom styling -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Custom Container Styling</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">With custom class for container</p>
+        <SkillsTags 
+          skills="React, TypeScript, Next.js, Tailwind CSS, Jest" 
+          class="justify-center" 
+        />
+      </section>
+
+      <!-- Example 5: Empty skills -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Empty Skills</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Should handle empty data gracefully</p>
+        <SkillsTags skills="" />
+      </section>
+      
+      <!-- Event listener demo -->
+      <section class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Event Listener Demo</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-2">Click on any skill to see the event in console</p>
+        <p id="skill-clicked" class="text-sm text-linkedin-600 dark:text-linkedin-400 mb-4 h-6"></p>
+        <SkillsTags skills="Click Me, Test Event, Another Skill" maxItems={20} />
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Listen for skill click events
+  document.addEventListener('skill-tag-click', ((e: CustomEvent) => {
+    const { skill } = e.detail;
+    console.log('Skill clicked:', skill);
+    
+    const display = document.getElementById('skill-clicked');
+    if (display) {
+      display.textContent = `Last clicked skill: ${skill}`;
+    }
+  }) as EventListener);
+  
+  // Listen for skills expanded events
+  document.addEventListener('skills-expanded', ((e: CustomEvent) => {
+    const { totalSkills, previousCount } = e.detail;
+    console.log(`Skills expanded: showing all ${totalSkills} skills (was showing ${previousCount})`);
+  }) as EventListener);
+</script>

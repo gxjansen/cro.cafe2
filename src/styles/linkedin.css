@@ -1,0 +1,178 @@
+/* LinkedIn Integration Design Tokens */
+
+:root {
+  /* LinkedIn Brand Colors */
+  --linkedin-primary: #0077B5;
+  --linkedin-hover: #005885;
+  --linkedin-light: #E8F4F8;
+  --linkedin-dark: #004264;
+  
+  /* Sync Status Colors */
+  --sync-success: #22c55e;
+  --sync-success-bg: #f0fdf4;
+  --sync-success-border: #bbf7d0;
+  
+  --sync-pending: #eab308;
+  --sync-pending-bg: #fefce8;
+  --sync-pending-border: #fef08a;
+  
+  --sync-error: #ef4444;
+  --sync-error-bg: #fef2f2;
+  --sync-error-border: #fecaca;
+  
+  /* LinkedIn Card Shadows */
+  --shadow-linkedin: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-linkedin-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-linkedin-active: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Transition Timings */
+  --transition-fast: 150ms;
+  --transition-base: 250ms;
+  --transition-slow: 350ms;
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Overrides */
+:root.dark {
+  /* LinkedIn Brand Colors - Dark Mode */
+  --linkedin-primary: #46A7C7;
+  --linkedin-hover: #74BDD5;
+  --linkedin-light: #001621;
+  --linkedin-dark: #A3D3E3;
+  
+  /* Sync Status Colors - Dark Mode */
+  --sync-success: #4ade80;
+  --sync-success-bg: #14532d;
+  --sync-success-border: #15803d;
+  
+  --sync-pending: #facc15;
+  --sync-pending-bg: #713f12;
+  --sync-pending-border: #854d0e;
+  
+  --sync-error: #f87171;
+  --sync-error-bg: #7f1d1d;
+  --sync-error-border: #991b1b;
+  
+  /* LinkedIn Card Shadows - Dark Mode */
+  --shadow-linkedin: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-linkedin-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-linkedin-active: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* LinkedIn Component Base Styles */
+.linkedin-card {
+  @apply bg-white dark:bg-gray-800 rounded-lg transition-all duration-250;
+  box-shadow: var(--shadow-linkedin);
+}
+
+.linkedin-card:hover {
+  box-shadow: var(--shadow-linkedin-hover);
+}
+
+.linkedin-card:active {
+  box-shadow: var(--shadow-linkedin-active);
+}
+
+/* LinkedIn Button Styles */
+.btn-linkedin {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium;
+  @apply text-white bg-linkedin-500 hover:bg-linkedin-600 active:bg-linkedin-700;
+  @apply transition-all duration-250 ease-smooth;
+  @apply focus:outline-none focus:ring-2 focus:ring-linkedin-500 focus:ring-offset-2;
+  @apply dark:focus:ring-offset-gray-900;
+}
+
+.btn-linkedin-outline {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium;
+  @apply text-linkedin-500 bg-transparent border-2 border-linkedin-500;
+  @apply hover:bg-linkedin-50 dark:hover:bg-linkedin-900;
+  @apply transition-all duration-250 ease-smooth;
+  @apply focus:outline-none focus:ring-2 focus:ring-linkedin-500 focus:ring-offset-2;
+  @apply dark:text-linkedin-200 dark:border-linkedin-200;
+  @apply dark:focus:ring-offset-gray-900;
+}
+
+/* Sync Status Indicators */
+.sync-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.sync-badge-success {
+  @apply sync-badge;
+  @apply text-sync-success-700 bg-sync-success-100;
+  @apply dark:text-sync-success-200 dark:bg-sync-success-900;
+}
+
+.sync-badge-pending {
+  @apply sync-badge;
+  @apply text-sync-pending-700 bg-sync-pending-100;
+  @apply dark:text-sync-pending-200 dark:bg-sync-pending-900;
+}
+
+.sync-badge-error {
+  @apply sync-badge;
+  @apply text-sync-error-700 bg-sync-error-100;
+  @apply dark:text-sync-error-200 dark:bg-sync-error-900;
+}
+
+/* Sync Status Cards */
+.sync-card {
+  @apply p-4 rounded-lg border-2 transition-all duration-250;
+}
+
+.sync-card-success {
+  @apply sync-card;
+  @apply bg-sync-success-50 border-sync-success-200 text-sync-success-800;
+  @apply dark:bg-sync-success-900 dark:border-sync-success-700 dark:text-sync-success-200;
+}
+
+.sync-card-pending {
+  @apply sync-card;
+  @apply bg-sync-pending-50 border-sync-pending-200 text-sync-pending-800;
+  @apply dark:bg-sync-pending-900 dark:border-sync-pending-700 dark:text-sync-pending-200;
+  @apply animate-pulse-slow;
+}
+
+.sync-card-error {
+  @apply sync-card;
+  @apply bg-sync-error-50 border-sync-error-200 text-sync-error-800;
+  @apply dark:bg-sync-error-900 dark:border-sync-error-700 dark:text-sync-error-200;
+}
+
+/* LinkedIn Profile Components */
+.linkedin-profile-link {
+  @apply inline-flex items-center gap-2 text-linkedin-500 hover:text-linkedin-600;
+  @apply dark:text-linkedin-200 dark:hover:text-linkedin-300;
+  @apply transition-colors duration-250;
+}
+
+.linkedin-profile-icon {
+  @apply w-5 h-5 text-linkedin-500;
+  @apply dark:text-linkedin-200;
+}
+
+/* LinkedIn Integration Animations */
+@keyframes sync-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-sync-pulse {
+  animation: sync-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Utility Classes for LinkedIn Integration */
+.linkedin-gradient {
+  @apply bg-gradient-to-r from-linkedin-400 to-linkedin-600;
+  @apply dark:from-linkedin-300 dark:to-linkedin-500;
+}
+
+.linkedin-text-gradient {
+  @apply bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-linkedin-500 to-linkedin-700;
+  @apply dark:from-linkedin-200 dark:to-linkedin-400;
+}

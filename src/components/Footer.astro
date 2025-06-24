@@ -1,0 +1,151 @@
+---
+import type { Language } from '../types';
+
+export interface Props {
+  language?: Language;
+  currentPath?: string;
+}
+
+const { language = 'en', currentPath = '/' } = Astro.props;
+
+// Check if we're in global mode
+const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/');
+
+// Translations for footer content
+const translations = {
+  en: {
+    footerDescription: 'The world\'s leading podcast for conversion rate optimization professionals. Expert insights in English, Dutch, German, and Spanish.',
+    languages: 'Shows',
+    subscribeOn: 'Subscribe',
+    browse: 'Browse',
+    episodes: 'Episodes',
+    guests: 'Guests',
+    hosts: 'Hosts',
+    subscribe: 'Subscribe',
+    about: 'About'
+  },
+  nl: {
+    footerDescription: 'De toonaangevende podcast voor conversion rate optimization professionals. Expert inzichten in het Nederlands.',
+    languages: 'Shows',
+    subscribeOn: 'Abonneer op',
+    browse: 'Bladeren',
+    episodes: 'Afleveringen',
+    guests: 'Gasten',
+    hosts: 'Hosts',
+    subscribe: 'Abonneren',
+    about: 'Over'
+  },
+  de: {
+    footerDescription: 'Der führende Podcast für Conversion Rate Optimization Profis. Experteneinblicke auf Deutsch.',
+    languages: 'Shows',
+    subscribeOn: 'Abonnieren',
+    browse: 'Durchsuchen',
+    episodes: 'Folgen',
+    guests: 'Gäste',
+    hosts: 'Hosts',
+    subscribe: 'Abonnieren',
+    about: 'Über'
+  },
+  es: {
+    footerDescription: 'El podcast líder para profesionales de optimización de tasa de conversión. Perspectivas de expertos en español.',
+    languages: 'Shows',
+    subscribeOn: 'Suscríbete',
+    browse: 'Explorar',
+    episodes: 'Episodios',
+    guests: 'Invitados',
+    hosts: 'Hosts',
+    subscribe: 'Suscribirse',
+    about: 'Acerca de'
+  }
+};
+
+// Get appropriate translations
+const t = isGlobalMode ? translations.en : translations[language];
+
+// For global mode, use the multi-language description
+const footerDescription = isGlobalMode 
+  ? 'The world\'s leading podcast for conversion rate optimization professionals. Expert insights in English, Dutch, German, and Spanish.'
+  : t.footerDescription;
+---
+
+<footer class="bg-gray-900 text-white">
+  <div class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center space-x-2 mb-4">
+          <img 
+            src="/images/crocafe-logo.svg" 
+            alt="CRO.CAFE Logo"
+            class="h-8 w-auto invert brightness-0 contrast-200"
+          />
+        </div>
+        <p class="text-gray-300 mb-4">
+          {footerDescription}
+        </p>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">{t.browse}</h3>
+        <ul class="space-y-2">
+          {isGlobalMode ? (
+            <>
+              <li><a href="/all/episodes/" class="text-gray-300 hover:text-white transition-colors">{t.episodes}</a></li>
+              <li><a href="/all/guests/" class="text-gray-300 hover:text-white transition-colors">{t.guests}</a></li>
+              <li><a href="/hosts/" class="text-gray-300 hover:text-white transition-colors">{t.hosts}</a></li>
+              <li><a href="/subscribe/" class="text-gray-300 hover:text-white transition-colors">{t.subscribe}</a></li>
+            </>
+          ) : (
+            <>
+              <li><a href={`/${language}/episodes/`} class="text-gray-300 hover:text-white transition-colors">{t.episodes}</a></li>
+              <li><a href={`/${language}/guests/`} class="text-gray-300 hover:text-white transition-colors">{t.guests}</a></li>
+              <li><a href="/hosts/" class="text-gray-300 hover:text-white transition-colors">{t.hosts}</a></li>
+              <li><a href={`/${language}/subscribe/`} class="text-gray-300 hover:text-white transition-colors">{t.subscribe}</a></li>
+            </>
+          )}
+        </ul>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">{t.languages}</h3>
+        <ul class="space-y-2">
+          {isGlobalMode ? (
+            <>
+              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">All Shows</a></li>
+              <li><a href="/en/" class="text-gray-300 hover:text-white transition-colors">English</a></li>
+              <li><a href="/nl/" class="text-gray-300 hover:text-white transition-colors">Nederlands</a></li>
+              <li><a href="/de/" class="text-gray-300 hover:text-white transition-colors">Deutsch</a></li>
+              <li><a href="/es/" class="text-gray-300 hover:text-white transition-colors">Español</a></li>
+            </>
+          ) : (
+            <>
+              <li><a href="/" class="text-gray-300 hover:text-white transition-colors">All Shows</a></li>
+              <li><a href="/en/" class={`transition-colors ${language === 'en' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>English</a></li>
+              <li><a href="/nl/" class={`transition-colors ${language === 'nl' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>Nederlands</a></li>
+              <li><a href="/de/" class={`transition-colors ${language === 'de' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>Deutsch</a></li>
+              <li><a href="/es/" class={`transition-colors ${language === 'es' ? 'text-primary-300' : 'text-gray-300 hover:text-white'}`}>Español</a></li>
+            </>
+          )}
+        </ul>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">{t.about}</h3>
+        <ul class="space-y-2">
+          <li><a href="/about/" class="text-gray-300 hover:text-white transition-colors">About CRO.CAFE</a></li>
+          <li><a href="https://gui.do" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors">Founder: Guido X Jansen</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-gray-800 pt-8 mt-8 text-center">
+      <p class="text-gray-400 mb-2">
+        © {new Date().getFullYear()} CRO.CAFE. All rights reserved. Built with ❤️ in 🇪🇺.
+      </p>
+      <p class="text-gray-400 text-sm">
+        We only use local storage, no cookies or tracking. <a href="/privacy-policy/" class="text-gray-300 hover:text-white underline transition-colors">Privacy Policy</a>
+      </p>
+    </div>
+    </div>
+  </div>
+</footer>

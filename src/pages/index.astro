@@ -1,0 +1,563 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import EpisodeImage from '../components/EpisodeImage.astro';
+import EpisodeCard from '../components/EpisodeCard.astro';
+import HostImage from '../components/HostImage.astro';
+import BrandLogoBar from '../components/BrandLogoBar.astro';
+import TestimonialsSection from '../components/TestimonialsSection.astro';
+import NotableGuestsSection from '../components/NotableGuestsSection.astro';
+import AnimatedCounter from '../components/AnimatedCounter.astro';
+import LiveEventsSection from '../components/LiveEventsSection.astro';
+import { getLatestEpisodesByLanguage, getLatestEpisodeFromEachLanguage, getEpisodeUrl, getHostsByLanguage, getHostImageUrl, getAllHosts, getEpisodesByLanguage, getHostUrl, getPopularEpisodeFromEachLanguage, getTotalDurationByLanguage, getTotalGuestCount, getGuestImageUrl } from '../utils/content';
+
+// Get latest episodes for all languages for the unified homepage
+const latestEpisodesByLanguage = await getLatestEpisodesByLanguage();
+const latestFromEachLanguage = await getLatestEpisodeFromEachLanguage();
+
+// Get popular episodes for all languages
+const popularFromEachLanguage = await getPopularEpisodeFromEachLanguage();
+
+// Get all episodes for each language to calculate the total
+const allEpisodesByLanguage = {
+  en: await getEpisodesByLanguage('en'),
+  nl: await getEpisodesByLanguage('nl'),
+  de: await getEpisodesByLanguage('de'),
+  es: await getEpisodesByLanguage('es')
+};
+
+// Get all guests for each language
+const { getGuestsByLanguage } = await import('../utils/content');
+const guestsByLanguage = {
+  en: await getGuestsByLanguage('en'),
+  nl: await getGuestsByLanguage('nl'),
+  de: await getGuestsByLanguage('de'),
+  es: await getGuestsByLanguage('es')
+};
+
+// Get total content hours for each language
+const totalHoursByLanguage = {
+  en: await getTotalDurationByLanguage('en'),
+  nl: await getTotalDurationByLanguage('nl'),
+  de: await getTotalDurationByLanguage('de'),
+  es: await getTotalDurationByLanguage('es')
+};
+
+// Calculate total published episodes across all languages
+const totalEpisodes = Object.values(allEpisodesByLanguage).reduce((total, episodes) => total + episodes.length, 0);
+
+// Calculate total guests across all languages
+const totalGuests = await getTotalGuestCount();
+
+// Calculate total hours across all languages
+const allLanguageTotalHours = Object.values(totalHoursByLanguage).reduce((sum, hours) => sum + hours, 0);
+const totalHoursRounded = Math.round(allLanguageTotalHours);
+
+// Get hosts and assign them to languages manually for now
+// (The automatic matching can be implemented later when episode-host relationships are clarified)
+const allHosts = await getAllHosts();
+const hostsByLanguage = {
+  en: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts English
+  nl: allHosts.filter(h => (h.data.slug || h.slug) === 'gxjansen'), // Guido hosts Dutch too  
+  de: allHosts.filter(h => ['michaelwitzenleiter', 'yvonneteufel'].includes(h.data.slug || h.slug)), // Michael & Yvonne host German
+  es: allHosts.filter(h => (h.data.slug || h.slug) === 'ricardotayar') // Ricardo hosts Spanish
+};
+
+
+const pageTitle = "CRO.CAFE - Conversion Rate Optimization Podcast";
+const pageDescription = "The leading podcast for conversion rate optimization professionals. Episodes in English, Dutch, German, and Spanish covering CRO strategies, case studies, and expert insights.";
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/"
+  hreflang={{
+    en: "https://cro.cafe/",
+    nl: "https://cro.cafe/nl/",
+    de: "https://cro.cafe/de/",
+    es: "https://cro.cafe/es/"
+  }}
+  currentPath="/"
+  isHomepage={true}
+>
+  <Header language="en" currentPath="/" />
+  
+  <main id="main-content" class="flex-1" tabindex="-1">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+            <span class="text-primary-600 dark:text-primary-300">4 Shows</span> • 4 Languages • <span class="text-primary-600 dark:text-primary-300">One Global CRO Community</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto">
+            Join <AnimatedCounter target={14000} suffix="+" /> CRO professionals getting raw, unfiltered insights from industry leaders
+          </p>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+            Conversations that go beyond the surface. Real experiments, real failures, real breakthroughs in CRO, experimentation, and digital growth.
+          </p>
+          
+          <!-- Stats -->
+          <div class="flex justify-center gap-8 mb-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalEpisodes} />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Episodes</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalGuests} suffix="+" />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Expert Guests</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                <AnimatedCounter target={totalHoursRounded} suffix="+" />
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Hours of Content</div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/all/episodes/" 
+              class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-accent-500 hover:bg-accent-600 dark:bg-accent-200 dark:text-gray-900 dark:hover:bg-accent-300 transition-colors shadow-lg"
+            >
+              Explore all episodes →
+            </a>
+            <a 
+              href="/all/guests/" 
+              class="inline-flex items-center px-8 py-3 border border-primary-600 dark:border-primary-300 text-base font-medium rounded-md text-primary-600 dark:text-primary-300 bg-transparent hover:bg-primary-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Browse Our Experts →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Logo Bar -->
+    <BrandLogoBar language="en" />
+
+    <!-- Language Selection -->
+    <section class="py-16 bg-white dark:bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+            Choose Your Language & Start Listening
+          </h2>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-2">
+            Each show features unique content from local CRO experts
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            All focused on conversion optimization, experimentation, and digital growth
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- English -->
+          <div class="card card-colored hover:border-blue-500 p-6 flex flex-col h-full">
+            <div class="text-center flex flex-col flex-grow">
+              <div class="text-4xl mb-4">🇬🇧</div>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE English</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Learn from CRO leaders worldwide</p>
+              
+              <!-- Host Information -->
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
+                {hostsByLanguage.en.length > 0 ? (
+                  <>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Hosted by</h4>
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('gxjansen')}
+                          alt="Guido X Jansen"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 px-2 py-1 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                      >
+                        Guido X Jansen
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Host information coming soon</div>
+                )}
+              </div>
+              
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.en.length} episodes • {guestsByLanguage.en.length} guests • {totalHoursByLanguage.en}h content
+              </div>
+              
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
+                Latest: {latestEpisodesByLanguage.en[0] ? (
+                  <a 
+                    href={getEpisodeUrl(latestEpisodesByLanguage.en[0], 'en')}
+                    class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                  >
+                    {latestEpisodesByLanguage.en[0].data.title}
+                  </a>
+                ) : 'No episodes yet'}
+              </div>
+              <div class="mt-auto">
+                <a 
+                  href="/en/" 
+                  class="inline-block px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 dark:text-gray-900 transition-colors font-medium"
+                >
+                  Explore English Show →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dutch -->
+          <div class="card card-colored hover:border-orange-500 p-6 flex flex-col h-full">
+            <div class="text-center flex flex-col flex-grow">
+              <div class="text-4xl mb-4">🇳🇱</div>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Nederlands</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Join the Netherlands' active CRO community</p>
+              
+              <!-- Host Information -->
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
+                {hostsByLanguage.nl.length > 0 ? (
+                  <>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Gehost door</h4>
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('gxjansen')}
+                          alt="Guido X Jansen"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/gxjansen/"
+                        class="relative z-20 px-2 py-1 hover:text-orange-600 dark:hover:text-orange-400 hover:underline transition-colors"
+                      >
+                        Guido X Jansen
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Host informatie komt binnenkort</div>
+                )}
+              </div>
+              
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.nl.length} afleveringen • {guestsByLanguage.nl.length} gasten • {totalHoursByLanguage.nl}u content
+              </div>
+              
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
+                Laatste: {latestEpisodesByLanguage.nl[0] ? (
+                  <a 
+                    href={getEpisodeUrl(latestEpisodesByLanguage.nl[0], 'nl')}
+                    class="hover:text-orange-600 dark:hover:text-orange-400 hover:underline transition-colors"
+                  >
+                    {latestEpisodesByLanguage.nl[0].data.title}
+                  </a>
+                ) : 'Nog geen afleveringen'}
+              </div>
+              <div class="mt-auto">
+                <a 
+                  href="/nl/" 
+                  class="inline-block px-6 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 dark:bg-orange-400 dark:hover:bg-orange-500 dark:text-gray-900 transition-colors font-medium"
+                >
+                  Ontdek Nederlandse Show →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- German -->
+          <div class="card card-colored hover:border-teal-500 p-6 flex flex-col h-full">
+            <div class="text-center flex flex-col flex-grow">
+              <div class="text-4xl mb-4">🇩🇪</div>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Deutsch</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Master systematic optimization approaches</p>
+              
+              <!-- Host Information -->
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
+                {hostsByLanguage.de.length > 0 ? (
+                  <>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Moderiert von</h4>
+                    <div class="flex items-center justify-center gap-4 mb-2">
+                      <a 
+                        href="/hosts/michaelwitzenleiter/"
+                        class="inline-block relative z-20 hover:opacity-90 transition-opacity"
+                      >
+                        <img 
+                          src={getHostImageUrl('michaelwitzenleiter')}
+                          alt="Michael Witzenleiter"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/yvonneteufel/"
+                        class="inline-block relative z-20 hover:opacity-90 transition-opacity"
+                      >
+                        <img 
+                          src={getHostImageUrl('yvonneteufel')}
+                          alt="Yvonne Teufel"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                    </div>
+                    <div class="text-center">
+                      <a 
+                        href="/hosts/michaelwitzenleiter/"
+                        class="inline-block relative z-20 px-2 py-1 -m-1 hover:text-teal-600 dark:hover:text-teal-400 hover:underline transition-colors"
+                      >
+                        Michael Witzenleiter
+                      </a>
+                      <span class="text-gray-600 dark:text-gray-400 mx-2">&amp;</span>
+                      <a 
+                        href="/hosts/yvonneteufel/"
+                        class="inline-block relative z-20 px-2 py-1 -m-1 hover:text-teal-600 dark:hover:text-teal-400 hover:underline transition-colors"
+                      >
+                        Yvonne Teufel
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Host-Informationen folgen in Kürze</div>
+                )}
+              </div>
+              
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.de.length} Folgen • {guestsByLanguage.de.length} Gäste • {totalHoursByLanguage.de}h Inhalt
+              </div>
+              
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
+                Neueste: {latestEpisodesByLanguage.de[0] ? (
+                  <a 
+                    href={getEpisodeUrl(latestEpisodesByLanguage.de[0], 'de')}
+                    class="hover:text-teal-600 dark:hover:text-teal-400 hover:underline transition-colors"
+                  >
+                    {latestEpisodesByLanguage.de[0].data.title}
+                  </a>
+                ) : 'Noch keine Folgen'}
+              </div>
+              <div class="mt-auto">
+                <a 
+                  href="/de/" 
+                  class="inline-block px-6 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 dark:bg-teal-400 dark:hover:bg-teal-500 dark:text-gray-900 transition-colors font-medium"
+                >
+                  Deutsche Show Entdecken →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spanish -->
+          <div class="card card-colored hover:border-red-500 p-6 flex flex-col h-full">
+            <div class="text-center flex flex-col flex-grow">
+              <div class="text-4xl mb-4">🇪🇸</div>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">CRO.CAFE Español</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 h-12">Discover growth strategies across Latin markets</p>
+              
+              <!-- Host Information -->
+              <div class="bg-white/50 dark:bg-gray-600/30 rounded-lg p-3 mb-4 mt-5 h-[190px] flex flex-col justify-center relative z-10">
+                {hostsByLanguage.es.length > 0 ? (
+                  <>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 text-center">Presentado por</h4>
+                    <div class="flex flex-col items-center">
+                      <a 
+                        href="/hosts/ricardotayar/"
+                        class="relative z-20 hover:opacity-90 transition-opacity mb-2"
+                      >
+                        <img 
+                          src={getHostImageUrl('ricardotayar')}
+                          alt="Ricardo Tayar"
+                          class="w-16 h-16 rounded-full object-cover"
+                        />
+                      </a>
+                      <a 
+                        href="/hosts/ricardotayar/"
+                        class="relative z-20 px-2 py-1 hover:text-red-600 dark:hover:text-red-400 hover:underline transition-colors"
+                      >
+                        Ricardo Tayar
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div class="text-sm text-gray-500 dark:text-gray-400 text-center">Información del presentador próximamente</div>
+                )}
+              </div>
+              
+              {/* Episode and Guest Stats */}
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {allEpisodesByLanguage.es.length} episodios • {guestsByLanguage.es.length} invitados • {totalHoursByLanguage.es}h contenido
+              </div>
+              
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
+                Último: {latestEpisodesByLanguage.es[0] ? (
+                  <a 
+                    href={getEpisodeUrl(latestEpisodesByLanguage.es[0], 'es')}
+                    class="hover:text-red-600 dark:hover:text-red-400 hover:underline transition-colors"
+                  >
+                    {latestEpisodesByLanguage.es[0].data.title}
+                  </a>
+                ) : 'Aún no hay episodios'}
+              </div>
+              <div class="mt-auto">
+                <a 
+                  href="/es/" 
+                  class="inline-block px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-500 dark:text-gray-900 transition-colors font-medium"
+                >
+                  Explorar Show en Español →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest Episodes from Each Language -->
+    {latestFromEachLanguage.length > 0 && (
+      <section class="py-16 bg-surface-alt">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              Latest Episodes
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              The newest episode from each language
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {latestFromEachLanguage.map((episode) => (
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={true}
+                size="medium"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Recently Popular Episodes from Each Language -->
+    {popularFromEachLanguage.length > 0 && (
+      <section class="py-16 bg-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+              Recently Popular Episodes
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+              The most popular episodes from each language based on episode downloads
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularFromEachLanguage.map((episode) => (
+              <EpisodeCard 
+                episode={episode} 
+                showLanguage={true}
+                size="medium"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Notable Guests -->
+    <NotableGuestsSection language="en" limit={6} />
+
+    <!-- Testimonials -->
+    <TestimonialsSection language="en" limit={3} />
+
+    <!-- Live Events Section -->
+    <LiveEventsSection language={null} />
+
+    <!-- Newsletter Signup -->
+    <!--
+    <section class="py-16 bg-primary-600 dark:bg-primary-700">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+          Stay Updated
+        </h2>
+        <p class="text-xl text-primary-100 mb-8">
+          Get notified about new episodes and exclusive CRO insights
+        </p>
+        <form class="max-w-md mx-auto flex gap-4">
+          <input 
+            type="email" 
+            placeholder="Your email address"
+            class="flex-1 px-4 py-3 rounded-md border-0 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-accent-500"
+            required
+          />
+          <button 
+            type="submit"
+            class="px-6 py-3 bg-accent-500 text-white font-medium rounded-md hover:bg-accent-600 transition-colors"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+    -->
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Fix for card hover interference with links */
+  .card-colored {
+    /* Disable transform on the card to prevent click issues */
+    transform: none !important;
+  }
+  
+  .card-colored:hover {
+    /* Use only shadow for hover effect, no transform */
+    transform: none !important;
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -4px rgba(0, 0, 0, 0.1),
+      0 20px 25px -5px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  /* Ensure links in cards are always clickable */
+  .card-colored a {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+  }
+  
+  /* Prevent any parent from blocking link clicks */
+  .card-colored * {
+    pointer-events: auto;
+  }
+</style>

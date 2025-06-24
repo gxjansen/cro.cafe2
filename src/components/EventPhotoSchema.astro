@@ -1,0 +1,31 @@
+---
+export interface Props {
+  images: Array<{
+    src: string;
+    alt: string;
+    event?: string;
+    date?: string;
+  }>;
+  eventName?: string;
+  eventDescription?: string;
+}
+
+const { images, eventName, eventDescription } = Astro.props;
+
+// Generate structured data for event photos
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "ImageGallery",
+  "name": eventName || "CRO.CAFE Live Event Photos",
+  "description": eventDescription || "Photos from CRO.CAFE live podcast recordings at industry events",
+  "image": images.map(img => ({
+    "@type": "ImageObject",
+    "contentUrl": new URL(img.src, Astro.url).toString(),
+    "caption": img.alt,
+    "name": img.event || img.alt,
+    "datePublished": img.date
+  }))
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaData)} />

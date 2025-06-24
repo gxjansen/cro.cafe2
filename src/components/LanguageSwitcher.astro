@@ -1,0 +1,558 @@
+---
+import type { Language } from '../types';
+import { getLanguageCounts } from '../utils/content';
+
+export interface Props {
+  currentLanguage?: Language;
+  currentPath: string;
+}
+
+const { currentLanguage, currentPath } = Astro.props;
+
+// Get counts for all languages
+const counts = await getLanguageCounts();
+
+const languages = [
+  { 
+    code: 'global' as 'global', 
+    name: 'All Languages', 
+    nativeName: 'All Languages', 
+    flag: '🌍',
+    episodes: counts.global.episodes,
+    guests: counts.global.guests
+  },
+  { 
+    code: 'en' as Language, 
+    name: 'English', 
+    nativeName: 'English', 
+    flag: '🇬🇧',
+    episodes: counts.en.episodes,
+    guests: counts.en.guests
+  },
+  { 
+    code: 'nl' as Language, 
+    name: 'Dutch', 
+    nativeName: 'Nederlands', 
+    flag: '🇳🇱',
+    episodes: counts.nl.episodes,
+    guests: counts.nl.guests
+  },
+  { 
+    code: 'de' as Language, 
+    name: 'German', 
+    nativeName: 'Deutsch', 
+    flag: '🇩🇪',
+    episodes: counts.de.episodes,
+    guests: counts.de.guests
+  },
+  { 
+    code: 'es' as Language, 
+    name: 'Spanish', 
+    nativeName: 'Español', 
+    flag: '🇪🇸',
+    episodes: counts.es.episodes,
+    guests: counts.es.guests
+  },
+];
+
+// Check if we're on a global/all-languages page (root page, /all/ pages, /subscribe, /search/, /guests/, and /hosts/)
+const isGlobal = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/subscribe' || currentPath === '/subscribe/' || currentPath === '/search/' || currentPath.startsWith('/guests/') || currentPath.startsWith('/hosts/');
+const currentLang = isGlobal ? languages[0] : languages.find(lang => lang.code === currentLanguage) || languages[1];
+
+// Generate language URLs - try to preserve current path structure
+const getLanguageUrl = (langCode: Language | 'global') => {
+  // Remove current language prefix from path to get the base path
+  let basePath = currentPath;
+  
+  // Remove language prefix if it exists
+  const langPrefixes = ['/en', '/nl', '/de', '/es'];
+  for (const prefix of langPrefixes) {
+    if (basePath.startsWith(prefix + '/') || basePath === prefix) {
+      basePath = basePath.substring(prefix.length);
+      break;
+    }
+  }
+  
+  // Ensure basePath starts with /
+  if (!basePath.startsWith('/')) {
+    basePath = '/' + basePath;
+  }
+  
+  // For global option
+  if (langCode === 'global') {
+    // If on episodes or guests pages, go to all-languages version
+    if (basePath.includes('/episodes')) {
+      return '/all/episodes/';
+    }
+    if (basePath.includes('/guests')) {
+      return '/all/guests/';
+    }
+    if (basePath.includes('/subscribe')) {
+      return '/subscribe/';
+    }
+    if (basePath.includes('/search')) {
+      return '/search/';
+    }
+    // Otherwise go to homepage
+    return '/';
+  }
+  
+  // Handle global pages - they don't have language versions
+  if (basePath.includes('/hosts') || basePath.includes('/color-test')) {
+    // Always return to the global (all languages) homepage when switching languages from a global page
+    if (langCode === 'global') {
+      return basePath; // Stay on the same page
+    }
+    // For language-specific selections from global pages, go to that language's homepage
+    return langCode === 'en' ? '/en/' : `/${langCode}/`;
+  }
+  
+  // Handle episode, guest, subscribe, and search pages (both detail and listing pages)
+  if (basePath.includes('/episodes') || basePath.includes('/guests') || basePath.includes('/subscribe') || basePath.includes('/search')) {
+    // For detail pages, redirect to the listing page for that language
+    if (langCode === 'en') {
+      if (basePath.includes('/episodes')) return '/en/episodes/';
+      if (basePath.includes('/guests')) return '/en/guests/';
+      if (basePath.includes('/subscribe')) return '/en/subscribe/';
+      if (basePath.includes('/search')) return '/en/search/';
+    }
+    if (basePath.includes('/episodes')) return `/${langCode}/episodes/`;
+    if (basePath.includes('/guests')) return `/${langCode}/guests/`;
+    if (basePath.includes('/subscribe')) return `/${langCode}/subscribe/`;
+    if (basePath.includes('/search')) return `/${langCode}/search/`;
+  }
+  
+  // For English, go to the dedicated English homepage or pages
+  if (langCode === 'en') {
+    return basePath === '/' ? '/en/' : `/en${basePath}`;
+  }
+  
+  // For other languages, add the language prefix
+  return `/${langCode}${basePath === '/' ? '/' : basePath}`;
+};
+---
+
+<div 
+  class="relative inline-block text-left language-switcher-container" 
+  style="z-index: 60;"
+  transition:name="language-switcher"
+  transition:animate="none"
+>
+  <button
+    type="button"
+    class="language-switcher-button inline-flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 sm:px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800 min-w-0 max-w-[120px] sm:max-w-none"
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-label={`Choose language. Current: ${currentLang.nativeName}`}
+    data-language-button
+  >
+    <span class="mr-1 sm:mr-2" aria-hidden="true">{currentLang.flag}</span>
+    <span class="hidden sm:inline truncate">{currentLang.nativeName}</span>
+    <span class="sm:hidden text-xs">{currentLang.code.toUpperCase()}</span>
+    <svg class="ml-1 sm:ml-2 -mr-1 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <div
+    class="language-switcher-menu hidden absolute right-0 z-[100] mt-2 w-60 sm:w-64 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-w-[calc(100vw-2rem)]"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="language-switcher-button"
+    data-language-menu
+    style="min-width: 220px;"
+  >
+    <div class="py-1" role="none">
+      {languages.map((lang) => {
+        const isCurrent = (lang.code === 'global' && isGlobal) || (lang.code === currentLanguage && !isGlobal);
+        return (
+          <a
+            href={getLanguageUrl(lang.code)}
+            class={`flex items-center px-4 py-2 text-sm transition-colors ${
+              isCurrent
+                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700'
+            }`}
+            role="menuitem"
+            aria-current={isCurrent ? 'page' : undefined}
+          >
+            <span class="mr-3 text-lg" aria-hidden="true">{lang.flag}</span>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-medium">{lang.nativeName}</span>
+                {isCurrent && (
+                  <svg class="ml-2 h-4 w-4 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" aria-label="Currently selected">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                  </svg>
+                )}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {lang.episodes} episodes · {lang.guests} guests
+              </div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Use a more robust event delegation approach that survives navigation
+  class LanguageSwitcherManager {
+    constructor() {
+      this.isInitialized = false;
+      this.debug = true; // Enable debug logging
+      this.init();
+    }
+
+    log(message, type = 'info') {
+      if (this.debug) {
+        console.log(`🌐 LanguageSwitcher [${type}]: ${message}`);
+      }
+    }
+
+    init() {
+      if (this.isInitialized) {
+        this.log('Already initialized, skipping');
+        return;
+      }
+
+      this.log('Initializing LanguageSwitcherManager');
+      this.isInitialized = true;
+
+      // Use event delegation on document for maximum reliability
+      this.setupEventDelegation();
+
+      // Set up observers for DOM changes
+      this.setupMutationObserver();
+
+      // Listen for navigation events
+      this.setupNavigationListeners();
+
+      // Fix z-index issues after View Transitions
+      this.fixZIndexAfterTransition();
+
+      this.log('Initialization complete');
+    }
+
+    setupEventDelegation() {
+      // Remove any existing delegated handlers
+      if (window.__languageSwitcherDelegateHandler) {
+        document.removeEventListener('click', window.__languageSwitcherDelegateHandler, true);
+        document.removeEventListener('touchstart', window.__languageSwitcherDelegateHandler, true);
+      }
+
+      // Create the delegated click handler
+      const delegateHandler = (event) => {
+        // Check if click is on the language button
+        const button = event.target.closest('[data-language-button]');
+        if (button) {
+          this.log('Language button clicked via delegation');
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation(); // Stop all propagation
+          this.toggleDropdown(button);
+          return;
+        }
+
+        // Check if click is on a menu item
+        const menuItem = event.target.closest('[data-language-menu] a[role="menuitem"]');
+        if (menuItem) {
+          this.log('Menu item clicked, allowing navigation');
+          // Let the link work normally, but close the menu
+          const menu = menuItem.closest('[data-language-menu]');
+          if (menu) {
+            this.closeDropdown(menu);
+          }
+          return;
+        }
+
+        // Close dropdown if clicking outside
+        const isInsideDropdown = event.target.closest('.language-switcher-container');
+        if (!isInsideDropdown) {
+          this.closeAllDropdowns();
+        }
+      };
+
+      // Add the handler with capture phase to catch events early
+      // Use both click and touchstart for better mobile support
+      document.addEventListener('click', delegateHandler, true);
+      document.addEventListener('touchstart', delegateHandler, { capture: true, passive: false });
+      window.__languageSwitcherDelegateHandler = delegateHandler;
+
+      this.log('Event delegation set up');
+    }
+
+    toggleDropdown(button) {
+      const container = button.closest('.language-switcher-container');
+      if (!container) {
+        this.log('Container not found', 'error');
+        return;
+      }
+
+      const menu = container.querySelector('[data-language-menu]');
+      if (!menu) {
+        this.log('Menu not found', 'error');
+        return;
+      }
+
+      const isHidden = menu.classList.contains('hidden');
+      
+      if (isHidden) {
+        // Close any other open dropdowns first
+        this.closeAllDropdowns();
+        
+        // Open this dropdown
+        menu.classList.remove('hidden');
+        button.setAttribute('aria-expanded', 'true');
+        
+        // Force high z-index to ensure visibility above audio player and view transitions
+        menu.style.zIndex = '9999';
+        container.style.zIndex = '9998';
+        
+        // Add temporary class to boost z-index during transitions
+        container.classList.add('dropdown-active');
+        
+        this.log('Dropdown opened');
+        
+        // Set up keyboard navigation
+        this.setupKeyboardNavigation(container, button, menu);
+      } else {
+        this.closeDropdown(menu, button);
+      }
+    }
+
+    closeDropdown(menu, button = null) {
+      menu.classList.add('hidden');
+      
+      const container = menu.closest('.language-switcher-container');
+      if (container) {
+        container.classList.remove('dropdown-active');
+      }
+      
+      if (!button) {
+        button = container?.querySelector('[data-language-button]');
+      }
+      
+      if (button) {
+        button.setAttribute('aria-expanded', 'false');
+      }
+      
+      this.log('Dropdown closed');
+    }
+
+    closeAllDropdowns() {
+      const menus = document.querySelectorAll('[data-language-menu]:not(.hidden)');
+      menus.forEach(menu => this.closeDropdown(menu));
+    }
+
+    setupKeyboardNavigation(container, button, menu) {
+      const keyHandler = (event) => {
+        const menuItems = Array.from(menu.querySelectorAll('a[role="menuitem"]'));
+        const currentIndex = menuItems.findIndex(item => item === document.activeElement);
+
+        switch (event.key) {
+          case 'Escape':
+            event.preventDefault();
+            this.closeDropdown(menu, button);
+            button.focus();
+            break;
+          
+          case 'ArrowDown':
+            event.preventDefault();
+            if (document.activeElement === button) {
+              menuItems[0]?.focus();
+            } else {
+              const nextIndex = (currentIndex + 1) % menuItems.length;
+              menuItems[nextIndex]?.focus();
+            }
+            break;
+          
+          case 'ArrowUp':
+            event.preventDefault();
+            if (currentIndex === -1) {
+              menuItems[menuItems.length - 1]?.focus();
+            } else {
+              const prevIndex = currentIndex === 0 ? menuItems.length - 1 : currentIndex - 1;
+              menuItems[prevIndex]?.focus();
+            }
+            break;
+          
+          case 'Home':
+            event.preventDefault();
+            menuItems[0]?.focus();
+            break;
+          
+          case 'End':
+            event.preventDefault();
+            menuItems[menuItems.length - 1]?.focus();
+            break;
+        }
+      };
+
+      // Add keyboard handler to container
+      container.addEventListener('keydown', keyHandler);
+
+      // Remove handler when menu closes
+      const observer = new MutationObserver(() => {
+        if (menu.classList.contains('hidden')) {
+          container.removeEventListener('keydown', keyHandler);
+          observer.disconnect();
+        }
+      });
+
+      observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    setupMutationObserver() {
+      // Watch for new language switchers being added to the DOM
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type === 'childList') {
+            for (const node of mutation.addedNodes) {
+              if (node.nodeType === 1 && node.querySelector?.('[data-language-button]')) {
+                this.log('New language switcher detected in DOM');
+                // Event delegation will handle it automatically
+              }
+            }
+          }
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      this.log('Mutation observer set up');
+    }
+
+    setupNavigationListeners() {
+      // Listen for Astro navigation events
+      document.addEventListener('astro:page-load', () => {
+        this.log('Page load event detected');
+        // Re-fix z-index after page load
+        this.fixZIndexAfterTransition();
+      });
+
+      document.addEventListener('astro:after-swap', () => {
+        this.log('After swap event detected');
+        // Close any open dropdowns after navigation
+        this.closeAllDropdowns();
+        // Fix z-index issues
+        this.fixZIndexAfterTransition();
+      });
+
+      // Listen for View Transitions API events
+      if ('startViewTransition' in document) {
+        document.addEventListener('pageswap', () => {
+          this.log('Page swap detected (View Transitions)');
+          this.closeAllDropdowns();
+        });
+
+        document.addEventListener('pagereveal', () => {
+          this.log('Page reveal detected (View Transitions)');
+          // Fix z-index after transition completes
+          requestAnimationFrame(() => {
+            this.fixZIndexAfterTransition();
+          });
+        });
+      }
+    }
+
+    fixZIndexAfterTransition() {
+      // Ensure language switcher maintains proper z-index after view transitions
+      const containers = document.querySelectorAll('.language-switcher-container');
+      containers.forEach(container => {
+        // Force the container to be above the audio player
+        container.style.position = 'relative';
+        container.style.zIndex = '60';
+        
+        // Ensure button is clickable
+        const button = container.querySelector('[data-language-button]');
+        if (button) {
+          button.style.position = 'relative';
+          button.style.zIndex = '61';
+          button.style.pointerEvents = 'auto';
+        }
+        
+        // Ensure menu will be above everything when opened
+        const menu = container.querySelector('[data-language-menu]');
+        if (menu) {
+          menu.style.position = 'absolute';
+          menu.style.zIndex = '100';
+          menu.style.pointerEvents = 'auto';
+        }
+      });
+      
+      this.log('Fixed z-index after transition');
+    }
+  }
+
+  // Initialize the manager once
+  if (!window.__languageSwitcherManager) {
+    window.__languageSwitcherManager = new LanguageSwitcherManager();
+  }
+</script>
+
+<style>
+  /* Ensure dropdown is always clickable */
+  .language-switcher-container {
+    position: relative;
+    z-index: 60 !important;
+    isolation: isolate; /* Create new stacking context */
+  }
+
+  /* Boost z-index when dropdown is active */
+  .language-switcher-container.dropdown-active {
+    z-index: 9998 !important;
+  }
+
+  .language-switcher-button {
+    position: relative;
+    z-index: 61 !important;
+    cursor: pointer;
+    pointer-events: auto !important;
+    /* Ensure button is clickable even during transitions */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .language-switcher-menu {
+    position: absolute;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+    /* Ensure menu is above view transition layer */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* When dropdown is active, ensure it's above everything */
+  .dropdown-active .language-switcher-menu {
+    z-index: 9999 !important;
+  }
+
+  /* Prevent any interference from other elements */
+  .language-switcher-container * {
+    pointer-events: auto !important;
+  }
+
+  /* Fix for view transitions */
+  :global(::view-transition-group(language-switcher)) {
+    z-index: 9999 !important;
+  }
+
+  :global(::view-transition-old(language-switcher)),
+  :global(::view-transition-new(language-switcher)) {
+    mix-blend-mode: normal;
+    z-index: 9999 !important;
+  }
+
+  /* Ensure proper stacking during transitions */
+  @supports (view-transition-name: language-switcher) {
+    .language-switcher-container {
+      view-transition-name: language-switcher;
+    }
+  }
+</style>

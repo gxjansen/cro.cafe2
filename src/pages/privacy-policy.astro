@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const pageTitle = "Privacy Policy - CRO.CAFE";
+const pageDescription = "Privacy Policy for CRO.CAFE - Learn how we collect, use, and protect your personal information.";
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/privacy-policy/"
+  currentPath="/privacy-policy/"
+>
+  <Header language="en" currentPath="/privacy-policy/" />
+  
+  <main class="flex-1">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article class="prose prose-lg dark:prose-invert max-w-none">
+        <h1>Privacy Policy for CRO.CAFE</h1>
+        
+        <p><strong>The short version:</strong> CRO.CAFE is a privacy-friendly podcast website. We don't use cookies, don't track you, and don't collect personal information beyond what you explicitly provide. We only store your theme preference locally on your device.</p>
+        
+        <p><em>Yes, a CRO website without tracking or A/B tests. We measure our success in happy listeners, not conversion rates. 😉</em></p>
+        
+        <p>This privacy policy explains our minimal data practices in detail.</p>
+        
+        <h2>Information You Provide</h2>
+        
+        <p>Currently, we don't have any forms on our website. In the future, we may add forms for:</p>
+        
+        <ul>
+          <li>Newsletter subscriptions</li>
+          <li>Event registrations</li>
+          <li>Sponsor applications</li>
+        </ul>
+        
+        <p>When we do, we'll only collect the information you explicitly type into these forms (like your name and email). We won't use any hidden tracking or collect data beyond what you provide. We'll update this policy with specific details when these features are added.</p>
+        
+        <h2>Your Privacy Rights</h2>
+        
+        <p>Currently, CRO.CAFE doesn't collect or store personal information beyond any future form submissions. Your theme preference is stored only on your device and can be changed or cleared through your browser settings at any time.</p>
+        
+        <p>If you submit information through future forms, you'll have the right to:</p>
+        
+        <ul>
+          <li>Access the information you've provided</li>
+          <li>Request corrections or deletion</li>
+          <li>Unsubscribe from any communications</li>
+        </ul>
+        
+        <p>If you have questions about your privacy rights, please contact us.</p>
+        
+        <h2>Server Logs</h2>
+        
+        <p>Our hosting provider (Netlify) automatically collects standard server logs for security and performance monitoring:</p>
+        
+        <ul>
+          <li>IP addresses (anonymized after 30 days)</li>
+          <li>Browser and operating system info</li>
+          <li>Pages visited and referring sites</li>
+          <li>Date and time of visits</li>
+        </ul>
+        
+        <p>These logs are retained for 30 days and are not used for tracking or marketing purposes. We don't have access to individual visitor data.</p>
+        
+        <h2>Cookies and Local Storage</h2>
+        
+        <p>CRO.CAFE does not use cookies. We use browser localStorage to:</p>
+        
+        <ul>
+          <li>Store your theme preference (light or dark mode)</li>
+        </ul>
+        
+        <p>This information is stored locally on your device and is not transmitted to our servers. You can clear localStorage data at any time through your browser settings.</p>
+        
+        <h2>Third-Party Services</h2>
+        
+        <p>We embed podcast players from Transistor.fm to play episodes. When you interact with these players, Transistor may collect playback statistics. Please refer to <a href="https://transistor.fm/privacy/" target="_blank" rel="noopener noreferrer" class="underline">Transistor's privacy policy</a> for details.</p>
+        
+        <p>We don't use any analytics, advertising networks, or social media tracking pixels.</p>
+        
+        <h2>Children's Privacy</h2>
+        
+        <p>CRO.CAFE is intended for professional audiences. We don't knowingly collect information from children under 16. Since we don't collect personal data from any visitors, children are protected by default.</p>
+        
+        <h2>External Links</h2>
+        
+        <p>Our website contains links to external sites (guest websites, podcast platforms, etc.). We're not responsible for the privacy practices of these external sites.</p>
+        
+        <h2>Data Security</h2>
+        
+        <p>Since we don't collect personal data, there's minimal security risk. Our website is served over HTTPS to ensure secure connections, and our hosting provider (Netlify) implements industry-standard security measures.</p>
+        
+        <h2>Changes to This Policy</h2>
+        
+        <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date. Since we don't collect email addresses, we can't notify you directly of changes.</p>
+        
+        <h2>Contact Us</h2>
+        
+        <p>If you have questions about this privacy policy or your privacy rights, please contact us through:</p>
+        
+        <ul>
+          <li>Website: <a href="https://www.cro.cafe" class="underline">www.cro.cafe</a></li>
+          <li>Email: <a href="mailto:crocafe@gui.do" class="underline">crocafe@gui.do</a></li>
+        </ul>
+        
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-8">Last updated: {new Date().toLocaleDateString()}</p>
+      </article>
+    </div>
+  </main>
+</BaseLayout>

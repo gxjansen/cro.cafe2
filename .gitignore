@@ -1,0 +1,174 @@
+# Claude-Flow and SPARC Agent Files - EXCLUDE ALL
+.claude/
+claude-flow
+memory/
+memory-bank.md
+coordination/
+coordination.md
+.roo/
+.roomodes
+phase_*.md
+architecture/
+CLAUDE.md
+
+# Development Documentation - Keep Only Implementation Docs
+devdocs/
+project/implementation-plan.md
+project/0*-*.md
+backup/
+project/
+
+# Astro Website Files - INCLUDE THESE
+# (Commented out means they WILL be tracked)
+# src/
+# public/
+# astro.config.mjs
+# package.json
+# tsconfig.json
+# tailwind.config.mjs
+
+# Standard Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+.grunt
+lib-cov
+coverage
+.nyc_output
+.cache
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+.env.local
+.env.github
+
+# parcel-bundler cache (https://parceljs.org/)
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Astro build output
+dist/
+
+# Vite build output
+dist/
+
+# Gatsby files
+.cache/
+
+# Vue.js
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+logs/
+
+# Testing
+coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+
+# Astro specific
+.astro/
+
+# Build tools
+.rollup.cache/
+.turbo/
+
+# Test folders and documentation
+test-content-output/
+test-crud-output/
+tests/
+docs/
+
+# Misc
+*.tgz
+*.tar.gz
+missing-guest-images.md
+
+# Local Netlify folder
+.netlify
+
+# Additional local files not in GitHub repo
+server.pid
+dev-server.log
+test-*.html
+test-jitter-fix.html
+test-audio-flow.html

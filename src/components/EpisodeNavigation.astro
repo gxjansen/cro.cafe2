@@ -1,0 +1,82 @@
+---
+import { getEpisodesByLanguage, getEpisodeUrl } from '../utils/content';
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../types';
+
+export interface Props {
+  currentEpisode: CollectionEntry<'episodes'>;
+  language: Language;
+}
+
+const { currentEpisode, language } = Astro.props;
+
+// Get all episodes for this language
+const allEpisodes = await getEpisodesByLanguage(language);
+
+// Find current episode index
+const currentIndex = allEpisodes.findIndex(ep => 
+  (ep.data.slug === currentEpisode.data.slug || ep.slug === currentEpisode.slug)
+);
+
+// Get previous and next episodes
+const previousEpisode = currentIndex < allEpisodes.length - 1 ? allEpisodes[currentIndex + 1] : null;
+const nextEpisode = currentIndex > 0 ? allEpisodes[currentIndex - 1] : null;
+
+// Translations
+const translations = {
+  en: {
+    previous: 'Previous Episode',
+    next: 'Next Episode'
+  },
+  nl: {
+    previous: 'Vorige Aflevering',
+    next: 'Volgende Aflevering'
+  },
+  de: {
+    previous: 'Vorherige Folge',
+    next: 'Nächste Folge'
+  },
+  es: {
+    previous: 'Episodio Anterior',
+    next: 'Siguiente Episodio'
+  }
+};
+
+const t = translations[language];
+---
+
+{(previousEpisode || nextEpisode) && (
+  <nav class="flex justify-between items-center py-8 border-t border-gray-200 dark:border-gray-700" aria-label="Episode navigation">
+    <div class="flex-1">
+      {previousEpisode && (
+        <a 
+          href={getEpisodeUrl(previousEpisode)}
+          class="flex flex-col group"
+        >
+          <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            ← {t.previous}
+          </span>
+          <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
+            {previousEpisode.data.title}
+          </span>
+        </a>
+      )}
+    </div>
+    
+    <div class="flex-1 text-right">
+      {nextEpisode && (
+        <a 
+          href={getEpisodeUrl(nextEpisode)}
+          class="flex flex-col group text-right"
+        >
+          <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            {t.next} →
+          </span>
+          <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
+            {nextEpisode.data.title}
+          </span>
+        </a>
+      )}
+    </div>
+  </nav>
+)}

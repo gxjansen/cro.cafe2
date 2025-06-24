@@ -1,0 +1,162 @@
+---
+import type { Language } from '../types';
+
+export interface Props {
+  language: Language;
+  currentPath: string;
+  items?: { label: string; href: string }[];
+  episodeTitle?: string;
+  guestName?: string;
+  hostName?: string;
+}
+
+const { language, currentPath, items, episodeTitle, guestName, hostName } = Astro.props;
+
+// Generate breadcrumb items based on current path if not provided
+const generateBreadcrumbs = (path: string, lang: Language) => {
+  const breadcrumbs = [];
+  
+  // Localized section names
+  const sectionNames = {
+    en: {
+      episodes: 'Episodes',
+      guests: 'Guests', 
+      subscribe: 'Subscribe'
+    },
+    nl: {
+      episodes: 'Afleveringen',
+      guests: 'Gasten',
+      subscribe: 'Abonneren'
+    },
+    de: {
+      episodes: 'Folgen',
+      guests: 'Gäste', 
+      subscribe: 'Abonnieren'
+    },
+    es: {
+      episodes: 'Episodios',
+      guests: 'Invitados',
+      subscribe: 'Suscribirse'
+    }
+  };
+  
+  // Determine if we're in global or language-specific context
+  const isGlobalContext = path === '/' || path.startsWith('/all/') || (path === '/episodes' || path === '/guests' || path === '/subscribe');
+  const isEnglishContext = path.startsWith('/en/') || path === '/en';
+  
+  // Always start with "All Languages" as root, except for the international homepage
+  if (!isGlobalContext || path.startsWith('/all/')) {
+    breadcrumbs.push({ label: '🌍 All Languages', href: '/' });
+  }
+  
+  // Language-specific breadcrumb
+  if (isGlobalContext && path.startsWith('/all/')) {
+    // We're on an all-languages page, no language-specific breadcrumb needed
+  } else if (isEnglishContext) {
+    breadcrumbs.push({ label: '🇬🇧 English', href: '/en/' });
+  } else if (!isGlobalContext) {
+    const langInfo = { 
+      nl: { name: 'Nederlands', flag: '🇳🇱' }, 
+      de: { name: 'Deutsch', flag: '🇩🇪' }, 
+      es: { name: 'Español', flag: '🇪🇸' } 
+    };
+    const langData = langInfo[lang as keyof typeof langInfo];
+    if (langData) {
+      breadcrumbs.push({ label: `${langData.flag} ${langData.name}`, href: `/${lang}/` });
+    }
+  }
+  
+  // Parse path segments
+  const segments = path.split('/').filter(Boolean);
+  
+  // Episodes section
+  if (segments.includes('episodes')) {
+    if (path.startsWith('/all/')) {
+      breadcrumbs.push({ label: sectionNames.en.episodes, href: '/all/episodes/' });
+    } else if (isEnglishContext) {
+      breadcrumbs.push({ label: sectionNames.en.episodes, href: '/en/episodes/' });
+    } else if (isGlobalContext) {
+      breadcrumbs.push({ label: sectionNames.en.episodes, href: '/episodes/' });
+    } else {
+      breadcrumbs.push({ label: sectionNames[lang].episodes, href: `/${lang}/episodes/` });
+    }
+  }
+  
+  // Guests section
+  if (segments.includes('guests')) {
+    if (path.startsWith('/all/')) {
+      breadcrumbs.push({ label: sectionNames.en.guests, href: '/all/guests/' });
+    } else if (isEnglishContext) {
+      breadcrumbs.push({ label: sectionNames.en.guests, href: '/en/guests/' });
+    } else if (isGlobalContext) {
+      breadcrumbs.push({ label: sectionNames.en.guests, href: '/guests/' });
+    } else {
+      breadcrumbs.push({ label: sectionNames[lang].guests, href: `/${lang}/guests/` });
+    }
+  }
+  
+  // Subscribe section
+  if (segments.includes('subscribe')) {
+    if (isEnglishContext) {
+      breadcrumbs.push({ label: sectionNames.en.subscribe, href: '/en/subscribe/' });
+    } else if (isGlobalContext) {
+      breadcrumbs.push({ label: sectionNames.en.subscribe, href: '/subscribe/' });
+    } else {
+      breadcrumbs.push({ label: sectionNames[lang].subscribe, href: `/${lang}/subscribe/` });
+    }
+  }
+  
+  // Hosts section
+  if (segments.includes('hosts')) {
+    breadcrumbs.push({ label: 'Hosts', href: '/hosts/' });
+  }
+  
+  return breadcrumbs;
+};
+
+const breadcrumbItems = items || generateBreadcrumbs(currentPath, language);
+
+// Add detail page names if provided
+if (episodeTitle && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: episodeTitle, href: currentPath });
+}
+if (guestName && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: guestName, href: currentPath });
+}
+if (hostName && breadcrumbItems.length > 0) {
+  breadcrumbItems.push({ label: hostName, href: currentPath });
+}
+---
+
+{breadcrumbItems.length > 1 && (
+  <nav aria-label="Breadcrumb" class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="overflow-x-auto scrollbar-hide">
+        <ol class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 min-w-max">
+          {breadcrumbItems.map((item, index) => (
+            <li class="flex items-center flex-shrink-0">
+              {index > 0 && (
+                <svg class="w-4 h-4 mx-1 sm:mx-2 text-gray-400 dark:text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              )}
+              {index === breadcrumbItems.length - 1 ? (
+                <span class="font-medium text-gray-900 dark:text-white truncate max-w-[200px] sm:max-w-none" aria-current="page" title={item.label}>
+                  {item.label}
+                </span>
+              ) : (
+                <a 
+                  href={item.href} 
+                  class="hover:text-primary-600 dark:hover:text-primary-300 transition-colors font-medium truncate max-w-[120px] sm:max-w-none"
+                  title={item.label}
+                >
+                  {item.label}
+                </a>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </nav>
+)}

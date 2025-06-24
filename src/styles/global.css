@@ -1,0 +1,670 @@
+/* Import language dropdown fixes */
+@import './language-dropdown-fix.css';
+
+/* Mobile Navigation Responsive Utilities */
+/* Extra small screens (below 475px) */
+@media (max-width: 474px) {
+  .xs\:hidden {
+    display: none !important;
+  }
+}
+
+@media (min-width: 475px) {
+  .xs\:block {
+    display: block !important;
+  }
+}
+
+/* Scrollbar hide utility for horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile header spacing fixes */
+@media (max-width: 640px) {
+  .language-switcher-container {
+    max-width: 120px;
+  }
+  
+  .language-switcher-menu {
+    right: 0;
+    left: auto;
+    transform: translateX(0);
+  }
+}
+
+/* Prevent mobile viewport overflow */
+.mobile-safe {
+  max-width: calc(100vw - 2rem);
+  overflow-wrap: break-word;
+}
+
+/* Text truncation for mobile */
+.truncate-mobile {
+  @apply truncate;
+  max-width: 150px;
+}
+
+@media (min-width: 640px) {
+  .truncate-mobile {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+/* View Transition fixes for language dropdown */
+/* Ensure language switcher stays above view transitions */
+::view-transition {
+  z-index: 10000;
+}
+
+::view-transition-group(root) {
+  z-index: 10000;
+}
+
+/* Ensure interactive elements remain clickable during transitions */
+.language-switcher-container {
+  contain: layout style;
+}
+
+/* Override view transition defaults for dropdown */
+::view-transition-old(language-switcher),
+::view-transition-new(language-switcher) {
+  animation: none;
+  opacity: 1;
+}
+
+/* Language-specific Accent Colors */
+:root {
+  /* Default/English colors (blue) */
+  --lang-accent-50: #eff6ff;
+  --lang-accent-100: #dbeafe;
+  --lang-accent-200: #bfdbfe;
+  --lang-accent-300: #93c5fd;
+  --lang-accent-400: #60a5fa;
+  --lang-accent-500: #3b82f6;
+  --lang-accent-600: #2563eb;
+  --lang-accent-700: #1d4ed8;
+  --lang-accent-800: #1e40af;
+  --lang-accent-900: #1e3a8a;
+}
+
+/* Dutch accent colors (orange) */
+[data-lang="nl"] {
+  --lang-accent-50: #fff7ed;
+  --lang-accent-100: #ffedd5;
+  --lang-accent-200: #fed7aa;
+  --lang-accent-300: #fdba74;
+  --lang-accent-400: #fb923c;
+  --lang-accent-500: #f97316;
+  --lang-accent-600: #ea580c;
+  --lang-accent-700: #c2410c;
+  --lang-accent-800: #9a3412;
+  --lang-accent-900: #7c2d12;
+}
+
+/* German accent colors (teal) */
+[data-lang="de"] {
+  --lang-accent-50: #f0fdfa;
+  --lang-accent-100: #ccfbf1;
+  --lang-accent-200: #99f6e4;
+  --lang-accent-300: #5eead4;
+  --lang-accent-400: #2dd4bf;
+  --lang-accent-500: #14b8a6;
+  --lang-accent-600: #0d9488;
+  --lang-accent-700: #0f766e;
+  --lang-accent-800: #115e59;
+  --lang-accent-900: #134e4a;
+}
+
+/* Spanish accent colors (red) */
+[data-lang="es"] {
+  --lang-accent-50: #fef2f2;
+  --lang-accent-100: #fee2e2;
+  --lang-accent-200: #fecaca;
+  --lang-accent-300: #fca5a5;
+  --lang-accent-400: #f87171;
+  --lang-accent-500: #ef4444;
+  --lang-accent-600: #dc2626;
+  --lang-accent-700: #b91c1c;
+  --lang-accent-800: #991b1b;
+  --lang-accent-900: #7f1d1d;
+}
+
+/* Global Focus Indicators for Accessibility */
+
+/* Remove default outline for all elements */
+*:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Visible focus indicators for keyboard navigation */
+*:focus-visible {
+  outline-color: rgb(192, 85, 89); /* accent-500 - accessible coral */
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+
+/* Enhanced focus for interactive elements */
+a:focus-visible,
+button:focus-visible {
+  outline-width: 3px;
+}
+
+/* Enhanced focus for form elements */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-width: 3px;
+  outline-color: rgb(90, 138, 135); /* primary-500 */
+}
+
+/* Remove outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Skip link styles (complementing the component) */
+.skip-link:focus {
+  outline: 3px solid rgb(90, 138, 135); /* primary-500 - accessible teal */
+  outline-offset: 2px;
+}
+
+/* Ensure focus is visible in dark mode */
+.dark *:focus-visible {
+  outline-color: rgb(240, 165, 168); /* accent-200 for dark mode */
+}
+
+.dark input:focus-visible,
+.dark select:focus-visible,
+.dark textarea:focus-visible {
+  outline-color: rgb(168, 213, 210); /* primary-200 for dark mode */
+}
+
+/* Screen reader only utility class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Allow screen reader text to be visible when focused */
+.sr-only:focus {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 0.5rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(192, 85, 89); /* accent-500 - accessible coral */
+  z-index: 9999;
+}
+
+/* Enhanced Card Design System with 3D Effect */
+/* Base card styles with multi-layer shadows for depth */
+.card {
+  @apply relative bg-white dark:bg-gray-800 rounded-lg transition-all duration-300 
+         border-2 border-gray-200 dark:border-gray-600;
+  /* Multi-layer shadow for enhanced depth */
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card hover state with sophisticated lift effect */
+.card:hover {
+  @apply border-gray-300 dark:border-gray-500;
+  transform: translateY(-4px);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode cards with subtle inner glow */
+.dark .card {
+  @apply bg-gradient-to-br from-gray-800 to-gray-800/95;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode hover with enhanced shadow */
+.dark .card:hover {
+  box-shadow: 
+    0 10px 40px 0 rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Language-specific shadow tints for visual hierarchy */
+.card-lang-en {
+  box-shadow: 
+    0 1px 3px 0 rgba(59, 130, 246, 0.1),  /* blue tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
+}
+
+.card-lang-nl {
+  box-shadow: 
+    0 1px 3px 0 rgba(249, 115, 22, 0.1),  /* orange tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(249, 115, 22, 0.05);
+}
+
+.card-lang-de {
+  box-shadow: 
+    0 1px 3px 0 rgba(20, 184, 166, 0.1),  /* teal tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(20, 184, 166, 0.05);
+}
+
+.card-lang-es {
+  box-shadow: 
+    0 1px 3px 0 rgba(239, 68, 68, 0.1),   /* red tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(239, 68, 68, 0.05);
+}
+
+/* Card sizes */
+.card-sm {
+  @apply rounded-md;
+}
+
+.card-lg {
+  @apply rounded-xl;
+}
+
+/* Enhanced elevation system with distinct depth levels */
+.card-flat {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.card-raised {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.card-elevated {
+  @apply border-gray-300 dark:border-gray-500;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.card-elevated:hover {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.card-high {
+  @apply border-gray-300 dark:border-gray-500;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+.card-high:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 12px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Special card variant for colored backgrounds */
+.card-colored {
+  @apply bg-gray-50 dark:bg-gray-700;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .card-colored {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Enhanced cards for similar backgrounds */
+.card-on-similar-bg {
+  @apply border-2 border-gray-300 dark:border-gray-500 shadow-xl;
+}
+
+/* Language-specific card accents */
+.card-accent {
+  @apply border-2;
+  border-color: rgb(var(--lang-accent-500) / 0.3);
+}
+
+.card-accent:hover {
+  border-color: rgb(var(--lang-accent-500) / 0.6);
+  @apply shadow-lg;
+}
+
+/* Interactive card with enhanced 3D perspective */
+.card-interactive {
+  @apply cursor-pointer;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) translateZ(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-interactive:hover {
+  transform: perspective(1000px) translateZ(20px) translateY(-4px) scale(1.02);
+}
+
+/* Pressed state for tactile feedback */
+.card-interactive:active {
+  transform: perspective(1000px) translateZ(10px) translateY(-2px) scale(1.01);
+  transition-duration: 0.1s;
+}
+
+/* Enhanced focus state with offset shadow */
+.card:focus-visible {
+  outline: 3px solid rgb(var(--lang-accent-500));
+  outline-offset: 4px;
+  box-shadow: 
+    0 0 0 6px rgba(var(--lang-accent-500), 0.1),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Testimonial cards specific enhancements */
+.testimonial-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle animation on hover for testimonials */
+.testimonial-card:hover .prose {
+  color: rgb(31 41 55); /* gray-800 */
+}
+
+.dark .testimonial-card:hover .prose {
+  color: rgb(243 244 246); /* gray-100 */
+}
+
+/* Optional: Add a subtle quote highlight on hover */
+.testimonial-card:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(to bottom, 
+    transparent,
+    rgb(var(--lang-accent-400) / 0.5),
+    transparent
+  );
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Glass morphism cards for modern look */
+.card-glass {
+  @apply backdrop-blur-sm rounded-lg;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+.dark .card-glass {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Subtle glow effect on hover */
+.card-glow:hover {
+  box-shadow: 
+    0 0 0 1px rgba(var(--lang-accent-500), 0.1),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth lift animation with reduced motion support */
+@media (prefers-reduced-motion: no-preference) {
+  .card-interactive {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .card-interactive:hover {
+    transform: perspective(1000px) translateZ(30px) translateY(-6px) scale(1.02);
+  }
+}
+
+/* Reduced motion animations */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card-interactive {
+    transition-duration: 0.01ms !important;
+  }
+  
+  .card:hover,
+  .card-interactive:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Purpose-Based Card Variants */
+/* Testimonial Card Variant - Enhanced hover effects for social proof */
+.card-testimonial {
+  @apply relative overflow-hidden;
+}
+
+/* Animated accent bar on hover */
+.card-testimonial::before {
+  content: '';
+  position: absolute;
+  inset-x: 0;
+  top: 0;
+  height: 4px;
+  background: linear-gradient(to right, rgb(var(--lang-accent-500)), rgb(var(--lang-accent-600)));
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-out;
+}
+
+.card-testimonial:hover::before {
+  transform: translateY(0);
+}
+
+/* Enhanced shadow on hover for testimonials */
+.card-testimonial:hover {
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Text color transitions for testimonial content */
+.card-testimonial .testimonial-content {
+  transition: color 0.3s ease-out;
+}
+
+.card-testimonial:hover .testimonial-content {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+/* Card content padding variants */
+.card-padding-sm {
+  @apply p-4;
+}
+
+.card-padding {
+  @apply p-6;
+}
+
+.card-padding-lg {
+  @apply p-8;
+}
+
+/* Background Hierarchy System */
+/* Layer 1: Base background (body/main) */
+.bg-base {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+/* Layer 2: Section backgrounds (alternating) */
+.bg-surface {
+  @apply bg-white dark:bg-gray-800;
+}
+
+.bg-surface-alt {
+  @apply bg-gray-100 dark:bg-gray-800/50;
+}
+
+/* Layer 3: Special surface for card contrast */
+.bg-surface-raised {
+  @apply bg-white dark:bg-gray-750;
+}
+
+/* Smart Card Contrast System */
+/* Cards automatically adjust based on parent background */
+/* Use these classes on cards when placed on matching backgrounds */
+.card-on-white {
+  @apply border-gray-300 dark:border-gray-600 shadow-md;
+}
+
+.card-on-gray-50 {
+  @apply border-gray-300 dark:border-gray-600 shadow-md;
+}
+
+.card-on-gray-100 {
+  @apply border-gray-300 dark:border-gray-600 shadow-lg;
+}
+
+/* Dark mode contrast adjustments */
+.dark .card-on-gray-800 {
+  @apply border-gray-600 shadow-lg;
+}
+
+.dark .card-on-gray-900 {
+  @apply bg-gray-800 border-gray-700 shadow-lg;
+}
+
+/* Language-specific background accents */
+.hero-lang {
+  @apply bg-gradient-to-br from-gray-50 via-white to-gray-50 
+         dark:from-gray-900 dark:via-gray-800 dark:to-gray-900;
+}
+
+.section-lang-accent {
+  @apply bg-gray-50/30 dark:bg-gray-800;
+}
+
+/* Cards with language accent */
+.card-lang {
+  @apply border-l-4;
+  border-left-color: rgb(var(--lang-accent-500));
+}
+
+/* Essential Episodes specific fix */
+.essential-episodes-section {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+.essential-episodes-section .card {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md;
+}
+
+/* Episode cards with language-specific enhancements */
+.episode-card[data-lang="en"] {
+  @apply card-lang-en;
+}
+
+.episode-card[data-lang="nl"] {
+  @apply card-lang-nl;
+}
+
+.episode-card[data-lang="de"] {
+  @apply card-lang-de;
+}
+
+.episode-card[data-lang="es"] {
+  @apply card-lang-es;
+}
+
+/* Episode cards on matching blue backgrounds */
+.episode-card-on-blue {
+  @apply card-glass;
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .episode-card-on-blue {
+  background: rgba(30, 58, 138, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    @apply border-4 border-black dark:border-white;
+  }
+  
+  .card:focus-visible {
+    outline: 4px solid;
+    outline-offset: 2px;
+  }
+}
+
+/* Touch target compliance */
+.card-touch {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Loading state animation */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.card-loading {
+  background: linear-gradient(90deg, 
+    rgba(0,0,0,0.03) 0%, 
+    rgba(0,0,0,0.06) 50%, 
+    rgba(0,0,0,0.03) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient border cards */
+.card-gradient-border {
+  position: relative;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+  border: 2px solid transparent;
+}

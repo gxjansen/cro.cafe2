@@ -1,0 +1,313 @@
+---
+/**
+ * Adaptive Episode Page Component
+ * Renders different layouts based on PWA vs Browser context
+ */
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../types';
+import EpisodeCard from './EpisodeCard.astro';
+import RelatedEpisodes from './RelatedEpisodes.astro';
+import GuestCard from './GuestCard.astro';
+import AdaptiveHeader from './AdaptiveHeader.astro';
+
+export interface Props {
+  episode: CollectionEntry<'episodes'>;
+  language: Language;
+  currentPath: string;
+  relatedEpisodes?: CollectionEntry<'episodes'>[];
+  guests?: any[];
+  isPWAMode?: boolean;
+}
+
+const {
+  episode,
+  language,
+  currentPath,
+  relatedEpisodes = [],
+  guests = [],
+  isPWAMode = false
+} = Astro.props;
+
+const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
+---
+
+<!-- Adaptive Header -->
+<AdaptiveHeader 
+  language={language} 
+  currentPath={currentPath}
+  showNavigation={!isPWAMode}
+  showLanguageSwitcher={!isPWAMode}
+  isPWAMode={isPWAMode}
+/>
+
+<!-- Main Content -->
+<main class={`flex-1 ${isPWAMode ? 'pwa-episode-content' : 'browser-episode-content'}`}>
+  <!-- PWA Mode: Focused on Audio -->
+  {isPWAMode && (
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <!-- Minimal Episode Header -->
+      <div class="text-center mb-6">
+        {imageUrl && (
+          <img 
+            src={imageUrl} 
+            alt={title}
+            class="w-48 h-48 mx-auto rounded-lg shadow-lg mb-4"
+            width="192"
+            height="192"
+            loading="eager"
+          />
+        )}
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          {title}
+        </h1>
+        {publishDate && (
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {new Date(publishDate).toLocaleDateString(language === 'en' ? 'en-US' : `${language}-${language.toUpperCase()}`)}
+          </p>
+        )}
+      </div>
+
+      <!-- Quick Play Button -->
+      {audioUrl && (
+        <div class="text-center mb-6">
+          <button
+            class="inline-flex items-center px-6 py-3 bg-cro-orange hover:bg-cro-orange-dark text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
+            data-play-episode
+            data-episode-id={episode.slug}
+            data-episode-title={title}
+            data-episode-audio={audioUrl}
+            data-episode-image={imageUrl}
+          >
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+            </svg>
+            Play Episode
+          </button>
+        </div>
+      )}
+
+      <!-- Minimal Description -->
+      {description && (
+        <div class="prose prose-sm dark:prose-dark max-w-none mb-6">
+          <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
+            {description}
+          </p>
+          <button class="text-cro-orange hover:text-cro-orange-dark text-sm font-medium mt-2" data-expand-description>
+            Show more
+          </button>
+        </div>
+      )}
+
+      <!-- Related Episodes (Compact) -->
+      {relatedEpisodes.length > 0 && (
+        <div class="mt-8">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            More Episodes
+          </h2>
+          <div class="space-y-3">
+            {relatedEpisodes.slice(0, 3).map((relatedEpisode) => (
+              <div class="flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                {relatedEpisode.data.imageUrl && (
+                  <img 
+                    src={relatedEpisode.data.imageUrl} 
+                    alt={relatedEpisode.data.title}
+                    class="w-12 h-12 rounded flex-shrink-0"
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                  />
+                )}
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                    <a href={`/${language}/episodes/${relatedEpisode.slug}/`}>
+                      {relatedEpisode.data.title}
+                    </a>
+                  </h3>
+                  {relatedEpisode.data.publishDate && (
+                    <p class="text-xs text-gray-600 dark:text-gray-400">
+                      {new Date(relatedEpisode.data.publishDate).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+
+  <!-- Browser Mode: Full Featured -->
+  {!isPWAMode && (
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Full Episode Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <!-- Episode Header -->
+          <div class="mb-8">
+            <div class="flex flex-col sm:flex-row gap-6">
+              {imageUrl && (
+                <div class="flex-shrink-0">
+                  <img 
+                    src={imageUrl} 
+                    alt={title}
+                    class="w-64 h-64 rounded-lg shadow-lg mx-auto sm:mx-0"
+                    width="256"
+                    height="256"
+                    loading="eager"
+                  />
+                </div>
+              )}
+              <div class="flex-1">
+                <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                  {title}
+                </h1>
+                {publishDate && (
+                  <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    Published on {new Date(publishDate).toLocaleDateString(language === 'en' ? 'en-US' : `${language}-${language.toUpperCase()}`)}
+                  </p>
+                )}
+                
+                <!-- Play Button -->
+                {audioUrl && (
+                  <button
+                    class="inline-flex items-center px-6 py-3 bg-cro-orange hover:bg-cro-orange-dark text-white font-semibold rounded-lg shadow-md transition-colors duration-200 mb-4"
+                    data-play-episode
+                    data-episode-id={episode.slug}
+                    data-episode-title={title}
+                    data-episode-audio={audioUrl}
+                    data-episode-image={imageUrl}
+                  >
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    Play Episode
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Description -->
+          {description && (
+            <div class="prose prose-lg dark:prose-dark max-w-none mb-8">
+              <div set:html={description} />
+            </div>
+          )}
+
+          <!-- Episode Content -->
+          <div class="prose prose-lg dark:prose-dark max-w-none">
+            <slot />
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Guests -->
+          {guests.length > 0 && (
+            <div class="mb-8">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Featured Guests
+              </h2>
+              <div class="space-y-4">
+                {guests.map((guest) => (
+                  <GuestCard guest={guest} language={language} compact={true} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Related Episodes -->
+          {relatedEpisodes.length > 0 && (
+            <RelatedEpisodes 
+              episodes={relatedEpisodes} 
+              language={language}
+              currentEpisodeSlug={episode.slug}
+            />
+          )}
+
+          <!-- Subscribe Section -->
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mt-8">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              Subscribe to CRO.CAFE
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              Get notified of new episodes and exclusive content.
+            </p>
+            <a
+              href={`/${language}/subscribe/`}
+              class="inline-flex items-center px-4 py-2 bg-cro-orange hover:bg-cro-orange-dark text-white text-sm font-medium rounded-md transition-colors duration-200"
+            >
+              Subscribe Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</main>
+
+<!-- Episode Page JavaScript -->
+<script>
+  import { audioPlayerActions } from '../stores/audioPlayerStore';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle play episode buttons
+    const playButtons = document.querySelectorAll('[data-play-episode]');
+    
+    playButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const episodeData = {
+          id: button.getAttribute('data-episode-id') || '',
+          title: button.getAttribute('data-episode-title') || '',
+          audioUrl: button.getAttribute('data-episode-audio') || '',
+          imageUrl: button.getAttribute('data-episode-image') || '',
+          slug: button.getAttribute('data-episode-id') || '',
+        };
+        
+        audioPlayerActions.loadEpisode(episodeData);
+        audioPlayerActions.play();
+      });
+    });
+
+    // Handle description expansion in PWA mode
+    const expandButton = document.querySelector('[data-expand-description]');
+    if (expandButton) {
+      expandButton.addEventListener('click', () => {
+        const description = expandButton.previousElementSibling;
+        if (description) {
+          description.classList.toggle('line-clamp-3');
+          expandButton.textContent = description.classList.contains('line-clamp-3') 
+            ? 'Show more' 
+            : 'Show less';
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  /* PWA-specific episode styles */
+  .pwa-episode-content {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0));
+  }
+  
+  .browser-episode-content {
+    padding-bottom: 100px;
+  }
+  
+  /* Text clamping utility */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Touch optimization for PWA */
+  [data-pwa-mode="true"] button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+</style>

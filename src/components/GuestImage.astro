@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  imageUrl?: string;
+  alt: string;
+  class?: string;
+  width?: number;
+  height?: number;
+}
+
+const { 
+  imageUrl, 
+  alt, 
+  class: className = '',
+  width = 400,
+  height = 400
+} = Astro.props;
+
+// Fallback gradient background for guests without images
+const fallbackGradient = `bg-gradient-to-br from-primary-500 to-accent-600`;
+
+// Standardized alt text format
+const standardizedAlt = alt && alt.includes('CRO.CAFE') ? alt : `${alt || 'Guest'} - CRO.CAFE podcast guest`;
+---
+
+{imageUrl ? (
+  <Image 
+    src={imageUrl} 
+    alt={standardizedAlt}
+    width={width}
+    height={height}
+    class={`grayscale ${className}`}
+    loading="lazy"
+    format="webp"
+    quality={85}
+    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+  />
+  <div class={`hidden items-center justify-center ${fallbackGradient} ${className}`}>
+    <svg class="w-1/3 h-1/3 text-white/50" fill="currentColor" viewBox="0 0 24 24" role="presentation" aria-hidden="true">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+    </svg>
+  </div>
+) : (
+  <div class={`flex items-center justify-center ${fallbackGradient} ${className}`}>
+    <svg class="w-1/3 h-1/3 text-white/50" fill="currentColor" viewBox="0 0 24 24" role="presentation" aria-hidden="true">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+    </svg>
+  </div>
+)}
+
+<style>
+  /* Ensure images maintain aspect ratio */
+  img {
+    object-fit: cover;
+  }
+</style>
