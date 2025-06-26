@@ -119,7 +119,7 @@ const instanceId = Math.random().toString(36).substring(7);
 ---
 
 <!-- Filter Controls -->
-<section class="mb-6" data-filter-instance={instanceId}>
+<section class="mb-6 guest-filter-bar" data-filter-instance={instanceId}>
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3">
     <!-- Single Row Layout -->
     <div class="flex flex-col lg:flex-row lg:items-center gap-4">
@@ -128,7 +128,7 @@ const instanceId = Math.random().toString(36).substring(7);
         <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filter:</h2>
         <button 
           id={`clearFilters-${instanceId}`}
-          class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors lg:order-last"
+          class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors lg:order-last clear-filters-btn"
         >
           Clear All
         </button>
@@ -143,8 +143,9 @@ const instanceId = Math.random().toString(36).substring(7);
                 type="checkbox" 
                 name={`show-${instanceId}`}
                 value={lang}
-                class="hidden peer"
+                class="hidden peer show-checkbox"
                 checked
+                data-filter-type="language"
               />
               <div class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 transition-all
                 peer-checked:bg-primary-100 peer-checked:border-primary-500 peer-checked:text-primary-700 
@@ -163,7 +164,8 @@ const instanceId = Math.random().toString(36).substring(7);
       <div class="flex gap-3 flex-grow lg:flex-grow-0 lg:ml-auto">
         <select 
           id={`countryFilter-${instanceId}`}
-          class="flex-1 lg:w-40 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500"
+          class="flex-1 lg:w-40 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500 country-filter"
+          data-filter-type="country"
         >
           <option value="">All Countries</option>
           {countries.map(country => (
@@ -173,7 +175,8 @@ const instanceId = Math.random().toString(36).substring(7);
 
         <select 
           id={`skillFilter-${instanceId}`}
-          class="flex-1 lg:w-48 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500"
+          class="flex-1 lg:w-48 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500 skill-filter"
+          data-filter-type="skill"
         >
           <option value="">All Expertise</option>
           {skills.map(skill => (
@@ -185,146 +188,134 @@ const instanceId = Math.random().toString(36).substring(7);
   </div>
 </section>
 
-<script data-instance-id={instanceId} data-show-language-filter={showLanguageFilter.toString()} data-language={language}>
-  // Import instance-specific variables
-  const instanceId = document.currentScript?.getAttribute('data-instance-id');
-  const showLanguageFilter = document.currentScript?.getAttribute('data-show-language-filter') === 'true';
-  const language = document.currentScript?.getAttribute('data-language');
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all filter bars on the page
+    document.querySelectorAll('.guest-filter-bar').forEach(filterBar => {
+      const instanceId = filterBar.getAttribute('data-filter-instance');
+      if (!instanceId) return;
 
-  // Guest filtering functionality
-  function initializeFilters() {
-    const filterInstance = document.querySelector(`[data-filter-instance="${instanceId}"]`);
-    if (!filterInstance) return;
-
-    const showCheckboxes = showLanguageFilter 
-      ? filterInstance.querySelectorAll(`input[name="show-${instanceId}"]`)
-      : [];
-    const countryFilter = document.getElementById(`countryFilter-${instanceId}`) as HTMLSelectElement;
-    const skillFilter = document.getElementById(`skillFilter-${instanceId}`) as HTMLSelectElement;
-    const clearButton = document.getElementById(`clearFilters-${instanceId}`);
-    const resultsInfo = document.getElementById('resultsInfo');
-    const guestsGrid = document.getElementById('guestsGrid');
-    
-    function filterGuests() {
-      const selectedShows = showLanguageFilter
-        ? Array.from(showCheckboxes)
-            .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked)
-            .map((cb) => cb.value)
-        : [language]; // If no language filter, use the current page language
+      const showCheckboxes = filterBar.querySelectorAll('.show-checkbox');
+      const countryFilter = filterBar.querySelector('.country-filter') as HTMLSelectElement;
+      const skillFilter = filterBar.querySelector('.skill-filter') as HTMLSelectElement;
+      const clearButton = filterBar.querySelector('.clear-filters-btn');
       
-      const selectedCountry = countryFilter?.value || '';
-      const selectedSkill = skillFilter?.value || '';
-      
-      const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
+      // Global elements to filter
+      const resultsInfo = document.getElementById('resultsInfo');
+      const guestsGrid = document.getElementById('guestsGrid');
       const noShowsMessage = document.getElementById('noShowsMessage');
       const noResultsMessage = document.getElementById('noResultsMessage');
-      let visibleCount = 0;
-      
-      // Check if no shows are selected (only relevant for international page)
-      if (showLanguageFilter && selectedShows.length === 0) {
-        // Hide all cards and show no shows message
-        guestCards.forEach((card) => {
-          if (card instanceof HTMLElement) {
-            card.style.display = 'none';
-          }
-        });
-        if (guestsGrid) guestsGrid.style.display = 'none';
-        if (noShowsMessage) noShowsMessage.classList.remove('hidden');
-        if (noResultsMessage) noResultsMessage.classList.add('hidden');
-        if (resultsInfo) resultsInfo.textContent = 'No filters selected';
-        return;
-      }
-      
-      // Shows are selected or we're on a language-specific page
-      if (noShowsMessage) noShowsMessage.classList.add('hidden');
-      
-      // Apply filters and count visible guests
-      guestCards.forEach((card) => {
-        if (!(card instanceof HTMLElement)) return;
+
+      function filterGuests() {
+        // Get selected languages (if language filter is shown)
+        const selectedShows = showCheckboxes.length > 0
+          ? Array.from(showCheckboxes)
+              .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked)
+              .map((cb) => cb.value)
+          : null;
         
-        const languages = JSON.parse(card.getAttribute('data-languages') || '[]');
-        const country = card.getAttribute('data-country') || '';
-        const skills = card.getAttribute('data-skills') || '';
+        const selectedCountry = countryFilter?.value || '';
+        const selectedSkill = skillFilter?.value || '';
         
-        // Check show filter
-        const showMatch = showLanguageFilter 
-          ? languages.some((lang: string) => selectedShows.includes(lang))
-          : true; // For language-specific pages, we already filtered by language server-side
+        const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
+        let visibleCount = 0;
         
-        // Check country filter
-        const countryMatch = !selectedCountry || country === selectedCountry;
-        
-        // Check skill filter
-        const skillMatch = !selectedSkill || skills.toLowerCase().includes(selectedSkill.toLowerCase());
-        
-        const shouldShow = showMatch && countryMatch && skillMatch;
-        
-        if (shouldShow) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
+        // Check if no shows are selected (only for international page)
+        if (selectedShows !== null && selectedShows.length === 0) {
+          guestCards.forEach((card) => {
+            if (card instanceof HTMLElement) {
+              card.style.display = 'none';
+            }
+          });
+          if (guestsGrid) guestsGrid.style.display = 'none';
+          if (noShowsMessage) noShowsMessage.classList.remove('hidden');
+          if (noResultsMessage) noResultsMessage.classList.add('hidden');
+          if (resultsInfo) resultsInfo.textContent = 'No filters selected';
+          return;
         }
-      });
-      
-      // Show appropriate message based on results
-      if (visibleCount === 0) {
-        // No results from filter combination
-        if (guestsGrid) guestsGrid.style.display = 'none';
-        if (noResultsMessage) noResultsMessage.classList.remove('hidden');
-      } else {
-        // Has results, show grid and hide no results message
-        if (guestsGrid) guestsGrid.style.display = 'grid';
-        if (noResultsMessage) noResultsMessage.classList.add('hidden');
-      }
-      
-      // Update results info
-      if (resultsInfo) {
+        
+        // Shows are selected or no language filter
+        if (noShowsMessage) noShowsMessage.classList.add('hidden');
+        
+        // Apply filters
+        guestCards.forEach((card) => {
+          if (!(card instanceof HTMLElement)) return;
+          
+          const languages = JSON.parse(card.getAttribute('data-languages') || '[]');
+          const country = card.getAttribute('data-country') || '';
+          const skills = card.getAttribute('data-skills') || '';
+          
+          // Language filter (only if showing language checkboxes)
+          const showMatch = selectedShows === null || 
+            languages.some((lang: string) => selectedShows.includes(lang));
+          
+          // Country filter
+          const countryMatch = !selectedCountry || country === selectedCountry;
+          
+          // Skill filter
+          const skillMatch = !selectedSkill || 
+            skills.toLowerCase().includes(selectedSkill.toLowerCase());
+          
+          const shouldShow = showMatch && countryMatch && skillMatch;
+          
+          card.style.display = shouldShow ? '' : 'none';
+          if (shouldShow) visibleCount++;
+        });
+        
+        // Update UI based on results
         if (visibleCount === 0) {
-          resultsInfo.textContent = 'No matching experts found';
+          if (guestsGrid) guestsGrid.style.display = 'none';
+          if (noResultsMessage) noResultsMessage.classList.remove('hidden');
         } else {
+          if (guestsGrid) guestsGrid.style.display = '';
+          if (noResultsMessage) noResultsMessage.classList.add('hidden');
+        }
+        
+        // Update results info
+        if (resultsInfo) {
           const filterText: string[] = [];
-          if (showLanguageFilter && selectedShows.length > 0 && selectedShows.length < 4) {
-            const showNames = selectedShows.map((lang: string) => {
-              const checkbox = filterInstance.querySelector(`input[value="${lang}"]`) as HTMLInputElement;
-              return checkbox?.parentElement?.querySelector('span:nth-child(2)')?.textContent;
-            }).filter(Boolean);
+          
+          if (selectedShows && selectedShows.length > 0 && selectedShows.length < 4) {
+            const showNames = selectedShows.map(lang => {
+              const checkbox = filterBar.querySelector(`input[value="${lang}"]`);
+              const label = checkbox?.parentElement;
+              return label?.querySelector('span:nth-child(2)')?.textContent || lang;
+            });
             filterText.push(showNames.join(', '));
           }
+          
           if (selectedCountry) filterText.push(selectedCountry);
           if (selectedSkill) filterText.push(selectedSkill);
           
-          const filterDescription = filterText.length > 0 ? ` (${filterText.join(', ')})` : '';
-          resultsInfo.textContent = `Showing ${visibleCount} experts${filterDescription}`;
+          const filterDescription = filterText.length > 0 
+            ? ` (${filterText.join(', ')})` 
+            : '';
+          
+          resultsInfo.textContent = visibleCount === 0 
+            ? 'No matching experts found'
+            : `Showing ${visibleCount} experts${filterDescription}`;
         }
       }
-    }
-    
-    function clearFilters() {
-      showCheckboxes.forEach((cb) => {
-        if (cb instanceof HTMLInputElement) {
-          cb.checked = true;
-        }
-      });
-      if (countryFilter) countryFilter.value = '';
-      if (skillFilter) skillFilter.value = '';
+
+      function clearFilters() {
+        showCheckboxes.forEach((cb) => {
+          if (cb instanceof HTMLInputElement) {
+            cb.checked = true;
+          }
+        });
+        if (countryFilter) countryFilter.value = '';
+        if (skillFilter) skillFilter.value = '';
+        filterGuests();
+      }
+
+      // Attach event listeners
+      showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
+      countryFilter?.addEventListener('change', filterGuests);
+      skillFilter?.addEventListener('change', filterGuests);
+      clearButton?.addEventListener('click', clearFilters);
+      
+      // Initialize
       filterGuests();
-    }
-    
-    // Event listeners
-    showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
-    countryFilter?.addEventListener('change', filterGuests);
-    skillFilter?.addEventListener('change', filterGuests);
-    clearButton?.addEventListener('click', clearFilters);
-    
-    // Initialize with all filters active
-    filterGuests();
-  }
-  
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeFilters);
-  } else {
-    initializeFilters();
-  }
+    });
+  });
 </script>
