@@ -1,0 +1,149 @@
+---
+export interface Props {
+  country?: string;
+  showName?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { 
+  country, 
+  showName = true, 
+  size = 'md',
+  class: className = '' 
+} = Astro.props;
+
+// Country to emoji flag mapping
+function getCountryFlag(countryName: string): string {
+  // Common country name to ISO code mapping
+  const countryMap: Record<string, string> = {
+    // Europe
+    'netherlands': 'NL',
+    'the netherlands': 'NL',
+    'holland': 'NL',
+    'germany': 'DE',
+    'deutschland': 'DE',
+    'united kingdom': 'GB',
+    'uk': 'GB',
+    'great britain': 'GB',
+    'england': 'GB',
+    'france': 'FR',
+    'spain': 'ES',
+    'españa': 'ES',
+    'italy': 'IT',
+    'italia': 'IT',
+    'portugal': 'PT',
+    'belgium': 'BE',
+    'belgie': 'BE',
+    'belgique': 'BE',
+    'switzerland': 'CH',
+    'austria': 'AT',
+    'sweden': 'SE',
+    'norway': 'NO',
+    'denmark': 'DK',
+    'finland': 'FI',
+    'poland': 'PL',
+    'czech republic': 'CZ',
+    'ireland': 'IE',
+    'greece': 'GR',
+    
+    // Americas
+    'united states': 'US',
+    'usa': 'US',
+    'us': 'US',
+    'america': 'US',
+    'canada': 'CA',
+    'mexico': 'MX',
+    'brasil': 'BR',
+    'brazil': 'BR',
+    'argentina': 'AR',
+    'chile': 'CL',
+    'colombia': 'CO',
+    'peru': 'PE',
+    
+    // Asia
+    'china': 'CN',
+    'japan': 'JP',
+    'india': 'IN',
+    'south korea': 'KR',
+    'korea': 'KR',
+    'singapore': 'SG',
+    'thailand': 'TH',
+    'vietnam': 'VN',
+    'indonesia': 'ID',
+    'malaysia': 'MY',
+    'philippines': 'PH',
+    
+    // Oceania
+    'australia': 'AU',
+    'new zealand': 'NZ',
+    
+    // Middle East & Africa
+    'israel': 'IL',
+    'united arab emirates': 'AE',
+    'uae': 'AE',
+    'south africa': 'ZA',
+    'egypt': 'EG',
+    'morocco': 'MA',
+    'nigeria': 'NG',
+    'kenya': 'KE'
+  };
+
+  // Convert country name to lowercase for matching
+  const normalized = countryName.toLowerCase().trim();
+  
+  // Check if we have a mapping
+  const isoCode = countryMap[normalized];
+  
+  if (isoCode) {
+    // Convert ISO code to emoji flag
+    const codePoints = isoCode
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  }
+  
+  // Return globe emoji as fallback
+  return '🌍';
+}
+
+// Size classes
+const sizeClasses = {
+  sm: {
+    container: 'text-xs',
+    flag: 'text-sm',
+    gap: 'gap-1'
+  },
+  md: {
+    container: 'text-sm',
+    flag: 'text-base',
+    gap: 'gap-1.5'
+  },
+  lg: {
+    container: 'text-base',
+    flag: 'text-lg',
+    gap: 'gap-2'
+  }
+};
+
+const classes = sizeClasses[size];
+const flag = country ? getCountryFlag(country) : null;
+const displayName = country || 'Unknown';
+---
+
+{country && (
+  <span 
+    class={`inline-flex items-center ${classes.gap} bg-gray-100 dark:bg-gray-700 rounded-full py-0.5 px-2 ${classes.container} ${className}`}
+    title={displayName}
+  >
+    <span class={classes.flag} role="img" aria-label={`Flag of ${displayName}`}>
+      {flag}
+    </span>
+    {showName && (
+      <span class="text-gray-600 dark:text-gray-300">
+        {displayName}
+      </span>
+    )}
+  </span>
+)}

@@ -262,15 +262,74 @@ export function parseSkills(skills: string | null | undefined): string[] {
  * Transform raw LinkedIn data from NocoDB to clean LinkedInData
  */
 export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
-  // Parse complex JSON fields
-  const experiences = safeJsonParse<unknown[]>(raw.linkedin_experiences || null, [])
-    .filter(isLinkedInExperience);
+  // Parse complex JSON fields - handle both string and object formats
+  let experiences: LinkedInExperience[] = [];
+  if (raw.linkedin_experiences) {
+    try {
+      // First, try parsing as JSON string
+      const parsed = typeof raw.linkedin_experiences === 'string' 
+        ? JSON.parse(raw.linkedin_experiences) 
+        : raw.linkedin_experiences;
+      
+      // Handle the specific structure from MDX files
+      if (Array.isArray(parsed)) {
+        experiences = parsed.map(exp => ({
+          title: exp.title || '',
+          company: exp.subtitle?.split(' · ')[0] || exp.company || '',
+          companyUrl: exp.companyLink1 || exp.companyUrl,
+          location: exp.metadata || exp.location,
+          description: exp.subComponents?.[0]?.description?.[0]?.text || exp.description,
+          duration: exp.caption || exp.duration,
+          isCurrent: exp.caption?.includes('Present') || exp.isCurrent,
+        })).filter(exp => exp.title && exp.company);
+      }
+    } catch (error) {
+      console.error('Error parsing experiences:', error);
+    }
+  }
   
-  const personalWebsites = safeJsonParse<unknown[]>(raw.linkedin_personal_website || null, [])
-    .filter(isLinkedInWebsite);
+  let personalWebsites: LinkedInWebsite[] = [];
+  if (raw.linkedin_personal_website) {
+    try {
+      const parsed = typeof raw.linkedin_personal_website === 'string' 
+        ? JSON.parse(raw.linkedin_personal_website) 
+        : raw.linkedin_personal_website;
+      
+      // Handle single website object format from MDX
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        if (parsed.link || parsed.url) {
+          personalWebsites = [{
+            url: parsed.link || parsed.url,
+            label: parsed.name || parsed.label,
+          }];
+        }
+      } else if (Array.isArray(parsed)) {
+        personalWebsites = parsed.filter(isLinkedInWebsite);
+      }
+    } catch (error) {
+      console.error('Error parsing personal websites:', error);
+    }
+  }
   
-  const publications = safeJsonParse<unknown[]>(raw.linkedin_publications || null, [])
-    .filter(isLinkedInPublication);
+  let publications: LinkedInPublication[] = [];
+  if (raw.linkedin_publications) {
+    try {
+      const parsed = typeof raw.linkedin_publications === 'string' 
+        ? JSON.parse(raw.linkedin_publications) 
+        : raw.linkedin_publications;
+      
+      if (Array.isArray(parsed)) {
+        publications = parsed.map(pub => ({
+          title: pub.title || '',
+          publisher: pub.subtitle?.split(' · ')[0] || pub.publisher,
+          date: pub.subtitle?.split(' · ')[1] || pub.date,
+          description: pub.subComponents?.[0]?.description?.[0]?.text || pub.description,
+        })).filter(pub => pub.title);
+      }
+    } catch (error) {
+      console.error('Error parsing publications:', error);
+    }
+  }
   
   // Parse skills
   const skills = parseSkills(raw.linkedin_skills);

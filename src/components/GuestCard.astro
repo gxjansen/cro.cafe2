@@ -1,5 +1,6 @@
 ---
 import GuestProfilePicture from './GuestProfilePicture.astro';
+import CountryFlag from './CountryFlag.astro';
 import type { Language } from '../types';
 
 export interface Props {
@@ -50,6 +51,9 @@ const imageUrl = getGuestImageUrl(guest);
 // Get LinkedIn headline
 const linkedinHeadline = guest.data.linkedin_headline || null;
 
+// Get LinkedIn country
+const linkedinCountry = guest.data.linkedin_country || null;
+
 // Truncate headline based on size
 function truncateHeadline(headline: string | null, maxLength: number): string | null {
   if (!headline) return null;
@@ -81,7 +85,8 @@ const sizeClasses = {
     title: 'text-sm font-semibold',
     subtitle: 'text-xs',
     headline: 'text-xs',
-    linkedin: 'w-4 h-4'
+    linkedin: 'w-4 h-4',
+    flagSize: 'sm' as const
   },
   medium: {
     container: 'p-4',
@@ -89,7 +94,8 @@ const sizeClasses = {
     title: 'text-base font-semibold',
     subtitle: 'text-sm',
     headline: 'text-sm',
-    linkedin: 'w-4 h-4'
+    linkedin: 'w-4 h-4',
+    flagSize: 'sm' as const
   },
   large: {
     container: 'p-6',
@@ -97,7 +103,8 @@ const sizeClasses = {
     title: 'text-lg font-semibold',
     subtitle: 'text-base',
     headline: 'text-sm',
-    linkedin: 'w-5 h-5'
+    linkedin: 'w-5 h-5',
+    flagSize: 'md' as const
   }
 };
 
@@ -116,6 +123,7 @@ const classes = sizeClasses[size];
         guest={guest}
         size={classes.imageSize}
         loading="lazy"
+        grayscale={true}
       />
     </div>
     
@@ -145,6 +153,17 @@ const classes = sizeClasses[size];
                title={linkedinHeadline}>
               {truncatedHeadline}
             </p>
+          )}
+          
+          <!-- Location with Country Flag -->
+          {linkedinCountry && (
+            <div class="mb-2">
+              <CountryFlag 
+                country={linkedinCountry}
+                size={classes.flagSize}
+                showName={true}
+              />
+            </div>
           )}
           
           <!-- Episode Count (optional) -->
