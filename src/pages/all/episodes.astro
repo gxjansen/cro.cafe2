@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeImage from '../../components/EpisodeImage.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
+import SEOEpisodeCard from '../../components/SEOEpisodeCard.astro';
 import { getCollection } from 'astro:content';
 import { getEpisodeUrl } from '../../utils/content';
 import type { Language } from '../../types';
@@ -42,13 +43,14 @@ const languageInfo = {
   <Header language="en" currentPath="/all/episodes/" />
   <Breadcrumb language="en" currentPath="/all/episodes/" />
   
-  <main class="flex-1">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="mb-8">
-        <h1 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4">
           All Episodes
         </h1>
-        <p class="text-lg text-gray-600 dark:text-gray-300">
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
           Browse all {sortedEpisodes.length} episodes from our multilingual podcast collection
         </p>
       </div>
@@ -60,10 +62,12 @@ const languageInfo = {
         </h2>
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {sortedEpisodes.slice(0, 9).map((episode) => (
-            <EpisodeCard 
+            <SEOEpisodeCard 
               episode={episode} 
               showLanguage={true}
               size="large"
+              useSEOTitle={false}
+              useSEODescription={false}
             />
           ))}
         </div>
@@ -89,10 +93,12 @@ const languageInfo = {
           </div>
           <div class="grid gap-6 md:grid-cols-3">
             {episodesByLanguage[lang].slice(0, 3).map((episode) => (
-              <EpisodeCard 
+              <SEOEpisodeCard 
                 episode={episode} 
                 showLanguage={false}
                 size="medium"
+                useSEOTitle={false}
+                useSEODescription={false}
               />
             ))}
           </div>

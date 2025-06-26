@@ -158,6 +158,14 @@ test-crud-output/
 tests/
 docs/
 
+# Demo and test files
+**/test-*
+**/demo-*
+**/*-test.*
+**/*-demo.*
+test-*.html
+demo-*.html
+
 # Misc
 *.tgz
 *.tar.gz
