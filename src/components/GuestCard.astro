@@ -1,5 +1,5 @@
 ---
-import GuestImage from './GuestImage.astro';
+import GuestProfilePicture from './GuestProfilePicture.astro';
 import type { Language } from '../types';
 
 export interface Props {
@@ -47,27 +47,56 @@ function getGuestImageUrl(guest: any): string | undefined {
 const linkedInUrl = getLinkedInUrl(guest);
 const imageUrl = getGuestImageUrl(guest);
 
+// Get LinkedIn headline
+const linkedinHeadline = guest.data.linkedin_headline || null;
+
+// Truncate headline based on size
+function truncateHeadline(headline: string | null, maxLength: number): string | null {
+  if (!headline) return null;
+  if (headline.length <= maxLength) return headline;
+  
+  // Smart truncation at word boundary
+  const truncated = headline.substr(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return headline.substr(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+}
+
+// Get truncated headline based on screen size
+const getHeadlineLength = () => {
+  switch(size) {
+    case 'small': return 45;
+    case 'medium': return 60;
+    case 'large': return 80;
+    default: return 60;
+  }
+};
+
+const truncatedHeadline = truncateHeadline(linkedinHeadline, getHeadlineLength());
+
 // Size-specific classes
 const sizeClasses = {
   small: {
     container: 'p-4',
-    image: 'w-12 h-12',
+    imageSize: 'sm' as const,
     title: 'text-sm font-semibold',
     subtitle: 'text-xs',
+    headline: 'text-xs',
     linkedin: 'w-4 h-4'
   },
   medium: {
     container: 'p-4',
-    image: 'w-16 h-16',
+    imageSize: 'sm' as const,
     title: 'text-base font-semibold',
     subtitle: 'text-sm',
+    headline: 'text-sm',
     linkedin: 'w-4 h-4'
   },
   large: {
     container: 'p-6',
-    image: 'w-20 h-20',
+    imageSize: 'md' as const,
     title: 'text-lg font-semibold',
     subtitle: 'text-base',
+    headline: 'text-sm',
     linkedin: 'w-5 h-5'
   }
 };
@@ -82,11 +111,11 @@ const classes = sizeClasses[size];
 >
   <div class="flex items-start gap-4">
     <!-- Guest Image -->
-    <div class="flex-shrink-0 group-hover:opacity-80 transition-opacity">
-      <GuestImage 
-        imageUrl={imageUrl} 
-        alt={`Photo of ${guest.data.name}`}
-        class={`${classes.image} rounded-full object-cover`}
+    <div class="flex-shrink-0 group-hover:opacity-90 transition-opacity">
+      <GuestProfilePicture 
+        guest={guest}
+        size={classes.imageSize}
+        loading="lazy"
       />
     </div>
     
@@ -101,12 +130,20 @@ const classes = sizeClasses[size];
           
           <!-- Job Title and Company -->
           {(guest.data.role || guest.data.company) && (
-            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-2`}>
+            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 ${truncatedHeadline ? 'mb-1' : 'mb-2'}`}>
               {guest.data.role && guest.data.company ? (
                 <>{guest.data.role} at {guest.data.company}</>
               ) : (
                 guest.data.role || guest.data.company
               )}
+            </p>
+          )}
+          
+          <!-- LinkedIn Headline -->
+          {truncatedHeadline && (
+            <p class={`${classes.headline} italic font-medium text-gray-600 dark:text-gray-300 border-l-2 border-linkedin dark:border-linkedin-dark pl-2 mb-2 line-clamp-2`}
+               title={linkedinHeadline}>
+              {truncatedHeadline}
             </p>
           )}
           

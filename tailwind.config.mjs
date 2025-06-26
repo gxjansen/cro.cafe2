@@ -58,6 +58,12 @@ export default {
           800: '#111827',
           850: '#0c1118',   // New shade between 800-900
           900: '#030712',
+        },
+        // LinkedIn brand colors
+        linkedin: {
+          DEFAULT: '#0077B5',
+          dark: '#46A7C7',    // Lighter variant for dark mode
+          hover: '#005885',   // Darker for hover states
         }
       },
       fontFamily: {
@@ -73,6 +79,13 @@ export default {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      backgroundImage: {
+        'gradient-teal': 'linear-gradient(135deg, #95c3c0 0%, #5a8a87 100%)',
+        'gradient-teal-dark': 'linear-gradient(135deg, #a8d5d2 0%, #7ba5a2 100%)',
+      },
+      borderWidth: {
+        '3': '3px',
       },
       keyframes: {
         fadeIn: {
