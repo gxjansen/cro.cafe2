@@ -100,4 +100,10 @@ Content types are validated using Zod schemas defined in `src/content/config.ts`
 
 ## 📄 License
 
-This project is proprietary software. All rights reserved. Not licensed for copying, distribution, or modification.
+The custom code and content in this project are proprietary and all rights reserved by CRO.CAFE. 
+
+This project builds upon various open-source technologies, each governed by their respective licenses:
+- Astro - MIT License
+- And other dependencies as listed in package.json
+
+For third-party components, please refer to their individual licenses in the respective node_modules directories or their source repositories.
