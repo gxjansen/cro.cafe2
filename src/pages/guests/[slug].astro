@@ -7,6 +7,7 @@ import GuestProfilePicture from '../../components/GuestProfilePicture.astro';
 import ThenNowCard from '../../components/ThenNowCard.astro';
 import SchemaPerson from '../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
+import CountryFlag from '../../components/CountryFlag.astro';
 import { getGuestEpisodes, getGuestWithLinkedIn } from '../../utils/content';
 import type { Language } from '../../types';
 
@@ -31,15 +32,6 @@ const language: Language = (urlLang && validLanguages.includes(urlLang)) ? urlLa
 
 // Get guest data with LinkedIn enrichment
 const guestWithLinkedIn = await getGuestWithLinkedIn(guestSlug);
-
-// DEBUG: Log LinkedIn data to understand what's happening
-console.log('=== LINKEDIN DEBUG ===');
-console.log('guestSlug:', guestSlug);
-console.log('guestWithLinkedIn:', guestWithLinkedIn);
-console.log('linkedInData:', guestWithLinkedIn?.linkedInData);
-console.log('linkedInRaw:', guestWithLinkedIn?.linkedInRaw);
-
-console.log('=== END DEBUG ===');
 
 // Get all episodes featuring this guest from ALL languages
 const guestEpisodes = await getGuestEpisodes(guestSlug);
@@ -116,9 +108,9 @@ const t = translations[language];
 
 
 // SEO metadata - Use LinkedIn data when available
-const guestName = guestWithLinkedIn?.name || guest.data.name;
+const guestName = guestWithLinkedIn?.linkedInData?.fullName || guestWithLinkedIn?.name || guest.data.name;
 const guestBio = guestWithLinkedIn?.linkedInData?.bio || guestWithLinkedIn?.bio || guest.data.bio;
-const profilePicUrl = guestWithLinkedIn?.linkedInData?.profilePicUrl || guest.data.imageUrl;
+const profilePicUrl = guest.data.imageUrl || `/images/guests/${guestSlug}.jpeg`; // Use local image, not LinkedIn URL
 
 const title = `${guestName} - CRO.CAFE Podcast`;
 const description = guestBio.substring(0, 160);
@@ -193,6 +185,17 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               <p class="text-lg text-gray-500 dark:text-gray-400 mb-4 italic">
                 {guestWithLinkedIn.linkedInData.headline}
               </p>
+            )}
+            
+            {/* Country flag */}
+            {guestWithLinkedIn?.linkedInData?.country && (
+              <div class="mb-4">
+                <CountryFlag 
+                  country={guestWithLinkedIn.linkedInData.country} 
+                  size="md"
+                  showName={true}
+                />
+              </div>
             )}
             
             {/* Social Links */}

@@ -745,7 +745,7 @@ export async function getGuestWithLinkedIn(slug: string): Promise<GuestWithLinke
       }
     }
     
-    // Return guest with LinkedIn data
+    // Return guest with LinkedIn data - include imageUrl!
     return {
       name: guest.data.name,
       bio: guest.data.bio,
@@ -754,6 +754,8 @@ export async function getGuestWithLinkedIn(slug: string): Promise<GuestWithLinke
       email: guest.data.email,
       website: guest.data.website,
       linkedin: guest.data.linkedin,
+      imageUrl: guest.data.imageUrl, // Include the imageUrl field!
+      slug: guest.data.slug || guest.slug, // Include slug for easier access
       linkedInData,
       linkedInRaw: hasLinkedInFields ? linkedInRaw : undefined,
     };
@@ -912,12 +914,14 @@ export function getGuestProfilePicture(guest: any): string {
   // NOTE: Never return LinkedIn URLs - only local files to avoid runtime calls
   
   // Priority 1: Check for explicit imageUrl in guest data first
-  if (guest?.data?.imageUrl) {
-    return guest.data.imageUrl;
+  // Check both guest.data.imageUrl and guest.imageUrl (for transformed objects)
+  const explicitImageUrl = guest?.data?.imageUrl || guest?.imageUrl;
+  if (explicitImageUrl) {
+    return explicitImageUrl;
   }
   
   // Priority 2: Generate local image path from slug
-  const guestSlug = guest?.data?.slug || guest?.slug || guest?.name;
+  const guestSlug = guest?.data?.slug || guest?.slug;
   if (guestSlug) {
     const localImageUrl = getGuestImageUrl(guestSlug);
     return localImageUrl;

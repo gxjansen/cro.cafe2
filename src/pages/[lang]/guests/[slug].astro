@@ -3,10 +3,12 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeCard from '../../../components/EpisodeCard.astro';
-import GuestImage from '../../../components/GuestImage.astro';
+import GuestProfilePicture from '../../../components/GuestProfilePicture.astro';
+import ThenNowCard from '../../../components/ThenNowCard.astro';
 import SchemaPerson from '../../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../../components/GuestOtherCompany.astro';
-import { getGuestBySlug, getGuestEpisodes } from '../../../utils/content';
+import CountryFlag from '../../../components/CountryFlag.astro';
+import { getGuestEpisodes, getGuestWithLinkedIn } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -32,6 +34,9 @@ export async function getStaticPaths() {
 
 const { guest, language } = Astro.props;
 const guestSlug = guest.data.slug || guest.slug;
+
+// Get guest data with LinkedIn enrichment
+const guestWithLinkedIn = await getGuestWithLinkedIn(guestSlug);
 
 // Get all episodes featuring this guest in the current language
 const guestEpisodes = await getGuestEpisodes(guestSlug, language);
@@ -94,9 +99,13 @@ const languageNames = {
   es: { en: 'Spanish', nl: 'Spaans', de: 'Spanisch' }
 };
 
-// SEO metadata
-const title = `${guest.data.name} - CRO.CAFE Podcast`;
-const description = guest.data.bio.substring(0, 160);
+// SEO metadata - Use LinkedIn data when available
+const guestName = guestWithLinkedIn?.linkedInData?.fullName || guestWithLinkedIn?.name || guest.data.name;
+const guestBio = guestWithLinkedIn?.linkedInData?.bio || guestWithLinkedIn?.bio || guest.data.bio;
+const profilePicUrl = guest.data.imageUrl || `/images/guests/${guestSlug}.jpeg`; // Use local image, not LinkedIn URL
+
+const title = `${guestName} - CRO.CAFE Podcast`;
+const description = guestBio.substring(0, 160);
 
 // Generate hreflang URLs for languages where guest appears
 const hreflang: Record<Language, string> = {
@@ -106,19 +115,12 @@ const hreflang: Record<Language, string> = {
   es: `https://cro.cafe/es/guests/${guestSlug}/`
 };
 
-// Get LinkedIn URL from socialLinks
-function getLinkedInUrl(guest: any): string | null {
-  if (guest.data.linkedin) {
-    return guest.data.linkedin;
-  }
-  if (guest.data.socialLinks) {
-    const linkedinLink = guest.data.socialLinks.find((link: any) => link.platform === 'linkedin');
-    return linkedinLink ? linkedinLink.url : null;
-  }
-  return null;
-}
-
-const linkedInUrl = getLinkedInUrl(guest);
+// Get LinkedIn URL from various sources
+const linkedInUrl = guestWithLinkedIn?.linkedInData?.url || 
+                   guestWithLinkedIn?.linkedin ||
+                   guest.data.linkedin ||
+                   guest.data.socialLinks?.find((link: any) => link.platform === 'linkedin')?.url ||
+                   null;
 ---
 
 <BaseLayout 
@@ -127,7 +129,7 @@ const linkedInUrl = getLinkedInUrl(guest);
   language={language}
   canonical={`https://cro.cafe/${language}/guests/${guestSlug}/`}
   hreflang={hreflang}
-  ogImage={guest.data.imageUrl}
+  ogImage={profilePicUrl}
 >
   <!-- Person Schema for Guest -->
   <SchemaPerson 
@@ -153,21 +155,44 @@ const linkedInUrl = getLinkedInUrl(guest);
         </div>
         
         <div class="flex flex-col md:flex-row gap-8 items-start">
-          <GuestImage 
-            imageUrl={guest.data.imageUrl || guest.data.image} 
-            alt={guest.data.name}
-            class="w-32 h-32 rounded-full object-cover flex-shrink-0"
-          />
+          <div class="relative">
+            <GuestProfilePicture 
+              guest={guestWithLinkedIn || guest}
+              size="lg"
+              class="w-32 h-32 rounded-full object-cover flex-shrink-0"
+              showLinkedInBadge={false}
+            />
+          </div>
           
           <div class="flex-1">
             <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-2">
-              {guest.data.name}
+              {guestName}
             </h1>
             
-            {(guest.data.role || guest.data.title) && guest.data.company && (
-              <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
-                {guest.data.role || guest.data.title} at {guest.data.company}
+            {/* Current role from LinkedIn or original data */}
+            {(guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title) && 
+             (guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company) && (
+              <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
+                {guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title} at {guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company}
               </p>
+            )}
+            
+            {/* LinkedIn headline if available */}
+            {guestWithLinkedIn?.linkedInData?.headline && (
+              <p class="text-lg text-gray-500 dark:text-gray-400 mb-4 italic">
+                {guestWithLinkedIn.linkedInData.headline}
+              </p>
+            )}
+            
+            {/* Country flag */}
+            {guestWithLinkedIn?.linkedInData?.country && (
+              <div class="mb-4">
+                <CountryFlag 
+                  country={guestWithLinkedIn.linkedInData.country} 
+                  size="md"
+                  showName={true}
+                />
+              </div>
             )}
             
             {/* Social Links */}
@@ -205,12 +230,12 @@ const linkedInUrl = getLinkedInUrl(guest);
                   href={linkedInUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  class="flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-md hover:bg-[#005582] transition-colors font-medium"
                 >
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                   </svg>
-                  LinkedIn
+                  Connect on LinkedIn
                 </a>
               )}
             </div>
@@ -219,10 +244,87 @@ const linkedInUrl = getLinkedInUrl(guest);
       </header>
 
       <!-- Bio Section -->
-      <div class="prose prose-lg dark:prose-invert max-w-none mb-12">
-        <h2>{t.about} {guest.data.name}</h2>
-        <p>{guest.data.bio}</p>
-      </div>
+      {(guestWithLinkedIn?.linkedInData?.bio || guest.data.bio) && (
+        <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
+          <h2>{t.about} {guestName}</h2>
+          
+          {/* LinkedIn bio if available */}
+          {guestWithLinkedIn?.linkedInData?.bio && (
+            <div class="mb-6">
+              <p class="whitespace-pre-wrap">{guestWithLinkedIn.linkedInData.bio}</p>
+            </div>
+          )}
+          
+          {/* Original bio if different or LinkedIn bio not available */}
+          {(!guestWithLinkedIn?.linkedInData?.bio || 
+            (guest.data.bio && guest.data.bio !== guestWithLinkedIn.linkedInData.bio)) && (
+            <div class="mt-6">
+              {guestWithLinkedIn?.linkedInData?.bio && (
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Additional information:</p>
+              )}
+              <p>{guest.data.bio}</p>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* LinkedIn Skills Section */}
+      {guestWithLinkedIn?.linkedInData?.skills && guestWithLinkedIn.linkedInData.skills.length > 0 && (
+        <div class="mb-8">
+          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Skills & Expertise</h3>
+          <div class="flex flex-wrap gap-2">
+            {guestWithLinkedIn.linkedInData.skills.map((skill: string) => (
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Career Progression - Then & Now Card */}
+      {guestWithLinkedIn?.linkedInData?.experiences && 
+       guestWithLinkedIn.linkedInData.experiences.length > 0 && 
+       guestEpisodes.length > 0 && (
+        <div class="mb-12">
+          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Career Journey</h3>
+          {/* Find the oldest episode to show progression */}
+          {(() => {
+            const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
+            const episodeDate = oldestEpisode.data.pubDate;
+            
+            // Find the experience at the time of the episode
+            const historicalExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => {
+              if (exp.startDate && exp.endDate) {
+                const startYear = parseInt(exp.startDate.split('-')[0]);
+                const endYear = parseInt(exp.endDate.split('-')[0]);
+                const episodeYear = episodeDate.getFullYear();
+                return episodeYear >= startYear && episodeYear <= endYear;
+              }
+              return false;
+            });
+            
+            const currentExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => exp.isCurrent);
+            
+            return (historicalExperience || guest.data.role) ? (
+              <ThenNowCard
+                historical={{
+                  role: historicalExperience?.title || guest.data.role || guest.data.title || 'Guest',
+                  company: historicalExperience?.company || guest.data.company || 'Company',
+                  date: episodeDate
+                }}
+                current={currentExperience ? {
+                  role: currentExperience.title,
+                  company: currentExperience.company,
+                  lastUpdated: guestWithLinkedIn?.linkedInData?.lastSync || new Date()
+                } : undefined}
+                episodeId={oldestEpisode.data.slug || oldestEpisode.slug}
+                episodeTitle={oldestEpisode.data.title}
+              />
+            ) : null;
+          })()}
+        </div>
+      )}
 
       <!-- Other Guests from Same Company -->
       <GuestOtherCompany guest={guest} language={language} />

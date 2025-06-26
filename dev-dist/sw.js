@@ -79,7 +79,7 @@ define(['./workbox-fa034aca'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/",
-    "revision": "0.mr1pbi14go8"
+    "revision": "0.ua8npftmqeg"
   }], {
     "directoryIndex": "index.html"
   });

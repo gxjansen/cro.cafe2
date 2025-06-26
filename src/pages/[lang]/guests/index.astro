@@ -2,7 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
-import GuestCard from '../../../components/GuestCard.astro';
+import GuestCardVertical from '../../../components/GuestCardVertical.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -84,7 +84,7 @@ const t = translations[language];
       <!-- Guests Grid -->
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {guests.map((guest) => (
-          <GuestCard guest={guest} language={language} size="large" showEpisodeCount={true} />
+          <GuestCardVertical guest={guest} language={language} size="large" showEpisodeCount={true} />
         ))}
       </div>
 

@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import GuestCard from '../components/GuestCard.astro';
+import GuestCardVertical from '../components/GuestCardVertical.astro';
+import GuestCardHorizontalImproved from '../components/GuestCardHorizontalImproved.astro';
+import { getCollection } from 'astro:content';
+
+// Get sample guests with LinkedIn data
+const allGuests = await getCollection('guests');
+const sampleGuests = allGuests
+  .filter(guest => guest.data.linkedin_headline && guest.data.linkedin_country)
+  .slice(0, 8);
+
+// Add a guest without LinkedIn data for comparison
+const guestWithoutLinkedIn = allGuests.find(guest => !guest.data.linkedin_headline) || sampleGuests[0];
+---
+
+<BaseLayout 
+  title="Guest Card Design Comparison - CRO.CAFE"
+  description="Comparing different guest card layout designs"
+  language="en"
+>
+  <Header language="en" currentPath="/design-demo-guest-cards/" />
+  
+  <main class="flex-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-12">
+        <h1 class="text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+          Guest Card Design Comparison
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
+          Evaluating three different layout approaches to solve text cramping and space utilization issues.
+        </p>
+        
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-8">
+          <h2 class="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">Current Issues:</h2>
+          <ul class="list-disc list-inside text-yellow-800 dark:text-yellow-200 space-y-1">
+            <li>Text overflow in narrow second column</li>
+            <li>Unused vertical space below profile pictures</li>
+            <li>LinkedIn headlines take significant space</li>
+            <li>Poor information hierarchy</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Current Design -->
+      <section class="mb-16">
+        <div class="mb-6">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-2">
+            Current Design (Horizontal Layout)
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400">
+            Profile picture on left, all text cramped in right column
+          </p>
+        </div>
+        
+        <!-- 4-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">4-Column Grid (Large Screens)</h3>
+          <div class="grid gap-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+            {sampleGuests.slice(0, 4).map((guest) => (
+              <GuestCard guest={guest} size="medium" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+        
+        <!-- 3-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">3-Column Grid (Medium Screens)</h3>
+          <div class="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
+            {sampleGuests.slice(0, 3).map((guest) => (
+              <GuestCard guest={guest} size="large" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Vertical Design -->
+      <section class="mb-16">
+        <div class="mb-6">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-2">
+            Option A: Vertical Layout (Recommended)
+          </h2>
+          <div class="prose dark:prose-invert max-w-none mb-4">
+            <ul>
+              <li>Profile picture centered at top</li>
+              <li>Text content uses full card width</li>
+              <li>Better vertical space utilization</li>
+              <li>Clear information hierarchy</li>
+              <li>LinkedIn headline in subtle background box</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 4-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">4-Column Grid</h3>
+          <div class="grid gap-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+            {sampleGuests.slice(0, 4).map((guest) => (
+              <GuestCardVertical guest={guest} size="small" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+        
+        <!-- 3-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">3-Column Grid</h3>
+          <div class="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
+            {sampleGuests.slice(0, 3).map((guest) => (
+              <GuestCardVertical guest={guest} size="medium" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Improved Horizontal Design -->
+      <section class="mb-16">
+        <div class="mb-6">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-2">
+            Option B: Two-Row Horizontal Layout
+          </h2>
+          <div class="prose dark:prose-invert max-w-none mb-4">
+            <ul>
+              <li>Row 1: Profile picture + name/role + LinkedIn icon</li>
+              <li>Row 2: LinkedIn headline and metadata use full width</li>
+              <li>Larger profile pictures (80px for medium)</li>
+              <li>Better spacing and visual hierarchy</li>
+              <li>LinkedIn headline with enhanced visual treatment</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 4-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">4-Column Grid</h3>
+          <div class="grid gap-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+            {sampleGuests.slice(0, 4).map((guest) => (
+              <GuestCardHorizontalImproved guest={guest} size="medium" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+        
+        <!-- 3-column grid -->
+        <div class="mb-8">
+          <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">3-Column Grid</h3>
+          <div class="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
+            {sampleGuests.slice(0, 3).map((guest) => (
+              <GuestCardHorizontalImproved guest={guest} size="large" showEpisodeCount={true} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Edge Cases -->
+      <section class="mb-16">
+        <div class="mb-6">
+          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-2">
+            Edge Cases Comparison
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            How each design handles guests without LinkedIn data
+          </p>
+        </div>
+        
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Design</h3>
+            <GuestCard guest={guestWithoutLinkedIn} size="medium" showEpisodeCount={true} />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vertical Layout</h3>
+            <GuestCardVertical guest={guestWithoutLinkedIn} size="medium" showEpisodeCount={true} />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Two-Row Horizontal</h3>
+            <GuestCardHorizontalImproved guest={guestWithoutLinkedIn} size="medium" showEpisodeCount={true} />
+          </div>
+        </div>
+      </section>
+
+      <!-- Recommendations -->
+      <section class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
+        <h2 class="text-2xl font-heading font-semibold text-green-900 dark:text-green-100 mb-4">
+          Design Recommendations
+        </h2>
+        <div class="prose dark:prose-invert max-w-none text-green-800 dark:text-green-200">
+          <ol>
+            <li><strong>Primary Recommendation:</strong> Adopt the vertical layout for 4-column grids (desktop) and smaller cards</li>
+            <li><strong>Alternative:</strong> Use the two-row horizontal layout for 2-3 column grids where horizontal space is more available</li>
+            <li><strong>Responsive Strategy:</strong> Consider using vertical layout on mobile/tablet, horizontal on larger screens</li>
+            <li><strong>Grid Adjustments:</strong> Consider using 3-column max on desktop for better readability</li>
+            <li><strong>Visual Enhancements:</strong>
+              <ul>
+                <li>Increase profile picture sizes</li>
+                <li>Add subtle backgrounds for LinkedIn headlines</li>
+                <li>Improve spacing and typography hierarchy</li>
+                <li>Position LinkedIn icon more prominently</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,232 @@
+---
+import GuestProfilePicture from './GuestProfilePicture.astro';
+import CountryFlag from './CountryFlag.astro';
+import type { Language } from '../types';
+
+export interface Props {
+  guest: any;
+  language?: Language;
+  size?: 'small' | 'medium' | 'large';
+  showEpisodeCount?: boolean;
+}
+
+const { guest, language, size = 'medium', showEpisodeCount = false } = Astro.props;
+
+// Helper function to get guest URL for a specific language
+function getGuestUrl(guest: any, lang?: Language): string {
+  const slug = guest.data.slug || guest.slug;
+  if (!lang) {
+    // Use the first available language for the guest
+    const firstLang = guest.data.languages[0];
+    return firstLang === 'en' ? `/guests/${slug}/` : `/${firstLang}/guests/${slug}/`;
+  }
+  return lang === 'en' ? `/guests/${slug}/` : `/${lang}/guests/${slug}/`;
+}
+
+// Get LinkedIn URL from socialLinks
+function getLinkedInUrl(guest: any): string | null {
+  if (guest.data.linkedin) {
+    return guest.data.linkedin;
+  }
+  if (guest.data.socialLinks) {
+    const linkedinLink = guest.data.socialLinks.find((link: any) => link.platform === 'linkedin');
+    return linkedinLink ? linkedinLink.url : null;
+  }
+  return null;
+}
+
+// Get guest image URL
+function getGuestImageUrl(guest: any): string | undefined {
+  if (guest.data.imageUrl) return guest.data.imageUrl;
+  if (guest.data.image) return guest.data.image;
+  
+  // Construct image path from slug
+  const slug = guest.data.slug || guest.slug;
+  return `/images/guests/${slug}.webp`;
+}
+
+const linkedInUrl = getLinkedInUrl(guest);
+const imageUrl = getGuestImageUrl(guest);
+
+// Get LinkedIn headline
+const linkedinHeadline = guest.data.linkedin_headline || null;
+
+// Get LinkedIn country
+const linkedinCountry = guest.data.linkedin_country || null;
+
+// Truncate headline based on size
+function truncateHeadline(headline: string | null, maxLength: number): string | null {
+  if (!headline) return null;
+  if (headline.length <= maxLength) return headline;
+  
+  // Smart truncation at word boundary
+  const truncated = headline.substr(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return headline.substr(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+}
+
+// Get truncated headline based on screen size
+const getHeadlineLength = () => {
+  switch(size) {
+    case 'small': return 80;
+    case 'medium': return 120;
+    case 'large': return 150;
+    default: return 120;
+  }
+};
+
+const truncatedHeadline = truncateHeadline(linkedinHeadline, getHeadlineLength());
+
+// Size-specific classes
+const sizeClasses = {
+  small: {
+    container: 'p-4',
+    imageSize: 'md' as const,
+    title: 'text-base font-semibold',
+    subtitle: 'text-sm',
+    headline: 'text-xs',
+    linkedin: 'w-5 h-5',
+    flagSize: 'sm' as const,
+    gap: 'gap-3'
+  },
+  medium: {
+    container: 'p-5',
+    imageSize: 'lg' as const,
+    title: 'text-lg font-semibold',
+    subtitle: 'text-sm',
+    headline: 'text-sm',
+    linkedin: 'w-5 h-5',
+    flagSize: 'sm' as const,
+    gap: 'gap-4'
+  },
+  large: {
+    container: 'p-6',
+    imageSize: 'xl' as const,
+    title: 'text-xl font-semibold',
+    subtitle: 'text-base',
+    headline: 'text-base',
+    linkedin: 'w-6 h-6',
+    flagSize: 'md' as const,
+    gap: 'gap-4'
+  }
+};
+
+const classes = sizeClasses[size];
+---
+
+<a 
+  href={getGuestUrl(guest, language)} 
+  class={`card card-interactive ${classes.container} block group relative`}
+  aria-label={`View ${guest.data.name}'s profile`}
+>
+  <!-- LinkedIn Icon - Absolute positioned top-right -->
+  {linkedInUrl && (
+    <div 
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+      }}
+      class="absolute top-4 right-4 text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 transition-colors z-10 cursor-pointer"
+      aria-label={`${guest.data.name} on LinkedIn`}
+      role="button"
+      tabindex="0"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+        }
+      }}
+    >
+      <svg class={classes.linkedin} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    </div>
+  )}
+
+  <div class={`flex flex-col items-center text-center ${classes.gap}`}>
+    <!-- Guest Image - Centered -->
+    <div class="group-hover:scale-105 transition-transform duration-300">
+      <GuestProfilePicture 
+        guest={guest}
+        size={classes.imageSize}
+        loading="lazy"
+        grayscale={true}
+      />
+    </div>
+    
+    <!-- Guest Info -->
+    <div class="w-full">
+      <!-- Guest Name -->
+      <h3 class={`${classes.title} text-gray-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors`}>
+        {guest.data.name}
+      </h3>
+      
+      <!-- Job Title and Company -->
+      {(guest.data.role || guest.data.company) && (
+        <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-3`}>
+          {guest.data.role && guest.data.company ? (
+            <>{guest.data.role} at {guest.data.company}</>
+          ) : (
+            guest.data.role || guest.data.company
+          )}
+        </p>
+      )}
+      
+      <!-- LinkedIn Headline -->
+      {truncatedHeadline && (
+        <div class="mb-3">
+          <p class={`${classes.headline} italic text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/30 rounded-md px-3 py-2`}
+             title={linkedinHeadline}>
+            "{truncatedHeadline}"
+          </p>
+        </div>
+      )}
+      
+      <!-- Location with Country Flag -->
+      {linkedinCountry && (
+        <div class="flex justify-center mb-2">
+          <CountryFlag 
+            country={linkedinCountry}
+            size={classes.flagSize}
+            showName={true}
+          />
+        </div>
+      )}
+      
+      <!-- Episode Count (optional) -->
+      {showEpisodeCount && guest.data.episodeCount && (
+        <p class={`${classes.subtitle} text-gray-500 dark:text-gray-400 mt-2`}>
+          {guest.data.episodeCount} episode{guest.data.episodeCount !== 1 ? 's' : ''}
+        </p>
+      )}
+    </div>
+  </div>
+</a>
+
+<style>
+  /* Enhanced hover effects */
+  .card-interactive {
+    @apply transition-all duration-300;
+  }
+  
+  .card-interactive:hover {
+    @apply shadow-lg scale-[1.02];
+  }
+  
+  /* Ensure cards have consistent height in grid */
+  .card-interactive {
+    height: 100%;
+  }
+  
+  /* Focus styles for accessibility */
+  .card-interactive:focus-visible {
+    @apply ring-2 ring-primary-500 ring-offset-2;
+  }
+  
+  /* LinkedIn icon hover effect */
+  .card-interactive [role="button"]:focus-visible {
+    @apply ring-2 ring-primary-500 ring-offset-2 rounded;
+  }
+</style>

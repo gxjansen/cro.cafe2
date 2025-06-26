@@ -57,6 +57,24 @@ const guestSchema = z.object({
   linkedin: z.string().url().optional(),
   socialLinks: z.any().optional(), // Flexible array format for social links
   
+  // LinkedIn enrichment fields
+  linkedin_url: z.string().optional(),
+  linkedin_full_name: z.string().optional(),
+  linkedin_first_name: z.string().optional(),
+  linkedin_headline: z.string().optional(),
+  linkedin_email: z.string().optional(),
+  linkedin_bio: z.string().optional(),
+  linkedin_profile_pic: z.string().optional(),
+  linkedin_current_role: z.string().optional(),
+  linkedin_current_company: z.string().optional(),
+  linkedin_country: z.string().optional(),
+  linkedin_skills: z.string().optional(),
+  linkedin_company_website: z.string().optional(),
+  linkedin_experiences: z.string().optional(),
+  linkedin_personal_website: z.string().optional(),
+  linkedin_publications: z.string().optional(),
+  last_linkedin_sync: z.string().optional(),
+  
   // Media - allow both full URLs and relative paths
   imageUrl: z.string().optional(),
   
