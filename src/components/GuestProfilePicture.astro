@@ -113,11 +113,22 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
         const img = event.target;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
         
-        // Local image failed - show initials placeholder
-        console.log('Local image failed, showing initials for:', img.src);
-        img.remove();
-        if (placeholder) {
-          placeholder.classList.remove('animate-pulse');
+        // Try alternative extension before giving up
+        if (img.src.endsWith('.jpeg') && !img.dataset.triedJpg) {
+          img.dataset.triedJpg = 'true';
+          img.src = img.src.replace('.jpeg', '.jpg');
+          console.log('Trying .jpg extension:', img.src);
+        } else if (img.src.endsWith('.jpg') && !img.dataset.triedJpeg) {
+          img.dataset.triedJpeg = 'true';
+          img.src = img.src.replace('.jpg', '.jpeg');
+          console.log('Trying .jpeg extension:', img.src);
+        } else {
+          // Both extensions failed - show initials placeholder
+          console.log('All image extensions failed, showing initials for:', img.src);
+          img.remove();
+          if (placeholder) {
+            placeholder.classList.remove('animate-pulse');
+          }
         }
       `}
     />
@@ -187,9 +198,14 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 
       // Implement retry logic for failed loads
       let retryCount = 0;
-      const maxRetries = 2;
+      const maxRetries = 1; // Reduced since we're trying different extensions
       
       img.addEventListener('error', function handleError() {
+        // Skip retry if we're already trying different extensions
+        if (img.dataset.triedJpg || img.dataset.triedJpeg) {
+          return;
+        }
+        
         if (retryCount < maxRetries && !img.src.includes('default-guest')) {
           retryCount++;
           console.log(`Retrying profile picture load (${retryCount}/${maxRetries}): ${img.src}`);
