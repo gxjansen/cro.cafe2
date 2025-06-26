@@ -57,6 +57,7 @@ const translations = {
   en: {
     backToGuests: '← Back to All Guests',
     about: 'About',
+    at: 'at',
     episodesWith: 'Episodes with',
     episodesIn: 'Episodes in',
     availableLanguages: 'Available in other languages',
@@ -69,6 +70,7 @@ const translations = {
   nl: {
     backToGuests: '← Terug naar Alle Gasten',
     about: 'Over',
+    at: 'bij',
     episodesWith: 'Afleveringen met',
     episodesIn: 'Afleveringen in het',
     availableLanguages: 'Beschikbaar in andere talen',
@@ -81,6 +83,7 @@ const translations = {
   de: {
     backToGuests: '← Zurück zu Allen Gästen',
     about: 'Über',
+    at: 'bei',
     episodesWith: 'Folgen mit',
     episodesIn: 'Folgen auf',
     availableLanguages: 'In anderen Sprachen verfügbar',
@@ -93,6 +96,7 @@ const translations = {
   es: {
     backToGuests: '← Volver a Todos los Invitados',
     about: 'Acerca de',
+    at: 'en',
     episodesWith: 'Episodios con',
     episodesIn: 'Episodios en',
     availableLanguages: 'Disponible en otros idiomas',
@@ -189,7 +193,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               if (role && company) {
                 return (
                   <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
-                    {role} at {company}
+                    {role} {t.at} {company}
                   </p>
                 );
               } else if (role) {

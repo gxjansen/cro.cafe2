@@ -10,7 +10,17 @@ export interface Props {
   showEpisodeCount?: boolean;
 }
 
-const { guest, language, size = 'medium', showEpisodeCount = false } = Astro.props;
+const { guest, language = 'en', size = 'medium', showEpisodeCount = false } = Astro.props;
+
+// Translations for the "at" text
+const translations = {
+  en: { at: 'at' },
+  nl: { at: 'bij' },
+  de: { at: 'bei' },
+  es: { at: 'en' }
+};
+
+const t = translations[language];
 
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
@@ -153,7 +163,7 @@ const classes = sizeClasses[size];
           {(guestRole || guestCompany) && (
             <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 ${truncatedHeadline ? 'mb-1' : 'mb-2'}`}>
               {guestRole && guestCompany ? (
-                <>{guestRole} at {guestCompany}</>
+                <>{guestRole} {t.at} {guestCompany}</>
               ) : (
                 guestRole || guestCompany
               )}
