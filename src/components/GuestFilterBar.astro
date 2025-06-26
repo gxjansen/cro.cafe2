@@ -185,7 +185,12 @@ const instanceId = Math.random().toString(36).substring(7);
   </div>
 </section>
 
-<script define:vars={{ instanceId, showLanguageFilter, language }}>
+<script data-instance-id={instanceId} data-show-language-filter={showLanguageFilter.toString()} data-language={language}>
+  // Import instance-specific variables
+  const instanceId = document.currentScript?.getAttribute('data-instance-id');
+  const showLanguageFilter = document.currentScript?.getAttribute('data-show-language-filter') === 'true';
+  const language = document.currentScript?.getAttribute('data-language');
+
   // Guest filtering functionality
   function initializeFilters() {
     const filterInstance = document.querySelector(`[data-filter-instance="${instanceId}"]`);
@@ -207,8 +212,8 @@ const instanceId = Math.random().toString(36).substring(7);
             .map((cb) => cb.value)
         : [language]; // If no language filter, use the current page language
       
-      const selectedCountry = countryFilter.value;
-      const selectedSkill = skillFilter.value;
+      const selectedCountry = countryFilter?.value || '';
+      const selectedSkill = skillFilter?.value || '';
       
       const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
       const noShowsMessage = document.getElementById('noShowsMessage');
@@ -244,7 +249,7 @@ const instanceId = Math.random().toString(36).substring(7);
         // Check show filter
         const showMatch = showLanguageFilter 
           ? languages.some((lang: string) => selectedShows.includes(lang))
-          : languages.includes(language); // For language-specific pages
+          : true; // For language-specific pages, we already filtered by language server-side
         
         // Check country filter
         const countryMatch = !selectedCountry || country === selectedCountry;
@@ -301,8 +306,8 @@ const instanceId = Math.random().toString(36).substring(7);
           cb.checked = true;
         }
       });
-      countryFilter.value = '';
-      skillFilter.value = '';
+      if (countryFilter) countryFilter.value = '';
+      if (skillFilter) skillFilter.value = '';
       filterGuests();
     }
     
