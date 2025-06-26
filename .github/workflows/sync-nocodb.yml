@@ -27,16 +27,16 @@ on:
         default: 'all'
         type: string
   
-  # Trigger on push to main branch (for testing)
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/lib/engines/content-generator.ts'
-      - 'src/lib/services/nocodb-service.ts'
-      - 'scripts/generate-content.ts'
-      - 'scripts/sync-images.ts'
-      - '.github/workflows/sync-nocodb.yml'
+  # DISABLED - Use sync-all-content.yml for scheduled content sync
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'src/lib/engines/content-generator.ts'
+  #     - 'src/lib/services/nocodb-service.ts'
+  #     - 'scripts/generate-content.ts'
+  #     - 'scripts/sync-images.ts'
+  #     - '.github/workflows/sync-nocodb.yml'
 
 # Environment variables
 env:
