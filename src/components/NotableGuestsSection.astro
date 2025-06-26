@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import GuestImage from './GuestImage.astro';
+import GuestProfilePictureOptimized from './GuestProfilePictureOptimized.astro';
 import { getGuestUrl, getGuestImageUrl } from '../utils/content';
 import type { Language } from '../types';
 
@@ -37,12 +37,6 @@ if (featuredGuests.length === 0) {
 // Randomize the selection for variety across builds and limit to exactly 6
 const shuffled = featuredGuests.sort(() => Math.random() - 0.5);
 const selectedGuests = shuffled.slice(0, 6);
-
-// Helper function to get guest image
-function getGuestImage(guest: any): string {
-  const slug = guest.data.slug || guest.slug;
-  return guest.data.imageUrl || getGuestImageUrl(slug);
-}
 
 // Translations
 const translations = {
@@ -90,7 +84,19 @@ const t = translations[language];
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
         {selectedGuests.map((guest) => {
           const guestUrl = getGuestUrl(guest, language);
-          const imageUrl = getGuestImage(guest);
+          
+          // Get LinkedIn data with priority: LinkedIn data first, then fallback to static data
+          const guestName = guest.data.linkedin_full_name || guest.data.name;
+          const guestRole = guest.data.linkedin_current_role || guest.data.role || guest.data.title;
+          
+          // Check if guest is a freelancer
+          const isFreelancer = (
+            (guest.data.linkedin_headline && guest.data.linkedin_headline.toLowerCase().includes('freelance')) ||
+            (guest.data.linkedin_current_role && guest.data.linkedin_current_role.toLowerCase().includes('freelance'))
+          );
+          
+          // Only use company if not freelancer and linkedin_current_company exists
+          const guestCompany = isFreelancer ? null : (guest.data.linkedin_current_company || null);
           
           return (
             <a 
@@ -98,13 +104,15 @@ const t = translations[language];
               class="group text-center hover:transform hover:scale-105 transition-all duration-300"
             >
               <div class="relative mb-4">
-                <GuestImage 
-                  imageUrl={imageUrl} 
-                  alt={`${guest.data.name} - CRO.CAFE notable guest`}
-                  width={128}
-                  height={128}
-                  class="w-32 h-32 mx-auto rounded-full object-cover shadow-md group-hover:shadow-xl transition-shadow"
-                />
+                <div class="w-32 h-32 mx-auto">
+                  <GuestProfilePictureOptimized 
+                    guest={guest}
+                    size="lg"
+                    loading="lazy"
+                    grayscale={true}
+                    class="shadow-md group-hover:shadow-xl transition-shadow"
+                  />
+                </div>
                 {guest.data.isFeatured && (
                   <div class="absolute -top-1 -right-1 w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -115,18 +123,18 @@ const t = translations[language];
               </div>
               
               <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                {guest.data.name}
+                {guestName}
               </h3>
               
-              {(guest.data.role || guest.data.title) && (
+              {guestRole && (
                 <p class="text-sm text-gray-700 dark:text-gray-300 mt-1 font-medium">
-                  {guest.data.role || guest.data.title}
+                  {guestRole}
                 </p>
               )}
               
-              {guest.data.company && (
+              {guestCompany && (
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {guest.data.company}
+                  {guestCompany}
                 </p>
               )}
             </a>

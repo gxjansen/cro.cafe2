@@ -173,12 +173,34 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             </h1>
             
             {/* Current role from LinkedIn or original data */}
-            {(guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title) && 
-             (guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company) && (
-              <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
-                {guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title} at {guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company}
-              </p>
-            )}
+            {(() => {
+              const role = guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title;
+              const headline = guestWithLinkedIn?.linkedInData?.headline || guest.data.linkedin_headline;
+              
+              // Check if guest is a freelancer
+              const isFreelancer = (
+                (headline && headline.toLowerCase().includes('freelance')) ||
+                (role && role.toLowerCase().includes('freelance'))
+              );
+              
+              // Only use company if not freelancer and company exists
+              const company = isFreelancer ? null : (guestWithLinkedIn?.linkedInData?.currentCompany || null);
+              
+              if (role && company) {
+                return (
+                  <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
+                    {role} at {company}
+                  </p>
+                );
+              } else if (role) {
+                return (
+                  <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
+                    {role}
+                  </p>
+                );
+              }
+              return null;
+            })()}
             
             {/* LinkedIn headline if available */}
             {guestWithLinkedIn?.linkedInData?.headline && (
