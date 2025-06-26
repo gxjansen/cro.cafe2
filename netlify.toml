@@ -12,11 +12,20 @@
   command = "npm run dev"
   port = 4321
 
-# Redirects for SPA routing (if needed)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Netlify automatically handles trailing slashes based on pretty URLs
+# This ensures URLs without trailing slashes redirect to ones with trailing slashes
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = true
+  minify = true
+[build.processing.js]
+  bundle = true
+  minify = true
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true
 
 # Headers for security and performance
 [[headers]]

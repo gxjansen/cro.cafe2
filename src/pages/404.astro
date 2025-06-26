@@ -1,0 +1,52 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Check if the URL needs a trailing slash redirect
+const url = new URL(Astro.url);
+const pathname = url.pathname;
+
+// Check if this is a missing trailing slash situation
+if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.startsWith('/api/')) {
+  // This is likely a missing trailing slash - redirect to the correct URL
+  return Astro.redirect(`${pathname}/`, 301);
+}
+---
+
+<BaseLayout 
+  title="Page Not Found - CRO.CAFE"
+  description="The page you're looking for doesn't exist."
+  noIndex={true}
+>
+  <div class="min-h-[60vh] flex items-center justify-center px-4">
+    <div class="text-center max-w-2xl mx-auto">
+      <h1 class="text-6xl font-bold text-brand-500 mb-4">404</h1>
+      <h2 class="text-3xl font-semibold mb-6">Page Not Found</h2>
+      <p class="text-lg text-gray-400 mb-8">
+        Sorry, we couldn't find the page you're looking for. 
+        It might have been moved or no longer exists.
+      </p>
+      <div class="space-y-4">
+        <a 
+          href="/" 
+          class="inline-block px-6 py-3 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
+        >
+          Go to Homepage
+        </a>
+        <div class="mt-4">
+          <a 
+            href="/episodes/" 
+            class="text-brand-500 hover:text-brand-600 mr-6"
+          >
+            Browse Episodes
+          </a>
+          <a 
+            href="/guests/" 
+            class="text-brand-500 hover:text-brand-600"
+          >
+            View Guests
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

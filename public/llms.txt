@@ -1,0 +1,41 @@
+# CRO.CAFE
+
+> CRO.CAFE is a global podcast community focused on conversion rate optimization (CRO), featuring expert interviews, practical insights, and discussions about experimentation and optimization strategies.
+
+The CRO.CAFE podcast network hosts conversations with conversion optimization experts, practitioners, and thought leaders from around the world. Our content spans four languages—English, Dutch, German, and Spanish—with each show offering unique episodes tailored to its audience, not translations.
+
+## Content
+
+- [Episodes](/episodes/): Interviews with CRO experts discussing optimization strategies, experimentation practices, and real-world case studies
+- [Guests](/guests/): Profiles of conversion optimization professionals, their expertise areas, and episode appearances
+- [Hosts](/hosts/): Information about podcast hosts across all language versions
+
+## Podcast Shows
+
+- [English Episodes](/en/episodes/): Main CRO.CAFE podcast featuring international experts
+- [Dutch Episodes](/nl/episodes/): CRO.CAFE Nederland with Dutch market insights
+- [German Episodes](/de/episodes/): CRO.CAFE Deutsch focusing on DACH region optimization
+- [Spanish Episodes](/es/episodes/): CRO.CAFE España covering Spanish-speaking markets
+
+## Key Topics Covered
+
+Our episodes explore:
+- Conversion rate optimization strategies and methodologies
+- A/B testing and experimentation best practices
+- Building experimentation cultures in organizations
+- User research and customer insights
+- Behavioral psychology in digital experiences
+- Case studies from leading brands and agencies
+- Personalization and targeting strategies
+- Analytics and data-driven decision making
+
+## Notable Episode Series
+
+- Live conference coverage from industry events
+- Deep dives into specific optimization techniques
+- Company spotlights on experimentation programs
+- Expert interviews on emerging CRO trends
+
+## Listen
+
+Episodes are available on all major podcast platforms. Each language version maintains its own feed with original content created for that specific market and audience.

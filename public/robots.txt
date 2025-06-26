@@ -9,10 +9,10 @@ Sitemap: https://cro.cafe/sitemap-de.xml
 Sitemap: https://cro.cafe/sitemap-es.xml
 
 # Block test and demo pages
-Disallow: /color-test
-Disallow: /color-demo
-Disallow: /test-*
-Disallow: /_*
+Disallow: /color-test/
+Disallow: /color-demo/
+Disallow: /test-*/
+Disallow: /_*/
 
 # Block API endpoints
 Disallow: /api/
