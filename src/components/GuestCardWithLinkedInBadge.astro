@@ -1,5 +1,5 @@
 ---
-import GuestImage from './GuestImage.astro';
+import GuestProfilePictureOptimized from './GuestProfilePictureOptimized.astro';
 import LinkedInBadge from './LinkedInBadge.astro';
 import type { Language } from '../types';
 import { getLinkedInSyncStatus } from '../types/linkedin';
@@ -111,10 +111,10 @@ const classes = sizeClasses[size];
       class="flex-shrink-0 hover:opacity-80 transition-opacity"
       aria-label={`View ${guest.data.name}'s profile`}
     >
-      <GuestImage 
-        imageUrl={imageUrl} 
-        alt={`Photo of ${guest.data.name}`}
-        class={`${classes.image} rounded-full object-cover`}
+      <GuestProfilePictureOptimized 
+        guest={guest}
+        size="md"
+        loading="lazy"
       />
     </a>
     

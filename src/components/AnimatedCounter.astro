@@ -11,11 +11,11 @@ const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <span id={id} class="tabular-nums" data-target={target} data-suffix={suffix} data-prefix={prefix} data-duration={duration}>
-  {prefix}0{suffix}
+  {prefix}{target.toLocaleString()}{suffix}
 </span>
 
 <script>
-  // Counter animation logic
+  // Counter animation logic with improved state management
   document.addEventListener('DOMContentLoaded', () => {
     const observerOptions = {
       threshold: 0.1,
@@ -28,7 +28,17 @@ const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
       const prefix = element.getAttribute('data-prefix') || '';
       const duration = parseInt(element.getAttribute('data-duration') || '2000');
       
-      let current = 0;
+      // Start from current displayed value (not always 0)
+      const currentText = element.textContent || '';
+      const currentMatch = currentText.match(/[\d,]+/);
+      let current = currentMatch ? parseInt(currentMatch[0].replace(/,/g, '')) : target;
+      
+      // If already at target, reset to 0 for animation
+      if (current === target) {
+        current = 0;
+        element.textContent = `${prefix}0${suffix}`;
+      }
+      
       const increment = target / (duration / 16); // 60 FPS
       
       const updateCounter = () => {
@@ -38,6 +48,7 @@ const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
           requestAnimationFrame(updateCounter);
         } else {
           element.textContent = `${prefix}${target.toLocaleString()}${suffix}`;
+          element.setAttribute('data-animated', 'true');
         }
       };
       
@@ -46,16 +57,43 @@ const id = `counter-${Math.random().toString(36).substr(2, 9)}`;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
-          entry.target.classList.add('animated');
-          animateCounter(entry.target);
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          const hasAnimated = element.getAttribute('data-animated') === 'true';
+          
+          // Always animate on first view, or if enough time has passed
+          if (!hasAnimated || shouldReAnimate(element)) {
+            element.setAttribute('data-animated', 'false');
+            animateCounter(element);
+          }
         }
       });
     }, observerOptions);
 
+    // Helper function to determine if we should re-animate
+    const shouldReAnimate = (element: Element): boolean => {
+      const lastAnimated = element.getAttribute('data-last-animated');
+      if (!lastAnimated) return true;
+      
+      const timeSinceLastAnimation = Date.now() - parseInt(lastAnimated);
+      return timeSinceLastAnimation > 5000; // Re-animate if more than 5 seconds have passed
+    };
+
     // Observe all counters
     document.querySelectorAll('[data-target]').forEach(counter => {
+      // Set initial timestamp
+      counter.setAttribute('data-last-animated', Date.now().toString());
       observer.observe(counter);
+    });
+
+    // Handle page visibility changes to reset animation state
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        // Reset animation state when page becomes visible
+        document.querySelectorAll('[data-target]').forEach(counter => {
+          counter.setAttribute('data-animated', 'false');
+        });
+      }
     });
   });
 </script>

@@ -20,37 +20,37 @@ const guests = await getGuestsByLanguage(language);
 // Translations
 const translations = {
   en: {
-    title: 'All English-language Guests - CRO.CAFE Podcast',
-    description: 'Meet the experts and thought leaders who have shared their insights on the English-language CRO.CAFE podcast episodes.',
-    heading: 'All English-language Guests',
-    subheading: 'Meet the experts and thought leaders who have shared their insights on CRO, experimentation, and digital optimization in English-language episodes.',
+    title: 'All CRO.CAFE English Guests - CRO.CAFE Podcast',
+    description: 'Meet the experts and thought leaders who have shared their insights on the English CRO.CAFE podcast episodes.',
+    heading: 'All CRO.CAFE English Guests',
+    subheading: `Meet the ${guests.length} experts and thought leaders who have shared their insights on CRO, experimentation, and digital optimization in English episodes.`,
     episodes: 'episode',
     episodesPlural: 'episodes',
     noGuests: 'No guests available yet. Check back soon!'
   },
   nl: {
-    title: 'Alle Dutch-language Gasten - CRO.CAFE Podcast',
-    description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de Dutch-language CRO.CAFE podcast afleveringen.',
-    heading: 'Alle Dutch-language Gasten',
-    subheading: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld over CRO, experimenteren en digitale optimalisatie in Dutch-language afleveringen.',
+    title: 'Alle CRO.CAFE Nederland Gasten - CRO.CAFE Podcast',
+    description: 'Ontmoet de experts en thought leaders die hun inzichten hebben gedeeld in de Nederlandse CRO.CAFE podcast afleveringen.',
+    heading: 'Alle CRO.CAFE Nederland Gasten',
+    subheading: `Ontmoet de ${guests.length} experts en thought leaders die hun inzichten hebben gedeeld over CRO, experimenteren en digitale optimalisatie in Nederlandse afleveringen.`,
     episodes: 'aflevering',
     episodesPlural: 'afleveringen',
     noGuests: 'Nog geen gasten beschikbaar. Check binnenkort terug!'
   },
   de: {
-    title: 'Alle German-language Gäste - CRO.CAFE Podcast',
-    description: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse in den German-language CRO.CAFE Podcast Folgen geteilt haben.',
-    heading: 'Alle German-language Gäste',
-    subheading: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse über CRO, Experimente und digitale Optimierung in German-language Folgen geteilt haben.',
+    title: 'Alle CRO.CAFE Deutschland Gäste - CRO.CAFE Podcast',
+    description: 'Lernen Sie die Experten und Vordenker kennen, die ihre Erkenntnisse in den deutschen CRO.CAFE Podcast Folgen geteilt haben.',
+    heading: 'Alle CRO.CAFE Deutschland Gäste',
+    subheading: `Lernen Sie die ${guests.length} Experten und Vordenker kennen, die ihre Erkenntnisse über CRO, Experimente und digitale Optimierung in deutschen Folgen geteilt haben.`,
     episodes: 'Folge',
     episodesPlural: 'Folgen',
     noGuests: 'Noch keine Gäste verfügbar. Schauen Sie bald wieder vorbei!'
   },
   es: {
-    title: 'Todos los Invitados Spanish-language - CRO.CAFE Podcast',
-    description: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos en los episodios Spanish-language del podcast CRO.CAFE.',
-    heading: 'Todos los Invitados Spanish-language',
-    subheading: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos sobre CRO, experimentación y optimización digital en episodios Spanish-language.',
+    title: 'Todos los CRO.CAFE España Invitados - CRO.CAFE Podcast',
+    description: 'Conoce a los expertos y líderes de opinión que han compartido sus conocimientos en los episodios españoles del podcast CRO.CAFE.',
+    heading: 'Todos los CRO.CAFE España Invitados',
+    subheading: `Conoce a los ${guests.length} expertos y líderes de opinión que han compartido sus conocimientos sobre CRO, experimentación y optimización digital en episodios españoles.`,
     episodes: 'episodio',
     episodesPlural: 'episodios',
     noGuests: '¡Aún no hay invitados disponibles. Vuelve pronto!'
@@ -97,11 +97,3 @@ const t = translations[language];
   </main>
 </BaseLayout>
 
-<style>
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

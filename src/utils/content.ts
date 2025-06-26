@@ -6,6 +6,8 @@ import {
   type LinkedInDataRaw,
   transformLinkedInData 
 } from '../types/linkedin';
+// Import image inventory for build-time validated images
+import imageInventory from '../data/guest-image-inventory.json';
 
 // Get episodes by language
 export async function getEpisodesByLanguage(language: Language) {
@@ -418,15 +420,16 @@ export function getHostImageUrl(hostSlug: string): string {
   return filename ? `/images/hosts/${filename}` : '/images/default-host.jpg';
 }
 
-// Get guest image URL
+// Get guest image URL using build-time validated inventory
 export function getGuestImageUrl(guestSlug: string): string {
-  // For guests, we check if the image exists in the guests folder
-  // The image filename is typically the guest slug with common extensions
-  const possibleExtensions = ['.jpeg', '.jpg', '.png', '.webp'];
+  const guestImage = imageInventory[guestSlug];
   
-  // In production, you might want to check if file exists
-  // For now, we'll assume the image exists with .jpeg extension
-  return `/images/guests/${guestSlug}.jpeg`;
+  if (guestImage?.hasImage && guestImage.imageUrl) {
+    return guestImage.imageUrl;
+  }
+  
+  // Return deterministic fallback (SVG initials)
+  return guestImage?.fallbackUrl || `/images/guests/generated/${guestSlug}-initials.svg`;
 }
 
 // Get host by slug
@@ -901,32 +904,25 @@ export function hasLinkedInData(guest: any): boolean {
 }
 
 /**
- * Get guest profile picture with fallback chain
+ * Get guest profile picture using build-time validated inventory
  * @param guest - The guest object
- * @returns Profile picture URL with fallback options
+ * @returns Profile picture URL (validated at build time)
  */
 export function getGuestProfilePicture(guest: any): string {
-  // Priority order (NO LIVE LINKEDIN CALLS):
-  // 1. Explicit imageUrl from guest data (could be LinkedIn downloaded or manual)
-  // 2. Generated local guest image file path
-  // 3. Default guest image placeholder
-  // 
-  // NOTE: Never return LinkedIn URLs - only local files to avoid runtime calls
-  
-  // Priority 1: Check for explicit imageUrl in guest data first
-  // Check both guest.data.imageUrl and guest.imageUrl (for transformed objects)
-  const explicitImageUrl = guest?.data?.imageUrl || guest?.imageUrl;
-  if (explicitImageUrl) {
-    return explicitImageUrl;
-  }
-  
-  // Priority 2: Generate local image path from slug
+  // Extract guest slug
   const guestSlug = guest?.data?.slug || guest?.slug;
-  if (guestSlug) {
-    const localImageUrl = getGuestImageUrl(guestSlug);
-    return localImageUrl;
+  if (!guestSlug) {
+    return '/images/default-guest.jpg';
   }
   
-  // Priority 3: Default fallback (no LinkedIn URLs ever)
-  return '/images/default-guest.jpg';
+  // Use build-time validated image inventory
+  const guestImage = imageInventory[guestSlug];
+  
+  if (guestImage?.hasImage && guestImage.imageUrl) {
+    // Return validated image path
+    return guestImage.imageUrl;
+  }
+  
+  // Return deterministic SVG fallback (generated at build time)
+  return guestImage?.fallbackUrl || `/images/guests/generated/${guestSlug}-initials.svg`;
 }

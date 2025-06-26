@@ -1,0 +1,191 @@
+{
+  "metadata": {
+    "totalGuests": 295,
+    "guestsWithSkills": 261,
+    "analysisDate": "2025-06-26T19:12:37.130Z",
+    "coverage": "88.5%"
+  },
+  "recommendedFilters": [
+    {
+      "label": "Conversion Optimization",
+      "count": 38,
+      "category": "Core CRO"
+    },
+    {
+      "label": "A/B Testing",
+      "count": 11,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Multivariate Testing",
+      "count": 3,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Conversion Rate Optimization",
+      "count": 2,
+      "category": "Core CRO"
+    },
+    {
+      "label": "CRO",
+      "count": 2,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Growth Experimentation",
+      "count": 1,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Online Marketing",
+      "count": 56,
+      "category": "Marketing"
+    },
+    {
+      "label": "E-commerce",
+      "count": 46,
+      "category": "E-commerce"
+    },
+    {
+      "label": "Web Analytics",
+      "count": 42,
+      "category": "Analytics"
+    },
+    {
+      "label": "Google Analytics",
+      "count": 39,
+      "category": "Analytics"
+    },
+    {
+      "label": "SEO",
+      "count": 33,
+      "category": "SEO/SEM"
+    },
+    {
+      "label": "Digital Marketing",
+      "count": 23,
+      "category": "Marketing"
+    },
+    {
+      "label": "User Experience",
+      "count": 19,
+      "category": "UX Research"
+    },
+    {
+      "label": "Usability",
+      "count": 19,
+      "category": "UX Research"
+    },
+    {
+      "label": "Analytics",
+      "count": 11,
+      "category": "Analytics"
+    }
+  ],
+  "categories": [
+    "Core CRO",
+    "Analytics",
+    "UX Research",
+    "Marketing",
+    "E-commerce",
+    "Optimization",
+    "SEO/SEM"
+  ],
+  "allSkills": [
+    {
+      "label": "Conversion Optimization",
+      "count": 38,
+      "category": "Core CRO"
+    },
+    {
+      "label": "A/B Testing",
+      "count": 11,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Multivariate Testing",
+      "count": 3,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Conversion Rate Optimization",
+      "count": 2,
+      "category": "Core CRO"
+    },
+    {
+      "label": "CRO",
+      "count": 2,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Growth Experimentation",
+      "count": 1,
+      "category": "Core CRO"
+    },
+    {
+      "label": "Online Marketing",
+      "count": 56,
+      "category": "Marketing"
+    },
+    {
+      "label": "E-commerce",
+      "count": 46,
+      "category": "E-commerce"
+    },
+    {
+      "label": "Web Analytics",
+      "count": 42,
+      "category": "Analytics"
+    },
+    {
+      "label": "Google Analytics",
+      "count": 39,
+      "category": "Analytics"
+    },
+    {
+      "label": "SEO",
+      "count": 33,
+      "category": "SEO/SEM"
+    },
+    {
+      "label": "Digital Marketing",
+      "count": 23,
+      "category": "Marketing"
+    },
+    {
+      "label": "User Experience",
+      "count": 19,
+      "category": "UX Research"
+    },
+    {
+      "label": "Usability",
+      "count": 19,
+      "category": "UX Research"
+    },
+    {
+      "label": "Analytics",
+      "count": 11,
+      "category": "Analytics"
+    },
+    {
+      "label": "SEM",
+      "count": 9,
+      "category": "SEO/SEM"
+    },
+    {
+      "label": "Usability Testing",
+      "count": 7,
+      "category": "UX Research"
+    },
+    {
+      "label": "Performance Marketing",
+      "count": 4,
+      "category": "Marketing"
+    },
+    {
+      "label": "Landing Page Optimization",
+      "count": 3,
+      "category": "Optimization"
+    }
+  ]
+}

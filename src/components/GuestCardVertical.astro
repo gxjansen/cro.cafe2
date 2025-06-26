@@ -1,5 +1,5 @@
 ---
-import GuestProfilePicture from './GuestProfilePicture.astro';
+import GuestProfilePictureOptimized from './GuestProfilePictureOptimized.astro';
 import CountryFlag from './CountryFlag.astro';
 import type { Language } from '../types';
 
@@ -35,18 +35,12 @@ function getLinkedInUrl(guest: any): string | null {
   return null;
 }
 
-// Get guest image URL
-function getGuestImageUrl(guest: any): string | undefined {
-  if (guest.data.imageUrl) return guest.data.imageUrl;
-  if (guest.data.image) return guest.data.image;
-  
-  // Construct image path from slug
-  const slug = guest.data.slug || guest.slug;
-  return `/images/guests/${slug}.webp`;
-}
-
 const linkedInUrl = getLinkedInUrl(guest);
-const imageUrl = getGuestImageUrl(guest);
+
+// Get LinkedIn data with priority: LinkedIn data first, then fallback to static data
+const guestName = guest.data.linkedin_full_name || guest.data.name;
+const guestRole = guest.data.linkedin_current_role || guest.data.role;
+const guestCompany = guest.data.linkedin_current_company || guest.data.company;
 
 // Get LinkedIn headline
 const linkedinHeadline = guest.data.linkedin_headline || null;
@@ -117,7 +111,7 @@ const classes = sizeClasses[size];
 <a 
   href={getGuestUrl(guest, language)} 
   class={`card card-interactive ${classes.container} block group relative`}
-  aria-label={`View ${guest.data.name}'s profile`}
+  aria-label={`View ${guestName}'s profile`}
 >
   <!-- LinkedIn Icon - Absolute positioned top-right -->
   {linkedInUrl && (
@@ -128,7 +122,7 @@ const classes = sizeClasses[size];
         window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
       }}
       class="absolute top-4 right-4 text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 transition-colors z-10 cursor-pointer"
-      aria-label={`${guest.data.name} on LinkedIn`}
+      aria-label={`${guestName} on LinkedIn`}
       role="button"
       tabindex="0"
       onKeyDown={(e) => {
@@ -148,7 +142,7 @@ const classes = sizeClasses[size];
   <div class={`flex flex-col items-center text-center ${classes.gap}`}>
     <!-- Guest Image - Centered -->
     <div class="group-hover:scale-105 transition-transform duration-300">
-      <GuestProfilePicture 
+      <GuestProfilePictureOptimized 
         guest={guest}
         size={classes.imageSize}
         loading="lazy"
@@ -160,16 +154,16 @@ const classes = sizeClasses[size];
     <div class="w-full">
       <!-- Guest Name -->
       <h3 class={`${classes.title} text-gray-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors`}>
-        {guest.data.name}
+        {guestName}
       </h3>
       
       <!-- Job Title and Company -->
-      {(guest.data.role || guest.data.company) && (
+      {(guestRole || guestCompany) && (
         <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-3`}>
-          {guest.data.role && guest.data.company ? (
-            <>{guest.data.role} at {guest.data.company}</>
+          {guestRole && guestCompany ? (
+            <>{guestRole} at {guestCompany}</>
           ) : (
-            guest.data.role || guest.data.company
+            guestRole || guestCompany
           )}
         </p>
       )}

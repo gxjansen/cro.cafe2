@@ -1,0 +1,103 @@
+---
+import { getGuestProfilePicture } from '../utils/content';
+
+export interface Props {
+  guest: any; // Guest data with potential LinkedIn data
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  loading?: 'lazy' | 'eager';
+  class?: string;
+  grayscale?: boolean;
+}
+
+const { 
+  guest,
+  size = 'md',
+  loading = 'lazy',
+  class: className = '',
+  grayscale = false
+} = Astro.props;
+
+// Get the profile picture URL (pre-validated at build time)
+const profilePictureUrl = getGuestProfilePicture(guest);
+
+// Extract guest name and company for alt text
+const guestName = guest?.data?.name || guest?.name || 'Guest';
+const guestCompany = guest?.data?.company || guest?.company || '';
+const guestRole = guest?.data?.role || guest?.role || '';
+
+// Size mappings
+const sizeClasses = {
+  sm: 'w-16 h-16',
+  md: 'w-24 h-24',
+  lg: 'w-32 h-32',
+  xl: 'w-48 h-48'
+};
+
+const imageSizes = {
+  sm: 64,
+  md: 96,
+  lg: 128,
+  xl: 192
+};
+
+// Create comprehensive alt text
+const altText = [
+  guestName,
+  guestRole && `${guestRole}`,
+  guestCompany && `at ${guestCompany}`,
+  '- CRO.CAFE podcast guest'
+].filter(Boolean).join(' ');
+
+// Generate slug for unique styling
+const guestSlug = guest?.data?.slug || guest?.slug || 'guest';
+---
+
+<div 
+  class={`guest-profile-picture relative rounded-full overflow-hidden ${sizeClasses[size]} ${className}`}
+  style={`view-transition-name: guest-${guestSlug}`}
+>
+  <img 
+    src={profilePictureUrl}
+    alt={altText}
+    width={imageSizes[size]}
+    height={imageSizes[size]}
+    class={`w-full h-full object-cover transition-transform duration-300 hover:scale-105 ${grayscale ? 'grayscale' : ''}`}
+    loading={loading}
+  />
+</div>
+
+<style>
+  /* Ensure images maintain aspect ratio and cover the container */
+  .guest-profile-picture img {
+    object-fit: cover;
+  }
+
+  /* Hover effect for interactive contexts */
+  .guest-profile-picture {
+    @apply transition-transform duration-300;
+  }
+  
+  .guest-profile-picture:hover {
+    @apply scale-105;
+  }
+  
+  .guest-profile-picture:hover img {
+    @apply brightness-110;
+  }
+
+  /* Accessibility: High contrast mode support */
+  @media (prefers-contrast: high) {
+    .guest-profile-picture img {
+      filter: grayscale(100%) contrast(1.2);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .guest-profile-picture * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
