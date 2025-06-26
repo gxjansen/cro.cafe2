@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import GuestCardVertical from '../../../components/GuestCardVertical.astro';
+import GuestFilterBar from '../../../components/GuestFilterBar.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -81,12 +82,46 @@ const t = translations[language];
         </p>
       </div>
 
-      <!-- Guests Grid -->
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {guests.map((guest) => (
-          <GuestCardVertical guest={guest} language={language} size="large" showEpisodeCount={true} />
-        ))}
+      <!-- Filter Controls -->
+      <GuestFilterBar guests={guests} showLanguageFilter={false} language={language} />
+
+      <!-- Results Info -->
+      <div class="mb-6">
+        <p id="resultsInfo" class="text-gray-600 dark:text-gray-400">
+          Showing {guests.length} experts
+        </p>
       </div>
+
+      <!-- No Results Message -->
+      <div id="noResultsMessage" class="hidden text-center py-12">
+        <div class="max-w-md mx-auto">
+          <div class="text-gray-400 dark:text-gray-500 mb-4">
+            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-3-3v3m5.036-8.05l-6.036 6.05-6.036-6.05A7.5 7.5 0 0112 3c2.07 0 3.946.835 5.304 2.186z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Matching Experts Found</h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            Try adjusting your filters to see more results. You can change the country or expertise filters above.
+          </p>
+        </div>
+      </div>
+
+      <!-- Guests Grid -->
+      <section>
+        <div id="guestsGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {guests.map((guest) => (
+            <div 
+              class="guest-card"
+              data-languages={JSON.stringify(guest.data.languages)}
+              data-country={guest.data.linkedin_country || ''}
+              data-skills={guest.data.linkedin_skills || ''}
+            >
+              <GuestCardVertical guest={guest} language={language} size="large" showEpisodeCount={true} />
+            </div>
+          ))}
+        </div>
+      </section>
 
       {guests.length === 0 && (
         <div class="text-center py-12">
