@@ -173,3 +173,9 @@ missing-guest-images.md
 
 # Local Netlify folder
 .netlify
+
+# Development service worker build
+dev-dist/
+
+# Synology temporary directories
+.SynologyWorkingDirectory/
