@@ -46,24 +46,21 @@ const countries = Array.from(countryMap.entries())
   .map(([country, count]) => ({ name: country, count }));
 
 // Curated list of most relevant CRO/digital marketing skills
+// Excluding CRO, A/B Testing, and Conversion Rate Optimization as they're implicit
 const relevantSkills = [
   'Online Marketing',
   'E-commerce', 
   'Web Analytics',
   'Google Analytics',
-  'Conversion Optimization',
   'SEO',
   'Digital Marketing',
   'User Experience',
   'Usability',
   'Analytics',
-  'A/B Testing',
   'UX',
   'Marketing Strategy',
   'Performance Marketing',
   'Growth Hacking',
-  'CRO',
-  'Conversion Rate Optimization',
   'Digital Strategy',
   'Marketing Automation',
   'Email Marketing',
@@ -173,16 +170,38 @@ const instanceId = Math.random().toString(36).substring(7);
           ))}
         </select>
 
-        <select 
-          id={`skillFilter-${instanceId}`}
-          class="flex-1 lg:w-48 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500 skill-filter"
-          data-filter-type="skill"
-        >
-          <option value="">All Expertise</option>
-          {skills.map(skill => (
-            <option value={skill.name}>{skill.name} ({skill.count})</option>
-          ))}
-        </select>
+        <div class="flex-1 lg:w-48 relative">
+          <button
+            id={`skillFilterButton-${instanceId}`}
+            type="button"
+            class="w-full text-left rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs px-3 py-2 focus:ring-primary-500 focus:border-primary-500 skill-filter-button flex items-center justify-between"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <span class="skill-filter-text">All Expertise</span>
+            <svg class="w-4 h-4 ml-2 skill-filter-arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div 
+            id={`skillFilterDropdown-${instanceId}`}
+            class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg hidden skill-filter-dropdown"
+          >
+            <div class="max-h-60 overflow-y-auto p-2">
+              {skills.map(skill => (
+                <label class="flex items-center px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded">
+                  <input
+                    type="checkbox"
+                    value={skill.name}
+                    class="skill-checkbox mr-2 text-primary-600 focus:ring-primary-500 rounded"
+                  />
+                  <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{skill.name}</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">({skill.count})</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -197,7 +216,11 @@ const instanceId = Math.random().toString(36).substring(7);
 
       const showCheckboxes = filterBar.querySelectorAll('.show-checkbox');
       const countryFilter = filterBar.querySelector('.country-filter') as HTMLSelectElement;
-      const skillFilter = filterBar.querySelector('.skill-filter') as HTMLSelectElement;
+      const skillFilterButton = filterBar.querySelector('.skill-filter-button') as HTMLButtonElement;
+      const skillFilterDropdown = filterBar.querySelector('.skill-filter-dropdown') as HTMLDivElement;
+      const skillCheckboxes = filterBar.querySelectorAll('.skill-checkbox') as NodeListOf<HTMLInputElement>;
+      const skillFilterText = filterBar.querySelector('.skill-filter-text') as HTMLSpanElement;
+      const skillFilterArrow = filterBar.querySelector('.skill-filter-arrow') as SVGElement;
       const clearButton = filterBar.querySelector('.clear-filters-btn');
       
       // Global elements to filter
@@ -205,6 +228,34 @@ const instanceId = Math.random().toString(36).substring(7);
       const guestsGrid = document.getElementById('guestsGrid');
       const noShowsMessage = document.getElementById('noShowsMessage');
       const noResultsMessage = document.getElementById('noResultsMessage');
+
+      // Multi-select dropdown functionality
+      function toggleSkillDropdown() {
+        const isOpen = !skillFilterDropdown.classList.contains('hidden');
+        if (isOpen) {
+          skillFilterDropdown.classList.add('hidden');
+          skillFilterButton.setAttribute('aria-expanded', 'false');
+          skillFilterArrow.classList.remove('rotate-180');
+        } else {
+          skillFilterDropdown.classList.remove('hidden');
+          skillFilterButton.setAttribute('aria-expanded', 'true');
+          skillFilterArrow.classList.add('rotate-180');
+        }
+      }
+
+      function updateSkillFilterText() {
+        const selectedSkills = Array.from(skillCheckboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
+        
+        if (selectedSkills.length === 0) {
+          skillFilterText.textContent = 'All Expertise';
+        } else if (selectedSkills.length === 1) {
+          skillFilterText.textContent = selectedSkills[0];
+        } else {
+          skillFilterText.textContent = `${selectedSkills.length} expertise selected`;
+        }
+      }
 
       function filterGuests() {
         // Get selected languages (if language filter is shown)
@@ -215,7 +266,9 @@ const instanceId = Math.random().toString(36).substring(7);
           : null;
         
         const selectedCountry = countryFilter?.value || '';
-        const selectedSkill = skillFilter?.value || '';
+        const selectedSkills = Array.from(skillCheckboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
         
         const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
         let visibleCount = 0;
@@ -252,9 +305,11 @@ const instanceId = Math.random().toString(36).substring(7);
           // Country filter
           const countryMatch = !selectedCountry || country === selectedCountry;
           
-          // Skill filter
-          const skillMatch = !selectedSkill || 
-            skills.toLowerCase().includes(selectedSkill.toLowerCase());
+          // Skill filter (now multi-select)
+          const skillMatch = selectedSkills.length === 0 || 
+            selectedSkills.some(skill => 
+              skills.toLowerCase().includes(skill.toLowerCase())
+            );
           
           const shouldShow = showMatch && countryMatch && skillMatch;
           
@@ -285,7 +340,12 @@ const instanceId = Math.random().toString(36).substring(7);
           }
           
           if (selectedCountry) filterText.push(selectedCountry);
-          if (selectedSkill) filterText.push(selectedSkill);
+          if (selectedSkills.length > 0) {
+            filterText.push(selectedSkills.length === 1 
+              ? selectedSkills[0] 
+              : `${selectedSkills.length} expertise`
+            );
+          }
           
           const filterDescription = filterText.length > 0 
             ? ` (${filterText.join(', ')})` 
@@ -304,15 +364,32 @@ const instanceId = Math.random().toString(36).substring(7);
           }
         });
         if (countryFilter) countryFilter.value = '';
-        if (skillFilter) skillFilter.value = '';
+        skillCheckboxes.forEach(cb => cb.checked = false);
+        updateSkillFilterText();
         filterGuests();
       }
 
       // Attach event listeners
       showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
       countryFilter?.addEventListener('change', filterGuests);
-      skillFilter?.addEventListener('change', filterGuests);
+      skillFilterButton?.addEventListener('click', toggleSkillDropdown);
+      skillCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          updateSkillFilterText();
+          filterGuests();
+        });
+      });
       clearButton?.addEventListener('click', clearFilters);
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!skillFilterButton?.contains(e.target as Node) && 
+            !skillFilterDropdown?.contains(e.target as Node)) {
+          skillFilterDropdown?.classList.add('hidden');
+          skillFilterButton?.setAttribute('aria-expanded', 'false');
+          skillFilterArrow?.classList.remove('rotate-180');
+        }
+      });
       
       // Initialize
       filterGuests();
