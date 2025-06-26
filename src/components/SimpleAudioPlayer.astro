@@ -1,0 +1,288 @@
+---
+export interface Props {
+  audioUrl: string;
+  episodeId: string;
+  episodeTitle: string;
+  duration?: number;
+}
+
+const { audioUrl, episodeId, episodeTitle, duration } = Astro.props;
+---
+
+<div class="simple-audio-player" data-episode-id={episodeId}>
+  <!-- Main Audio Element -->
+  <audio 
+    id={`audio-${episodeId}`}
+    class="hidden"
+    preload="metadata"
+  >
+    <source src={audioUrl} type="audio/mpeg" />
+  </audio>
+
+  <!-- Custom Controls -->
+  <div class="player-controls bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+    <!-- Progress Bar -->
+    <div class="mb-3">
+      <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+        <span class="current-time">0:00</span>
+        <span class="duration">{duration ? `${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}` : '--:--'}</span>
+      </div>
+      <div class="progress-bar bg-gray-300 dark:bg-gray-700 rounded-full h-2 cursor-pointer relative">
+        <div class="progress-fill bg-primary-600 dark:bg-primary-500 h-full rounded-full transition-all duration-100" style="width: 0%"></div>
+        <div class="progress-handle absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary-600 dark:bg-primary-500 rounded-full shadow-md opacity-0 transition-opacity" style="left: 0%"></div>
+      </div>
+    </div>
+
+    <!-- All Controls in One Row -->
+    <div class="flex items-center justify-between gap-2">
+      <!-- Left side: Playback controls -->
+      <div class="flex items-center gap-2">
+        <!-- Skip Backward -->
+        <button 
+          class="skip-backward p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+          title="Skip backward 15 seconds"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+          </svg>
+          <span class="text-xs font-semibold">15</span>
+        </button>
+
+        <!-- Play/Pause -->
+        <button 
+          class="play-pause p-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-full shadow transition-colors"
+          title="Play/Pause"
+        >
+          <svg class="play-icon w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+          </svg>
+          <svg class="pause-icon w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <!-- Skip Forward -->
+        <button 
+          class="skip-forward p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+          title="Skip forward 30 seconds"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" style="transform: scaleX(-1)">
+            <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+          </svg>
+          <span class="text-xs font-semibold">30</span>
+        </button>
+      </div>
+
+      <!-- Right side: Speed control -->
+      <div class="flex items-center">
+        <select 
+          class="speed-control px-2 py-1 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+          title="Playback speed"
+        >
+          <option value="0.5">0.5×</option>
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2×</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class SimpleAudioPlayer {
+    constructor(container: HTMLElement) {
+      this.container = container;
+      this.episodeId = container.dataset.episodeId!;
+      this.audio = container.querySelector('audio') as HTMLAudioElement;
+      this.playPauseBtn = container.querySelector('.play-pause') as HTMLButtonElement;
+      this.playIcon = container.querySelector('.play-icon') as SVGElement;
+      this.pauseIcon = container.querySelector('.pause-icon') as SVGElement;
+      this.skipBackwardBtn = container.querySelector('.skip-backward') as HTMLButtonElement;
+      this.skipForwardBtn = container.querySelector('.skip-forward') as HTMLButtonElement;
+      this.progressBar = container.querySelector('.progress-bar') as HTMLDivElement;
+      this.progressFill = container.querySelector('.progress-fill') as HTMLDivElement;
+      this.progressHandle = container.querySelector('.progress-handle') as HTMLDivElement;
+      this.currentTimeEl = container.querySelector('.current-time') as HTMLSpanElement;
+      this.durationEl = container.querySelector('.duration') as HTMLSpanElement;
+      this.speedControl = container.querySelector('.speed-control') as HTMLSelectElement;
+
+      this.init();
+    }
+
+    private container: HTMLElement;
+    private episodeId: string;
+    private audio: HTMLAudioElement;
+    private playPauseBtn: HTMLButtonElement;
+    private playIcon: SVGElement;
+    private pauseIcon: SVGElement;
+    private skipBackwardBtn: HTMLButtonElement;
+    private skipForwardBtn: HTMLButtonElement;
+    private progressBar: HTMLDivElement;
+    private progressFill: HTMLDivElement;
+    private progressHandle: HTMLDivElement;
+    private currentTimeEl: HTMLSpanElement;
+    private durationEl: HTMLSpanElement;
+    private speedControl: HTMLSelectElement;
+    private isDragging = false;
+
+    private init() {
+      // Load saved position and speed from localStorage
+      this.loadSavedState();
+
+      // Event listeners
+      this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+      this.skipBackwardBtn.addEventListener('click', () => this.skip(-15));
+      this.skipForwardBtn.addEventListener('click', () => this.skip(30));
+      this.speedControl.addEventListener('change', () => this.setPlaybackRate());
+      
+      // Progress bar interactions
+      this.progressBar.addEventListener('click', (e) => this.seek(e));
+      this.progressBar.addEventListener('mousedown', (e) => this.startDragging(e));
+      this.progressBar.addEventListener('mouseenter', () => this.progressHandle.style.opacity = '1');
+      this.progressBar.addEventListener('mouseleave', () => {
+        if (!this.isDragging) this.progressHandle.style.opacity = '0';
+      });
+
+      // Audio events
+      this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
+      this.audio.addEventListener('timeupdate', () => this.updateProgress());
+      this.audio.addEventListener('play', () => this.updatePlayPauseButton(true));
+      this.audio.addEventListener('pause', () => this.updatePlayPauseButton(false));
+      this.audio.addEventListener('ended', () => this.handleEnded());
+
+      // Save state periodically
+      setInterval(() => this.saveState(), 1000);
+
+      // Handle page unload
+      window.addEventListener('beforeunload', () => this.saveState());
+    }
+
+    private togglePlayPause() {
+      if (this.audio.paused) {
+        this.audio.play();
+      } else {
+        this.audio.pause();
+      }
+    }
+
+    private updatePlayPauseButton(isPlaying: boolean) {
+      if (isPlaying) {
+        this.playIcon.classList.add('hidden');
+        this.pauseIcon.classList.remove('hidden');
+      } else {
+        this.playIcon.classList.remove('hidden');
+        this.pauseIcon.classList.add('hidden');
+      }
+    }
+
+    private skip(seconds: number) {
+      this.audio.currentTime = Math.max(0, Math.min(this.audio.duration, this.audio.currentTime + seconds));
+    }
+
+    private setPlaybackRate() {
+      this.audio.playbackRate = parseFloat(this.speedControl.value);
+      this.saveState();
+    }
+
+    private seek(e: MouseEvent) {
+      const rect = this.progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      this.audio.currentTime = percent * this.audio.duration;
+    }
+
+    private startDragging(e: MouseEvent) {
+      this.isDragging = true;
+      this.progressHandle.style.opacity = '1';
+      this.seek(e);
+
+      const handleMouseMove = (e: MouseEvent) => {
+        if (this.isDragging) this.seek(e);
+      };
+
+      const handleMouseUp = () => {
+        this.isDragging = false;
+        this.progressHandle.style.opacity = '0';
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    private updateDuration() {
+      const minutes = Math.floor(this.audio.duration / 60);
+      const seconds = Math.floor(this.audio.duration % 60);
+      this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    private updateProgress() {
+      const percent = (this.audio.currentTime / this.audio.duration) * 100;
+      this.progressFill.style.width = `${percent}%`;
+      this.progressHandle.style.left = `${percent}%`;
+
+      const minutes = Math.floor(this.audio.currentTime / 60);
+      const seconds = Math.floor(this.audio.currentTime % 60);
+      this.currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    private handleEnded() {
+      this.updatePlayPauseButton(false);
+      // Clear saved position when episode ends
+      localStorage.removeItem(`audio-position-${this.episodeId}`);
+    }
+
+    private loadSavedState() {
+      // Load saved position
+      const savedPosition = localStorage.getItem(`audio-position-${this.episodeId}`);
+      if (savedPosition) {
+        const position = parseFloat(savedPosition);
+        // Wait for metadata to load before setting position
+        this.audio.addEventListener('loadedmetadata', () => {
+          this.audio.currentTime = position;
+        }, { once: true });
+      }
+
+      // Load saved speed
+      const savedSpeed = localStorage.getItem(`audio-speed-${this.episodeId}`);
+      if (savedSpeed) {
+        this.speedControl.value = savedSpeed;
+        this.audio.playbackRate = parseFloat(savedSpeed);
+      }
+    }
+
+    private saveState() {
+      if (this.audio.currentTime > 0 && !this.audio.ended) {
+        localStorage.setItem(`audio-position-${this.episodeId}`, this.audio.currentTime.toString());
+        localStorage.setItem(`audio-speed-${this.episodeId}`, this.speedControl.value);
+      }
+    }
+  }
+
+  // Initialize all audio players on the page
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.simple-audio-player').forEach(player => {
+      new SimpleAudioPlayer(player as HTMLElement);
+    });
+  });
+
+  // Re-initialize after view transitions
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('.simple-audio-player').forEach(player => {
+      if (!player.hasAttribute('data-initialized')) {
+        new SimpleAudioPlayer(player as HTMLElement);
+        player.setAttribute('data-initialized', 'true');
+      }
+    });
+  });
+</script>
+
+<style>
+  .progress-bar:hover .progress-handle {
+    opacity: 1;
+  }
+</style>

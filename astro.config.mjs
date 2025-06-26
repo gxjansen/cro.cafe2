@@ -46,7 +46,7 @@ export default defineConfig({
         navigateFallback: '/',
         globPatterns: process.env.NODE_ENV === 'production' 
           ? ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}']
-          : ['**/*.{js,css}'], // Simplified patterns for development
+          : ['**/*.js'], // Only JS files in dev-dist during development
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
           // Audio files - use NetworkOnly to prevent caching issues with streaming

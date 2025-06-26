@@ -11,11 +11,9 @@ import BrandLogoBar from '../../components/BrandLogoBar.astro';
 import HostSection from '../../components/HostSection.astro';
 import NotableGuestsSection from '../../components/NotableGuestsSection.astro';
 import LiveEventsSection from '../../components/LiveEventsSection.astro';
-import PlayButton from '../../components/AudioPlayer/PlayButton';
 import { getEpisodesByLanguage, getGuestsByLanguage, getValidPlatformsForLanguage, getEpisodeUrl, getGuestUrl, getTotalDurationByLanguage, getHostsByLanguage, getGuestBySlug } from '../../utils/content';
 import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
-import type { Episode } from '../../stores/audioPlayerStore';
 
 export async function getStaticPaths() {
   const languages: Language[] = ['en', 'nl', 'de', 'es'];
@@ -60,30 +58,6 @@ const totalHours = await getTotalDurationByLanguage(language);
 // Get the latest episode for featured player
 const featuredEpisode = latestEpisodes[0];
 
-// Convert featured episode to audio player format
-let featuredAudioEpisode: Episode | null = null;
-if (featuredEpisode) {
-  // Get guest details for the featured episode
-  const featuredGuestDetails = await Promise.all(
-    featuredEpisode.data.guests.map(async (guestSlug: string) => {
-      const guest = await getGuestBySlug(guestSlug);
-      return guest;
-    })
-  );
-  
-  featuredAudioEpisode = {
-    id: featuredEpisode.id,
-    title: featuredEpisode.data.title,
-    audioUrl: featuredEpisode.data.audioUrl,
-    duration: featuredEpisode.data.duration,
-    description: featuredEpisode.data.description,
-    publishDate: featuredEpisode.data.pubDate.toISOString(),
-    imageUrl: featuredEpisode.data.imageUrl,
-    slug: featuredEpisode.data.slug || featuredEpisode.slug,
-    guests: featuredGuestDetails.filter(guest => guest).map(guest => guest?.data?.name).filter(Boolean),
-    language: language,
-  };
-}
 
 // Create essential episodes - mix of latest and popular
 // Start with the second and third latest episodes (first is featured)
@@ -357,22 +331,7 @@ const hreflang = {
               
               <!-- Player Controls -->
               <div class="flex flex-col sm:flex-row gap-4 items-center">
-                {featuredAudioEpisode && (
-                  <PlayButton 
-                    episode={featuredAudioEpisode}
-                    size="lg"
-                    variant="primary"
-                    className="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
-                    client:load
-                  >
-                    <span class="inline-flex items-center">
-                      <span class="group-hover:scale-110 transition-transform">{t.listenNow}</span>
-                      {featuredEpisode.data.duration && (
-                        <span class="ml-4 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
-                      )}
-                    </span>
-                  </PlayButton>
-                ) || (
+                {
                   <a 
                     href={getEpisodeUrl(featuredEpisode, language)}
                     class="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
@@ -385,7 +344,7 @@ const hreflang = {
                       <span class="ml-4 text-sm opacity-90">({Math.round(featuredEpisode.data.duration / 60)} {t.minutesShort})</span>
                     )}
                   </a>
-                )}
+                }
                 
                 <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <span>{t.orSubscribeOn}:</span>
