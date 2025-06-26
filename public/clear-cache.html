@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache - CRO.CAFE</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Clear CRO.CAFE Cache</h1>
+        <p>This page will help you clear all cached data and service workers for CRO.CAFE.</p>
+        
+        <button onclick="clearEverything()">Clear All Cache & Service Workers</button>
+        
+        <div id="status" class="status"></div>
+        <div id="log" class="log" style="display: none;"></div>
+        
+        <h2>Instructions:</h2>
+        <ol>
+            <li>Click the button above to clear all caches</li>
+            <li>Wait for the process to complete</li>
+            <li>Close this tab</li>
+            <li>Open a new tab and navigate to the site</li>
+        </ol>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            logDiv.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status ' + type;
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = message;
+        }
+
+        async function clearEverything() {
+            try {
+                log('Starting cache clear process...');
+                
+                // 1. Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    log(`Found ${registrations.length} service worker(s)`);
+                    
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        log(`Unregistered service worker: ${registration.scope}`);
+                    }
+                }
+                
+                // 2. Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    log(`Found ${cacheNames.length} cache(s)`);
+                    
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        log(`Deleted cache: ${cacheName}`);
+                    }
+                }
+                
+                // 3. Clear localStorage
+                if (window.localStorage) {
+                    const localStorageSize = localStorage.length;
+                    localStorage.clear();
+                    log(`Cleared localStorage (${localStorageSize} items)`);
+                }
+                
+                // 4. Clear sessionStorage
+                if (window.sessionStorage) {
+                    const sessionStorageSize = sessionStorage.length;
+                    sessionStorage.clear();
+                    log(`Cleared sessionStorage (${sessionStorageSize} items)`);
+                }
+                
+                // 5. Clear IndexedDB (if any)
+                if ('indexedDB' in window) {
+                    const databases = await indexedDB.databases();
+                    for (let db of databases) {
+                        indexedDB.deleteDatabase(db.name);
+                        log(`Deleted IndexedDB: ${db.name}`);
+                    }
+                }
+                
+                showStatus('✅ All caches and service workers have been cleared successfully!', 'success');
+                log('Cache clear process completed successfully!');
+                
+                setTimeout(() => {
+                    log('You can now close this tab and open the site in a new tab.');
+                }, 1000);
+                
+            } catch (error) {
+                showStatus('❌ Error clearing cache: ' + error.message, 'error');
+                log('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

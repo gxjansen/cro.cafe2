@@ -89,17 +89,32 @@ console.log('Updated sitemap-index.xml with language-specific sitemaps');
 
 // Update robots.txt to reference language sitemaps
 const robotsPath = path.join(distPath, '..', 'public', 'robots.txt');
-const robotsContent = fs.readFileSync(robotsPath, 'utf-8');
-const updatedRobotsContent = robotsContent.replace(
-  'Sitemap: https://cro.cafe/sitemap-index.xml',
-  `Sitemap: https://cro.cafe/sitemap-index.xml
-Sitemap: https://cro.cafe/sitemap-en.xml
-Sitemap: https://cro.cafe/sitemap-nl.xml
-Sitemap: https://cro.cafe/sitemap-de.xml
-Sitemap: https://cro.cafe/sitemap-es.xml`
+let robotsContent = fs.readFileSync(robotsPath, 'utf-8');
+
+// Check if language-specific sitemaps are already in robots.txt
+const hasSitemaps = languages.every(lang => 
+  robotsContent.includes(`Sitemap: https://cro.cafe/sitemap-${lang}.xml`)
 );
 
-if (robotsContent !== updatedRobotsContent) {
-  fs.writeFileSync(robotsPath, updatedRobotsContent);
-  console.log('Updated robots.txt with language-specific sitemap references');
+if (!hasSitemaps) {
+  // Find the position after the main sitemap index
+  const indexSitemapPattern = /Sitemap: https:\/\/cro\.cafe\/sitemap-index\.xml/;
+  const match = robotsContent.match(indexSitemapPattern);
+  
+  if (match) {
+    const insertPosition = match.index! + match[0].length;
+    const sitemapEntries = languages.map(lang => 
+      `\nSitemap: https://cro.cafe/sitemap-${lang}.xml`
+    ).join('');
+    
+    robotsContent = 
+      robotsContent.slice(0, insertPosition) + 
+      sitemapEntries + 
+      robotsContent.slice(insertPosition);
+    
+    fs.writeFileSync(robotsPath, robotsContent);
+    console.log('Updated robots.txt with language-specific sitemap references');
+  }
+} else {
+  console.log('robots.txt already contains language-specific sitemap references');
 }
