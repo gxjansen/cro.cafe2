@@ -170,7 +170,7 @@ const instanceId = Math.random().toString(36).substring(7);
           ))}
         </select>
 
-        <div class="flex-1 lg:w-48 relative">
+        <div class="flex-1 lg:w-64 relative">
           <button
             id={`skillFilterButton-${instanceId}`}
             type="button"
@@ -178,25 +178,25 @@ const instanceId = Math.random().toString(36).substring(7);
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span class="skill-filter-text">All Expertise</span>
-            <svg class="w-4 h-4 ml-2 skill-filter-arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="skill-filter-text truncate">All Expertise</span>
+            <svg class="w-4 h-4 ml-2 flex-shrink-0 skill-filter-arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
             </svg>
           </button>
           <div 
             id={`skillFilterDropdown-${instanceId}`}
-            class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg hidden skill-filter-dropdown"
+            class="absolute z-10 mt-1 w-full min-w-[280px] bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg hidden skill-filter-dropdown"
           >
             <div class="max-h-60 overflow-y-auto p-2">
               {skills.map(skill => (
-                <label class="flex items-center px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded">
+                <label class="flex items-center px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded whitespace-nowrap">
                   <input
                     type="checkbox"
                     value={skill.name}
-                    class="skill-checkbox mr-2 text-primary-600 focus:ring-primary-500 rounded"
+                    class="skill-checkbox mr-2 text-primary-600 focus:ring-primary-500 rounded flex-shrink-0"
                   />
-                  <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{skill.name}</span>
-                  <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">({skill.count})</span>
+                  <span class="text-xs text-gray-700 dark:text-gray-300 flex-1 pr-2">{skill.name}</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">({skill.count})</span>
                 </label>
               ))}
             </div>
