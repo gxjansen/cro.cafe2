@@ -177,34 +177,34 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               {guestName}
             </h1>
             
-            {/* Optimized professional display with smart deduplication */}
-            {(() => {
-              const role = guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title;
-              const headline = guestWithLinkedIn?.linkedInData?.headline || guest.data.linkedin_headline;
-              const company = guestWithLinkedIn?.linkedInData?.currentCompany || null;
-              const isFreelancer = checkIsFreelancer(headline, role);
-              
-              const professionalDisplay = getOptimalProfessionalDisplay(
-                { role, company, headline, isFreelancer },
-                language,
-                translations
-              );
-              
-              return (
-                <div class="mb-2">
-                  {professionalDisplay.primary && (
-                    <p class="text-xl text-gray-600 dark:text-gray-400">
-                      {professionalDisplay.primary}
-                    </p>
-                  )}
-                  {professionalDisplay.showBoth && professionalDisplay.secondary && (
-                    <p class="text-lg text-gray-500 dark:text-gray-400 italic mt-1">
-                      {professionalDisplay.secondary}
-                    </p>
-                  )}
-                </div>
-              );
-            })()}
+{/* Extract professional data and apply deduplication */}
+{(() => {
+  const role = guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title;
+  const headline = guestWithLinkedIn?.linkedInData?.headline || guest.data.linkedin_headline;
+  const company = guestWithLinkedIn?.linkedInData?.currentCompany || null;
+  const isFreelancer = checkIsFreelancer(headline, role);
+  
+  const professionalDisplay = getOptimalProfessionalDisplay(
+    { role, company, headline, isFreelancer },
+    language,
+    translations
+  );
+  
+  return (
+    <div class="mb-2">
+      {professionalDisplay.primary && (
+        <p class="text-xl text-gray-600 dark:text-gray-400">
+          {professionalDisplay.primary}
+        </p>
+      )}
+      {professionalDisplay.showBoth && professionalDisplay.secondary && (
+        <p class="text-lg text-gray-500 dark:text-gray-400 italic mt-1">
+          {professionalDisplay.secondary}
+        </p>
+      )}
+    </div>
+  );
+})()}
             
             
             {/* Country flag */}

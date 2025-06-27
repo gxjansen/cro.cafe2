@@ -9,6 +9,7 @@ import SchemaPerson from '../../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../../components/GuestOtherCompany.astro';
 import CountryFlag from '../../../components/CountryFlag.astro';
 import { getGuestEpisodes, getGuestWithLinkedIn } from '../../../utils/content';
+import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../../../utils/guest-display-utils';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -46,6 +47,7 @@ const translations = {
   en: {
     backToGuests: '← Back to All Guests',
     about: 'About',
+    at: 'at',
     episodesWith: 'Episodes with',
     availableLanguages: 'Available in other languages',
     viewIn: 'View in',
@@ -57,6 +59,7 @@ const translations = {
   nl: {
     backToGuests: '← Terug naar Alle Gasten',
     about: 'Over',
+    at: 'bij',
     episodesWith: 'Afleveringen met',
     availableLanguages: 'Beschikbaar in andere talen',
     viewIn: 'Bekijk in het',
@@ -68,6 +71,7 @@ const translations = {
   de: {
     backToGuests: '← Zurück zu Allen Gästen',
     about: 'Über',
+    at: 'bei',
     episodesWith: 'Folgen mit',
     availableLanguages: 'In anderen Sprachen verfügbar',
     viewIn: 'Ansehen auf',
@@ -79,6 +83,7 @@ const translations = {
   es: {
     backToGuests: '← Volver a Todos los Invitados',
     about: 'Acerca de',
+    at: 'en',
     episodesWith: 'Episodios con',
     availableLanguages: 'Disponible en otros idiomas',
     viewIn: 'Ver en',
@@ -169,20 +174,34 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               {guestName}
             </h1>
             
-            {/* Current role from LinkedIn or original data */}
-            {(guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title) && 
-             (guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company) && (
-              <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
-                {guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title} at {guestWithLinkedIn?.linkedInData?.currentCompany || guestWithLinkedIn?.company || guest.data.company}
-              </p>
-            )}
-            
-            {/* LinkedIn headline if available */}
-            {guestWithLinkedIn?.linkedInData?.headline && (
-              <p class="text-lg text-gray-500 dark:text-gray-400 mb-4 italic">
-                {guestWithLinkedIn.linkedInData.headline}
-              </p>
-            )}
+{/* Extract professional data and apply deduplication */}
+{(() => {
+  const role = guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title;
+  const headline = guestWithLinkedIn?.linkedInData?.headline || guest.data.linkedin_headline;
+  const company = guestWithLinkedIn?.linkedInData?.currentCompany || null;
+  const isFreelancer = checkIsFreelancer(headline, role);
+  
+  const professionalDisplay = getOptimalProfessionalDisplay(
+    { role, company, headline, isFreelancer },
+    language,
+    translations
+  );
+  
+  return (
+    <div class="mb-2">
+      {professionalDisplay.primary && (
+        <p class="text-xl text-gray-600 dark:text-gray-400">
+          {professionalDisplay.primary}
+        </p>
+      )}
+      {professionalDisplay.showBoth && professionalDisplay.secondary && (
+        <p class="text-lg text-gray-500 dark:text-gray-400 italic mt-1">
+          {professionalDisplay.secondary}
+        </p>
+      )}
+    </div>
+  );
+})()}
             
             {/* Country flag */}
             {guestWithLinkedIn?.linkedInData?.country && (

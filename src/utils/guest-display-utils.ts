@@ -34,7 +34,7 @@ function normalizeText(text: string): string {
 }
 
 /**
- * Calculate similarity between two text strings based on word overlap
+ * Calculate similarity between two text strings based on word overlap and semantic similarity
  */
 function calculateSimilarity(text1: string, text2: string): number {
   if (!text1 || !text2) return 0;
@@ -44,16 +44,54 @@ function calculateSimilarity(text1: string, text2: string): number {
   
   if (norm1 === norm2) return 1;
   
-  const words1 = new Set(norm1.split(' ').filter(w => w.length > 2));
-  const words2 = new Set(norm2.split(' ').filter(w => w.length > 2));
+  // Filter out connector words that are used for localization
+  const connectorWords = ['at', 'bij', 'bei', 'en'];
+  const words1 = norm1.split(' ').filter(w => w.length > 2 && !connectorWords.includes(w));
+  const words2 = norm2.split(' ').filter(w => w.length > 2 && !connectorWords.includes(w));
   
-  if (words1.size === 0 && words2.size === 0) return 1;
-  if (words1.size === 0 || words2.size === 0) return 0;
+  if (words1.length === 0 && words2.length === 0) return 1;
+  if (words1.length === 0 || words2.length === 0) return 0;
   
-  const intersection = new Set([...words1].filter(w => words2.has(w)));
-  const union = new Set([...words1, ...words2]);
+  // Define semantic similarity groups for common role titles
+  const semanticGroups = [
+    ['founder', 'owner', 'ceo', 'chief executive'],
+    ['director', 'head', 'lead', 'manager'],
+    ['developer', 'engineer', 'programmer', 'coder'],
+    ['designer', 'ux', 'ui', 'creative'],
+    ['consultant', 'advisor', 'specialist', 'expert'],
+    ['analyst', 'researcher', 'data scientist'],
+    ['marketer', 'marketing', 'growth', 'digital marketer']
+  ];
   
-  return intersection.size / union.size;
+  // Create sets for exact matching
+  const set1 = new Set(words1);
+  const set2 = new Set(words2);
+  
+  // Calculate exact word matches
+  const exactMatches = new Set([...set1].filter(w => set2.has(w)));
+  
+  // Calculate semantic matches (words that belong to the same semantic group)
+  const semanticMatches = new Set();
+  for (const word1 of words1) {
+    for (const word2 of words2) {
+      if (word1 !== word2) {
+        // Check if both words belong to the same semantic group
+        for (const group of semanticGroups) {
+          if (group.includes(word1) && group.includes(word2)) {
+            semanticMatches.add(word1);
+            semanticMatches.add(word2);
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  // Combined similarity: exact matches + semantic matches
+  const totalMatches = exactMatches.size + (semanticMatches.size / 2); // Weight semantic matches slightly less
+  const totalWords = new Set([...words1, ...words2]).size;
+  
+  return totalMatches / totalWords;
 }
 
 /**
@@ -84,6 +122,29 @@ function isMoreInformative(text1: string, text2: string): boolean {
 }
 
 /**
+ * Normalize role text that might already contain localized separators
+ */
+function normalizeRoleText(text: string, language: Language, translations: Record<Language, { at: string }>): string {
+  if (!text) return text;
+  
+  // List of all possible "at" variations to replace
+  const atVariations = ['at', 'bij', 'bei', 'en'];
+  const currentAt = translations[language].at;
+  
+  // Replace any existing "at" variation with the correct localized one
+  let normalized = text;
+  for (const variation of atVariations) {
+    if (variation !== currentAt) {
+      // Use word boundaries to avoid replacing parts of words
+      const regex = new RegExp(`\\b${variation}\\b`, 'gi');
+      normalized = normalized.replace(regex, currentAt);
+    }
+  }
+  
+  return normalized;
+}
+
+/**
  * Get optimal professional display for guest information
  */
 export function getOptimalProfessionalDisplay(
@@ -98,7 +159,8 @@ export function getOptimalProfessionalDisplay(
   if (role && company && !isFreelancer) {
     structured = `${role} ${translations[language].at} ${company}`;
   } else if (role) {
-    structured = role;
+    // Normalize the role text to use correct localized separators
+    structured = normalizeRoleText(role, language, translations);
   } else if (company && !isFreelancer) {
     structured = company;
   }
@@ -112,23 +174,36 @@ export function getOptimalProfessionalDisplay(
     };
   }
   
-  // If no structured data, return headline only
+  // If no structured data, return normalized headline only
   if (!structured) {
     return {
-      primary: headline,
+      primary: normalizeRoleText(headline, language, translations),
       secondary: null,
       showBoth: false
     };
   }
   
-  // Calculate similarity between structured and headline
-  const similarity = calculateSimilarity(structured, headline);
+  // Normalize the headline for consistency
+  const normalizedHeadline = normalizeRoleText(headline, language, translations);
+  
+  // Calculate similarity between structured and normalized headline
+  const similarity = calculateSimilarity(structured, normalizedHeadline);
   
   // High similarity threshold - likely redundant
   if (similarity > 0.7) {
-    const useStructured = isMoreInformative(structured, headline);
+    // Prefer structured format when it includes proper localization (contains "at", "bij", "bei", "en")
+    const hasLocalizedConnector = /\b(at|bij|bei|en)\b/i.test(structured);
+    if (hasLocalizedConnector) {
+      return {
+        primary: structured,
+        secondary: null,
+        showBoth: false
+      };
+    }
+    
+    const useStructured = isMoreInformative(structured, normalizedHeadline);
     return {
-      primary: useStructured ? structured : headline,
+      primary: useStructured ? structured : normalizedHeadline,
       secondary: null,
       showBoth: false
     };
@@ -138,13 +213,13 @@ export function getOptimalProfessionalDisplay(
   if (similarity > 0.4) {
     const careerKeywords = ['former', 'previously', 'ex-', 'past', 'current', 'now'];
     const hasCareerContext = careerKeywords.some(keyword => 
-      normalizeText(headline).includes(keyword)
+      normalizeText(normalizedHeadline).includes(keyword)
     );
     
     if (hasCareerContext) {
       return {
         primary: structured,
-        secondary: headline,
+        secondary: normalizedHeadline,
         showBoth: true
       };
     }
@@ -152,21 +227,21 @@ export function getOptimalProfessionalDisplay(
     // Check if headline adds meaningful specialization context
     const specializationKeywords = ['expert', 'specialist', 'consultant', 'advisor', 'strategist'];
     const hasSpecialization = specializationKeywords.some(keyword => 
-      normalizeText(headline).includes(keyword)
+      normalizeText(normalizedHeadline).includes(keyword)
     );
     
     if (hasSpecialization) {
       return {
         primary: structured,
-        secondary: headline,
+        secondary: normalizedHeadline,
         showBoth: true
       };
     }
     
     // Default to more informative version for medium similarity
-    const useStructured = isMoreInformative(structured, headline);
+    const useStructured = isMoreInformative(structured, normalizedHeadline);
     return {
-      primary: useStructured ? structured : headline,
+      primary: useStructured ? structured : normalizedHeadline,
       secondary: null,
       showBoth: false
     };
@@ -175,7 +250,7 @@ export function getOptimalProfessionalDisplay(
   // Low similarity - show both as they provide different value
   return {
     primary: structured,
-    secondary: headline,
+    secondary: normalizedHeadline,
     showBoth: true
   };
 }
