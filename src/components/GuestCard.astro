@@ -13,6 +13,14 @@ export interface Props {
 
 const { guest, language = 'en', size = 'medium', showEpisodeCount = false } = Astro.props;
 
+// Translations for the "at" text
+const translations = {
+  en: { at: 'at' },
+  nl: { at: 'bij' },
+  de: { at: 'bei' },
+  es: { at: 'en' }
+};
+
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
   const slug = guest.data.slug || guest.slug;
