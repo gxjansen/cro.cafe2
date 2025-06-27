@@ -1,4 +1,4 @@
-name: [DEPRECATED] Content Synchronization from NocoDB
+name: "DEPRECATED - Content Synchronization from NocoDB"
 # This workflow has been replaced by sync-all-content.yml
 # which uses modular workflows to prevent cross-contamination
 
