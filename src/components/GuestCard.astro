@@ -1,6 +1,7 @@
 ---
 import GuestProfilePictureOptimized from './GuestProfilePictureOptimized.astro';
 import CountryFlag from './CountryFlag.astro';
+import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../utils/guest-display-utils';
 import type { Language } from '../types';
 
 export interface Props {
@@ -11,16 +12,6 @@ export interface Props {
 }
 
 const { guest, language = 'en', size = 'medium', showEpisodeCount = false } = Astro.props;
-
-// Translations for the "at" text
-const translations = {
-  en: { at: 'at' },
-  nl: { at: 'bij' },
-  de: { at: 'bei' },
-  es: { at: 'en' }
-};
-
-const t = translations[language];
 
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
@@ -61,44 +52,44 @@ const imageUrl = getGuestImageUrl(guest);
 // Get LinkedIn data with priority: LinkedIn data first, then fallback to static data
 const guestName = guest.data.linkedin_full_name || guest.data.name;
 const guestRole = guest.data.linkedin_current_role || guest.data.role;
-
-// Check if guest is a freelancer
-const isFreelancer = (
-  (guest.data.linkedin_headline && guest.data.linkedin_headline.toLowerCase().includes('freelance')) ||
-  (guest.data.linkedin_current_role && guest.data.linkedin_current_role.toLowerCase().includes('freelance'))
-);
-
-// Only use company if not freelancer and linkedin_current_company exists
-const guestCompany = isFreelancer ? null : (guest.data.linkedin_current_company || null);
-
-// Get LinkedIn headline
+const guestCompany = guest.data.linkedin_current_company || null;
 const linkedinHeadline = guest.data.linkedin_headline || null;
+const isFreelancer = checkIsFreelancer(linkedinHeadline, guestRole);
+
+// Get optimized professional display using smart deduplication
+const professionalDisplay = getOptimalProfessionalDisplay(
+  { role: guestRole, company: guestCompany, headline: linkedinHeadline, isFreelancer },
+  language,
+  translations
+);
 
 // Get LinkedIn country
 const linkedinCountry = guest.data.linkedin_country || null;
 
 // Truncate headline based on size
-function truncateHeadline(headline: string | null, maxLength: number): string | null {
-  if (!headline) return null;
-  if (headline.length <= maxLength) return headline;
+function truncateText(text: string | null, maxLength: number): string | null {
+  if (!text) return null;
+  if (text.length <= maxLength) return text;
   
   // Smart truncation at word boundary
-  const truncated = headline.substr(0, maxLength);
+  const truncated = text.substr(0, maxLength);
   const lastSpace = truncated.lastIndexOf(' ');
-  return headline.substr(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+  return text.substr(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
 }
 
-// Get truncated headline based on screen size
-const getHeadlineLength = () => {
+// Get truncated lengths based on screen size
+const getTextLengths = () => {
   switch(size) {
-    case 'small': return 45;
-    case 'medium': return 60;
-    case 'large': return 80;
-    default: return 60;
+    case 'small': return { primary: 35, headline: 45 };
+    case 'medium': return { primary: 50, headline: 60 };
+    case 'large': return { primary: 70, headline: 80 };
+    default: return { primary: 50, headline: 60 };
   }
 };
 
-const truncatedHeadline = truncateHeadline(linkedinHeadline, getHeadlineLength());
+const textLengths = getTextLengths();
+const truncatedPrimaryText = truncateText(professionalDisplay.primary, textLengths.primary);
+const truncatedSecondaryText = truncateText(professionalDisplay.secondary, textLengths.headline);
 
 // Size-specific classes
 const sizeClasses = {
@@ -159,22 +150,19 @@ const classes = sizeClasses[size];
             {guestName}
           </h3>
           
-          <!-- Job Title and Company -->
-          {(guestRole || guestCompany) && (
-            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 ${truncatedHeadline ? 'mb-1' : 'mb-2'}`}>
-              {guestRole && guestCompany ? (
-                <>{guestRole} {t.at} {guestCompany}</>
-              ) : (
-                guestRole || guestCompany
-              )}
+          <!-- Primary Professional Information -->
+          {truncatedPrimaryText && (
+            <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 ${professionalDisplay.showBoth && truncatedSecondaryText ? 'mb-1' : 'mb-2'}`}
+               title={professionalDisplay.primary}>
+              {truncatedPrimaryText}
             </p>
           )}
           
-          <!-- LinkedIn Headline -->
-          {truncatedHeadline && (
+          <!-- Secondary Professional Information (only shown if different and meaningful) -->
+          {professionalDisplay.showBoth && truncatedSecondaryText && (
             <p class={`${classes.headline} italic font-medium text-gray-600 dark:text-gray-300 border-l-2 border-linkedin dark:border-linkedin-dark pl-2 mb-2 line-clamp-2`}
-               title={linkedinHeadline}>
-              {truncatedHeadline}
+               title={professionalDisplay.secondary}>
+              {truncatedSecondaryText}
             </p>
           )}
           

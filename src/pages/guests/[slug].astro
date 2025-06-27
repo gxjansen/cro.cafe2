@@ -9,6 +9,7 @@ import SchemaPerson from '../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
 import CountryFlag from '../../components/CountryFlag.astro';
 import { getGuestEpisodes, getGuestWithLinkedIn } from '../../utils/content';
+import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../../utils/guest-display-utils';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -176,42 +177,35 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               {guestName}
             </h1>
             
-            {/* Current role from LinkedIn or original data */}
+            {/* Optimized professional display with smart deduplication */}
             {(() => {
               const role = guestWithLinkedIn?.linkedInData?.currentRole || guestWithLinkedIn?.role || guest.data.role || guest.data.title;
               const headline = guestWithLinkedIn?.linkedInData?.headline || guest.data.linkedin_headline;
+              const company = guestWithLinkedIn?.linkedInData?.currentCompany || null;
+              const isFreelancer = checkIsFreelancer(headline, role);
               
-              // Check if guest is a freelancer
-              const isFreelancer = (
-                (headline && headline.toLowerCase().includes('freelance')) ||
-                (role && role.toLowerCase().includes('freelance'))
+              const professionalDisplay = getOptimalProfessionalDisplay(
+                { role, company, headline, isFreelancer },
+                language,
+                translations
               );
               
-              // Only use company if not freelancer and company exists
-              const company = isFreelancer ? null : (guestWithLinkedIn?.linkedInData?.currentCompany || null);
-              
-              if (role && company) {
-                return (
-                  <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
-                    {role} {t.at} {company}
-                  </p>
-                );
-              } else if (role) {
-                return (
-                  <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">
-                    {role}
-                  </p>
-                );
-              }
-              return null;
+              return (
+                <div class="mb-2">
+                  {professionalDisplay.primary && (
+                    <p class="text-xl text-gray-600 dark:text-gray-400">
+                      {professionalDisplay.primary}
+                    </p>
+                  )}
+                  {professionalDisplay.showBoth && professionalDisplay.secondary && (
+                    <p class="text-lg text-gray-500 dark:text-gray-400 italic mt-1">
+                      {professionalDisplay.secondary}
+                    </p>
+                  )}
+                </div>
+              );
             })()}
             
-            {/* LinkedIn headline if available */}
-            {guestWithLinkedIn?.linkedInData?.headline && (
-              <p class="text-lg text-gray-500 dark:text-gray-400 mb-4 italic">
-                {guestWithLinkedIn.linkedInData.headline}
-              </p>
-            )}
             
             {/* Country flag */}
             {guestWithLinkedIn?.linkedInData?.country && (

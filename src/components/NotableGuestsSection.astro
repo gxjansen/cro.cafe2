@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import GuestProfilePictureOptimized from './GuestProfilePictureOptimized.astro';
 import { getGuestUrl, getGuestImageUrl } from '../utils/content';
+import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../utils/guest-display-utils';
 import type { Language } from '../types';
 
 export interface Props {
@@ -88,15 +89,14 @@ const t = translations[language];
           // Get LinkedIn data with priority: LinkedIn data first, then fallback to static data
           const guestName = guest.data.linkedin_full_name || guest.data.name;
           const guestRole = guest.data.linkedin_current_role || guest.data.role || guest.data.title;
+          const guestCompany = guest.data.linkedin_current_company || null;
+          const linkedinHeadline = guest.data.linkedin_headline || null;
+          const isFreelancer = checkIsFreelancer(linkedinHeadline, guestRole);
           
-          // Check if guest is a freelancer
-          const isFreelancer = (
-            (guest.data.linkedin_headline && guest.data.linkedin_headline.toLowerCase().includes('freelance')) ||
-            (guest.data.linkedin_current_role && guest.data.linkedin_current_role.toLowerCase().includes('freelance'))
-          );
-          
-          // Only use company if not freelancer and linkedin_current_company exists
-          const guestCompany = isFreelancer ? null : (guest.data.linkedin_current_company || null);
+          // For Notable Guests, use simplified display - only show role and company separately
+          // This component displays them on separate lines so we don't need the full deduplication
+          const finalGuestRole = guestRole;
+          const finalGuestCompany = isFreelancer ? null : guestCompany;
           
           return (
             <a 
@@ -126,15 +126,15 @@ const t = translations[language];
                 {guestName}
               </h3>
               
-              {guestRole && (
+              {finalGuestRole && (
                 <p class="text-sm text-gray-700 dark:text-gray-300 mt-1 font-medium">
-                  {guestRole}
+                  {finalGuestRole}
                 </p>
               )}
               
-              {guestCompany && (
+              {finalGuestCompany && (
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {guestCompany}
+                  {finalGuestCompany}
                 </p>
               )}
             </a>
