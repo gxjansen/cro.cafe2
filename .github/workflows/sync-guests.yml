@@ -68,8 +68,7 @@ jobs:
             echo "Guest changes detected"
           else
             echo "has-changes=false" >> $GITHUB_OUTPUT
-            echo "No guest changes detected, but forcing update for debugging"
-            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "No guest changes detected"
           fi
       
       - name: Commit and push changes
@@ -78,14 +77,24 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Force update timestamp to ensure git detects changes
-          touch src/content/guests/*.mdx
           git add src/content/guests/
           
-          COMMIT_MSG="Update guest content from NocoDB (DEBUG MODE)
+          COMMIT_MSG="Update guest content from NocoDB
           
-          Guests: ${{ steps.generate.outputs.guests-generated }} generated
-          Forced update to debug LinkedIn field integration"
+          Guests: ${{ steps.generate.outputs.guests-generated }} generated"
           
           git commit -m "$COMMIT_MSG" || echo "No changes to commit"
-          git push
+          
+          # Pull latest changes and push with retry logic
+          git pull --rebase origin main
+          
+          for i in {1..3}; do
+            if git push; then
+              echo "Successfully pushed changes"
+              break
+            else
+              echo "Push failed, retrying in 5 seconds..."
+              sleep 5
+              git pull --rebase origin main
+            fi
+          done
