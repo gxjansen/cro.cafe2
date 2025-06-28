@@ -58,7 +58,8 @@
 /* Ensure header stays on top */
 header {
   z-index: 50 !important;
-  position: relative !important;
+  position: sticky !important;
+  top: 0 !important;
 }
 
 /* Fix for any overlays that might interfere */
