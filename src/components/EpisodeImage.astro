@@ -7,6 +7,10 @@ export interface Props {
   class?: string;
   width?: number;
   height?: number;
+  episodeTitle?: string;
+  episodeNumber?: number;
+  season?: number;
+  guestName?: string;
 }
 
 const { 
@@ -14,14 +18,46 @@ const {
   alt, 
   class: className = '',
   width = 400,
-  height = 400
+  height = 400,
+  episodeTitle,
+  episodeNumber,
+  season,
+  guestName
 } = Astro.props;
 
 // Fallback gradient background for episodes without images
 const fallbackGradient = `bg-gradient-to-br from-primary-400 to-accent-500`;
 
-// Standardized alt text format for episodes
-const standardizedAlt = alt && alt.includes('CRO.CAFE') ? alt : `${alt || 'Episode'} - CRO.CAFE podcast episode`;
+// Build comprehensive alt text with context
+const buildAltText = () => {
+  const parts = [];
+  
+  // Use provided alt text as base
+  if (alt) {
+    parts.push(alt);
+  } else {
+    parts.push('Episode cover art');
+  }
+  
+  // Add episode details if provided
+  if (season && episodeNumber) {
+    parts.push(`Season ${season}, Episode ${episodeNumber}`);
+  }
+  
+  // Add guest name if provided
+  if (guestName) {
+    parts.push(`featuring ${guestName}`);
+  }
+  
+  // Add podcast branding if not already included
+  if (!alt?.includes('CRO.CAFE')) {
+    parts.push('CRO.CAFE podcast');
+  }
+  
+  return parts.join(' - ');
+};
+
+const standardizedAlt = buildAltText();
 ---
 
 {imageUrl ? (

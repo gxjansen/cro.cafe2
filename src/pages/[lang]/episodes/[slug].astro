@@ -82,7 +82,9 @@ const translations = {
     discoverMore: 'Discover More Episodes',
     continueListening: 'Continue your CRO journey with more expert insights',
     browseMoreEpisodes: 'Browse More Episodes',
-    subscribeNow: 'Subscribe Now'
+    subscribeNow: 'Subscribe Now',
+    playPause: 'Play/Pause',
+    listenOn: 'Listen on'
   },
   nl: {
     backToEpisodes: '← Terug naar Afleveringen',
@@ -102,7 +104,9 @@ const translations = {
     discoverMore: 'Ontdek Meer Afleveringen',
     continueListening: 'Ga door met je CRO reis met meer expert inzichten',
     browseMoreEpisodes: 'Bekijk Meer Afleveringen',
-    subscribeNow: 'Abonneer Nu'
+    subscribeNow: 'Abonneer Nu',
+    playPause: 'Afspelen/Pauzeren',
+    listenOn: 'Luister op'
   },
   de: {
     backToEpisodes: '← Zurück zu Folgen',
@@ -122,7 +126,9 @@ const translations = {
     discoverMore: 'Weitere Folgen entdecken',
     continueListening: 'Setzen Sie Ihre CRO-Reise mit weiteren Experteneinblicken fort',
     browseMoreEpisodes: 'Weitere Folgen durchsuchen',
-    subscribeNow: 'Jetzt abonnieren'
+    subscribeNow: 'Jetzt abonnieren',
+    playPause: 'Abspielen/Pausieren',
+    listenOn: 'Anhören auf'
   },
   es: {
     backToEpisodes: '← Volver a Episodios',
@@ -142,7 +148,9 @@ const translations = {
     discoverMore: 'Descubre Más Episodios',
     continueListening: 'Continúa tu viaje CRO con más perspectivas de expertos',
     browseMoreEpisodes: 'Ver Más Episodios',
-    subscribeNow: 'Suscríbete Ahora'
+    subscribeNow: 'Suscríbete Ahora',
+    playPause: 'Reproducir/Pausar',
+    listenOn: 'Escuchar en'
   }
 };
 
@@ -197,254 +205,261 @@ const getDateLocale = (lang: Language) => {
   />
   
   <main class="flex-grow">
-    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <!-- Episode Header -->
-      <header class="mb-8">
-        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-          <a href={`/${language}/episodes/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-            {t.backToEpisodes}
-          </a>
-          {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
-            <>
-              <span>•</span>
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 uppercase">
-                {episode.data.episode_type}
-              </span>
-            </>
-          ) : (
-            <>
-              <span>•</span>
-              <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
-            </>
-          )}
-        </div>
-        
-        <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-          {episode.data.title}
-        </h1>
-        
-        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-          <time datetime={episode.data.pubDate.toISOString()}>
-            {new Date(episode.data.pubDate).toLocaleDateString(getDateLocale(language), { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </time>
-        </div>
-      </header>
-
-      <!-- Episode Image -->
-      <div class="mb-8 rounded-xl overflow-hidden">
-        <EpisodeImage 
-          imageUrl={episode.data.imageUrl} 
-          alt={episode.data.title}
-          class="w-full h-auto max-h-96"
-        />
-      </div>
-
-      <!-- Audio Player -->
-      <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-xl p-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t.listenTo}</h2>
-        
-        <!-- Enhanced Audio Player -->
-        <SimpleAudioPlayer 
-          audioUrl={episode.data.audioUrl}
-          episodeId={episode.id}
-          episodeTitle={episode.data.title}
-          duration={episode.data.duration}
-        />
-        
-        <!-- Fallback: Embedded player if available -->
-        {episode.data.embedHtml && (
-          <details class="mb-4">
-            <summary class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
-              Alternative Player
-            </summary>
-            <div set:html={episode.data.embedHtml} class="transistor-embed mt-2" />
-          </details>
-        )}
-        
-        <!-- Subscribe options -->
-        <div class="mt-6 space-y-3">
-          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t.subscribe}
-          </p>
-          <div class="flex flex-wrap items-center gap-4">
-            {/* Spotify */}
-            {spotify && spotify.data.urls[language] && (
-              <a 
-                href={spotify.data.urls[language]}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-2 px-4 py-2 bg-[#1DB954] hover:bg-[#1aa34a] text-white rounded-full transition-colors"
-                aria-label="Listen on Spotify"
-              >
-                <img 
-                  src={spotify.data.iconUrl} 
-                  alt="Spotify" 
-                  class="w-5 h-5 brightness-0 invert"
-                />
-                <span class="text-sm font-medium">Spotify</span>
+    <div class="container-xl py-md md:py-lg lg:py-xl">
+      <div class="layout-with-sidebar">
+        <!-- Main Content -->
+        <article class="min-w-0">
+          <!-- Episode Header -->
+          <header class="mb-lg">
+            <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-md">
+              <a href={`/${language}/episodes/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                {t.backToEpisodes}
               </a>
-            )}
-            
-            {/* Apple Podcasts */}
-            {applePodcasts && applePodcasts.data.urls[language] && (
-              <a 
-                href={applePodcasts.data.urls[language]}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-2 px-4 py-2 bg-[#872EC4] hover:bg-[#7326ad] text-white rounded-full transition-colors"
-                aria-label="Listen on Apple Podcasts"
-              >
-                <img 
-                  src={applePodcasts.data.iconUrl} 
-                  alt="Apple Podcasts" 
-                  class="w-5 h-5"
-                />
-                <span class="text-sm font-medium">Apple Podcasts</span>
-              </a>
-            )}
-            
-            {/* More options link */}
-            <a 
-              href={`/${language}/subscribe/`} 
-              class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium underline"
-            >
-              {t.morePlatforms}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Episode Summary -->
-      <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
-        {episode.data.summary ? (
-          <>
-            <h2>{t.summary}</h2>
-            <p>{episode.data.summary}</p>
-          </>
-        ) : (
-          <>
-            <h2>{t.description}</h2>
-            <p>{episode.data.description}</p>
-          </>
-        )}
-      </div>
-
-      <!-- Guest(s) and Host(s) Section -->
-      {guestDetails.length === 1 && hostDetails.length > 0 ? (
-        <!-- Single guest - show guest and host side by side -->
-        <div class="mb-8">
-          <div class="grid gap-6 md:grid-cols-2">
-            <!-- Guest Column -->
-            <div>
-              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-                {t.guest}
-              </h2>
-              {guestDetails.map((guest) => guest && (
-                <GuestCard guest={guest} language={language} size="medium" />
-              ))}
+              {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
+                <>
+                  <span>•</span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 uppercase">
+                    {episode.data.episode_type}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>•</span>
+                  <span>{t.season} {episode.data.season}, {t.episode} {episode.data.episode}</span>
+                </>
+              )}
             </div>
-            <!-- Host Column -->
-            <div>
-              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
-                {hostDetails.length === 1 ? t.host : t.hosts}
-              </h2>
-              <div class="space-y-6">
-                {hostDetails.map((host) => host && (
-                  <HostCard host={host} language={language} size="medium" />
+            
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-md balance-text">
+              {episode.data.title}
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <time datetime={episode.data.pubDate.toISOString()}>
+                {new Date(episode.data.pubDate).toLocaleDateString(getDateLocale(language), { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </time>
+            </div>
+          </header>
+
+          <!-- Episode Image -->
+          <div class="mb-lg rounded-xl overflow-hidden aspect-video lg:aspect-[21/9]">
+            <EpisodeImage 
+              imageUrl={episode.data.imageUrl} 
+              alt={episode.data.title}
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <!-- Audio Player -->
+          <div class="mb-lg bg-gray-100 dark:bg-gray-800 rounded-xl p-md lg:p-lg">
+            <h2 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-md">{t.listenTo}</h2>
+            
+            <!-- Enhanced Audio Player -->
+            <SimpleAudioPlayer 
+              audioUrl={episode.data.audioUrl}
+              episodeId={episode.id}
+              episodeTitle={episode.data.title}
+              duration={episode.data.duration}
+            />
+            
+            <!-- Fallback: Embedded player if available -->
+            {episode.data.embedHtml && (
+              <details class="mb-md">
+                <summary class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
+                  Alternative Player
+                </summary>
+                <div set:html={episode.data.embedHtml} class="transistor-embed mt-2" />
+              </details>
+            )}
+          </div>
+
+          <!-- Episode Summary/Description -->
+          <div class="prose prose-lg dark:prose-invert max-w-none mb-lg content-spacing">
+            {episode.data.summary ? (
+              <>
+                <h2 class="text-2xl lg:text-3xl">{t.summary}</h2>
+                <p>{episode.data.summary}</p>
+              </>
+            ) : (
+              <>
+                <h2 class="text-2xl lg:text-3xl">{t.description}</h2>
+                <p>{episode.data.description}</p>
+              </>
+            )}
+          </div>
+
+          <!-- Guest(s) and Host(s) Section for Mobile -->
+          <div class="lg:hidden">
+            {guestDetails.length > 0 && (
+              <section class="mb-lg">
+                <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
+                  {guestDetails.length === 1 ? t.guest : t.guests}
+                </h2>
+                <div class="space-y-md">
+                  {guestDetails.map((guest) => guest && (
+                    <GuestCard guest={guest} language={language} size="medium" />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {hostDetails.length > 0 && (
+              <section class="mb-lg">
+                <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
+                  {hostDetails.length === 1 ? t.host : t.hosts}
+                </h2>
+                <div class="space-y-md">
+                  {hostDetails.map((host) => host && (
+                    <HostCard host={host} language={language} size="medium" />
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          <!-- Transcript Section -->
+          {episode.data.transcript && (
+            <section class="mb-lg">
+              <details class="bg-gray-50 dark:bg-gray-800 rounded-xl p-md lg:p-lg">
+                <summary class="cursor-pointer font-semibold text-gray-900 dark:text-white text-lg lg:text-xl">
+                  {t.transcript}
+                </summary>
+                <div class="mt-md prose prose-sm dark:prose-invert max-w-none">
+                  <div set:html={episode.data.transcript} />
+                </div>
+              </details>
+            </section>
+          )}
+
+          <!-- Keywords/Tags -->
+          {episode.data.keywords.length > 0 && (
+            <section class="mb-lg">
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-sm">{t.topics}</h3>
+              <div class="flex flex-wrap gap-xs">
+                {episode.data.keywords.map((keyword) => (
+                  <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
+                    {keyword}
+                  </span>
                 ))}
               </div>
+            </section>
+          )}
+          
+          <!-- Episode Navigation -->
+          <EpisodeNavigation currentEpisode={episode} language={language} />
+        </article>
+
+        <!-- Desktop Sidebar -->
+        <aside class="hidden lg:block sidebar-sticky space-y-lg">
+          <!-- Subscribe Section -->
+          <section class="bg-gray-50 dark:bg-gray-800 rounded-xl p-lg">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-md">
+              {t.subscribe}
+            </h3>
+            <div class="space-y-sm">
+              {/* Spotify */}
+              {spotify && spotify.data.urls[language] && (
+                <a 
+                  href={spotify.data.urls[language]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 px-4 py-3 bg-[#1DB954] hover:bg-[#1aa34a] text-white rounded-lg transition-colors w-full"
+                  aria-label={`${t.listenOn} Spotify`}
+                >
+                  <img 
+                    src={spotify.data.iconUrl} 
+                    alt="Spotify" 
+                    class="w-6 h-6 brightness-0 invert"
+                  />
+                  <span class="font-medium">Spotify</span>
+                </a>
+              )}
+              
+              {/* Apple Podcasts */}
+              {applePodcasts && applePodcasts.data.urls[language] && (
+                <a 
+                  href={applePodcasts.data.urls[language]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 px-4 py-3 bg-[#872EC4] hover:bg-[#7326ad] text-white rounded-lg transition-colors w-full"
+                  aria-label={`${t.listenOn} Apple Podcasts`}
+                >
+                  <img 
+                    src={applePodcasts.data.iconUrl} 
+                    alt="Apple Podcasts" 
+                    class="w-6 h-6"
+                  />
+                  <span class="font-medium">Apple Podcasts</span>
+                </a>
+              )}
+              
+              {/* More options link */}
+              <a 
+                href={`/${language}/subscribe/`} 
+                class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium underline block text-center mt-md"
+              >
+                {t.morePlatforms}
+              </a>
             </div>
-          </div>
-        </div>
-      ) : (
-        <>
-          <!-- Multiple guests or no guests - show sections separately -->
+          </section>
+
+          <!-- Guest(s) Section -->
           {guestDetails.length > 0 && (
-            <div class="mb-8">
-              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+            <section>
+              <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {guestDetails.length === 1 ? t.guest : t.guests}
               </h2>
-              <div class="grid gap-6 md:grid-cols-2">
+              <div class="space-y-sm">
                 {guestDetails.map((guest) => guest && (
-                  <GuestCard guest={guest} language={language} size="medium" />
+                  <GuestCard guest={guest} language={language} size="small" />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
+          <!-- Host(s) Section -->
           {hostDetails.length > 0 && (
-            <div class="mb-8">
-              <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+            <section>
+              <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {hostDetails.length === 1 ? t.host : t.hosts}
               </h2>
-              <div class="grid gap-6 md:grid-cols-2">
+              <div class="space-y-sm">
                 {hostDetails.map((host) => host && (
-                  <HostCard host={host} language={language} size="medium" />
+                  <HostCard host={host} language={language} size="small" />
                 ))}
               </div>
-            </div>
+            </section>
           )}
-        </>
-      )}
-
-      <!-- Transcript Section -->
-      {episode.data.transcript && (
-        <div class="mb-8">
-          <details class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-            <summary class="cursor-pointer font-semibold text-gray-900 dark:text-white">
-              {t.transcript}
-            </summary>
-            <div class="mt-4 prose prose-sm dark:prose-invert max-w-none">
-              <div set:html={episode.data.transcript} />
-            </div>
-          </details>
-        </div>
-      )}
-
-      <!-- Keywords/Tags -->
-      {episode.data.keywords.length > 0 && (
-        <div class="mb-8">
-          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t.topics}</h3>
-          <div class="flex flex-wrap gap-2">
-            {episode.data.keywords.map((keyword) => (
-              <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
-                {keyword}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      <!-- Episode Navigation -->
-      <EpisodeNavigation currentEpisode={episode} language={language} />
-    </article>
+        </aside>
+      </div>
+    </div>
 
     <!-- Related Episodes -->
     <RelatedEpisodes episode={episode} language={language} />
 
     <!-- Call to Action -->
-    <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+    <section class="section-spacing bg-accent-500 dark:bg-accent-700">
+      <div class="container text-center">
+        <h2 class="text-3xl lg:text-4xl font-heading font-bold text-white mb-md balance-text">
           {t.discoverMore}
         </h2>
-        <p class="text-xl text-white/90 mb-8">
+        <p class="text-xl lg:text-2xl text-white/90 mb-lg max-w-prose mx-auto">
           {t.continueListening}
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <div class="flex flex-col sm:flex-row gap-sm justify-center">
           <a 
             href={`/${language}/episodes/`}
-            class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-accent-600 dark:text-accent-700 bg-white hover:bg-white/90 transition-all shadow-lg"
+            class="inline-flex items-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-accent-600 dark:text-accent-700 bg-white hover:bg-white/90 transition-all shadow-lg touch-target"
           >
             {t.browseMoreEpisodes}
           </a>
           <a 
             href={`/${language}/subscribe/`}
-            class="inline-flex items-center px-8 py-3 border-2 border-white/70 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 transition-all"
+            class="inline-flex items-center px-8 py-3 border-2 border-white/70 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 transition-all touch-target"
           >
             {t.subscribeNow}
           </a>
@@ -455,16 +470,44 @@ const getDateLocale = (lang: Language) => {
 </BaseLayout>
 
 <style>
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
   /* Transistor embed styling */
   .transistor-embed :global(iframe) {
     width: 100% !important;
     max-width: 100% !important;
   }
 </style>
+
+<script>
+  // Initialize swipe gestures for episode navigation
+  import { SwipeGestures } from '../../../scripts/swipe-gestures.js';
+  
+  // Initialize swipe gestures when DOM is ready
+  if (typeof window !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const swipeGestures = new SwipeGestures({
+        threshold: 50,
+        velocity: 0.3,
+        restraint: 100,
+        allowedTime: 300
+      });
+      
+      // Show swipe hint on first visit
+      const hasSeenHint = localStorage.getItem('swipeHintShown');
+      if (!hasSeenHint && 'ontouchstart' in window) {
+        setTimeout(() => {
+          const hint = document.createElement('div');
+          hint.className = 'swipe-hint show';
+          hint.textContent = 'Swipe left or right to navigate episodes';
+          document.body.appendChild(hint);
+          
+          setTimeout(() => {
+            hint.classList.remove('show');
+            setTimeout(() => hint.remove(), 300);
+          }, 3000);
+          
+          localStorage.setItem('swipeHintShown', 'true');
+        }, 2000);
+      }
+    });
+  }
+</script>

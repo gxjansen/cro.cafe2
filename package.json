@@ -15,6 +15,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "test:mobile": "jest tests/mobile-enhancements.test.js",
+    "test:mobile:headless": "jest tests/mobile-enhancements.test.js --forceExit",
     "generate-content": "tsx scripts/generate-content.ts",
     "generate-content-simple": "tsx scripts/generate-content-simple.ts",
     "generate-content-robust": "tsx scripts/generate-content-robust.ts",
@@ -57,6 +59,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@jest/globals": "^30.0.3",
     "@types/node": "^22.10.2",
     "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
@@ -67,8 +70,10 @@
     "eslint": "^9.18.0",
     "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
+    "jest": "^30.0.3",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
+    "puppeteer": "^24.11.0",
     "sharp": "^0.34.2",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",

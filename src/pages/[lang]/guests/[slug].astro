@@ -4,7 +4,7 @@ import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeCard from '../../../components/EpisodeCard.astro';
 import GuestProfilePicture from '../../../components/GuestProfilePicture.astro';
-import ThenNowCard from '../../../components/ThenNowCard.astro';
+import CareerTimeline from '../../../components/CareerTimeline.astro';
 import SchemaPerson from '../../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../../components/GuestOtherCompany.astro';
 import CountryFlag from '../../../components/CountryFlag.astro';
@@ -301,48 +301,22 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
         </div>
       )}
       
-      {/* Career Progression - Then & Now Card */}
+      {/* Career Timeline */}
       {guestWithLinkedIn?.linkedInData?.experiences && 
        guestWithLinkedIn.linkedInData.experiences.length > 0 && 
        guestEpisodes.length > 0 && (
-        <div class="mb-12">
-          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Career Journey</h3>
-          {/* Find the oldest episode to show progression */}
-          {(() => {
-            const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
-            const episodeDate = oldestEpisode.data.pubDate;
-            
-            // Find the experience at the time of the episode
-            const historicalExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => {
-              if (exp.startDate && exp.endDate) {
-                const startYear = parseInt(exp.startDate.split('-')[0]);
-                const endYear = parseInt(exp.endDate.split('-')[0]);
-                const episodeYear = episodeDate.getFullYear();
-                return episodeYear >= startYear && episodeYear <= endYear;
-              }
-              return false;
-            });
-            
-            const currentExperience = guestWithLinkedIn.linkedInData.experiences.find(exp => exp.isCurrent);
-            
-            return (historicalExperience || guest.data.role) ? (
-              <ThenNowCard
-                historical={{
-                  role: historicalExperience?.title || guest.data.role || guest.data.title || 'Guest',
-                  company: historicalExperience?.company || guest.data.company || 'Company',
-                  date: episodeDate
-                }}
-                current={currentExperience ? {
-                  role: currentExperience.title,
-                  company: currentExperience.company,
-                  lastUpdated: guestWithLinkedIn?.linkedInData?.lastSync || new Date()
-                } : undefined}
-                episodeId={oldestEpisode.data.slug || oldestEpisode.slug}
-                episodeTitle={oldestEpisode.data.title}
-              />
-            ) : null;
-          })()}
-        </div>
+        (() => {
+          const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
+          const firstEpisodeDate = oldestEpisode.data.pubDate.toISOString();
+          
+          return (
+            <CareerTimeline
+              experiences={JSON.stringify(guestWithLinkedIn.linkedInData.experiences)}
+              firstEpisodeDate={firstEpisodeDate}
+              guestName={guest.data.name}
+            />
+          );
+        })()
       )}
 
       <!-- Other Guests from Same Company -->

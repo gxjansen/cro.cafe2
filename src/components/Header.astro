@@ -2,6 +2,7 @@
 import type { Language } from '../types';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import MobileSearchOverlay from './MobileSearchOverlay.astro';
 
 export interface Props {
   language?: Language;
@@ -10,8 +11,18 @@ export interface Props {
 
 const { language = 'en', currentPath = '/' } = Astro.props;
 
-// Check if we're in global mode (on root page, all-languages pages, or global search)
-const isGlobalMode = currentPath === '/' || currentPath.startsWith('/all/') || currentPath === '/search/';
+// Check if we're in global mode (on root page, all-languages pages, global search, or global pages like subscribe)
+const isGlobalMode = currentPath === '/' || 
+                     currentPath.startsWith('/all/') || 
+                     currentPath === '/search/' ||
+                     currentPath === '/subscribe/' ||
+                     currentPath === '/about/' ||
+                     currentPath === '/privacy-policy/' ||
+                     currentPath === '/offline/' ||
+                     (!currentPath.startsWith('/en/') && 
+                      !currentPath.startsWith('/nl/') && 
+                      !currentPath.startsWith('/de/') && 
+                      !currentPath.startsWith('/es/'));
 
 // Navigation items based on language and mode
 const getNavItems = (lang: Language, isGlobal: boolean) => {
@@ -64,10 +75,20 @@ const getNavItems = (lang: Language, isGlobal: boolean) => {
 };
 
 const navItems = getNavItems(language, isGlobalMode);
+
+// Search translations
+const searchTranslations = {
+  en: 'Search',
+  nl: 'Zoeken',
+  de: 'Suche',
+  es: 'Buscar'
+};
+
+const searchLabel = searchTranslations[language] || 'Search';
 ---
 
 <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800" style="isolation: isolate;">
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+  <nav id="main-navigation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
     <div class="flex justify-between items-center h-16">
       <!-- Logo -->
       <div class="flex-shrink-0">
@@ -105,16 +126,28 @@ const navItems = getNavItems(language, isGlobalMode);
 
       <!-- Right side controls -->
       <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4 flex-shrink-0 min-w-0">
-        <!-- Search Button - Hidden on small mobile, visible on sm+ -->
+        <!-- Search Button -->
+        <!-- Desktop: Link to search page -->
         <a
           href={isGlobalMode ? '/search/' : `/${language}/search/`}
-          class="hidden xs:block p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors flex-shrink-0"
+          class="hidden lg:flex min-w-[48px] min-h-[48px] items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors flex-shrink-0 touch-target"
           aria-label="Search episodes and guests"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </a>
+        <!-- Mobile: Button to open search overlay -->
+        <button
+          id="mobile-search-trigger"
+          type="button"
+          class="flex lg:hidden min-w-[48px] min-h-[48px] items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors flex-shrink-0 touch-target"
+          aria-label="Search episodes and guests"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
 
         <!-- Language Switcher with responsive width -->
         <div class="flex-shrink-0 min-w-0">
@@ -126,12 +159,12 @@ const navItems = getNavItems(language, isGlobalMode);
           <ThemeToggle />
         </div>
 
-        <!-- Mobile menu button -->
-        <div class="md:hidden flex-shrink-0">
+        <!-- Mobile menu button - Hidden now that we have bottom nav -->
+        <div class="hidden">
           <button
             id="mobile-menu-toggle"
             type="button"
-            class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors"
+            class="min-w-[48px] min-h-[48px] flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-md transition-colors touch-target"
             aria-label="Open main menu"
             aria-expanded="false"
           >
@@ -146,28 +179,17 @@ const navItems = getNavItems(language, isGlobalMode);
       </div>
     </div>
 
-    <!-- Mobile Navigation Menu -->
+    <!-- Mobile Navigation Menu - Hidden now that we have bottom nav -->
     <nav 
-      class="md:hidden hidden" 
+      class="hidden" 
       id="mobile-menu"
       aria-label="Mobile navigation"
     >
       <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
-        <!-- Search Link for Mobile (hidden on xs+ screens) -->
-        <a
-          href={isGlobalMode ? '/search/' : `/${language}/search/`}
-          class="xs:hidden flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          Search
-        </a>
-        
         {navItems.map((item) => (
           <a
             href={item.href}
-            class={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+            class={`block min-h-[48px] px-4 py-3 rounded-md text-base font-medium transition-colors touch-target ${
               currentPath.startsWith(item.href)
                 ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                 : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -181,6 +203,9 @@ const navItems = getNavItems(language, isGlobalMode);
     </nav>
   </nav>
 </header>
+
+<!-- Mobile Search Overlay -->
+<MobileSearchOverlay searchId="header-search" />
 
 <script>
   // Function to initialize mobile menu
@@ -264,8 +289,27 @@ const navItems = getNavItems(language, isGlobalMode);
     }
   }
 
+  // Function to initialize mobile search
+  function initializeMobileSearch() {
+    const searchTrigger = document.getElementById('mobile-search-trigger');
+    
+    if (!searchTrigger) return;
+    
+    // Remove any existing listeners by cloning
+    const newTrigger = searchTrigger.cloneNode(true) as HTMLElement;
+    searchTrigger.parentNode?.replaceChild(newTrigger, searchTrigger);
+    
+    // Add click handler to open search overlay
+    newTrigger.addEventListener('click', () => {
+      if (typeof window !== 'undefined' && window.openHeader_searchOverlay) {
+        window.openHeader_searchOverlay();
+      }
+    });
+  }
+
   // Initialize on first load
   initializeMobileMenu();
+  initializeMobileSearch();
 
   // Re-initialize after Astro page transitions
   document.addEventListener('astro:page-load', () => {
@@ -275,6 +319,7 @@ const navItems = getNavItems(language, isGlobalMode);
     }
     // Re-initialize
     initializeMobileMenu();
+    initializeMobileSearch();
   });
 
   // Also handle after-swap event
@@ -285,5 +330,6 @@ const navItems = getNavItems(language, isGlobalMode);
     }
     // Re-initialize
     initializeMobileMenu();
+    initializeMobileSearch();
   });
 </script>

@@ -4,53 +4,80 @@ import { safeJsonParse } from '../types/linkedin';
 
 export interface Props {
   experiences: string;
-  currentRole?: string;
-  episodeDate?: string;
+  firstEpisodeDate: string;
+  guestName: string;
 }
 
-const { experiences, currentRole, episodeDate } = Astro.props;
+const { experiences, firstEpisodeDate, guestName } = Astro.props;
 
 // Parse experiences from JSON string
 const parsedExperiences = safeJsonParse<LinkedInExperience[]>(experiences, []);
 
+// Return early if no experiences
+if (parsedExperiences.length === 0) {
+  return null;
+}
+
+// Remove duplicate experiences and fix broken data
+const cleanedExperiences = parsedExperiences.filter((exp, index, self) => {
+  // Remove if it's a duplicate (same title and company)
+  const isDuplicate = self.findIndex(e => 
+    e.title === exp.title && 
+    e.company === exp.company
+  ) !== index;
+  
+  // Remove if dates are invalid (both start and end are missing or invalid)
+  const hasValidDates = exp.startDate || exp.endDate || exp.isCurrent;
+  
+  return !isDuplicate && hasValidDates;
+});
+
 // Sort experiences by start date (most recent first)
-const sortedExperiences = [...parsedExperiences].sort((a, b) => {
+const sortedExperiences = [...cleanedExperiences].sort((a, b) => {
   const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
   const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
   return dateB - dateA;
 });
 
+// Filter experiences to show only from first episode onwards
+const relevantExperiences = sortedExperiences.filter(exp => {
+  const expStartDate = exp.startDate ? new Date(exp.startDate) : new Date();
+  const firstEpisode = new Date(firstEpisodeDate);
+  
+  // Include if:
+  // 1. Job started after first episode, OR
+  // 2. Job was active during first episode (no end date or ended after episode)
+  return expStartDate >= firstEpisode || 
+         (!exp.endDate || new Date(exp.endDate) >= firstEpisode);
+});
+
+// If no relevant experiences, return null
+if (relevantExperiences.length === 0) {
+  return null;
+}
+
 // Format date for display
 function formatDate(dateStr?: string | null): string {
   if (!dateStr) return 'Present';
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  
+  try {
+    const date = new Date(dateStr);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return 'Present';
+    }
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  } catch {
+    return 'Present';
+  }
 }
 
-// Calculate position for episode marker
-function getEpisodePosition(): number {
-  if (!episodeDate || sortedExperiences.length === 0) return 0;
-  
-  const episodeTime = new Date(episodeDate).getTime();
-  const firstDate = sortedExperiences[sortedExperiences.length - 1].startDate;
-  const lastDate = sortedExperiences[0].endDate || new Date().toISOString();
-  
-  if (!firstDate) return 0;
-  
-  const startTime = new Date(firstDate).getTime();
-  const endTime = new Date(lastDate).getTime();
-  
-  // Calculate percentage position
-  const position = ((episodeTime - startTime) / (endTime - startTime)) * 100;
-  return Math.max(0, Math.min(100, position));
-}
-
-const episodePosition = getEpisodePosition();
 ---
 
-<div class="career-timeline" data-timeline>
+{parsedExperiences.length > 0 && relevantExperiences.length > 0 && (
+<div class="career-timeline" data-timeline role="region" aria-label={`Career journey for ${guestName}`}>
   <div class="timeline-header">
-    <h3>Career Journey</h3>
+    <h2>Career Journey</h2>
     <button 
       class="timeline-toggle"
       aria-label="Toggle timeline view"
@@ -62,24 +89,25 @@ const episodePosition = getEpisodePosition();
     </button>
   </div>
 
-  <div class="timeline-container" data-timeline-container>
+  <!-- Timeline labels -->
+  <div class={`timeline-labels ${relevantExperiences.length <= 3 ? 'few-items-labels' : ''}`} aria-hidden="true">
+    <span class="timeline-label timeline-label-start">Previously</span>
+    <span class="timeline-label timeline-label-end">Today</span>
+  </div>
+  
+  <div class={`timeline-container ${relevantExperiences.length <= 3 ? 'few-items' : ''}`} data-timeline-container>
     <div class="timeline-track"></div>
-    
-    {episodeDate && (
-      <div 
-        class="episode-marker"
-        style={`--episode-position: ${episodePosition}%`}
-        title={`Podcast recorded on ${formatDate(episodeDate)}`}
-      >
-        <div class="episode-marker-dot"></div>
-        <div class="episode-marker-label">Episode Recording</div>
-      </div>
-    )}
 
+    <!-- Timeline arrow for desktop -->
+    <div class="timeline-arrow" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 10L19 10M19 10L16 7M19 10L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
     <div class="timeline-items">
-      {sortedExperiences.map((experience, index) => {
-        const isCurrentRole = experience.isCurrent || 
-          (currentRole && experience.title === currentRole);
+      {relevantExperiences.map((experience, index) => {
+        const isCurrentRole = experience.isCurrent;
         
         return (
           <div 
@@ -91,31 +119,14 @@ const episodePosition = getEpisodePosition();
               <div class="timeline-header-content">
                 <h4 class="timeline-title">{experience.title}</h4>
                 <div class="timeline-company">
-                  {experience.companyUrl ? (
-                    <a 
-                      href={experience.companyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="company-link"
-                    >
-                      {experience.company}
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 2L2 10M10 2V8M10 2H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </a>
-                  ) : (
-                    <span>{experience.company}</span>
-                  )}
+                  <span>{experience.company}</span>
                 </div>
               </div>
               
               <div class="timeline-meta">
                 <time class="timeline-date">
-                  {formatDate(experience.startDate)} - {formatDate(experience.endDate)}
+                  {experience.duration || `${formatDate(experience.startDate)} - ${formatDate(experience.endDate)}`}
                 </time>
-                {experience.duration && (
-                  <span class="timeline-duration">{experience.duration}</span>
-                )}
                 {experience.location && (
                   <span class="timeline-location">{experience.location}</span>
                 )}
@@ -131,6 +142,7 @@ const episodePosition = getEpisodePosition();
     </div>
   </div>
 </div>
+)}
 
 <style>
   .career-timeline {
@@ -148,7 +160,7 @@ const episodePosition = getEpisodePosition();
     margin-bottom: 1.5rem;
   }
 
-  .timeline-header h3 {
+  .timeline-header h2 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
@@ -204,7 +216,7 @@ const episodePosition = getEpisodePosition();
 
     .timeline-items {
       display: flex;
-      flex-direction: column;
+      flex-direction: column-reverse; /* Reverse to show newest first */
       gap: var(--timeline-gap);
     }
 
@@ -213,12 +225,14 @@ const episodePosition = getEpisodePosition();
       padding-left: calc(var(--timeline-dot-size) * 2 + 1rem);
     }
 
-    .episode-marker {
+    /* Timeline arrow on mobile */
+    .timeline-arrow {
       position: absolute;
       left: var(--timeline-dot-size);
-      top: var(--episode-position);
-      transform: translate(-50%, -50%);
-      z-index: 10;
+      bottom: -20px;
+      transform: translateX(-50%) rotate(90deg);
+      z-index: 2;
+      color: var(--timeline-active-color);
     }
   }
 
@@ -231,28 +245,51 @@ const episodePosition = getEpisodePosition();
       height: 2px;
       transform: translateY(-50%);
     }
+    
+    /* Shorter track when items are centered */
+    .timeline-container.few-items .timeline-track {
+      left: 20%;
+      right: 20%;
+    }
 
     .timeline-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      display: flex;
+      flex-direction: row-reverse; /* Reverse to show newest first */
       gap: var(--timeline-gap);
       padding-top: calc(var(--timeline-dot-size) * 2);
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      justify-content: flex-end; /* Default: left-align for scrolling */
+    }
+    
+    /* Center items when few */
+    .timeline-container.few-items .timeline-items {
+      justify-content: center;
     }
 
     .timeline-item {
       position: relative;
+      flex: 0 0 300px;
+      max-width: 350px;
     }
 
     .timeline-item:nth-child(even) {
       margin-top: 4rem;
     }
 
-    .episode-marker {
+    /* Timeline arrow */
+    .timeline-arrow {
       position: absolute;
-      left: var(--episode-position);
+      right: -10px;
       top: var(--timeline-dot-size);
-      transform: translate(-50%, -50%);
-      z-index: 10;
+      transform: translateY(-50%);
+      z-index: 2;
+      color: var(--timeline-active-color);
+    }
+    
+    /* Adjust arrow position when items are centered (few items) */
+    .timeline-container.few-items .timeline-arrow {
+      right: calc(20% - 10px);
     }
   }
 
@@ -334,18 +371,6 @@ const episodePosition = getEpisodePosition();
     color: #6b7280;
   }
 
-  .company-link {
-    color: inherit;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    transition: color 0.2s ease;
-  }
-
-  .company-link:hover {
-    color: var(--timeline-active-color);
-  }
 
   .timeline-meta {
     display: flex;
@@ -358,12 +383,6 @@ const episodePosition = getEpisodePosition();
 
   .timeline-date {
     font-weight: 500;
-  }
-
-  .timeline-duration {
-    padding: 0.125rem 0.5rem;
-    background-color: #f3f4f6;
-    border-radius: 9999px;
     color: #6b7280;
   }
 
@@ -382,60 +401,61 @@ const episodePosition = getEpisodePosition();
     overflow: hidden;
   }
 
-  /* Episode Marker */
-  .episode-marker {
+  /* Timeline labels */
+  .timeline-labels {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .episode-marker-dot {
-    width: 20px;
-    height: 20px;
-    background-color: #dc2626;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 11;
-  }
-
-  .episode-marker-dot::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
-    background-color: rgba(220, 38, 38, 0.2);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  .episode-marker-label {
-    background-color: #dc2626;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    justify-content: space-between;
     font-size: 0.75rem;
+    color: #6b7280;
     font-weight: 500;
-    white-space: nowrap;
+    margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
   }
 
-  @keyframes pulse {
-    0% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
+  .timeline-label {
+    background-color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Desktop labels positioning */
+  @media (min-width: 769px) {
+    .timeline-labels {
+      margin-bottom: 1rem;
     }
-    70% {
-      transform: translate(-50%, -50%) scale(1.5);
-      opacity: 0;
+    
+    /* Adjust labels when items are centered (few items) */
+    .career-timeline:has(.few-items) .timeline-labels,
+    .timeline-labels.few-items-labels {
+      max-width: 60%;
+      margin-left: 20%;
+      margin-right: 20%;
     }
-    100% {
-      transform: translate(-50%, -50%) scale(1.5);
-      opacity: 0;
+  }
+
+  /* Mobile labels positioning */
+  @media (max-width: 768px) {
+    .timeline-labels {
+      margin-left: calc(var(--timeline-dot-size) * 2 + 1rem);
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Hide arrow on very small screens */
+  @media (max-width: 640px) {
+    .timeline-arrow {
+      display: none;
+    }
+  }
+
+  /* Dark mode labels */
+  @media (prefers-color-scheme: dark) {
+    .timeline-label {
+      background-color: #374151;
+      color: #d1d5db;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
   }
 
@@ -458,11 +478,6 @@ const episodePosition = getEpisodePosition();
     .timeline-company,
     .timeline-description {
       color: #9ca3af;
-    }
-
-    .timeline-duration {
-      background-color: #374151;
-      color: #d1d5db;
     }
 
     .timeline-toggle:hover {

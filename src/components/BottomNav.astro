@@ -1,0 +1,303 @@
+---
+import type { Language } from '../types';
+
+export interface Props {
+  language?: Language;
+  currentPath?: string;
+}
+
+const { language = 'en', currentPath = '/' } = Astro.props;
+
+// Check if we're in global mode (same logic as Header component)
+const isGlobalMode = currentPath === '/' || 
+                     currentPath.startsWith('/all/') || 
+                     currentPath === '/search/' ||
+                     currentPath === '/subscribe/' ||
+                     currentPath === '/about/' ||
+                     currentPath === '/privacy-policy/' ||
+                     currentPath === '/offline/' ||
+                     (!currentPath.startsWith('/en/') && 
+                      !currentPath.startsWith('/nl/') && 
+                      !currentPath.startsWith('/de/') && 
+                      !currentPath.startsWith('/es/'));
+
+// Navigation items with icons
+const getNavItems = (lang: Language, isGlobal: boolean) => {
+  const basePath = isGlobal ? '' : `/${lang}`;
+  
+  const navTexts = {
+    en: {
+      episodes: 'Episodes',
+      guests: 'Guests',
+      search: 'Search',
+      more: 'More'
+    },
+    nl: {
+      episodes: 'Afleveringen',
+      guests: 'Gasten',
+      search: 'Zoeken',
+      more: 'Meer'
+    },
+    de: {
+      episodes: 'Folgen',
+      guests: 'Gäste',
+      search: 'Suche',
+      more: 'Mehr'
+    },
+    es: {
+      episodes: 'Episodios',
+      guests: 'Invitados',
+      search: 'Buscar',
+      more: 'Más'
+    }
+  };
+  
+  const texts = navTexts[lang];
+  
+  return [
+    { 
+      href: isGlobal ? '/all/episodes/' : `${basePath}/episodes/`,
+      label: texts.episodes,
+      icon: 'podcast'
+    },
+    { 
+      href: isGlobal ? '/all/guests/' : `${basePath}/guests/`,
+      label: texts.guests,
+      icon: 'users'
+    },
+    { 
+      href: isGlobal ? '/search/' : `${basePath}/search/`,
+      label: texts.search,
+      icon: 'search'
+    },
+    { 
+      href: '#',
+      label: texts.more,
+      icon: 'menu',
+      action: 'more-menu'
+    }
+  ];
+};
+
+const navItems = getNavItems(language, isGlobalMode);
+
+// Function to check if current path matches nav item
+const isActive = (href: string) => {
+  if (href === '#') return false;
+  return currentPath.startsWith(href);
+};
+---
+
+<!-- Bottom Navigation - Only visible on mobile -->
+<nav 
+  class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 safe-bottom contain-layout"
+  aria-label="Mobile navigation"
+>
+  <div class="grid grid-cols-4 h-16">
+    {navItems.map((item) => (
+      item.action ? (
+        <button
+          type="button"
+          class={`flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors touch-target ${
+            isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : ''
+          }`}
+          data-action={item.action}
+          aria-label={item.label}
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {item.icon === 'podcast' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            )}
+            {item.icon === 'users' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            )}
+            {item.icon === 'search' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            )}
+            {item.icon === 'menu' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+          <span class="text-xs">{item.label}</span>
+        </button>
+      ) : (
+        <a
+          href={item.href}
+          class={`flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors touch-target ${
+            isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : ''
+          }`}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {item.icon === 'podcast' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            )}
+            {item.icon === 'users' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            )}
+            {item.icon === 'search' && (
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            )}
+          </svg>
+          <span class="text-xs">{item.label}</span>
+        </a>
+      )
+    ))}
+  </div>
+</nav>
+
+<!-- More Menu Modal -->
+<div 
+  id="more-menu-modal"
+  class="fixed inset-0 bg-black/50 z-50 hidden"
+  aria-hidden="true"
+>
+  <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl transform translate-y-full transition-transform duration-300">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">More Options</h2>
+        <button
+          type="button"
+          class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          aria-label="Close menu"
+          data-close-menu
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <nav class="p-4 space-y-2">
+      <a
+        href={isGlobalMode ? '/subscribe/' : `/${language}/subscribe/`}
+        class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        Subscribe
+      </a>
+      <a
+        href="/about/"
+        class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        About
+      </a>
+      <a
+        href="/privacy-policy/"
+        class="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        Privacy Policy
+      </a>
+    </nav>
+  </div>
+</div>
+
+<style>
+  /* Add padding to body when bottom nav is present */
+  @media (max-width: 767px) {
+    :global(body) {
+      padding-bottom: 4rem; /* Height of bottom nav */
+    }
+  }
+  
+  /* Safe area padding for devices with home indicator */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Slide-up animation for more menu */
+  #more-menu-modal.active > div {
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // More menu functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const moreButton = document.querySelector('[data-action="more-menu"]');
+    const modal = document.getElementById('more-menu-modal');
+    const closeButton = document.querySelector('[data-close-menu]');
+    
+    if (!moreButton || !modal || !closeButton) return;
+    
+    function openMenu() {
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      // Force reflow before adding active class for animation
+      modal.offsetHeight;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMenu() {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }, 300); // Match transition duration
+    }
+    
+    moreButton.addEventListener('click', openMenu);
+    closeButton.addEventListener('click', closeMenu);
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeMenu();
+      }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeMenu();
+      }
+    });
+  });
+  
+  // Re-initialize after view transitions
+  document.addEventListener('astro:after-swap', () => {
+    const moreButton = document.querySelector('[data-action="more-menu"]');
+    const modal = document.getElementById('more-menu-modal');
+    const closeButton = document.querySelector('[data-close-menu]');
+    
+    if (!moreButton || !modal || !closeButton) return;
+    
+    // Remove any existing event listeners by cloning
+    const newMoreButton = moreButton.cloneNode(true);
+    moreButton.parentNode?.replaceChild(newMoreButton, moreButton);
+    
+    const newCloseButton = closeButton.cloneNode(true);
+    closeButton.parentNode?.replaceChild(newCloseButton, closeButton);
+    
+    // Re-attach event listeners
+    function openMenu() {
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      modal.offsetHeight;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMenu() {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+    
+    newMoreButton.addEventListener('click', openMenu);
+    newCloseButton.addEventListener('click', closeMenu);
+  });
+</script>

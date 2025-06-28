@@ -4,6 +4,7 @@ import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import GuestCardVertical from '../../../components/GuestCardVertical.astro';
 import GuestFilterBar from '../../../components/GuestFilterBar.astro';
+import GuestFilterBarMobile from '../../../components/GuestFilterBarMobile.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
@@ -83,6 +84,9 @@ const t = translations[language];
       </div>
 
       <!-- Filter Controls -->
+      <!-- Mobile Filter -->
+      <GuestFilterBarMobile guests={guests} showLanguageFilter={false} language={language} />
+      <!-- Desktop Filter -->
       <GuestFilterBar guests={guests} showLanguageFilter={false} language={language} />
 
       <!-- Results Info -->

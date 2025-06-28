@@ -1,0 +1,149 @@
+---
+interface Props {
+  filterId: string;
+  title?: string;
+}
+
+const { filterId, title = 'Filters' } = Astro.props;
+---
+
+<!-- Mobile Filter Sheet -->
+<div 
+  id={`mobile-filter-sheet-${filterId}`}
+  class="mobile-filter-sheet fixed inset-0 z-50 lg:hidden"
+  data-state="closed"
+  aria-hidden="true"
+>
+  <!-- Backdrop -->
+  <div class="backdrop absolute inset-0 bg-black bg-opacity-50 transition-opacity opacity-0"></div>
+  
+  <!-- Sheet Panel -->
+  <div class="sheet-panel absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-xl transform translate-y-full transition-transform">
+    <!-- Handle Bar -->
+    <div class="flex justify-center pt-2 pb-1">
+      <div class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+    </div>
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
+      <button 
+        type="button"
+        class="close-sheet p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        aria-label="Close filters"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Content Slot -->
+    <div class="sheet-content overflow-y-auto max-h-[70vh] px-4 py-4">
+      <slot />
+    </div>
+    
+    <!-- Footer Actions -->
+    <div class="sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 flex gap-3">
+      <button 
+        type="button"
+        class="clear-filters flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+      >
+        Clear All
+      </button>
+      <button 
+        type="button"
+        class="apply-filters flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+      >
+        Apply Filters
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-filter-sheet[data-state="open"] .backdrop {
+    opacity: 1;
+  }
+  
+  .mobile-filter-sheet[data-state="open"] .sheet-panel {
+    transform: translateY(0);
+  }
+  
+  .mobile-filter-sheet[data-state="closed"] {
+    pointer-events: none;
+  }
+  
+  .mobile-filter-sheet[data-state="open"] {
+    pointer-events: auto;
+  }
+  
+  /* Prevent body scroll when sheet is open */
+  :global(body.filter-sheet-open) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  function initializeMobileFilterSheets() {
+    // Initialize all filter sheets
+    document.querySelectorAll('.mobile-filter-sheet').forEach(sheet => {
+      const backdrop = sheet.querySelector('.backdrop');
+      const closeBtn = sheet.querySelector('.close-sheet');
+      const applyBtn = sheet.querySelector('.apply-filters');
+      const clearBtn = sheet.querySelector('.clear-filters');
+      
+      function openSheet() {
+        sheet.setAttribute('data-state', 'open');
+        sheet.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('filter-sheet-open');
+      }
+      
+      function closeSheet() {
+        sheet.setAttribute('data-state', 'closed');
+        sheet.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('filter-sheet-open');
+      }
+      
+      // Event listeners
+      backdrop?.addEventListener('click', closeSheet);
+      closeBtn?.addEventListener('click', closeSheet);
+      applyBtn?.addEventListener('click', () => {
+        // Trigger filter application
+        const event = new CustomEvent('filters:apply', {
+          detail: { sheetId: sheet.id }
+        });
+        document.dispatchEvent(event);
+        closeSheet();
+      });
+      
+      clearBtn?.addEventListener('click', () => {
+        // Trigger filter clear
+        const event = new CustomEvent('filters:clear', {
+          detail: { sheetId: sheet.id }
+        });
+        document.dispatchEvent(event);
+      });
+      
+      // Handle escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sheet.getAttribute('data-state') === 'open') {
+          closeSheet();
+        }
+      });
+      
+      // Expose open method globally
+      (window as any)[`openFilterSheet_${sheet.id}`] = openSheet;
+    });
+  }
+
+  // Initialize on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeMobileFilterSheets);
+  } else {
+    initializeMobileFilterSheets();
+  }
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initializeMobileFilterSheets);
+</script>

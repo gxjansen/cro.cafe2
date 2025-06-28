@@ -1,0 +1,371 @@
+/* CSS Containment Optimizations for Performance */
+/* Based on analysis of large components and containers */
+
+/* ===================================
+   1. Guest Cards - High Priority
+   =================================== */
+
+/* Guest cards have fixed dimensions and independent layout */
+.guest-card,
+[class*="guest-card"] {
+  contain: layout style paint;
+  /* Cards don't affect outside layout and have predictable size */
+}
+
+/* Optimize the guest image container */
+.guest-card .flex-shrink-0,
+.guest-card__image {
+  contain: strict;
+  /* Images have fixed dimensions */
+}
+
+/* Guest filter bar - frequent updates when filtering */
+.guest-filter-bar {
+  contain: layout style;
+  /* Layout containment prevents filter changes from affecting rest of page */
+}
+
+/* Guest grid container */
+#guestsGrid,
+.guests-grid,
+[data-guest-grid] {
+  contain: layout;
+  /* Grid layout is independent */
+}
+
+/* ===================================
+   2. Episode Cards - High Priority
+   =================================== */
+
+/* Episode cards with predictable dimensions */
+.episode-card {
+  contain: layout style paint;
+  /* Cards are self-contained with fixed aspect ratios */
+}
+
+/* Episode image containers with fixed aspect ratio */
+.episode-card [class*="pb-[56.25%]"],
+.episode-card__image-container {
+  contain: strict;
+  /* Fixed aspect ratio containers */
+}
+
+/* Episode grid containers */
+#episodesGrid,
+.episodes-grid,
+[class*="episode-grid"],
+[data-episode-grid] {
+  contain: layout;
+  /* Grid changes don't affect outside layout */
+}
+
+/* Related episodes section */
+.related-episodes {
+  contain: layout style;
+  /* Independent section that doesn't affect main content */
+}
+
+/* ===================================
+   3. Audio Player - Critical
+   =================================== */
+
+/* Audio player with frequent updates */
+.simple-audio-player {
+  contain: layout style paint;
+  /* Player updates frequently but has fixed dimensions */
+}
+
+/* Progress bar that updates continuously */
+.simple-audio-player .progress-bar,
+.simple-audio-player .progress-fill {
+  contain: strict;
+  will-change: width;
+  /* Progress updates are isolated */
+}
+
+/* Player controls container */
+.simple-audio-player .player-controls {
+  contain: layout style paint;
+  /* Controls are independent */
+}
+
+/* ===================================
+   4. Filter Components
+   =================================== */
+
+/* Filter dropdowns and controls */
+.skill-filter-dropdown,
+.country-filter,
+select.touch-target {
+  contain: layout style;
+  /* Dropdown changes don't affect layout */
+}
+
+/* Filter pills/badges */
+.filter-pill,
+[type="checkbox"] + div {
+  contain: paint;
+  /* Visual changes only */
+}
+
+/* ===================================
+   5. Photo Gallery - Heavy DOM
+   =================================== */
+
+/* Photo gallery containers */
+.photo-gallery {
+  contain: layout style;
+  /* Gallery is independent layout */
+}
+
+/* Grid variant */
+.photo-gallery--grid {
+  contain: strict;
+  /* Grid has predictable layout */
+}
+
+/* Carousel variant with transforms */
+.photo-gallery--carousel {
+  contain: layout style paint;
+  /* Carousel animations are isolated */
+}
+
+.photo-gallery--carousel .carousel-container {
+  contain: paint;
+  overflow: hidden;
+  /* Scroll container isolation */
+}
+
+/* Masonry variant */
+.photo-gallery--masonry {
+  contain: layout style;
+  /* Masonry calculations are isolated */
+}
+
+/* Individual gallery items */
+.photo-gallery__item {
+  contain: paint;
+  /* Hover effects and transforms are isolated */
+}
+
+/* ===================================
+   6. Navigation Components
+   =================================== */
+
+/* Episode navigation */
+.episode-navigation {
+  contain: layout style paint;
+  /* Fixed position, independent */
+}
+
+/* Bottom navigation (mobile) */
+.bottom-nav {
+  contain: strict;
+  /* Already has containment in mobile-enhancements.css */
+}
+
+/* ===================================
+   7. Card Components - General
+   =================================== */
+
+/* All card variants from unified design system */
+.card {
+  contain: layout style;
+  /* Cards are self-contained */
+}
+
+.card-interactive {
+  contain: layout style paint;
+  /* Interactive cards with hover states */
+}
+
+/* Elevated cards with shadows */
+.card-elevated,
+.card-high {
+  contain: layout style paint;
+  /* Shadow changes are isolated */
+}
+
+/* ===================================
+   8. Profile Components
+   =================================== */
+
+/* Guest profile pictures */
+.guest-profile-picture,
+[class*="GuestProfilePicture"] {
+  contain: strict;
+  /* Fixed size profile images */
+}
+
+/* Profile info sections */
+.guest-info,
+.profile-section {
+  contain: layout style;
+  /* Profile sections are independent */
+}
+
+/* ===================================
+   9. Content Sections
+   =================================== */
+
+/* Transcript sections */
+.episode-transcript {
+  contain: layout;
+  /* Long content that expands */
+}
+
+/* Notable guests section */
+.notable-guests-section {
+  contain: layout style;
+  /* Independent showcase section */
+}
+
+/* ===================================
+   10. Performance Hints
+   =================================== */
+
+/* Components that benefit from GPU acceleration */
+.photo-gallery__item img,
+.episode-card img,
+.guest-card img {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize hover transitions */
+@media (hover: hover) {
+  .card-interactive,
+  .photo-gallery__item {
+    will-change: auto;
+  }
+  
+  .card-interactive:hover,
+  .photo-gallery__item:hover {
+    will-change: transform, box-shadow;
+  }
+}
+
+/* ===================================
+   11. Responsive Containment
+   =================================== */
+
+/* Adjust containment for mobile where layout is simpler */
+@media (max-width: 768px) {
+  /* Reduce containment on mobile for simpler layouts */
+  .guest-card,
+  .episode-card {
+    contain: layout paint;
+    /* Remove style containment on mobile */
+  }
+  
+  /* Mobile grids are simpler */
+  .guests-grid,
+  .episodes-grid {
+    contain: none;
+    /* Grid is single column on mobile */
+  }
+}
+
+/* ===================================
+   12. Lazy Loading Optimization
+   =================================== */
+
+/* Optimize lazy-loaded content */
+[loading="lazy"] {
+  contain: strict;
+  /* Lazy images have placeholder dimensions */
+}
+
+/* Content that will be revealed */
+.accordion-content,
+.dropdown-content,
+[aria-expanded="false"] + * {
+  contain: layout style paint;
+  /* Hidden content is isolated */
+}
+
+/* ===================================
+   13. Intersection Observer Targets
+   =================================== */
+
+/* Elements tracked by intersection observer */
+[data-animate],
+[data-lazy],
+.intersection-target {
+  contain: layout paint;
+  /* Observed elements are isolated */
+}
+
+/* ===================================
+   14. Common Grid Layouts
+   =================================== */
+
+/* Tailwind grid containers */
+.grid {
+  contain: layout;
+  /* Grid container isolation */
+}
+
+/* Fixed column grids */
+.grid-cols-2,
+.grid-cols-3,
+.grid-cols-4,
+.sm\:grid-cols-2,
+.sm\:grid-cols-3,
+.md\:grid-cols-3,
+.md\:grid-cols-4,
+.lg\:grid-cols-3,
+.lg\:grid-cols-4,
+.lg\:grid-cols-5,
+.lg\:grid-cols-6 {
+  contain: layout style;
+  /* Fixed grid layouts */
+}
+
+/* ===================================
+   15. Heavy Content Sections
+   =================================== */
+
+/* Brand logo bars */
+.brand-logo-bar,
+[class*="logo-bar"] {
+  contain: layout paint;
+  /* Logo sections are independent */
+}
+
+/* Testimonial sections */
+.testimonials-section,
+[class*="testimonial"] {
+  contain: layout style;
+  /* Testimonials don't affect layout */
+}
+
+/* Career timeline */
+.career-timeline {
+  contain: layout;
+  /* Timeline is independent */
+}
+
+/* Event galleries */
+.about-event-gallery,
+.live-events-section {
+  contain: layout style;
+  /* Event sections are isolated */
+}
+
+/* ===================================
+   16. Search Results
+   =================================== */
+
+/* Search result containers */
+.search-results,
+[data-search-results] {
+  contain: layout;
+  /* Search results are dynamic */
+}
+
+/* Search result items */
+.search-result-item {
+  contain: layout paint;
+  /* Individual results are isolated */
+}

@@ -45,11 +45,12 @@ export default defineConfig({
         ]
       },
       workbox: {
-        navigateFallback: '/',
+        navigateFallback: '/offline/',
         globPatterns: process.env.NODE_ENV === 'production' 
           ? ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}']
           : ['**/*.js'], // Only JS files in dev-dist during development
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           // Audio files - use NetworkOnly to prevent caching issues with streaming
           // Audio streaming doesn't work well with service worker caching
@@ -75,7 +76,7 @@ export default defineConfig({
               }
             }
           },
-          // PWA-optimized caching strategy
+          // Content pages - use Network First strategy
           {
             urlPattern: /\/(episodes|guests)\/.*$/,
             handler: 'NetworkFirst',

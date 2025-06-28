@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import GuestCardVertical from '../../components/GuestCardVertical.astro';
 import GuestFilterBar from '../../components/GuestFilterBar.astro';
+import GuestFilterBarMobile from '../../components/GuestFilterBarMobile.astro';
 import { getCollection } from 'astro:content';
 import type { Language } from '../../types';
 
@@ -47,6 +48,9 @@ function getGuestUrl(guest: any, language: Language): string {
       </div>
 
       <!-- Filter Controls -->
+      <!-- Mobile Filter -->
+      <GuestFilterBarMobile guests={sortedGuests} showLanguageFilter={true} language="en" />
+      <!-- Desktop Filter -->
       <GuestFilterBar guests={sortedGuests} showLanguageFilter={true} />
 
       <!-- Results Info -->

@@ -1,17 +1,55 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import type { Language } from '../types';
 
-// Default to English for offline page
-const language = 'en';
+// Try to get language from query params or default to English
+const url = new URL(Astro.url);
+const language = (url.searchParams.get('lang') as Language) || 'en';
 
 const translations = {
   en: {
-    title: 'You\'re Offline',
+    title: 'You\'re Offline - CRO.CAFE',
     heading: 'No Internet Connection',
     description: 'It looks like you\'re offline. Some features may be limited.',
     cachedContent: 'You can still access previously cached episodes and pages.',
     tryAgain: 'Try Again',
-    goHome: 'Go to Homepage'
+    goHome: 'Go to Homepage',
+    cachedPages: 'Cached Pages',
+    recentEpisodes: 'Recent Episodes (Offline)',
+    tip: 'Tip: Save episodes for offline listening by visiting them while online.'
+  },
+  nl: {
+    title: 'Je Bent Offline - CRO.CAFE',
+    heading: 'Geen Internetverbinding',
+    description: 'Het lijkt erop dat je offline bent. Sommige functies kunnen beperkt zijn.',
+    cachedContent: 'Je hebt nog steeds toegang tot eerder gecachte afleveringen en pagina\'s.',
+    tryAgain: 'Probeer Opnieuw',
+    goHome: 'Ga naar Startpagina',
+    cachedPages: 'Gecachte Pagina\'s',
+    recentEpisodes: 'Recente Afleveringen (Offline)',
+    tip: 'Tip: Bewaar afleveringen voor offline luisteren door ze te bezoeken terwijl je online bent.'
+  },
+  de: {
+    title: 'Sie sind Offline - CRO.CAFE',
+    heading: 'Keine Internetverbindung',
+    description: 'Sie scheinen offline zu sein. Einige Funktionen könnten eingeschränkt sein.',
+    cachedContent: 'Sie können weiterhin auf zuvor zwischengespeicherte Episoden und Seiten zugreifen.',
+    tryAgain: 'Erneut Versuchen',
+    goHome: 'Zur Startseite',
+    cachedPages: 'Zwischengespeicherte Seiten',
+    recentEpisodes: 'Aktuelle Episoden (Offline)',
+    tip: 'Tipp: Speichern Sie Episoden für das Offline-Hören, indem Sie sie online besuchen.'
+  },
+  es: {
+    title: 'Estás Sin Conexión - CRO.CAFE',
+    heading: 'Sin Conexión a Internet',
+    description: 'Parece que estás sin conexión. Algunas funciones pueden estar limitadas.',
+    cachedContent: 'Aún puedes acceder a episodios y páginas almacenados previamente.',
+    tryAgain: 'Intentar de Nuevo',
+    goHome: 'Ir a la Página Principal',
+    cachedPages: 'Páginas en Caché',
+    recentEpisodes: 'Episodios Recientes (Sin Conexión)',
+    tip: 'Consejo: Guarda episodios para escuchar sin conexión visitándolos mientras estés en línea.'
   }
 };
 
@@ -23,48 +61,100 @@ const t = translations[language];
   description={t.description}
   language={language}
 >
-  <div class="min-h-screen flex items-center justify-center px-4">
-    <div class="max-w-md w-full text-center">
-      <!-- Offline Icon -->
-      <div class="mb-8">
-        <svg class="w-24 h-24 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3"></path>
-        </svg>
-      </div>
-
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-        {t.heading}
-      </h1>
-      
-      <p class="text-gray-600 dark:text-gray-400 mb-2">
-        {t.description}
-      </p>
-      
-      <p class="text-gray-600 dark:text-gray-400 mb-8">
-        {t.cachedContent}
-      </p>
-
-      <div class="space-y-3">
-        <button 
-          onclick="window.location.reload()"
-          class="w-full px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
-        >
-          {t.tryAgain}
-        </button>
-        
-        <a 
-          href="/"
-          class="block w-full px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-        >
-          {t.goHome}
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Header with logo -->
+    <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div class="container mx-auto px-4 py-4">
+        <a href={`/${language}/`} class="inline-flex items-center space-x-2">
+          <img src="/images/crocafe-logo.svg" alt="CRO.CAFE" class="h-8 w-auto" />
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">CRO.CAFE</span>
         </a>
       </div>
-    </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Offline Status Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8 text-center">
+          <!-- Animated Offline Icon -->
+          <div class="mb-6">
+            <div class="relative inline-block">
+              <svg class="w-24 h-24 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3"></path>
+              </svg>
+              <div class="absolute inset-0 w-24 h-24 bg-gray-400 dark:bg-gray-500 rounded-full opacity-20 animate-ping"></div>
+            </div>
+          </div>
+
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.heading}
+          </h1>
+          
+          <p class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+            {t.description}
+          </p>
+          
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {t.cachedContent}
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button 
+              id="retry-connection"
+              class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>{t.tryAgain}</span>
+            </button>
+            
+            <a 
+              href={`/${language}/`}
+              class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <span>{t.goHome}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tip Card -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-sm text-blue-800 dark:text-blue-200">
+              {t.tip}
+            </p>
+          </div>
+        </div>
+
+        <!-- Cached Content Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            {t.cachedPages}
+          </h2>
+          <div id="cached-content" class="space-y-3">
+            <!-- Cached content will be populated by JavaScript -->
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p>Checking for cached content...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </BaseLayout>
 
 <style>
-  /* Simple animation for the offline icon */
+  /* Animation for offline icon */
   @keyframes pulse {
     0%, 100% {
       opacity: 1;
@@ -74,7 +164,166 @@ const t = translations[language];
     }
   }
   
-  svg {
+  /* Only animate the main offline icon */
+  .relative svg {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+  
+  /* Ping animation for background circle */
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  
+  .animate-ping {
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
 </style>
+
+<script>
+  // Check connection status
+  const retryButton = document.getElementById('retry-connection');
+  const cachedContentDiv = document.getElementById('cached-content');
+  
+  // Retry connection
+  retryButton?.addEventListener('click', async () => {
+    retryButton.disabled = true;
+    retryButton.innerHTML = `
+      <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      <span>Checking...</span>
+    `;
+    
+    try {
+      const response = await fetch('/api/health', { method: 'HEAD' });
+      if (response.ok) {
+        window.location.reload();
+      }
+    } catch (error) {
+      // Still offline
+    }
+    
+    setTimeout(() => {
+      retryButton.disabled = false;
+      retryButton.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        <span>${retryButton.dataset.originalText || 'Try Again'}</span>
+      `;
+    }, 2000);
+  });
+  
+  // List cached pages
+  async function listCachedPages() {
+    if ('caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        const cachePromises = cacheNames.map(async (cacheName) => {
+          const cache = await caches.open(cacheName);
+          const requests = await cache.keys();
+          return requests;
+        });
+        
+        const allRequests = (await Promise.all(cachePromises)).flat();
+        const uniqueUrls = [...new Set(allRequests.map(req => req.url))];
+        
+        // Filter and categorize URLs
+        const pages = uniqueUrls
+          .filter(url => {
+            const pathname = new URL(url).pathname;
+            return pathname.endsWith('/') || pathname.includes('/episodes/') || pathname.includes('/guests/');
+          })
+          .map(url => {
+            const urlObj = new URL(url);
+            const pathname = urlObj.pathname;
+            let type = 'page';
+            let title = pathname;
+            
+            if (pathname.includes('/episodes/')) {
+              type = 'episode';
+              title = pathname.split('/').pop() || 'Episode';
+            } else if (pathname.includes('/guests/')) {
+              type = 'guest';
+              title = pathname.split('/').pop() || 'Guest';
+            }
+            
+            return { url, pathname, type, title };
+          })
+          .slice(0, 10); // Limit to 10 items
+        
+        if (pages.length > 0) {
+          cachedContentDiv!.innerHTML = pages.map(page => `
+            <a href="${page.pathname}" class="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div class="flex items-center space-x-3">
+                ${page.type === 'episode' ? `
+                  <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                ` : page.type === 'guest' ? `
+                  <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                ` : `
+                  <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                `}
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    ${page.title.replace(/-/g, ' ')}
+                  </p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    ${page.type.charAt(0).toUpperCase() + page.type.slice(1)}
+                  </p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+          `).join('');
+        } else {
+          cachedContentDiv!.innerHTML = `
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <p>No cached pages found.</p>
+              <p class="text-sm mt-2">Visit pages while online to cache them for offline access.</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error listing cached pages:', error);
+        cachedContentDiv!.innerHTML = `
+          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+            <p>Unable to access cached content.</p>
+          </div>
+        `;
+      }
+    } else {
+      cachedContentDiv!.innerHTML = `
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <p>Offline storage not supported in this browser.</p>
+        </div>
+      `;
+    }
+  }
+  
+  // List cached pages on load
+  listCachedPages();
+  
+  // Periodically check connection
+  setInterval(async () => {
+    try {
+      const response = await fetch('/api/health', { method: 'HEAD' });
+      if (response.ok) {
+        window.location.reload();
+      }
+    } catch (error) {
+      // Still offline
+    }
+  }, 30000); // Check every 30 seconds
+</script>

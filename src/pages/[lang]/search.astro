@@ -57,7 +57,7 @@ const translations = {
     title: 'Search - CRO.CAFE Podcast',
     description: 'Search through episodes and guests of the CRO.CAFE English podcast',
     searchTitle: 'Search',
-    searchSubtitle: 'Find episodes and guests in English',
+    searchSubtitle: 'Find episodes and guests in the English show',
     placeholder: 'Search episodes, guests, topics...',
     quickSearches: 'Quick searches:',
     resultsFor: 'Found {count} result{plural} for "{query}"',
@@ -74,7 +74,7 @@ const translations = {
     title: 'Zoeken - CRO.CAFE Podcast',
     description: 'Zoek door afleveringen en gasten van de CRO.CAFE Nederlandse podcast',
     searchTitle: 'Zoeken',
-    searchSubtitle: 'Vind afleveringen en gasten in het Nederlands',
+    searchSubtitle: 'Vind afleveringen en gasten in de Nederlandse show',
     placeholder: 'Zoek afleveringen, gasten, onderwerpen...',
     quickSearches: 'Snelzoeken:',
     resultsFor: '{count} resultaat{plural} gevonden voor "{query}"',
@@ -91,7 +91,7 @@ const translations = {
     title: 'Suche - CRO.CAFE Podcast',
     description: 'Durchsuchen Sie Folgen und Gäste des deutschen CRO.CAFE Podcasts',
     searchTitle: 'Suche',
-    searchSubtitle: 'Finden Sie Folgen und Gäste auf Deutsch',
+    searchSubtitle: 'Finden Sie Folgen und Gäste in der deutschen Show',
     placeholder: 'Folgen, Gäste, Themen suchen...',
     quickSearches: 'Schnellsuche:',
     resultsFor: '{count} Ergebnis{plural} für "{query}" gefunden',
@@ -108,7 +108,7 @@ const translations = {
     title: 'Buscar - CRO.CAFE Podcast',
     description: 'Busca a través de episodios e invitados del podcast CRO.CAFE en español',
     searchTitle: 'Buscar',
-    searchSubtitle: 'Encuentra episodios e invitados en español',
+    searchSubtitle: 'Encuentra episodios e invitados en el show en español',
     placeholder: 'Buscar episodios, invitados, temas...',
     quickSearches: 'Búsquedas rápidas:',
     resultsFor: '{count} resultado{plural} encontrado{plural} para "{query}"',
@@ -156,28 +156,34 @@ const quickSearchTerms = {
       </div>
 
       <!-- Search Input -->
-      <div class="max-w-4xl mx-auto mb-12">
+      <div id="search-section" class="max-w-4xl mx-auto mb-12">
         <div class="relative mb-6">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </div>
+          <label for="search-input" class="sr-only">Search episodes and guests</label>
           <input
             type="text"
             id="search-input"
             class="block w-full pl-10 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             placeholder={t.placeholder}
             autocomplete="off"
+            aria-describedby="search-description"
           />
+          <span id="search-description" class="sr-only">Enter keywords to search across all shows</span>
         </div>
+
+        <!-- Search Results Live Region -->
+        <div aria-live="polite" aria-atomic="true" id="search-status" class="sr-only"></div>
 
         <!-- Filters -->
         <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
           <div class="flex flex-wrap items-center gap-6">
             <!-- Content Type Filter -->
             <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{language === 'en' ? 'Show:' : language === 'nl' ? 'Tonen:' : language === 'de' ? 'Zeigen:' : 'Mostrar:'}</span>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{language === 'en' ? 'Content type:' : language === 'nl' ? 'Inhoudstype:' : language === 'de' ? 'Inhaltstyp:' : 'Tipo de contenido:'}</span>
               <div class="flex gap-1">
                 <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
                   {language === 'en' ? 'All Content' : language === 'nl' ? 'Alle inhoud' : language === 'de' ? 'Alle Inhalte' : 'Todo el contenido'}
@@ -378,6 +384,10 @@ const quickSearchTerms = {
     resultsContainer.classList.remove('hidden');
     
     resultsCount.textContent = formatResultsText(totalResults, query);
+    
+    // Update live region for screen readers
+    const searchStatus = document.getElementById('search-status');
+    searchStatus.textContent = `Showing ${totalResults} result${totalResults !== 1 ? 's' : ''} for ${query}. ${episodes.length} episode${episodes.length !== 1 ? 's' : ''} and ${guests.length} guest${guests.length !== 1 ? 's' : ''}.`;
 
     // Display episodes
     const episodesSection = document.getElementById('episodes-section');

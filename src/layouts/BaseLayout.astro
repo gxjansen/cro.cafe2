@@ -7,6 +7,8 @@ import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
 import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
+import PWAUpdateNotification from '../components/PWAUpdateNotification.astro';
+import BottomNav from '../components/BottomNav.astro';
 
 export interface Props {
   title: string;
@@ -170,6 +172,12 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- PWA Install Prompt -->
     <PWAInstallPrompt language={language} />
+    
+    <!-- PWA Update Notification -->
+    <PWAUpdateNotification language={language} />
+    
+    <!-- Bottom Navigation for Mobile -->
+    <BottomNav language={language} currentPath={currentPath} />
     
     <!-- Theme management and View Transitions -->
     <script>

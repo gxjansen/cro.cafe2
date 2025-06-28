@@ -1,10 +1,38 @@
 ---
-// Skip to main content link for keyboard navigation accessibility
+// Skip links for keyboard navigation accessibility
+// Provides quick access to major page sections
+export interface Props {
+  includeNavigation?: boolean;
+  includeSearch?: boolean;
+  includeFooter?: boolean;
+}
+
+const { includeNavigation = true, includeSearch = true, includeFooter = true } = Astro.props;
 ---
 
-<a href="#main-content" class="skip-link">
-  Skip to main content
-</a>
+<nav class="skip-links" aria-label="Skip links">
+  <a href="#main-content" class="skip-link">
+    Skip to main content
+  </a>
+  
+  {includeNavigation && (
+    <a href="#main-navigation" class="skip-link">
+      Skip to navigation
+    </a>
+  )}
+  
+  {includeSearch && (
+    <a href="#search-section" class="skip-link">
+      Skip to search
+    </a>
+  )}
+  
+  {includeFooter && (
+    <a href="#footer" class="skip-link">
+      Skip to footer
+    </a>
+  )}
+</nav>
 
 <style>
   .skip-link {

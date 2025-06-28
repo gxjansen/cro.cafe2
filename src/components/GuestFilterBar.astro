@@ -116,16 +116,16 @@ const instanceId = Math.random().toString(36).substring(7);
 ---
 
 <!-- Filter Controls -->
-<section class="mb-6 guest-filter-bar" data-filter-instance={instanceId}>
+<section class="hidden lg:block mb-6 guest-filter-bar" data-filter-instance={instanceId}>
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3">
-    <!-- Single Row Layout -->
-    <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+    <!-- Responsive Layout with Flex Wrap -->
+    <div class="flex flex-wrap items-center gap-4">
       <!-- Filter Label & Clear Button -->
-      <div class="flex items-center justify-between lg:justify-start lg:gap-4 flex-shrink-0">
-        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filter:</h2>
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <span class="text-sm font-semibold text-gray-900 dark:text-white">Filter:</span>
         <button 
           id={`clearFilters-${instanceId}`}
-          class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors lg:order-last clear-filters-btn"
+          class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors clear-filters-btn"
         >
           Clear All
         </button>
@@ -133,74 +133,63 @@ const instanceId = Math.random().toString(36).substring(7);
 
       {showLanguageFilter && (
         <!-- Show Pills -->
-        <div class="flex flex-wrap gap-1.5 flex-shrink-0">
-          {Object.entries(showFilters).map(([lang, info]) => (
-            <label class="inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                name={`show-${instanceId}`}
-                value={lang}
-                class="hidden peer show-checkbox"
-                checked
-                data-filter-type="language"
-              />
-              <div class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 transition-all
-                peer-checked:bg-primary-100 peer-checked:border-primary-500 peer-checked:text-primary-700 
-                dark:peer-checked:bg-primary-900/30 dark:peer-checked:border-primary-400 dark:peer-checked:text-primary-300
-                hover:border-primary-300 dark:hover:border-primary-500">
-                <span class="text-sm">{info.flag}</span>
-                <span class="font-medium">{info.name}</span>
-                <span class="opacity-70">({info.count})</span>
-              </div>
-            </label>
-          ))}
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">Shows:</span>
+          <div class="flex flex-wrap gap-1.5">
+            {Object.entries(showFilters).map(([lang, info]) => (
+              <label class="inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  name={`show-${instanceId}`}
+                  value={lang}
+                  class="hidden peer show-checkbox"
+                  checked
+                  data-filter-type="language"
+                />
+                <div class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 transition-all
+                  peer-checked:bg-primary-100 peer-checked:border-primary-500 peer-checked:text-primary-700 
+                  dark:peer-checked:bg-primary-900/30 dark:peer-checked:border-primary-400 dark:peer-checked:text-primary-300
+                  hover:border-primary-300 dark:hover:border-primary-500">
+                  <span class="text-sm">{info.flag}</span>
+                  <span class="font-medium">{info.name}</span>
+                  <span class="opacity-70">({info.count})</span>
+                </div>
+              </label>
+            ))}
+          </div>
         </div>
       )}
 
       <!-- Compact Dropdowns -->
-      <div class="flex gap-3 flex-grow lg:flex-grow-0 lg:ml-auto">
-        <select 
-          id={`countryFilter-${instanceId}`}
-          class="flex-1 lg:w-40 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs focus:ring-primary-500 focus:border-primary-500 country-filter"
-          data-filter-type="country"
-        >
-          <option value="">All Countries</option>
-          {countries.map(country => (
-            <option value={country.name}>{country.name} ({country.count})</option>
-          ))}
-        </select>
+      <div class="flex gap-3 flex-grow lg:flex-grow-0" style="position: relative;">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">Countries:</span>
+          <select 
+            id={`countryFilter-${instanceId}`}
+            class="min-h-[48px] px-3 py-2 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm focus:ring-primary-500 focus:border-primary-500 country-filter touch-target"
+            data-filter-type="country"
+            aria-label="Filter by guest country"
+          >
+            <option value="">All Countries</option>
+            {countries.map(country => (
+              <option value={country.name}>{country.name} ({country.count})</option>
+            ))}
+          </select>
+        </div>
 
-        <div class="flex-1 lg:w-64 relative">
-          <button
-            id={`skillFilterButton-${instanceId}`}
-            type="button"
-            class="w-full text-left rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-xs px-3 py-2 focus:ring-primary-500 focus:border-primary-500 skill-filter-button flex items-center justify-between"
-            aria-haspopup="true"
-            aria-expanded="false"
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">Expertise:</span>
+          <select 
+            id={`expertiseFilter-${instanceId}`}
+            class="min-h-[48px] px-3 py-2 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm focus:ring-primary-500 focus:border-primary-500 expertise-filter touch-target"
+            data-filter-type="expertise"
+            aria-label="Filter guests by expertise"
           >
-            <span class="skill-filter-text truncate">All Expertise</span>
-            <svg class="w-4 h-4 ml-2 flex-shrink-0 skill-filter-arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div 
-            id={`skillFilterDropdown-${instanceId}`}
-            class="absolute z-10 mt-1 w-full min-w-[280px] bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg hidden skill-filter-dropdown"
-          >
-            <div class="max-h-60 overflow-y-auto p-2">
-              {skills.map(skill => (
-                <label class="flex items-center px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded whitespace-nowrap">
-                  <input
-                    type="checkbox"
-                    value={skill.name}
-                    class="skill-checkbox mr-2 text-primary-600 focus:ring-primary-500 rounded flex-shrink-0"
-                  />
-                  <span class="text-xs text-gray-700 dark:text-gray-300 flex-1 pr-2">{skill.name}</span>
-                  <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">({skill.count})</span>
-                </label>
-              ))}
-            </div>
-          </div>
+            <option value="">All Expertise</option>
+            {skills.map(skill => (
+              <option value={skill.name}>{skill.name} ({skill.count})</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
@@ -208,7 +197,7 @@ const instanceId = Math.random().toString(36).substring(7);
 </section>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  function initializeGuestFilters() {
     // Initialize all filter bars on the page
     document.querySelectorAll('.guest-filter-bar').forEach(filterBar => {
       const instanceId = filterBar.getAttribute('data-filter-instance');
@@ -216,11 +205,7 @@ const instanceId = Math.random().toString(36).substring(7);
 
       const showCheckboxes = filterBar.querySelectorAll('.show-checkbox');
       const countryFilter = filterBar.querySelector('.country-filter') as HTMLSelectElement;
-      const skillFilterButton = filterBar.querySelector('.skill-filter-button') as HTMLButtonElement;
-      const skillFilterDropdown = filterBar.querySelector('.skill-filter-dropdown') as HTMLDivElement;
-      const skillCheckboxes = filterBar.querySelectorAll('.skill-checkbox') as NodeListOf<HTMLInputElement>;
-      const skillFilterText = filterBar.querySelector('.skill-filter-text') as HTMLSpanElement;
-      const skillFilterArrow = filterBar.querySelector('.skill-filter-arrow') as SVGElement;
+      const expertiseFilter = filterBar.querySelector('.expertise-filter') as HTMLSelectElement;
       const clearButton = filterBar.querySelector('.clear-filters-btn');
       
       // Global elements to filter
@@ -229,33 +214,6 @@ const instanceId = Math.random().toString(36).substring(7);
       const noShowsMessage = document.getElementById('noShowsMessage');
       const noResultsMessage = document.getElementById('noResultsMessage');
 
-      // Multi-select dropdown functionality
-      function toggleSkillDropdown() {
-        const isOpen = !skillFilterDropdown.classList.contains('hidden');
-        if (isOpen) {
-          skillFilterDropdown.classList.add('hidden');
-          skillFilterButton.setAttribute('aria-expanded', 'false');
-          skillFilterArrow.classList.remove('rotate-180');
-        } else {
-          skillFilterDropdown.classList.remove('hidden');
-          skillFilterButton.setAttribute('aria-expanded', 'true');
-          skillFilterArrow.classList.add('rotate-180');
-        }
-      }
-
-      function updateSkillFilterText() {
-        const selectedSkills = Array.from(skillCheckboxes)
-          .filter(cb => cb.checked)
-          .map(cb => cb.value);
-        
-        if (selectedSkills.length === 0) {
-          skillFilterText.textContent = 'All Expertise';
-        } else if (selectedSkills.length === 1) {
-          skillFilterText.textContent = selectedSkills[0];
-        } else {
-          skillFilterText.textContent = `${selectedSkills.length} expertise selected`;
-        }
-      }
 
       function filterGuests() {
         // Get selected languages (if language filter is shown)
@@ -266,9 +224,7 @@ const instanceId = Math.random().toString(36).substring(7);
           : null;
         
         const selectedCountry = countryFilter?.value || '';
-        const selectedSkills = Array.from(skillCheckboxes)
-          .filter(cb => cb.checked)
-          .map(cb => cb.value);
+        const selectedExpertise = expertiseFilter?.value || '';
         
         const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
         let visibleCount = 0;
@@ -305,13 +261,11 @@ const instanceId = Math.random().toString(36).substring(7);
           // Country filter
           const countryMatch = !selectedCountry || country === selectedCountry;
           
-          // Skill filter (now multi-select)
-          const skillMatch = selectedSkills.length === 0 || 
-            selectedSkills.some(skill => 
-              skills.toLowerCase().includes(skill.toLowerCase())
-            );
+          // Expertise filter
+          const expertiseMatch = !selectedExpertise || 
+            skills.toLowerCase().includes(selectedExpertise.toLowerCase());
           
-          const shouldShow = showMatch && countryMatch && skillMatch;
+          const shouldShow = showMatch && countryMatch && expertiseMatch;
           
           card.style.display = shouldShow ? '' : 'none';
           if (shouldShow) visibleCount++;
@@ -340,12 +294,7 @@ const instanceId = Math.random().toString(36).substring(7);
           }
           
           if (selectedCountry) filterText.push(selectedCountry);
-          if (selectedSkills.length > 0) {
-            filterText.push(selectedSkills.length === 1 
-              ? selectedSkills[0] 
-              : `${selectedSkills.length} expertise`
-            );
-          }
+          if (selectedExpertise) filterText.push(selectedExpertise);
           
           const filterDescription = filterText.length > 0 
             ? ` (${filterText.join(', ')})` 
@@ -364,35 +313,28 @@ const instanceId = Math.random().toString(36).substring(7);
           }
         });
         if (countryFilter) countryFilter.value = '';
-        skillCheckboxes.forEach(cb => cb.checked = false);
-        updateSkillFilterText();
+        if (expertiseFilter) expertiseFilter.value = '';
         filterGuests();
       }
 
       // Attach event listeners
       showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
       countryFilter?.addEventListener('change', filterGuests);
-      skillFilterButton?.addEventListener('click', toggleSkillDropdown);
-      skillCheckboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-          updateSkillFilterText();
-          filterGuests();
-        });
-      });
+      expertiseFilter?.addEventListener('change', filterGuests);
       clearButton?.addEventListener('click', clearFilters);
-      
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!skillFilterButton?.contains(e.target as Node) && 
-            !skillFilterDropdown?.contains(e.target as Node)) {
-          skillFilterDropdown?.classList.add('hidden');
-          skillFilterButton?.setAttribute('aria-expanded', 'false');
-          skillFilterArrow?.classList.remove('rotate-180');
-        }
-      });
       
       // Initialize
       filterGuests();
     });
-  });
+  }
+
+  // Initialize on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGuestFilters);
+  } else {
+    initializeGuestFilters();
+  }
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initializeGuestFilters);
 </script>

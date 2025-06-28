@@ -1,0 +1,453 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../types';
+import MobileFilterSheet from './MobileFilterSheet.astro';
+
+interface Props {
+  guests: CollectionEntry<'guests'>[];
+  showLanguageFilter?: boolean;
+  language?: Language;
+}
+
+const { guests, showLanguageFilter = true, language } = Astro.props;
+
+// Filter out guests with zero episodes
+const guestsWithEpisodes = guests.filter(guest => 
+  guest.data.episodes && guest.data.episodes.length > 0
+);
+
+// Prepare filter data
+const showFilters = showLanguageFilter ? {
+  en: { name: 'English', flag: '🇬🇧', count: 0 },
+  nl: { name: 'Dutch', flag: '🇳🇱', count: 0 },
+  de: { name: 'German', flag: '🇩🇪', count: 0 },
+  es: { name: 'Spanish', flag: '🇪🇸', count: 0 }
+} : {};
+
+// Count guests per show/language only if showing language filter
+if (showLanguageFilter) {
+  guestsWithEpisodes.forEach(guest => {
+    guest.data.languages.forEach(lang => {
+      if (showFilters[lang]) {
+        showFilters[lang].count++;
+      }
+    });
+  });
+}
+
+// Get unique countries from guests
+const countryMap = new Map<string, number>();
+guestsWithEpisodes.forEach(guest => {
+  if (guest.data.linkedin_country) {
+    countryMap.set(guest.data.linkedin_country, (countryMap.get(guest.data.linkedin_country) || 0) + 1);
+  }
+});
+const countries = Array.from(countryMap.entries())
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([country, count]) => ({ name: country, count }));
+
+// Curated list of most relevant CRO/digital marketing skills
+const relevantSkills = [
+  'Online Marketing',
+  'E-commerce', 
+  'Web Analytics',
+  'Google Analytics',
+  'SEO',
+  'Digital Marketing',
+  'User Experience',
+  'Usability',
+  'Analytics',
+  'UX',
+  'Marketing Strategy',
+  'Performance Marketing',
+  'Growth Hacking',
+  'Digital Strategy',
+  'Marketing Automation',
+  'Email Marketing',
+  'Content Marketing',
+  'Social Media Marketing',
+  'Pay Per Click',
+  'PPC',
+  'SEM',
+  'Search Engine Marketing',
+  'Data Analysis',
+  'Customer Experience',
+  'Lead Generation',
+  'Marketing Research',
+  'Brand Management',
+  'Product Management',
+  'Web Development',
+  'JavaScript',
+  'Marketing Analytics',
+  'Customer Acquisition',
+  'Retention Marketing',
+  'Funnel Optimization',
+  'Landing Page Optimization',
+  'Mobile Marketing'
+];
+
+// Count guests for each relevant skill
+const skillCounts: Record<string, number> = {};
+relevantSkills.forEach(skill => {
+  let count = 0;
+  guestsWithEpisodes.forEach(guest => {
+    if (guest.data.linkedin_skills) {
+      const skillsText = typeof guest.data.linkedin_skills === 'string' 
+        ? guest.data.linkedin_skills.toLowerCase()
+        : '';
+      if (skillsText.includes(skill.toLowerCase())) {
+        count++;
+      }
+    }
+  });
+  if (count > 0) {
+    skillCounts[skill] = count;
+  }
+});
+
+// Sort skills by count and keep only those with guests
+const skills = Object.entries(skillCounts)
+  .sort(([,a], [,b]) => b - a)
+  .slice(0, 30) // Top 30 most popular relevant skills
+  .map(([skill, count]) => ({ name: skill, count }));
+
+// Unique ID for this instance to avoid conflicts
+const instanceId = Math.random().toString(36).substring(7);
+
+// Translations for mobile filter UI
+const filterTranslations = {
+  en: {
+    filters: 'Filters',
+    showFilters: 'Show Filters',
+    allCountries: 'All Countries',
+    allExpertise: 'All Expertise',
+    selectedExpertise: 'expertise selected',
+    clearAll: 'Clear All',
+    applyFilters: 'Apply Filters',
+    activeFilters: 'active filters'
+  },
+  nl: {
+    filters: 'Filters',
+    showFilters: 'Toon Filters',
+    allCountries: 'Alle Landen',
+    allExpertise: 'Alle Expertise',
+    selectedExpertise: 'expertise geselecteerd',
+    clearAll: 'Alles Wissen',
+    applyFilters: 'Filters Toepassen',
+    activeFilters: 'actieve filters'
+  },
+  de: {
+    filters: 'Filter',
+    showFilters: 'Filter Anzeigen',
+    allCountries: 'Alle Länder',
+    allExpertise: 'Alle Expertise',
+    selectedExpertise: 'Expertise ausgewählt',
+    clearAll: 'Alles Löschen',
+    applyFilters: 'Filter Anwenden',
+    activeFilters: 'aktive Filter'
+  },
+  es: {
+    filters: 'Filtros',
+    showFilters: 'Mostrar Filtros',
+    allCountries: 'Todos los Países',
+    allExpertise: 'Toda la Experiencia',
+    selectedExpertise: 'experiencia seleccionada',
+    clearAll: 'Borrar Todo',
+    applyFilters: 'Aplicar Filtros',
+    activeFilters: 'filtros activos'
+  }
+};
+
+const t = filterTranslations[language || 'en'];
+---
+
+<!-- Mobile Filter Bar -->
+<section class="mb-6 guest-filter-bar-mobile lg:hidden" data-filter-instance={instanceId}>
+  <!-- Mobile Filter Trigger Button -->
+  <button
+    type="button"
+    id={`mobile-filter-trigger-${instanceId}`}
+    class="w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between touch-target"
+    aria-label={t.showFilters}
+  >
+    <div class="flex items-center gap-3">
+      <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+      </svg>
+      <span class="text-gray-900 dark:text-white font-medium">{t.filters}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span id={`active-filter-count-${instanceId}`} class="text-sm text-gray-500 dark:text-gray-400"></span>
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </div>
+  </button>
+</section>
+
+<!-- Mobile Filter Sheet -->
+<MobileFilterSheet filterId={`guest-filters-${instanceId}`} title={t.filters}>
+  <div class="space-y-6">
+    {showLanguageFilter && (
+      <!-- Language Filter Section -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Shows</h3>
+        <div class="space-y-2">
+          {Object.entries(showFilters).map(([lang, info]) => (
+            <label class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <div class="flex items-center gap-3">
+                <input 
+                  type="checkbox" 
+                  name={`mobile-show-${instanceId}`}
+                  value={lang}
+                  class="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 mobile-show-checkbox"
+                  checked
+                  data-filter-type="language"
+                />
+                <span class="text-lg">{info.flag}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{info.name}</span>
+              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400">({info.count})</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    <!-- Country Filter Section -->
+    <div>
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Countries</h3>
+      <select 
+        id={`mobile-countryFilter-${instanceId}`}
+        class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-base focus:ring-primary-500 focus:border-primary-500 mobile-country-filter"
+        data-filter-type="country"
+      >
+        <option value="">{t.allCountries}</option>
+        {countries.map(country => (
+          <option value={country.name}>{country.name} ({country.count})</option>
+        ))}
+      </select>
+    </div>
+    
+    <!-- Skills Filter Section -->
+    <div>
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Expertise</h3>
+      <div class="max-h-64 overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-600 rounded-lg p-2">
+        {skills.map(skill => (
+          <label class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <div class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                value={skill.name}
+                class="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 mobile-skill-checkbox"
+              />
+              <span class="text-gray-900 dark:text-white">{skill.name}</span>
+            </div>
+            <span class="text-sm text-gray-500 dark:text-gray-400">({skill.count})</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  </div>
+</MobileFilterSheet>
+
+<script>
+  function initializeMobileGuestFilters() {
+    // Initialize all mobile filter bars
+    document.querySelectorAll('.guest-filter-bar-mobile').forEach(filterBar => {
+      const instanceId = filterBar.getAttribute('data-filter-instance');
+      if (!instanceId) return;
+
+      const triggerButton = document.getElementById(`mobile-filter-trigger-${instanceId}`);
+      const filterSheetId = `mobile-filter-sheet-guest-filters-${instanceId}`;
+      const activeCountElement = document.getElementById(`active-filter-count-${instanceId}`);
+      
+      // Elements inside the filter sheet
+      const showCheckboxes = document.querySelectorAll(`input[name="mobile-show-${instanceId}"]`);
+      const countryFilter = document.getElementById(`mobile-countryFilter-${instanceId}`) as HTMLSelectElement;
+      const skillCheckboxes = document.querySelectorAll('.mobile-skill-checkbox');
+      
+      // Global elements to filter
+      const resultsInfo = document.getElementById('resultsInfo');
+      const guestsGrid = document.getElementById('guestsGrid');
+      const noShowsMessage = document.getElementById('noShowsMessage');
+      const noResultsMessage = document.getElementById('noResultsMessage');
+      
+      // Open filter sheet on trigger click
+      triggerButton?.addEventListener('click', () => {
+        const openFunction = (window as any)[`openFilterSheet_${filterSheetId}`];
+        if (openFunction) {
+          openFunction();
+        }
+      });
+      
+      // Update active filter count
+      function updateActiveFilterCount() {
+        const selectedShows = Array.from(showCheckboxes)
+          .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked);
+        const selectedCountry = countryFilter?.value || '';
+        const selectedSkills = Array.from(skillCheckboxes)
+          .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked);
+        
+        let activeCount = 0;
+        if (selectedShows.length < 4 && selectedShows.length > 0) activeCount += selectedShows.length;
+        if (selectedCountry) activeCount += 1;
+        if (selectedSkills.length > 0) activeCount += selectedSkills.length;
+        
+        if (activeCountElement) {
+          activeCountElement.textContent = activeCount > 0 ? `${activeCount} active` : '';
+        }
+      }
+      
+      // Filter guests function
+      function filterGuests() {
+        // Get selected languages
+        const selectedShows = showCheckboxes.length > 0
+          ? Array.from(showCheckboxes)
+              .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked)
+              .map((cb) => cb.value)
+          : null;
+        
+        const selectedCountry = countryFilter?.value || '';
+        const selectedSkills = Array.from(skillCheckboxes)
+          .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked)
+          .map((cb) => cb.value);
+        
+        const guestCards = guestsGrid?.querySelectorAll('.guest-card') || [];
+        let visibleCount = 0;
+        
+        // Check if no shows are selected
+        if (selectedShows !== null && selectedShows.length === 0) {
+          guestCards.forEach((card) => {
+            if (card instanceof HTMLElement) {
+              card.style.display = 'none';
+            }
+          });
+          if (guestsGrid) guestsGrid.style.display = 'none';
+          if (noShowsMessage) noShowsMessage.classList.remove('hidden');
+          if (noResultsMessage) noResultsMessage.classList.add('hidden');
+          if (resultsInfo) resultsInfo.textContent = 'No filters selected';
+          return;
+        }
+        
+        // Shows are selected or no language filter
+        if (noShowsMessage) noShowsMessage.classList.add('hidden');
+        
+        // Apply filters
+        guestCards.forEach((card) => {
+          if (!(card instanceof HTMLElement)) return;
+          
+          const languages = JSON.parse(card.getAttribute('data-languages') || '[]');
+          const country = card.getAttribute('data-country') || '';
+          const skills = card.getAttribute('data-skills') || '';
+          
+          // Language filter
+          const showMatch = selectedShows === null || 
+            languages.some((lang: string) => selectedShows.includes(lang));
+          
+          // Country filter
+          const countryMatch = !selectedCountry || country === selectedCountry;
+          
+          // Skill filter
+          const skillMatch = selectedSkills.length === 0 || 
+            selectedSkills.some(skill => 
+              skills.toLowerCase().includes(skill.toLowerCase())
+            );
+          
+          const shouldShow = showMatch && countryMatch && skillMatch;
+          
+          card.style.display = shouldShow ? '' : 'none';
+          if (shouldShow) visibleCount++;
+        });
+        
+        // Update UI based on results
+        if (visibleCount === 0) {
+          if (guestsGrid) guestsGrid.style.display = 'none';
+          if (noResultsMessage) noResultsMessage.classList.remove('hidden');
+        } else {
+          if (guestsGrid) guestsGrid.style.display = '';
+          if (noResultsMessage) noResultsMessage.classList.add('hidden');
+        }
+        
+        // Update results info
+        if (resultsInfo) {
+          const filterText: string[] = [];
+          
+          if (selectedShows && selectedShows.length > 0 && selectedShows.length < 4) {
+            const showNames = selectedShows.map(lang => {
+              const checkbox = document.querySelector(`input[value="${lang}"]`);
+              const label = checkbox?.parentElement;
+              return label?.querySelector('span:nth-child(3)')?.textContent || lang;
+            });
+            filterText.push(showNames.join(', '));
+          }
+          
+          if (selectedCountry) filterText.push(selectedCountry);
+          if (selectedSkills.length > 0) {
+            filterText.push(selectedSkills.length === 1 
+              ? selectedSkills[0] 
+              : `${selectedSkills.length} expertise`
+            );
+          }
+          
+          const filterDescription = filterText.length > 0 
+            ? ` (${filterText.join(', ')})` 
+            : '';
+          
+          resultsInfo.textContent = visibleCount === 0 
+            ? 'No matching experts found'
+            : `Showing ${visibleCount} experts${filterDescription}`;
+        }
+        
+        updateActiveFilterCount();
+      }
+      
+      // Clear filters function
+      function clearFilters() {
+        showCheckboxes.forEach((cb) => {
+          if (cb instanceof HTMLInputElement) {
+            cb.checked = true;
+          }
+        });
+        if (countryFilter) countryFilter.value = '';
+        skillCheckboxes.forEach((cb) => {
+          if (cb instanceof HTMLInputElement) {
+            cb.checked = false;
+          }
+        });
+        filterGuests();
+      }
+      
+      // Attach event listeners
+      showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
+      countryFilter?.addEventListener('change', filterGuests);
+      skillCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests));
+      
+      // Listen for custom events
+      document.addEventListener('filters:apply', (e: CustomEvent) => {
+        if (e.detail.sheetId === filterSheetId) {
+          filterGuests();
+        }
+      });
+      
+      document.addEventListener('filters:clear', (e: CustomEvent) => {
+        if (e.detail.sheetId === filterSheetId) {
+          clearFilters();
+        }
+      });
+      
+      // Initialize
+      filterGuests();
+    });
+  }
+
+  // Initialize on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeMobileGuestFilters);
+  } else {
+    initializeMobileGuestFilters();
+  }
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initializeMobileGuestFilters);
+</script>

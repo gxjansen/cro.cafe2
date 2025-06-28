@@ -51,7 +51,9 @@ const t = translations[language];
       {previousEpisode && (
         <a 
           href={getEpisodeUrl(previousEpisode)}
-          class="flex flex-col group"
+          class="flex flex-col group navigation-prev"
+          rel="prev"
+          data-prev-link
         >
           <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             ← {t.previous}
@@ -67,7 +69,9 @@ const t = translations[language];
       {nextEpisode && (
         <a 
           href={getEpisodeUrl(nextEpisode)}
-          class="flex flex-col group text-right"
+          class="flex flex-col group text-right navigation-next"
+          rel="next"
+          data-next-link
         >
           <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {t.next} →

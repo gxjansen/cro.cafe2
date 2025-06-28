@@ -55,33 +55,39 @@ const languages = [
           Global Search
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300">
-          Find episodes and guests across all languages of CRO.CAFE
+          Find episodes and guests across all shows of CRO.CAFE
         </p>
       </div>
 
       <!-- Search Input -->
-      <div class="max-w-4xl mx-auto mb-12">
+      <div id="search-section" class="max-w-4xl mx-auto mb-12">
         <div class="relative mb-6">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </div>
+          <label for="search-input" class="sr-only">Search episodes and guests</label>
           <input
             type="text"
             id="search-input"
             class="block w-full pl-10 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="Search episodes, guests, topics across all languages..."
+            placeholder="Search episodes, guests, topics across all shows..."
             autocomplete="off"
+            aria-describedby="search-description"
           />
+          <span id="search-description" class="sr-only">Enter keywords to search across all shows</span>
         </div>
+
+        <!-- Search Results Live Region -->
+        <div aria-live="polite" aria-atomic="true" id="search-status" class="sr-only"></div>
 
         <!-- Filters -->
         <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
           <div class="flex flex-wrap items-center gap-6">
             <!-- Content Type Filter -->
             <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Show:</span>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Content type:</span>
               <div class="flex gap-1">
                 <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
                   All Content
@@ -95,12 +101,12 @@ const languages = [
               </div>
             </div>
 
-            <!-- Language Filter -->
+            <!-- Show Filter -->
             <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Language:</span>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Shows:</span>
               <div class="flex gap-1">
                 <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
-                  All Languages
+                  All Shows
                 </button>
                 {languages.map(lang => (
                   <button id={`lang-${lang.code}`} class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
@@ -303,6 +309,10 @@ const languages = [
     resultsContainer.classList.remove('hidden');
     
     resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`;
+    
+    // Update live region for screen readers
+    const searchStatus = document.getElementById('search-status');
+    searchStatus.textContent = `Showing ${totalResults} result${totalResults !== 1 ? 's' : ''} for ${query}. ${episodes.length} episode${episodes.length !== 1 ? 's' : ''} and ${guests.length} guest${guests.length !== 1 ? 's' : ''}.`;
 
     // Display episodes
     const episodesSection = document.getElementById('episodes-section');

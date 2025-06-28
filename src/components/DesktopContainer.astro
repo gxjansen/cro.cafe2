@@ -1,0 +1,64 @@
+---
+export interface Props {
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '6xl' | '7xl';
+  centered?: boolean;
+  padding?: boolean;
+  class?: string;
+}
+
+const { 
+  maxWidth = '4xl', 
+  centered = true,
+  padding = true,
+  class: className = ''
+} = Astro.props;
+
+const maxWidthClasses = {
+  'sm': 'max-w-sm',    // 384px
+  'md': 'max-w-md',    // 448px
+  'lg': 'max-w-lg',    // 512px
+  'xl': 'max-w-xl',    // 576px
+  '2xl': 'max-w-2xl',  // 672px
+  '4xl': 'max-w-4xl',  // 896px
+  '6xl': 'max-w-6xl',  // 1152px
+  '7xl': 'max-w-7xl'   // 1280px
+};
+
+const containerClasses = [
+  maxWidthClasses[maxWidth],
+  centered ? 'mx-auto' : '',
+  padding ? 'px-4 sm:px-6 lg:px-8' : '',
+  'w-full',
+  className
+].filter(Boolean).join(' ');
+---
+
+<div class={containerClasses}>
+  <slot />
+</div>
+
+<style>
+  /* Ensure proper centering on desktop */
+  @media (min-width: 1024px) {
+    .max-w-sm { max-width: 24rem; }
+    .max-w-md { max-width: 28rem; }
+    .max-w-lg { max-width: 32rem; }
+    .max-w-xl { max-width: 36rem; }
+    .max-w-2xl { max-width: 42rem; }
+    .max-w-4xl { max-width: 56rem; }
+    .max-w-6xl { max-width: 72rem; }
+    .max-w-7xl { max-width: 80rem; }
+    
+    .mx-auto {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+  
+  /* Ultra-wide support */
+  @media (min-width: 1920px) {
+    .max-w-7xl { 
+      max-width: 96rem; 
+    }
+  }
+</style>

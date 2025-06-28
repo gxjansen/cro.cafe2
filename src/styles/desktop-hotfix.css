@@ -1,0 +1,294 @@
+/* Desktop Layout Hotfix - Immediate fixes for desktop experience */
+/* This is a temporary solution while we implement the full responsive design system */
+
+/* ===================================
+   1. Container Centering Fix
+   =================================== */
+
+/* Ensure containers are properly centered on desktop */
+@media (min-width: 1024px) {
+  /* Fix for main content containers */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Ensure proper padding on containers */
+  main .max-w-4xl {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  main .max-w-6xl,
+  main .max-w-7xl {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* ===================================
+   2. Content Width Constraints
+   =================================== */
+
+/* Prevent full-width content on desktop */
+@media (min-width: 1024px) {
+  /* Guest profile pages */
+  .guest-profile-content,
+  main > article {
+    max-width: 65ch; /* Optimal reading line length */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Episode content */
+  .prose {
+    max-width: 65ch;
+  }
+  
+  /* Card grids should have maximum width */
+  .guest-grid,
+  .episode-grid {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ===================================
+   3. Visual Balance Restoration
+   =================================== */
+
+/* Add proper spacing for visual hierarchy on desktop */
+@media (min-width: 1024px) {
+  /* Main content areas need breathing room */
+  main {
+    min-height: calc(100vh - 200px); /* Account for header/footer */
+  }
+  
+  /* Section spacing */
+  section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+  
+  /* Header spacing */
+  h1, h2, h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ===================================
+   4. Layout Grid Fixes
+   =================================== */
+
+/* Restore proper grid behavior on desktop */
+@media (min-width: 1024px) {
+  /* Guest cards grid */
+  .guest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* Episode cards grid */
+  .episode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* ===================================
+   5. Sidebar Layout Support
+   =================================== */
+
+/* Add sidebar layout for appropriate pages */
+@media (min-width: 1024px) {
+  /* Two column layout wrapper */
+  .desktop-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  
+  /* Main content area */
+  .desktop-main-content {
+    min-width: 0; /* Prevent overflow */
+  }
+  
+  /* Sidebar */
+  .desktop-sidebar {
+    position: sticky;
+    top: 5rem;
+    height: fit-content;
+  }
+}
+
+/* ===================================
+   6. Ultra-wide Display Support
+   =================================== */
+
+/* Handle ultra-wide displays gracefully */
+@media (min-width: 1920px) {
+  /* Maximum content width with decorative margins */
+  .max-w-7xl {
+    max-width: 1536px;
+  }
+  
+  /* Add subtle background to show content boundaries */
+  body {
+    background-color: #fafafa;
+  }
+  
+  .dark body {
+    background-color: #0a0a0a;
+  }
+  
+  /* Content area with subtle shadow */
+  main {
+    background-color: white;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .dark main {
+    background-color: #111111;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* ===================================
+   7. Typography Adjustments
+   =================================== */
+
+/* Restore proper typography scaling for desktop */
+@media (min-width: 1024px) {
+  /* Base font size */
+  html {
+    font-size: 18px;
+  }
+  
+  /* Heading sizes */
+  h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+  
+  /* Body text */
+  p {
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* ===================================
+   8. Component Specific Fixes
+   =================================== */
+
+/* Guest profile page specific fixes */
+@media (min-width: 1024px) {
+  /* Center the profile header */
+  .guest-profile-header {
+    max-width: 48rem;
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+  
+  /* Profile content should be contained */
+  .guest-profile-content {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+  
+  /* Episode list in profile */
+  .guest-episodes-section {
+    max-width: 64rem;
+    margin: 3rem auto;
+  }
+}
+
+/* Episode page specific fixes */
+@media (min-width: 1024px) {
+  /* Episode header */
+  .episode-header {
+    max-width: 48rem;
+    margin: 0 auto 2rem;
+  }
+  
+  /* Episode content */
+  .episode-content {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+  
+  /* Audio player container */
+  .audio-player-container {
+    max-width: 48rem;
+    margin: 2rem auto;
+  }
+}
+
+/* ===================================
+   9. Navigation Adjustments
+   =================================== */
+
+/* Ensure navigation is properly aligned on desktop */
+@media (min-width: 1024px) {
+  /* Header navigation */
+  header nav {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  /* Breadcrumb navigation */
+  .breadcrumb-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+}
+
+/* ===================================
+   10. Temporary Override Classes
+   =================================== */
+
+/* Utility classes for immediate fixes */
+@media (min-width: 1024px) {
+  /* Force center alignment */
+  .desktop-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Force max width */
+  .desktop-max-w-4xl {
+    max-width: 56rem !important;
+  }
+  
+  .desktop-max-w-6xl {
+    max-width: 72rem !important;
+  }
+  
+  /* Force proper padding */
+  .desktop-px-8 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}

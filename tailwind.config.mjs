@@ -102,5 +102,24 @@ export default {
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
+    function({ addComponents }) {
+      addComponents({
+        '.language-card': {
+          '@apply bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors shadow-sm hover:shadow-md p-3 sm:p-4 flex flex-col h-full': {},
+        },
+        '.language-card .host-info': {
+          '@apply bg-gray-50 dark:bg-gray-800/50 rounded p-3 mb-3 flex-1 flex flex-col justify-center': {},
+        },
+        '.language-card .stats': {
+          '@apply text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed': {},
+        },
+        '.language-card .latest': {
+          '@apply text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed': {},
+        },
+        '.language-card .action-btn': {
+          '@apply block w-full px-4 py-3 text-white text-base font-semibold rounded-md transition-all duration-200 text-center shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2': {},
+        },
+      })
+    },
   ],
 }

@@ -1,6 +1,19 @@
 /* Import language dropdown fixes */
 @import './language-dropdown-fix.css';
 
+/* Import mobile enhancements for better touch experience */
+@import './mobile-enhancements.css';
+
+/* Import CSS containment optimizations for performance */
+@import './containment-optimizations.css';
+
+/* Import desktop hotfix for layout issues */
+@import './desktop-hotfix.css';
+
+/* Import responsive design system */
+@import './responsive-utilities.css';
+@import './spacing-typography.css';
+
 /* Mobile Navigation Responsive Utilities */
 /* Extra small screens (below 475px) */
 @media (max-width: 474px) {
@@ -667,4 +680,159 @@ textarea:focus-visible {
   background: linear-gradient(white, white) padding-box,
               linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
   border: 2px solid transparent;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Disable parallax effects */
+  .parallax {
+    transform: none !important;
+  }
+  
+  /* Disable auto-playing videos */
+  video[autoplay] {
+    display: none;
+  }
+  
+  /* Simplified hover states */
+  .card-interactive:hover,
+  .btn:hover,
+  a:hover {
+    transform: none !important;
+  }
+  
+  /* Remove shimmer effect for loading states */
+  .card-loading {
+    animation: none !important;
+    background: rgba(0,0,0,0.05);
+  }
+}
+
+/* ===================================
+   Swipe Gesture Support
+   =================================== */
+
+/* Swipe gesture transitions */
+.swipe-transition-left {
+  animation: slideOutLeft 0.3s ease-out forwards;
+}
+
+.swipe-transition-right {
+  animation: slideOutRight 0.3s ease-out forwards;
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+}
+
+/* Swipe hint indicator */
+.swipe-hint {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+.swipe-hint.show {
+  opacity: 1;
+}
+
+/* Touch feedback for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .touch-feedback {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .touch-feedback::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  .touch-feedback:active::after {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Swipe navigation indicators */
+.swipe-nav-hint {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.swipe-nav-hint.left {
+  left: 0;
+  border-radius: 0 40px 40px 0;
+}
+
+.swipe-nav-hint.right {
+  right: 0;
+  border-radius: 40px 0 0 40px;
+}
+
+.swipe-nav-hint.visible {
+  opacity: 1;
+}
+
+/* Mobile-only swipe indicators */
+@media (hover: hover) and (pointer: fine) {
+  .swipe-nav-hint {
+    display: none;
+  }
 }
