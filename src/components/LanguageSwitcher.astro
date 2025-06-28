@@ -155,12 +155,12 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   </button>
 
   <div
-    class="language-switcher-menu hidden absolute right-0 z-[100] mt-2 w-60 sm:w-64 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-w-[calc(100vw-2rem)]"
+    class="language-switcher-menu hidden absolute right-0 z-[9999] mt-2 w-60 sm:w-64 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-w-[calc(100vw-2rem)]"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="language-switcher-button"
     data-language-menu
-    style="min-width: 220px;"
+    style="min-width: 220px; isolation: isolate;"
   >
     <div class="py-1" role="none">
       {languages.map((lang) => {
@@ -521,11 +521,12 @@ const getLanguageUrl = (langCode: Language | 'global') => {
 
   .language-switcher-menu {
     position: absolute;
-    z-index: 100 !important;
+    z-index: 9999 !important;
     pointer-events: auto !important;
     /* Ensure menu is above view transition layer */
     transform: translateZ(0);
     will-change: transform;
+    isolation: isolate;
   }
 
   /* When dropdown is active, ensure it's above everything */

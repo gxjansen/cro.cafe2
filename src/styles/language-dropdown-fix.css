@@ -27,12 +27,15 @@
 
 .language-switcher-menu {
   position: absolute !important;
-  z-index: 100 !important;
+  z-index: 9999 !important;
   pointer-events: auto !important;
   /* Prevent menu from causing horizontal scroll */
   right: 0 !important;
   left: auto !important;
   max-width: calc(100vw - 2rem) !important;
+  /* Ensure it creates a new stacking context above everything */
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
 }
 
 /* Ensure all children are clickable */
