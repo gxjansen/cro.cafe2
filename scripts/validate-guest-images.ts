@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { glob } from 'glob';
+import { globSync } from 'glob';
 
 // Types for our image validation system
 interface GuestImageInfo {
@@ -56,7 +56,7 @@ function generateInitialsSVG(name: string, slug: string): string {
 
 // Read guest data from markdown files
 async function getGuestData() {
-  const guestFiles = await glob('./src/content/guests/*.mdx');
+  const guestFiles = globSync('./src/content/guests/*.mdx');
   const guests = [];
   
   for (const file of guestFiles) {
