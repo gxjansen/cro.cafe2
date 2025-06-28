@@ -45,20 +45,24 @@
 @media (min-width: 1024px) {
   .container {
     max-width: 1024px;
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
 @media (min-width: 1280px) {
   .container {
     max-width: 1280px;
+    padding-left: 4rem;
+    padding-right: 4rem;
   }
 }
 
 @media (min-width: 1536px) {
   .container {
     max-width: 1536px;
+    padding-left: 5rem;
+    padding-right: 5rem;
   }
 }
 
@@ -103,8 +107,24 @@
   .container-lg,
   .container-xl,
   .container-2xl {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-xl,
+  .container-2xl {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-xl,
+  .container-2xl {
+    padding-left: 5rem;
+    padding-right: 5rem;
   }
 }
 
@@ -376,8 +396,8 @@
 
 @media (min-width: 1024px) {
   .px-responsive {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
