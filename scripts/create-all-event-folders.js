@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
 // Complete list of all events from https://www.cro.cafe/event
 const ALL_EVENTS = [
@@ -32,22 +32,22 @@ const ALL_EVENTS = [
   'emerce-conversion',
   'uxinsight',
   'cro-workshop-a-b-testen-weet-je-het-zeker'
-];
+]
 
-const OUTPUT_DIR = path.join(process.cwd(), 'public', 'images', 'events');
+const OUTPUT_DIR = path.join(process.cwd(), 'public', 'images', 'events')
 
 // Create all event folders
-console.log('Creating folders for all CRO.CAFE events...\n');
+console.log('Creating folders for all CRO.CAFE events...\n')
 
 ALL_EVENTS.forEach(event => {
-  const eventDir = path.join(OUTPUT_DIR, event);
+  const eventDir = path.join(OUTPUT_DIR, event)
   if (!fs.existsSync(eventDir)) {
-    fs.mkdirSync(eventDir, { recursive: true });
-    console.log(`✓ Created folder: ${event}`);
+    fs.mkdirSync(eventDir, { recursive: true })
+    console.log(`✓ Created folder: ${event}`)
   } else {
-    console.log(`- Folder exists: ${event}`);
+    console.log(`- Folder exists: ${event}`)
   }
-});
+})
 
-console.log(`\nTotal events: ${ALL_EVENTS.length}`);
+console.log(`\nTotal events: ${ALL_EVENTS.length}`)
 EOF < /dev/null

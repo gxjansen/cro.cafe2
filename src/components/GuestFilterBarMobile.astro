@@ -263,7 +263,7 @@ const t = filterTranslations[language || 'en'];
 </MobileFilterSheet>
 
 <script>
-import { skillMatchesGroup, getGroupSkills, SKILL_GROUPS } from '../utils/skillGroups';
+import { skillMatchesGroup, getGroupSkills, SKILL_GROUPS } from '../utils/skillGroups'
 
 function initializeMobileGuestFilters() {
   // Initialize all mobile filter bars
@@ -366,11 +366,11 @@ function initializeMobileGuestFilters() {
             selectedSkills.some(skill => {
               if (skill.startsWith('group:')) {
                 // Group-based filtering
-                const groupId = skill.substring(6);
-                return skillMatchesGroup(skills, groupId);
+                const groupId = skill.substring(6)
+                return skillMatchesGroup(skills, groupId)
               } else {
                 // Individual skill filtering
-                return skills.toLowerCase().includes(skill.toLowerCase());
+                return skills.toLowerCase().includes(skill.toLowerCase())
               }
             })
 
@@ -459,7 +459,7 @@ function initializeMobileGuestFilters() {
     // Read URL parameters on initialization
     const urlParams = new URLSearchParams(window.location.search)
     const expertiseParam = urlParams.get('expertise')
-    
+
     if (expertiseParam && skillCheckboxes.length > 0) {
       // Check if it's already a group parameter
       if (expertiseParam.startsWith('group:')) {

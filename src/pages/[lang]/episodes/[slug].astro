@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
-import GuestCard from '../../../components/GuestCard.astro';
+import GuestCardVertical from '../../../components/GuestCardVertical.astro';
 import HostCard from '../../../components/HostCard.astro';
 import SchemaPodcastEpisode from '../../../components/schema/SchemaPodcastEpisode.astro';
 import RelatedEpisodes from '../../../components/RelatedEpisodes.astro';
@@ -211,9 +211,14 @@ const getDateLocale = (lang: Language) => {
         <article class="min-w-0">
           <!-- Episode Header -->
           <header class="mb-lg">
-            <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-md">
-              <a href={`/${language}/episodes/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                {t.backToEpisodes}
+            <div class="flex items-center gap-4 text-sm text-subtle mb-md">
+              <a 
+                href={`/${language}/episodes/`} 
+                class="nav-back-link"
+                aria-label={t.backToEpisodes.replace('←', 'Navigate back to')}
+              >
+                <span aria-hidden="true">←</span>
+                <span>{t.backToEpisodes.replace('← ', '')}</span>
               </a>
               {(episode.data.episode_type === 'trailer' || episode.data.episode_type === 'bonus') ? (
                 <>
@@ -234,7 +239,7 @@ const getDateLocale = (lang: Language) => {
               {episode.data.title}
             </h1>
             
-            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <div class="flex flex-wrap items-center gap-4 text-sm text-metadata">
               <time datetime={episode.data.pubDate.toISOString()}>
                 {new Date(episode.data.pubDate).toLocaleDateString(getDateLocale(language), { 
                   year: 'numeric', 
@@ -299,9 +304,9 @@ const getDateLocale = (lang: Language) => {
                 <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                   {guestDetails.length === 1 ? t.guest : t.guests}
                 </h2>
-                <div class="space-y-md">
+                <div class="space-y-4">
                   {guestDetails.map((guest) => guest && (
-                    <GuestCard guest={guest} language={language} size="medium" />
+                    <GuestCardVertical guest={guest} language={language} size="small" showEpisodeCount={false} />
                   ))}
                 </div>
               </section>
@@ -312,7 +317,7 @@ const getDateLocale = (lang: Language) => {
                 <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                   {hostDetails.length === 1 ? t.host : t.hosts}
                 </h2>
-                <div class="space-y-md">
+                <div class="space-y-4">
                   {hostDetails.map((host) => host && (
                     <HostCard host={host} language={language} size="medium" />
                   ))}
@@ -360,7 +365,7 @@ const getDateLocale = (lang: Language) => {
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-md">
               {t.subscribe}
             </h3>
-            <div class="space-y-sm">
+            <div class="space-y-4">
               {/* Spotify */}
               {spotify && spotify.data.urls[language] && (
                 <a 
@@ -413,9 +418,9 @@ const getDateLocale = (lang: Language) => {
               <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {guestDetails.length === 1 ? t.guest : t.guests}
               </h2>
-              <div class="space-y-sm">
+              <div class="space-y-4">
                 {guestDetails.map((guest) => guest && (
-                  <GuestCard guest={guest} language={language} size="small" />
+                  <GuestCardVertical guest={guest} language={language} size="small" showEpisodeCount={false} />
                 ))}
               </div>
             </section>
@@ -427,7 +432,7 @@ const getDateLocale = (lang: Language) => {
               <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {hostDetails.length === 1 ? t.host : t.hosts}
               </h2>
-              <div class="space-y-sm">
+              <div class="space-y-4">
                 {hostDetails.map((host) => host && (
                   <HostCard host={host} language={language} size="small" />
                 ))}

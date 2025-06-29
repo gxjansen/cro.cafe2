@@ -1,6 +1,6 @@
 /**
  * List of skills that are excluded from display because they are inherent/implicit
- * for all CRO.CAFE guests. These skills are fundamental to the field and don't 
+ * for all CRO.CAFE guests. These skills are fundamental to the field and don't
  * provide differentiating value when displayed.
  */
 export const EXCLUDED_SKILLS = [
@@ -14,7 +14,7 @@ export const EXCLUDED_SKILLS = [
   'Experimentation',
   'Testing',
   'Optimization'
-];
+]
 
 /**
  * Check if a skill should be excluded from display
@@ -22,11 +22,11 @@ export const EXCLUDED_SKILLS = [
  * @returns true if the skill should be excluded, false otherwise
  */
 export function isExcludedSkill(skill: string): boolean {
-  const normalizedSkill = skill.toLowerCase().trim();
-  return EXCLUDED_SKILLS.some(excluded => 
+  const normalizedSkill = skill.toLowerCase().trim()
+  return EXCLUDED_SKILLS.some(excluded =>
     normalizedSkill === excluded.toLowerCase() ||
     normalizedSkill === excluded.toLowerCase().replace(/\s+/g, '') // Handle variations without spaces
-  );
+  )
 }
 
 /**
@@ -35,5 +35,5 @@ export function isExcludedSkill(skill: string): boolean {
  * @returns Filtered array without excluded skills
  */
 export function filterExcludedSkills(skills: string[]): string[] {
-  return skills.filter(skill => !isExcludedSkill(skill));
+  return skills.filter(skill => !isExcludedSkill(skill))
 }

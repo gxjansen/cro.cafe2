@@ -208,7 +208,7 @@ const instanceId = Math.random().toString(36).substring(7);
 </section>
 
 <script>
-import { skillMatchesGroup, getGroupSkills, SKILL_GROUPS } from '../utils/skillGroups';
+import { skillMatchesGroup, getGroupSkills, SKILL_GROUPS } from '../utils/skillGroups'
 
 function initializeGuestFilters() {
   // Initialize all filter bars on the page
@@ -275,16 +275,16 @@ function initializeGuestFilters() {
         const countryMatch = !selectedCountry || country === selectedCountry
 
         // Expertise filter
-        let expertiseMatch = false;
+        let expertiseMatch = false
         if (!selectedExpertise) {
-          expertiseMatch = true;
+          expertiseMatch = true
         } else if (selectedExpertise.startsWith('group:')) {
           // Group-based filtering
-          const groupId = selectedExpertise.substring(6); // Remove 'group:' prefix
-          expertiseMatch = skillMatchesGroup(skills, groupId);
+          const groupId = selectedExpertise.substring(6) // Remove 'group:' prefix
+          expertiseMatch = skillMatchesGroup(skills, groupId)
         } else {
           // Individual skill filtering
-          expertiseMatch = skills.toLowerCase().includes(selectedExpertise.toLowerCase());
+          expertiseMatch = skills.toLowerCase().includes(selectedExpertise.toLowerCase())
         }
 
         const shouldShow = showMatch && countryMatch && expertiseMatch
@@ -348,7 +348,7 @@ function initializeGuestFilters() {
       if (expertiseFilter) {expertiseFilter.value = ''}
       filterGuests()
     }
-    
+
     // Attach event listeners
     showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests))
     countryFilter?.addEventListener('change', filterGuests)
@@ -358,7 +358,7 @@ function initializeGuestFilters() {
     // Read URL parameters on initialization
     const urlParams = new URLSearchParams(window.location.search)
     const expertiseParam = urlParams.get('expertise')
-    
+
     if (expertiseParam && expertiseFilter) {
       // Check if it's already a group parameter
       if (expertiseParam.startsWith('group:')) {

@@ -157,9 +157,14 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
         <article class="min-w-0">
       <!-- Guest Header -->
       <header class="mb-lg">
-        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-md">
-          <a href={`/${language}/guests/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-            {t.backToGuests}
+        <div class="flex items-center gap-4 text-sm text-subtle mb-md">
+          <a 
+            href={`/${language}/guests/`} 
+            class="nav-back-link"
+            aria-label={t.backToGuests.replace('←', 'Navigate back to')}
+          >
+            <span aria-hidden="true">←</span>
+            <span>{t.backToGuests.replace('← ', '')}</span>
           </a>
         </div>
         
@@ -194,12 +199,12 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
   return (
     <div class="mb-sm">
       {professionalDisplay.primary && (
-        <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-400">
+        <p class="text-professional-primary">
           {professionalDisplay.primary}
         </p>
       )}
       {professionalDisplay.showBoth && professionalDisplay.secondary && (
-        <p class="text-lg lg:text-xl text-gray-500 dark:text-gray-400 italic mt-1">
+        <p class="text-professional-secondary">
           {professionalDisplay.secondary}
         </p>
       )}
@@ -283,7 +288,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             (guest.data.bio && guest.data.bio !== guestWithLinkedIn.linkedInData.bio)) && (
             <div class="mt-md">
               {guestWithLinkedIn?.linkedInData?.bio && (
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Additional information:</p>
+                <p class="text-additional-info">Additional information:</p>
               )}
               <p>{guest.data.bio}</p>
             </div>
@@ -395,7 +400,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             {t.episodesWith} {guest.data.name}
           </h2>
           
-          <div class="space-y-sm">
+          <div class="space-y-6">
             {guestEpisodes.map((episode) => (
               <EpisodeCard episode={episode} size="small" showLanguage={false} />
             ))}

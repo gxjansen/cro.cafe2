@@ -185,7 +185,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
     ],
     relatedGroups: ['ux', 'strategy']
   }
-];
+]
 
 // Related skills mapping for suggestions
 export const SKILL_RELATIONS: SkillRelation[] = [
@@ -213,74 +213,74 @@ export const SKILL_RELATIONS: SkillRelation[] = [
     skill: 'Email Marketing',
     relatedSkills: ['Marketing Automation', 'Lead Generation', 'Customer Retention', 'Content Marketing']
   }
-];
+]
 
 /**
  * Get the group(s) a skill belongs to
  */
 export function getSkillGroups(skill: string): SkillGroup[] {
-  const normalizedSkill = skill.toLowerCase().trim();
-  return SKILL_GROUPS.filter(group => 
-    group.skills.some(groupSkill => 
+  const normalizedSkill = skill.toLowerCase().trim()
+  return SKILL_GROUPS.filter(group =>
+    group.skills.some(groupSkill =>
       groupSkill.toLowerCase() === normalizedSkill
     )
-  );
+  )
 }
 
 /**
  * Get all skills in a group
  */
 export function getGroupSkills(groupId: string): string[] {
-  const group = SKILL_GROUPS.find(g => g.id === groupId);
-  return group ? group.skills : [];
+  const group = SKILL_GROUPS.find(g => g.id === groupId)
+  return group ? group.skills : []
 }
 
 /**
  * Get related skills for a given skill
  */
 export function getRelatedSkills(skill: string): string[] {
-  const relation = SKILL_RELATIONS.find(r => 
+  const relation = SKILL_RELATIONS.find(r =>
     r.skill.toLowerCase() === skill.toLowerCase()
-  );
-  return relation ? relation.relatedSkills : [];
+  )
+  return relation ? relation.relatedSkills : []
 }
 
 /**
  * Check if a skill matches any skill in a group
  */
 export function skillMatchesGroup(skill: string, groupId: string): boolean {
-  const groupSkills = getGroupSkills(groupId);
-  const normalizedSkill = skill.toLowerCase().trim();
-  
-  return groupSkills.some(groupSkill => 
+  const groupSkills = getGroupSkills(groupId)
+  const normalizedSkill = skill.toLowerCase().trim()
+
+  return groupSkills.some(groupSkill =>
     normalizedSkill.includes(groupSkill.toLowerCase()) ||
     groupSkill.toLowerCase().includes(normalizedSkill)
-  );
+  )
 }
 
 /**
  * Get a display-friendly group name with icon
  */
 export function getGroupDisplay(groupId: string): string {
-  const group = SKILL_GROUPS.find(g => g.id === groupId);
-  return group ? `${group.icon || ''} ${group.name}`.trim() : groupId;
+  const group = SKILL_GROUPS.find(g => g.id === groupId)
+  return group ? `${group.icon || ''} ${group.name}`.trim() : groupId
 }
 
 /**
  * Count guests that have skills in a specific group
  */
 export function countGuestsInGroup(guests: any[], groupId: string): number {
-  const groupSkills = getGroupSkills(groupId);
-  
+  const groupSkills = getGroupSkills(groupId)
+
   return guests.filter(guest => {
-    if (!guest.data.linkedin_skills) return false;
-    
+    if (!guest.data.linkedin_skills) {return false}
+
     const guestSkills = typeof guest.data.linkedin_skills === 'string'
       ? guest.data.linkedin_skills.toLowerCase()
-      : '';
-      
-    return groupSkills.some(skill => 
+      : ''
+
+    return groupSkills.some(skill =>
       guestSkills.includes(skill.toLowerCase())
-    );
-  }).length;
+    )
+  }).length
 }

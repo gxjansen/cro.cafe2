@@ -5,16 +5,23 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && npm run generate-sitemaps",
+    "build": "astro build && npm run generate-sitemaps && npm run check:accessibility",
+    "build:no-test": "astro build && npm run generate-sitemaps",
     "generate-sitemaps": "tsx scripts/generate-language-sitemaps.ts",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix",
+    "check": "npm run typecheck && npm run lint && npm run test:a11y",
+    "check:fix": "npm run typecheck && npm run lint:fix && npm run test:a11y",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "test:a11y": "vitest run --config vitest.config.a11y.ts",
+    "test:a11y:watch": "vitest --config vitest.config.a11y.ts",
+    "test:a11y:ui": "vitest --ui --config vitest.config.a11y.ts",
+    "test:all": "npm run test:run && npm run test:a11y",
     "test:mobile": "jest tests/mobile-enhancements.test.js",
     "test:mobile:headless": "jest tests/mobile-enhancements.test.js --forceExit",
     "test:brand-logos": "jest tests/brand-logos-visibility.test.js --forceExit",
@@ -26,6 +33,8 @@
     "sync-content": "npm run generate-content-simple && npm run validate-content",
     "validate-content": "tsx scripts/validate-content.ts",
     "check-links": "node scripts/check-links.js",
+    "check:accessibility": "tsx scripts/check-accessibility.ts",
+    "check:accessibility:detailed": "tsx scripts/check-accessibility-detailed.ts",
     "build:check": "npm run build && npm run check-links",
     "optimize-seo": "tsx scripts/optimize-episode-seo.ts",
     "demo-seo": "tsx scripts/demo-seo-optimization.ts",
@@ -62,6 +71,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@axe-core/puppeteer": "^4.10.2",
     "@jest/globals": "^30.0.3",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.10.2",
@@ -83,6 +93,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0"
   }
 }

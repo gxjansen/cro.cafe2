@@ -12,6 +12,7 @@ A modern podcast platform built with Astro, featuring multi-language support and
 - **Content Validation**: Zod schema validation ensuring data integrity
 - **Responsive Design**: Mobile-first, accessible design with modern UI components
 - **SEO Optimized**: Built-in meta tags, structured data, and search engine optimization
+- **WCAG 2.2 Compliant**: Comprehensive accessibility testing ensuring Level AA compliance
 
 ## 📁 Project Structure
 
@@ -64,6 +65,12 @@ pnpm dev
 
 # Build for production
 pnpm build
+
+# Run accessibility tests
+pnpm test:a11y
+
+# Run all tests
+pnpm test:all
 ```
 
 ### Testing Content Sync
@@ -90,6 +97,8 @@ Content types are validated using Zod schemas defined in `src/content/config.ts`
 - [Content Schema](src/content/config.ts) - Content type definitions and validation
 - [Project Architecture](src/) - Codebase structure and organization
 - [Development Guide](docs/) - Development workflows and best practices
+- [WCAG Testing Strategy](docs/wcag-testing-strategy.md) - Comprehensive accessibility testing approach
+- [Accessibility Testing Quick Start](docs/accessibility-testing-quickstart.md) - Quick guide for developers
 
 ## 🚀 Getting Started
 
