@@ -1,47 +1,47 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distPath = path.join(__dirname, '..', 'dist');
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const distPath = path.join(__dirname, '..', 'dist')
 
 // Read the main sitemap
-const mainSitemapPath = path.join(distPath, 'sitemap-0.xml');
-const mainSitemapContent = fs.readFileSync(mainSitemapPath, 'utf-8');
+const mainSitemapPath = path.join(distPath, 'sitemap-0.xml')
+const mainSitemapContent = fs.readFileSync(mainSitemapPath, 'utf-8')
 
 // Parse URLs from the sitemap
-const urlRegex = /<loc>(.*?)<\/loc>/g;
-const urls = [...mainSitemapContent.matchAll(urlRegex)].map(match => match[1]);
+const urlRegex = /<loc>(.*?)<\/loc>/g
+const urls = [...mainSitemapContent.matchAll(urlRegex)].map(match => match[1])
 
 // Language patterns
-const languages = ['en', 'nl', 'de', 'es'];
+const languages = ['en', 'nl', 'de', 'es']
 const languageUrls: Record<string, string[]> = {
   en: [],
   nl: [],
   de: [],
   es: [],
   global: [] // URLs without language prefix
-};
+}
 
 // Categorize URLs by language
 urls.forEach(url => {
-  let categorized = false;
-  
+  let categorized = false
+
   // Check for language-specific URLs
   for (const lang of languages) {
     // Match patterns like /en/, /nl/, etc.
     if (url.includes(`/${lang}/`) || url.endsWith(`/${lang}/`)) {
-      languageUrls[lang].push(url);
-      categorized = true;
-      break;
+      languageUrls[lang].push(url)
+      categorized = true
+      break
     }
   }
-  
+
   // URLs without language prefix (global pages)
   if (!categorized) {
-    languageUrls.global.push(url);
+    languageUrls.global.push(url)
   }
-});
+})
 
 // Generate XML for a sitemap
 function generateSitemapXML(urls: string[], lastmod: string = new Date().toISOString().split('T')[0]): string {
@@ -49,25 +49,25 @@ function generateSitemapXML(urls: string[], lastmod: string = new Date().toISOSt
   <url>
     <loc>${url}</loc>
     <lastmod>${lastmod}</lastmod>
-  </url>`).join('');
+  </url>`).join('')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urlEntries}
-</urlset>`;
+</urlset>`
 }
 
 // Generate language-specific sitemaps
 for (const [lang, urls] of Object.entries(languageUrls)) {
-  if (lang === 'global') continue; // Skip global for individual language sitemaps
-  
+  if (lang === 'global') {continue} // Skip global for individual language sitemaps
+
   // Combine language-specific URLs with global URLs
-  const combinedUrls = [...urls, ...languageUrls.global];
-  
+  const combinedUrls = [...urls, ...languageUrls.global]
+
   if (combinedUrls.length > 0) {
-    const sitemapContent = generateSitemapXML(combinedUrls);
-    const sitemapPath = path.join(distPath, `sitemap-${lang}.xml`);
-    fs.writeFileSync(sitemapPath, sitemapContent);
-    console.log(`Generated ${sitemapPath} with ${combinedUrls.length} URLs`);
+    const sitemapContent = generateSitemapXML(combinedUrls)
+    const sitemapPath = path.join(distPath, `sitemap-${lang}.xml`)
+    fs.writeFileSync(sitemapPath, sitemapContent)
+    console.log(`Generated ${sitemapPath} with ${combinedUrls.length} URLs`)
   }
 }
 
@@ -82,39 +82,39 @@ const sitemapIndexContent = `<?xml version="1.0" encoding="UTF-8"?>
     <loc>https://cro.cafe/sitemap-${lang}.xml</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
   </sitemap>`).join('\n  ')}
-</sitemapindex>`;
+</sitemapindex>`
 
-fs.writeFileSync(path.join(distPath, 'sitemap-index.xml'), sitemapIndexContent);
-console.log('Updated sitemap-index.xml with language-specific sitemaps');
+fs.writeFileSync(path.join(distPath, 'sitemap-index.xml'), sitemapIndexContent)
+console.log('Updated sitemap-index.xml with language-specific sitemaps')
 
 // Update robots.txt to reference language sitemaps
-const robotsPath = path.join(distPath, '..', 'public', 'robots.txt');
-let robotsContent = fs.readFileSync(robotsPath, 'utf-8');
+const robotsPath = path.join(distPath, '..', 'public', 'robots.txt')
+let robotsContent = fs.readFileSync(robotsPath, 'utf-8')
 
 // Check if language-specific sitemaps are already in robots.txt
-const hasSitemaps = languages.every(lang => 
+const hasSitemaps = languages.every(lang =>
   robotsContent.includes(`Sitemap: https://cro.cafe/sitemap-${lang}.xml`)
-);
+)
 
 if (!hasSitemaps) {
   // Find the position after the main sitemap index
-  const indexSitemapPattern = /Sitemap: https:\/\/cro\.cafe\/sitemap-index\.xml/;
-  const match = robotsContent.match(indexSitemapPattern);
-  
+  const indexSitemapPattern = /Sitemap: https:\/\/cro\.cafe\/sitemap-index\.xml/
+  const match = robotsContent.match(indexSitemapPattern)
+
   if (match) {
-    const insertPosition = match.index! + match[0].length;
-    const sitemapEntries = languages.map(lang => 
+    const insertPosition = match.index! + match[0].length
+    const sitemapEntries = languages.map(lang =>
       `\nSitemap: https://cro.cafe/sitemap-${lang}.xml`
-    ).join('');
-    
-    robotsContent = 
-      robotsContent.slice(0, insertPosition) + 
-      sitemapEntries + 
-      robotsContent.slice(insertPosition);
-    
-    fs.writeFileSync(robotsPath, robotsContent);
-    console.log('Updated robots.txt with language-specific sitemap references');
+    ).join('')
+
+    robotsContent =
+      robotsContent.slice(0, insertPosition) +
+      sitemapEntries +
+      robotsContent.slice(insertPosition)
+
+    fs.writeFileSync(robotsPath, robotsContent)
+    console.log('Updated robots.txt with language-specific sitemap references')
   }
 } else {
-  console.log('robots.txt already contains language-specific sitemap references');
+  console.log('robots.txt already contains language-specific sitemap references')
 }

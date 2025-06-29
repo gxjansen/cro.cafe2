@@ -117,23 +117,23 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- PWA Theme Script -->
     <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        return 'dark'; // PWA defaults to dark mode
-      })();
-      
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
-      }
-      window.__theme = theme;
-      
-      // PWA context detection
-      window.__isPWA = true;
-    </script>
+const theme = (() => {
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+    return localStorage.getItem('theme')
+  }
+  return 'dark' // PWA defaults to dark mode
+})()
+
+if (theme === 'light') {
+  document.documentElement.classList.remove('dark')
+} else {
+  document.documentElement.classList.add('dark')
+}
+window.__theme = theme
+
+// PWA context detection
+window.__isPWA = true
+</script>
   </head>
   
   <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased pwa-safe-area">
@@ -175,61 +175,61 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- PWA-specific functionality -->
     <script>
-      // Initialize PWA context
-      import('../utils/pwa-context.js').then(({ initializePWAContext }) => {
-        initializePWAContext();
-      });
-      
-      // PWA Service Worker Registration with enhanced features
-      if ('serviceWorker' in navigator) {
-        import('virtual:pwa-register').then(({ registerSW }) => {
-          registerSW({
-            immediate: true,
-            onRegisteredSW(swScriptUrl) {
-              console.log('PWA SW registered:', swScriptUrl);
-            },
-            onOfflineReady() {
-              console.log('PWA ready for offline use');
-              // Show offline indicator if needed
-            },
-            onNeedRefresh() {
-              // Auto-refresh in PWA mode for better UX
-              window.location.reload();
-            }
-          });
-        });
+// Initialize PWA context
+import('../utils/pwa-context.js').then(({ initializePWAContext }) => {
+  initializePWAContext()
+})
+
+// PWA Service Worker Registration with enhanced features
+if ('serviceWorker' in navigator) {
+  import('virtual:pwa-register').then(({ registerSW }) => {
+    registerSW({
+      immediate: true,
+      onRegisteredSW(swScriptUrl) {
+        console.log('PWA SW registered:', swScriptUrl)
+      },
+      onOfflineReady() {
+        console.log('PWA ready for offline use')
+        // Show offline indicator if needed
+      },
+      onNeedRefresh() {
+        // Auto-refresh in PWA mode for better UX
+        window.location.reload()
       }
-      
-      // Prevent zoom on double-tap (iOS PWA)
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', function (event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-          event.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
-      
-      // Handle keyboard media controls if available
-      if ('mediaSession' in navigator) {
-        // This will be integrated with the audio player
-        navigator.mediaSession.setActionHandler('play', () => {
-          // Will be connected to audio player store
-          window.dispatchEvent(new CustomEvent('audio-play'));
-        });
-        
-        navigator.mediaSession.setActionHandler('pause', () => {
-          window.dispatchEvent(new CustomEvent('audio-pause'));
-        });
-        
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-          window.dispatchEvent(new CustomEvent('audio-previous'));
-        });
-        
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-          window.dispatchEvent(new CustomEvent('audio-next'));
-        });
-      }
-    </script>
+    })
+  })
+}
+
+// Prevent zoom on double-tap (iOS PWA)
+let lastTouchEnd = 0
+document.addEventListener('touchend', function (event) {
+  const now = (new Date()).getTime()
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault()
+  }
+  lastTouchEnd = now
+}, false)
+
+// Handle keyboard media controls if available
+if ('mediaSession' in navigator) {
+  // This will be integrated with the audio player
+  navigator.mediaSession.setActionHandler('play', () => {
+    // Will be connected to audio player store
+    window.dispatchEvent(new CustomEvent('audio-play'))
+  })
+
+  navigator.mediaSession.setActionHandler('pause', () => {
+    window.dispatchEvent(new CustomEvent('audio-pause'))
+  })
+
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    window.dispatchEvent(new CustomEvent('audio-previous'))
+  })
+
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    window.dispatchEvent(new CustomEvent('audio-next'))
+  })
+}
+</script>
   </body>
 </html>

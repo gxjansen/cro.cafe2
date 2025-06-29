@@ -11,7 +11,7 @@ async function main() {
 
   // Get environment variables
   const baseUrl = process.env.NOCODB_BASE_URL
-  const apiKey = process.env.NOCODB_API_KEY  
+  const apiKey = process.env.NOCODB_API_KEY
   const baseId = process.env.NOCODB_BASE_ID
 
   console.log('\n📋 Environment Variables:')
@@ -27,7 +27,7 @@ async function main() {
 
   // Test basic connectivity
   console.log('\n🌐 Testing Basic Connectivity:')
-  
+
   try {
     const response = await fetch(baseUrl)
     console.log(`✅ Base URL accessible: ${response.status} ${response.statusText}`)
@@ -37,10 +37,10 @@ async function main() {
 
   // Test various auth endpoints
   console.log('\n🔐 Testing Authentication Endpoints:')
-  
+
   const authEndpoints = [
     '/api/v1/auth/user/me',
-    '/api/v2/auth/user/me', 
+    '/api/v2/auth/user/me',
     '/api/v1/user/me',
     '/api/v2/user/me',
     '/auth/user/me',
@@ -66,11 +66,11 @@ async function main() {
 
   // Test direct table access patterns
   console.log('\n📊 Testing Table Access Patterns:')
-  
+
   const tableEndpoints = [
     '/api/v1/tables',
     '/api/v2/tables',
-    '/tables', 
+    '/tables',
     `/api/v1/meta/bases/${baseId}/tables`,
     `/api/v2/meta/bases/${baseId}/tables`,
     `/nc/${baseId}/api/v1/tables`,
@@ -89,7 +89,7 @@ async function main() {
         }
       })
       console.log(`${response.ok ? '✅' : '❌'} ${endpoint}: ${response.status} ${response.statusText}`)
-      
+
       if (response.ok) {
         const data = await response.json()
         console.log(`   📝 Response sample: ${JSON.stringify(data).substring(0, 100)}...`)

@@ -28,25 +28,25 @@ const { episode, className = '' } = Astro.props;
 </div>
 
 <script>
-  import OfflineEpisodeCard from '../components/OfflineEpisodeCard';
-  import React from 'react';
-  import ReactDOM from 'react-dom/client';
+import OfflineEpisodeCard from '../components/OfflineEpisodeCard'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 
-  // Mount React components for offline buttons
-  document.addEventListener('DOMContentLoaded', () => {
-    const offlineButtons = document.querySelectorAll('.episode-offline-button');
-    
-    offlineButtons.forEach((container) => {
-      const episodeData = container.getAttribute('data-episode');
-      if (episodeData) {
-        try {
-          const episode = JSON.parse(episodeData);
-          const root = ReactDOM.createRoot(container);
-          root.render(React.createElement(OfflineEpisodeCard, { episode }));
-        } catch (error) {
-          console.error('Failed to parse episode data:', error);
-        }
+// Mount React components for offline buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const offlineButtons = document.querySelectorAll('.episode-offline-button')
+
+  offlineButtons.forEach((container) => {
+    const episodeData = container.getAttribute('data-episode')
+    if (episodeData) {
+      try {
+        const episode = JSON.parse(episodeData)
+        const root = ReactDOM.createRoot(container)
+        root.render(React.createElement(OfflineEpisodeCard, { episode }))
+      } catch (error) {
+        console.error('Failed to parse episode data:', error)
       }
-    });
-  });
+    }
+  })
+})
 </script>

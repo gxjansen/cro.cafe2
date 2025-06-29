@@ -123,4 +123,4 @@ export const LANGUAGE_LABELS: Record<Language, { name: string; nativeName: strin
   nl: { name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
   de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
   es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' }
-};
+}

@@ -39,7 +39,7 @@ class PlatformGenerator {
 
   async generate(): Promise<PlatformGenerationStats> {
     console.log('🎵 Starting platform generation...')
-    
+
     try {
       // Test connection
       const connected = await this.client.testConnection()
@@ -52,7 +52,7 @@ class PlatformGenerator {
 
       // Initialize deletion tracker
       const deletionTracker = new DeletionTracker('src/content')
-      
+
       // Get existing platform files
       const existingFiles = await this.getExistingFiles()
       console.log(`📁 Found ${existingFiles.size} existing platform files`)
@@ -95,14 +95,14 @@ class PlatformGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Platform generation complete in ${duration}ms`)
       console.log(`✅ Generated ${this.stats.platformsGenerated} platforms`)
-      
+
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted ${this.stats.filesDeleted} orphaned files`)
       }
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred`)
       }
@@ -130,10 +130,10 @@ class PlatformGenerator {
 
     // Get iconUrl
     const iconUrl = this.isValidUrl(platform.logo_url) ? platform.logo_url :
-                   this.isValidUrl(platform.icon_url) ? platform.icon_url :
-                   this.isValidUrl(platform.icon) ? platform.icon :
-                   `/images/platforms/${slug}.png`
-    
+      this.isValidUrl(platform.icon_url) ? platform.icon_url :
+        this.isValidUrl(platform.icon) ? platform.icon :
+          `/images/platforms/${slug}.png`
+
     const platformData = {
       id: platform.Id,
       name: name,
@@ -153,7 +153,7 @@ class PlatformGenerator {
     }
 
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
-    
+
     return platformPath
   }
 
@@ -183,7 +183,7 @@ class PlatformGenerator {
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
-    if (!url) return false
+    if (!url) {return false}
     try {
       new URL(url)
       return true

@@ -1,5 +1,5 @@
-import type { CollectionEntry } from 'astro:content';
-import type { Language } from '../types';
+import type { CollectionEntry } from 'astro:content'
+import type { Language } from '../types'
 
 interface SEOOptimizationConfig {
   titleLength: number;
@@ -11,7 +11,7 @@ const SEO_CONFIG: SEOOptimizationConfig = {
   titleLength: 60,
   descriptionLength: 160,
   summaryLength: 320
-};
+}
 
 // Language-specific SEO keywords and patterns
 const SEO_KEYWORDS: Record<Language, {
@@ -79,7 +79,7 @@ const SEO_KEYWORDS: Record<Language, {
       tips: 'Consejos'
     }
   }
-};
+}
 
 /**
  * Optimize episode title for SEO
@@ -91,43 +91,43 @@ export function optimizeEpisodeTitle(
   episode: CollectionEntry<'episodes'>,
   guestNames: string[] = []
 ): string {
-  const { title, language } = episode.data;
-  const keywords = SEO_KEYWORDS[language];
-  
+  const { title, language } = episode.data
+  const keywords = SEO_KEYWORDS[language]
+
   // Check if title already contains key terms
-  const hasCROTerm = /CRO|conversion|optimization|optimierung|optimización|optimalisatie/i.test(title);
-  const hasActionWord = /how|guide|tips|strategies|insights/i.test(title);
-  
+  const hasCROTerm = /CRO|conversion|optimization|optimierung|optimización|optimalisatie/i.test(title)
+  const hasActionWord = /how|guide|tips|strategies|insights/i.test(title)
+
   // Build optimized title
-  let optimizedTitle = title;
-  
+  let optimizedTitle = title
+
   // Add guest names if available and title is short enough
   if (guestNames.length > 0 && title.length < 40) {
-    const guestString = guestNames.slice(0, 2).join(' & ');
-    optimizedTitle = `${title} ${keywords.patterns.withGuest} ${guestString}`;
+    const guestString = guestNames.slice(0, 2).join(' & ')
+    optimizedTitle = `${title} ${keywords.patterns.withGuest} ${guestString}`
   }
-  
+
   // Add CRO context if not present and title is generic
   if (!hasCROTerm && title.length < 45) {
     // Check if it's a how-to or guide type content
     if (title.toLowerCase().includes(keywords.patterns.howTo.toLowerCase())) {
-      optimizedTitle = `${title} - CRO ${keywords.patterns.guide}`;
+      optimizedTitle = `${title} - CRO ${keywords.patterns.guide}`
     } else {
-      optimizedTitle = `${title} - CRO ${keywords.patterns.insights}`;
+      optimizedTitle = `${title} - CRO ${keywords.patterns.insights}`
     }
   }
-  
+
   // Ensure we don't exceed length limit
   if (optimizedTitle.length > SEO_CONFIG.titleLength) {
     // Try to keep the original title if it's already good
     if (title.length <= SEO_CONFIG.titleLength && hasCROTerm) {
-      return title;
+      return title
     }
     // Otherwise truncate smartly
-    optimizedTitle = truncateSmartly(optimizedTitle, SEO_CONFIG.titleLength);
+    optimizedTitle = truncateSmartly(optimizedTitle, SEO_CONFIG.titleLength)
   }
-  
-  return optimizedTitle;
+
+  return optimizedTitle
 }
 
 /**
@@ -140,41 +140,41 @@ export function optimizeEpisodeDescription(
   episode: CollectionEntry<'episodes'>,
   guestNames: string[] = []
 ): string {
-  const { description, summary, language, title } = episode.data;
-  const keywords = SEO_KEYWORDS[language];
-  
+  const { description, summary, language, title } = episode.data
+  const keywords = SEO_KEYWORDS[language]
+
   // Use summary if available and description is too long
-  let baseText = description;
+  let baseText = description
   if (summary && description.length > SEO_CONFIG.descriptionLength * 1.5) {
-    baseText = summary;
+    baseText = summary
   }
-  
+
   // Extract key topics from the content
-  const topics = extractTopics(baseText, keywords);
-  
+  const topics = extractTopics(baseText, keywords)
+
   // Build optimized description
-  let optimizedDesc = '';
-  
+  let optimizedDesc = ''
+
   // Start with action-oriented opening
   if (topics.includes('how') || topics.includes('guide')) {
-    optimizedDesc = `Learn ${topics.join(', ')} in this CRO podcast episode`;
+    optimizedDesc = `Learn ${topics.join(', ')} in this CRO podcast episode`
   } else {
-    optimizedDesc = `Discover ${topics.join(', ')} insights`;
+    optimizedDesc = `Discover ${topics.join(', ')} insights`
   }
-  
+
   // Add guest context
   if (guestNames.length > 0) {
-    optimizedDesc += ` with ${guestNames.join(' & ')}`;
+    optimizedDesc += ` with ${guestNames.join(' & ')}`
   }
-  
+
   // Add value proposition
-  const valueProps = extractValueProposition(baseText, language);
+  const valueProps = extractValueProposition(baseText, language)
   if (valueProps) {
-    optimizedDesc += `. ${valueProps}`;
+    optimizedDesc += `. ${valueProps}`
   }
-  
+
   // Ensure we stay within limit
-  return truncateSmartly(optimizedDesc, SEO_CONFIG.descriptionLength);
+  return truncateSmartly(optimizedDesc, SEO_CONFIG.descriptionLength)
 }
 
 /**
@@ -185,59 +185,59 @@ export function generateMetaDescription(
   episode: CollectionEntry<'episodes'>,
   guestNames: string[] = []
 ): string {
-  const { language, title } = episode.data;
-  const keywords = SEO_KEYWORDS[language];
-  
+  const { language, title } = episode.data
+  const keywords = SEO_KEYWORDS[language]
+
   // Template patterns for meta descriptions
   const templates = [
     `${keywords.patterns.episode}: ${title}. Join us for actionable ${keywords.primary[0]} insights`,
     `Discover proven ${keywords.primary[1]} strategies in this episode`,
     `Learn from ${keywords.primary[0]} experts about ${extractMainTopic(title, language)}`
-  ];
-  
+  ]
+
   // Select appropriate template based on content
-  let metaDesc = templates[0];
-  
+  let metaDesc = templates[0]
+
   if (guestNames.length > 0) {
-    metaDesc += ` with ${guestNames[0]}`;
+    metaDesc += ` with ${guestNames[0]}`
     if (guestNames.length > 1) {
-      metaDesc += ` and ${guestNames.length - 1} more`;
+      metaDesc += ` and ${guestNames.length - 1} more`
     }
   }
-  
+
   // Add call to action
-  metaDesc += '. Listen now!';
-  
-  return truncateSmartly(metaDesc, SEO_CONFIG.descriptionLength);
+  metaDesc += '. Listen now!'
+
+  return truncateSmartly(metaDesc, SEO_CONFIG.descriptionLength)
 }
 
 /**
  * Extract main topics from text
  */
 function extractTopics(text: string, keywords: typeof SEO_KEYWORDS[Language]): string[] {
-  const topics: string[] = [];
-  const lowerText = text.toLowerCase();
-  
+  const topics: string[] = []
+  const lowerText = text.toLowerCase()
+
   // Check for primary keywords
   keywords.primary.forEach(keyword => {
     if (lowerText.includes(keyword.toLowerCase())) {
-      topics.push(keyword);
+      topics.push(keyword)
     }
-  });
-  
+  })
+
   // Check for common topics
   const commonTopics = [
     'testing', 'personalization', 'analytics', 'user research',
     'conversion', 'optimization', 'experimentation', 'growth'
-  ];
-  
+  ]
+
   commonTopics.forEach(topic => {
     if (lowerText.includes(topic) && !topics.includes(topic)) {
-      topics.push(topic);
+      topics.push(topic)
     }
-  });
-  
-  return topics.slice(0, 3); // Limit to 3 topics
+  })
+
+  return topics.slice(0, 3) // Limit to 3 topics
 }
 
 /**
@@ -265,17 +265,17 @@ function extractValueProposition(text: string, language: Language): string {
       /descubre\s+(.+?)(?:\.|,|$)/i,
       /perspectivas?\s+(?:sobre|en)\s+(.+?)(?:\.|,|$)/i
     ]
-  };
-  
-  const langPatterns = patterns[language];
+  }
+
+  const langPatterns = patterns[language]
   for (const pattern of langPatterns) {
-    const match = text.match(pattern);
+    const match = text.match(pattern)
     if (match && match[1]) {
-      return match[1].trim();
+      return match[1].trim()
     }
   }
-  
-  return '';
+
+  return ''
 }
 
 /**
@@ -288,36 +288,36 @@ function extractMainTopic(title: string, language: Language): string {
     .replace(/^(hoe je|gids voor|tips voor|strategieën voor)/i, '')
     .replace(/^(wie man|leitfaden für|tipps für|strategien für)/i, '')
     .replace(/^(cómo|guía para|consejos para|estrategias para)/i, '')
-    .trim();
-  
+    .trim()
+
   // Extract the main topic (usually the first few words)
-  const words = cleanTitle.split(' ');
-  return words.slice(0, 4).join(' ').toLowerCase();
+  const words = cleanTitle.split(' ')
+  return words.slice(0, 4).join(' ').toLowerCase()
 }
 
 /**
  * Smart truncation that preserves whole words
  */
 function truncateSmartly(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  
+  if (text.length <= maxLength) {return text}
+
   // Find the last space before maxLength
-  let truncated = text.substring(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(' ');
-  
+  let truncated = text.substring(0, maxLength)
+  const lastSpace = truncated.lastIndexOf(' ')
+
   if (lastSpace > maxLength * 0.8) {
-    truncated = truncated.substring(0, lastSpace);
+    truncated = truncated.substring(0, lastSpace)
   }
-  
+
   // Remove trailing punctuation except periods
-  truncated = truncated.replace(/[,;:]$/, '');
-  
+  truncated = truncated.replace(/[,;:]$/, '')
+
   // Add ellipsis if needed
   if (!truncated.endsWith('.')) {
-    truncated += '...';
+    truncated += '...'
   }
-  
-  return truncated;
+
+  return truncated
 }
 
 /**
@@ -327,8 +327,8 @@ export function generateStructuredData(
   episode: CollectionEntry<'episodes'>,
   guestNames: string[] = []
 ): Record<string, any> {
-  const { title, description, language, pubDate, duration } = episode.data;
-  
+  const { title, description, language, pubDate, duration } = episode.data
+
   return {
     '@context': 'https://schema.org',
     '@type': 'PodcastEpisode',
@@ -338,5 +338,5 @@ export function generateStructuredData(
     duration: duration ? `PT${duration}S` : undefined,
     inLanguage: language,
     keywords: SEO_KEYWORDS[language].primary.concat(SEO_KEYWORDS[language].secondary).join(', ')
-  };
+  }
 }

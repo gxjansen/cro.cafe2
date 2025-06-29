@@ -85,65 +85,65 @@ const { filterId, title = 'Filters' } = Astro.props;
 </style>
 
 <script>
-  function initializeMobileFilterSheets() {
-    // Initialize all filter sheets
-    document.querySelectorAll('.mobile-filter-sheet').forEach(sheet => {
-      const backdrop = sheet.querySelector('.backdrop');
-      const closeBtn = sheet.querySelector('.close-sheet');
-      const applyBtn = sheet.querySelector('.apply-filters');
-      const clearBtn = sheet.querySelector('.clear-filters');
-      
-      function openSheet() {
-        sheet.setAttribute('data-state', 'open');
-        sheet.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('filter-sheet-open');
+function initializeMobileFilterSheets() {
+  // Initialize all filter sheets
+  document.querySelectorAll('.mobile-filter-sheet').forEach(sheet => {
+    const backdrop = sheet.querySelector('.backdrop')
+    const closeBtn = sheet.querySelector('.close-sheet')
+    const applyBtn = sheet.querySelector('.apply-filters')
+    const clearBtn = sheet.querySelector('.clear-filters')
+
+    function openSheet() {
+      sheet.setAttribute('data-state', 'open')
+      sheet.setAttribute('aria-hidden', 'false')
+      document.body.classList.add('filter-sheet-open')
+    }
+
+    function closeSheet() {
+      sheet.setAttribute('data-state', 'closed')
+      sheet.setAttribute('aria-hidden', 'true')
+      document.body.classList.remove('filter-sheet-open')
+    }
+
+    // Event listeners
+    backdrop?.addEventListener('click', closeSheet)
+    closeBtn?.addEventListener('click', closeSheet)
+    applyBtn?.addEventListener('click', () => {
+      // Trigger filter application
+      const event = new CustomEvent('filters:apply', {
+        detail: { sheetId: sheet.id }
+      })
+      document.dispatchEvent(event)
+      closeSheet()
+    })
+
+    clearBtn?.addEventListener('click', () => {
+      // Trigger filter clear
+      const event = new CustomEvent('filters:clear', {
+        detail: { sheetId: sheet.id }
+      })
+      document.dispatchEvent(event)
+    })
+
+    // Handle escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sheet.getAttribute('data-state') === 'open') {
+        closeSheet()
       }
-      
-      function closeSheet() {
-        sheet.setAttribute('data-state', 'closed');
-        sheet.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('filter-sheet-open');
-      }
-      
-      // Event listeners
-      backdrop?.addEventListener('click', closeSheet);
-      closeBtn?.addEventListener('click', closeSheet);
-      applyBtn?.addEventListener('click', () => {
-        // Trigger filter application
-        const event = new CustomEvent('filters:apply', {
-          detail: { sheetId: sheet.id }
-        });
-        document.dispatchEvent(event);
-        closeSheet();
-      });
-      
-      clearBtn?.addEventListener('click', () => {
-        // Trigger filter clear
-        const event = new CustomEvent('filters:clear', {
-          detail: { sheetId: sheet.id }
-        });
-        document.dispatchEvent(event);
-      });
-      
-      // Handle escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sheet.getAttribute('data-state') === 'open') {
-          closeSheet();
-        }
-      });
-      
-      // Expose open method globally
-      (window as any)[`openFilterSheet_${sheet.id}`] = openSheet;
     });
-  }
 
-  // Initialize on DOMContentLoaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeMobileFilterSheets);
-  } else {
-    initializeMobileFilterSheets();
-  }
+    // Expose open method globally
+    (window as any)[`openFilterSheet_${sheet.id}`] = openSheet
+  })
+}
 
-  // Re-initialize on Astro page navigation
-  document.addEventListener('astro:page-load', initializeMobileFilterSheets);
+// Initialize on DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMobileFilterSheets)
+} else {
+  initializeMobileFilterSheets()
+}
+
+// Re-initialize on Astro page navigation
+document.addEventListener('astro:page-load', initializeMobileFilterSheets)
 </script>

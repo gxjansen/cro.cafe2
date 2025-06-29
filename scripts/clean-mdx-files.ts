@@ -11,18 +11,18 @@ import { glob } from 'glob'
 async function cleanMDXFile(filePath: string): Promise<boolean> {
   try {
     const content = await fs.readFile(filePath, 'utf8')
-    
+
     // Check if file contains HTML comments
     if (!content.includes('<!--')) {
       return false
     }
-    
+
     // Remove HTML comments from the entire file
     const cleanedContent = content.replace(/<!--[\s\S]*?-->/g, '')
-    
+
     // Write back the cleaned content
     await fs.writeFile(filePath, cleanedContent, 'utf8')
-    
+
     console.log(`✅ Cleaned: ${filePath}`)
     return true
   } catch (error) {
@@ -33,22 +33,22 @@ async function cleanMDXFile(filePath: string): Promise<boolean> {
 
 async function main() {
   console.log('🧹 Cleaning HTML comments from MDX files...\n')
-  
+
   // Find all MDX files in the content directory
   const mdxFiles = await glob('src/content/**/*.mdx')
-  
+
   console.log(`Found ${mdxFiles.length} MDX files to check\n`)
-  
+
   let cleanedCount = 0
-  let errorCount = 0
-  
+  const errorCount = 0
+
   for (const file of mdxFiles) {
     const wasCleaned = await cleanMDXFile(file)
     if (wasCleaned) {
       cleanedCount++
     }
   }
-  
+
   console.log('\n📊 Summary:')
   console.log(`- Total MDX files: ${mdxFiles.length}`)
   console.log(`- Files cleaned: ${cleanedCount}`)

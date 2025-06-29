@@ -1,4 +1,4 @@
-#\!/usr/bin/env node
+#!/usr/bin/env node
 
 import fs from 'fs';
 import path from 'path';
@@ -41,7 +41,7 @@ console.log('Creating folders for all CRO.CAFE events...\n');
 
 ALL_EVENTS.forEach(event => {
   const eventDir = path.join(OUTPUT_DIR, event);
-  if (\!fs.existsSync(eventDir)) {
+  if (!fs.existsSync(eventDir)) {
     fs.mkdirSync(eventDir, { recursive: true });
     console.log(`✓ Created folder: ${event}`);
   } else {

@@ -1,6 +1,6 @@
 /**
  * LinkedIn Integration Type Definitions
- * 
+ *
  * This module provides comprehensive TypeScript types for LinkedIn profile data
  * integration. It includes raw data types from NocoDB, transformed types for
  * components, type guards, and utility types for safe data handling.
@@ -161,9 +161,9 @@ export interface GuestWithLinkedIn {
  * Type guard to check if a value is a valid LinkedInExperience
  */
 export function isLinkedInExperience(value: unknown): value is LinkedInExperience {
-  if (typeof value !== 'object' || value === null) return false;
-  
-  const exp = value as Record<string, unknown>;
+  if (typeof value !== 'object' || value === null) {return false}
+
+  const exp = value as Record<string, unknown>
   return (
     typeof exp.title === 'string' &&
     typeof exp.company === 'string' &&
@@ -174,30 +174,30 @@ export function isLinkedInExperience(value: unknown): value is LinkedInExperienc
     (exp.isCurrent === undefined || typeof exp.isCurrent === 'boolean') &&
     (exp.description === undefined || typeof exp.description === 'string') &&
     (exp.duration === undefined || typeof exp.duration === 'string')
-  );
+  )
 }
 
 /**
  * Type guard to check if a value is a valid LinkedInWebsite
  */
 export function isLinkedInWebsite(value: unknown): value is LinkedInWebsite {
-  if (typeof value !== 'object' || value === null) return false;
-  
-  const website = value as Record<string, unknown>;
+  if (typeof value !== 'object' || value === null) {return false}
+
+  const website = value as Record<string, unknown>
   return (
     typeof website.url === 'string' &&
     (website.type === undefined || typeof website.type === 'string') &&
     (website.label === undefined || typeof website.label === 'string')
-  );
+  )
 }
 
 /**
  * Type guard to check if a value is a valid LinkedInPublication
  */
 export function isLinkedInPublication(value: unknown): value is LinkedInPublication {
-  if (typeof value !== 'object' || value === null) return false;
-  
-  const pub = value as Record<string, unknown>;
+  if (typeof value !== 'object' || value === null) {return false}
+
+  const pub = value as Record<string, unknown>
   return (
     typeof pub.title === 'string' &&
     (pub.publisher === undefined || typeof pub.publisher === 'string') &&
@@ -205,36 +205,36 @@ export function isLinkedInPublication(value: unknown): value is LinkedInPublicat
     (pub.url === undefined || typeof pub.url === 'string') &&
     (pub.authors === undefined || (Array.isArray(pub.authors) && pub.authors.every(a => typeof a === 'string'))) &&
     (pub.description === undefined || typeof pub.description === 'string')
-  );
+  )
 }
 
 /**
  * Type guard to check if a value has LinkedIn data
  */
 export function hasLinkedInData(value: unknown): value is { linkedInData: LinkedInData } {
-  if (typeof value !== 'object' || value === null) return false;
-  
-  const obj = value as Record<string, unknown>;
-  return obj.linkedInData !== undefined && typeof obj.linkedInData === 'object';
+  if (typeof value !== 'object' || value === null) {return false}
+
+  const obj = value as Record<string, unknown>
+  return obj.linkedInData !== undefined && typeof obj.linkedInData === 'object'
 }
 
 /**
  * Safely parse JSON string with fallback
  */
 export function safeJsonParse<T>(jsonString: string | null | undefined, fallback: T): T {
-  if (!jsonString) return fallback;
-  
+  if (!jsonString) {return fallback}
+
   try {
-    const parsed = JSON.parse(jsonString);
-    
+    const parsed = JSON.parse(jsonString)
+
     // If we expect an array but got something else, return fallback
     if (Array.isArray(fallback) && !Array.isArray(parsed)) {
-      return fallback;
+      return fallback
     }
-    
-    return parsed as T;
+
+    return parsed as T
   } catch {
-    return fallback;
+    return fallback
   }
 }
 
@@ -242,20 +242,20 @@ export function safeJsonParse<T>(jsonString: string | null | undefined, fallback
  * Parse skills from various formats (comma-separated string or JSON array)
  */
 export function parseSkills(skills: string | null | undefined): string[] {
-  if (!skills) return [];
-  
+  if (!skills) {return []}
+
   // Try parsing as JSON array first
   try {
-    const parsed = JSON.parse(skills);
+    const parsed = JSON.parse(skills)
     if (Array.isArray(parsed)) {
-      return parsed.filter(skill => typeof skill === 'string');
+      return parsed.filter(skill => typeof skill === 'string')
     }
   } catch {
     // If JSON parsing fails, treat as comma-separated string
-    return skills.split(',').map(skill => skill.trim()).filter(Boolean);
+    return skills.split(',').map(skill => skill.trim()).filter(Boolean)
   }
-  
-  return [];
+
+  return []
 }
 
 /**
@@ -263,14 +263,14 @@ export function parseSkills(skills: string | null | undefined): string[] {
  */
 export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
   // Parse complex JSON fields - handle both string and object formats
-  let experiences: LinkedInExperience[] = [];
+  let experiences: LinkedInExperience[] = []
   if (raw.linkedin_experiences) {
     try {
       // First, try parsing as JSON string
-      const parsed = typeof raw.linkedin_experiences === 'string' 
-        ? JSON.parse(raw.linkedin_experiences) 
-        : raw.linkedin_experiences;
-      
+      const parsed = typeof raw.linkedin_experiences === 'string'
+        ? JSON.parse(raw.linkedin_experiences)
+        : raw.linkedin_experiences
+
       // Handle the specific structure from MDX files
       if (Array.isArray(parsed)) {
         experiences = parsed.map(exp => ({
@@ -280,67 +280,67 @@ export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
           location: exp.metadata || exp.location,
           description: exp.subComponents?.[0]?.description?.[0]?.text || exp.description,
           duration: exp.caption || exp.duration,
-          isCurrent: exp.caption?.includes('Present') || exp.isCurrent,
-        })).filter(exp => exp.title && exp.company);
+          isCurrent: exp.caption?.includes('Present') || exp.isCurrent
+        })).filter(exp => exp.title && exp.company)
       }
     } catch (error) {
-      console.error('Error parsing experiences:', error);
+      console.error('Error parsing experiences:', error)
     }
   }
-  
-  let personalWebsites: LinkedInWebsite[] = [];
+
+  let personalWebsites: LinkedInWebsite[] = []
   if (raw.linkedin_personal_website) {
     try {
-      const parsed = typeof raw.linkedin_personal_website === 'string' 
-        ? JSON.parse(raw.linkedin_personal_website) 
-        : raw.linkedin_personal_website;
-      
+      const parsed = typeof raw.linkedin_personal_website === 'string'
+        ? JSON.parse(raw.linkedin_personal_website)
+        : raw.linkedin_personal_website
+
       // Handle single website object format from MDX
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
         if (parsed.link || parsed.url) {
           personalWebsites = [{
             url: parsed.link || parsed.url,
-            label: parsed.name || parsed.label,
-          }];
+            label: parsed.name || parsed.label
+          }]
         }
       } else if (Array.isArray(parsed)) {
-        personalWebsites = parsed.filter(isLinkedInWebsite);
+        personalWebsites = parsed.filter(isLinkedInWebsite)
       }
     } catch (error) {
-      console.error('Error parsing personal websites:', error);
+      console.error('Error parsing personal websites:', error)
     }
   }
-  
-  let publications: LinkedInPublication[] = [];
+
+  let publications: LinkedInPublication[] = []
   if (raw.linkedin_publications) {
     try {
-      const parsed = typeof raw.linkedin_publications === 'string' 
-        ? JSON.parse(raw.linkedin_publications) 
-        : raw.linkedin_publications;
-      
+      const parsed = typeof raw.linkedin_publications === 'string'
+        ? JSON.parse(raw.linkedin_publications)
+        : raw.linkedin_publications
+
       if (Array.isArray(parsed)) {
         publications = parsed.map(pub => ({
           title: pub.title || '',
           publisher: pub.subtitle?.split(' · ')[0] || pub.publisher,
           date: pub.subtitle?.split(' · ')[1] || pub.date,
-          description: pub.subComponents?.[0]?.description?.[0]?.text || pub.description,
-        })).filter(pub => pub.title);
+          description: pub.subComponents?.[0]?.description?.[0]?.text || pub.description
+        })).filter(pub => pub.title)
       }
     } catch (error) {
-      console.error('Error parsing publications:', error);
+      console.error('Error parsing publications:', error)
     }
   }
-  
+
   // Parse skills
-  const skills = parseSkills(raw.linkedin_skills);
-  
+  const skills = parseSkills(raw.linkedin_skills)
+
   // Parse last sync date
-  let lastSync: Date | undefined;
+  let lastSync: Date | undefined
   if (raw.linkedin_last_modified) {
-    const date = new Date(raw.linkedin_last_modified);
-    lastSync = isNaN(date.getTime()) ? undefined : date;
+    const date = new Date(raw.linkedin_last_modified)
+    lastSync = isNaN(date.getTime()) ? undefined : date
   }
-  
+
   return {
     url: raw.linkedin_url || undefined,
     fullName: raw.linkedin_full_name || undefined,
@@ -357,8 +357,8 @@ export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
     experiences,
     personalWebsites,
     publications,
-    lastSync,
-  };
+    lastSync
+  }
 }
 
 /**
@@ -370,9 +370,9 @@ export function mergeGuestWithLinkedIn(
   linkedInData?: LinkedInData
 ): GuestWithLinkedIn {
   if (!linkedInData) {
-    return { ...guest };
+    return { ...guest }
   }
-  
+
   return {
     ...guest,
     // Override with LinkedIn data if available
@@ -381,8 +381,8 @@ export function mergeGuestWithLinkedIn(
     company: linkedInData.currentCompany || guest.company,
     role: linkedInData.currentRole || guest.role,
     email: linkedInData.email || guest.email,
-    linkedInData,
-  };
+    linkedInData
+  }
 }
 
 /**
@@ -408,18 +408,18 @@ export interface LinkedInSyncStatus {
  * Get LinkedIn sync status for a guest
  */
 export function getLinkedInSyncStatus(linkedInData?: LinkedInData): LinkedInSyncStatus {
-  const hasData = Boolean(linkedInData && linkedInData.url);
-  const lastSync = linkedInData?.lastSync;
-  
+  const hasData = Boolean(linkedInData && linkedInData.url)
+  const lastSync = linkedInData?.lastSync
+
   return {
     hasData,
     lastSync,
     isStale: (days: number) => {
-      if (!lastSync) return true;
-      const daysSinceSync = (Date.now() - lastSync.getTime()) / (1000 * 60 * 60 * 24);
-      return daysSinceSync > days;
+      if (!lastSync) {return true}
+      const daysSinceSync = (Date.now() - lastSync.getTime()) / (1000 * 60 * 60 * 24)
+      return daysSinceSync > days
     },
-    needsSync: !hasData || !lastSync || 
-      ((Date.now() - (lastSync?.getTime() || 0)) > 30 * 24 * 60 * 60 * 1000), // 30 days
-  };
+    needsSync: !hasData || !lastSync ||
+      ((Date.now() - (lastSync?.getTime() || 0)) > 30 * 24 * 60 * 60 * 1000) // 30 days
+  }
 }

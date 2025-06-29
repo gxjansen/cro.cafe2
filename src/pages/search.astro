@@ -188,139 +188,139 @@ const languages = [
 </BaseLayout>
 
 <script define:vars={{ searchData, languages }}>
-  // Search state
-  let currentFilters = {
-    contentType: 'all', // 'all', 'episodes', 'guests'
-    language: 'all' // 'all', 'en', 'nl', 'de', 'es'
-  };
+// Search state
+let currentFilters = {
+  contentType: 'all', // 'all', 'episodes', 'guests'
+  language: 'all' // 'all', 'en', 'nl', 'de', 'es'
+}
 
-  // Simple fuzzy search function
-  function fuzzySearch(query, text) {
-    if (!query || !text) return false;
-    
-    const normalizedQuery = query.toLowerCase().trim();
-    const normalizedText = text.toLowerCase();
-    
-    // Exact match gets highest score
-    if (normalizedText.includes(normalizedQuery)) {
-      return true;
-    }
-    
-    // Word-based fuzzy matching
-    const queryWords = normalizedQuery.split(/\s+/);
-    return queryWords.some(word => 
-      word.length > 2 && normalizedText.includes(word)
-    );
+// Simple fuzzy search function
+function fuzzySearch(query, text) {
+  if (!query || !text) {return false}
+
+  const normalizedQuery = query.toLowerCase().trim()
+  const normalizedText = text.toLowerCase()
+
+  // Exact match gets highest score
+  if (normalizedText.includes(normalizedQuery)) {
+    return true
   }
 
-  // Apply filters to results
-  function applyFilters(episodes, guests) {
-    let filteredEpisodes = episodes;
-    let filteredGuests = guests;
+  // Word-based fuzzy matching
+  const queryWords = normalizedQuery.split(/\s+/)
+  return queryWords.some(word =>
+    word.length > 2 && normalizedText.includes(word)
+  )
+}
 
-    // Content type filter
-    if (currentFilters.contentType === 'episodes') {
-      filteredGuests = [];
-    } else if (currentFilters.contentType === 'guests') {
-      filteredEpisodes = [];
-    }
+// Apply filters to results
+function applyFilters(episodes, guests) {
+  let filteredEpisodes = episodes
+  let filteredGuests = guests
 
-    // Language filter
-    if (currentFilters.language !== 'all') {
-      filteredEpisodes = filteredEpisodes.filter(ep => ep.language === currentFilters.language);
-      filteredGuests = filteredGuests.filter(guest => 
-        guest.languages && guest.languages.includes(currentFilters.language)
-      );
-    }
-
-    return { episodes: filteredEpisodes, guests: filteredGuests };
+  // Content type filter
+  if (currentFilters.contentType === 'episodes') {
+    filteredGuests = []
+  } else if (currentFilters.contentType === 'guests') {
+    filteredEpisodes = []
   }
 
-  // Update filter button states
-  function updateFilterButtons() {
-    // Content type filters
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.classList.remove('active', 'bg-primary-600', 'text-white');
-      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    });
-    
-    const activeContentBtn = document.getElementById(`filter-${currentFilters.contentType}`);
-    if (activeContentBtn) {
-      activeContentBtn.classList.add('active', 'bg-primary-600', 'text-white');
-      activeContentBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    }
-
-    // Language filters
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.classList.remove('active', 'bg-primary-600', 'text-white');
-      btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    });
-    
-    const activeLangBtn = document.getElementById(currentFilters.language === 'all' ? 'lang-all' : `lang-${currentFilters.language}`);
-    if (activeLangBtn) {
-      activeLangBtn.classList.add('active', 'bg-primary-600', 'text-white');
-      activeLangBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    }
+  // Language filter
+  if (currentFilters.language !== 'all') {
+    filteredEpisodes = filteredEpisodes.filter(ep => ep.language === currentFilters.language)
+    filteredGuests = filteredGuests.filter(guest =>
+      guest.languages && guest.languages.includes(currentFilters.language)
+    )
   }
 
-  // Search function
-  function performSearch(query) {
-    if (!query || query.trim().length < 2) {
-      showEmptyState();
-      return;
-    }
+  return { episodes: filteredEpisodes, guests: filteredGuests }
+}
 
-    let episodeResults = searchData.episodes.filter(episode => {
-      return fuzzySearch(query, episode.title) ||
-             fuzzySearch(query, episode.description) ||
-             (episode.keywords && episode.keywords.some(keyword => fuzzySearch(query, keyword)));
-    });
+// Update filter button states
+function updateFilterButtons() {
+  // Content type filters
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active', 'bg-primary-600', 'text-white')
+    btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300')
+  })
 
-    let guestResults = searchData.guests.filter(guest => {
-      return fuzzySearch(query, guest.name) ||
-             fuzzySearch(query, guest.bio) ||
-             fuzzySearch(query, guest.company) ||
-             fuzzySearch(query, guest.role);
-    });
-
-    // Apply filters
-    const filtered = applyFilters(episodeResults, guestResults);
-    displayResults(filtered.episodes, filtered.guests, query);
+  const activeContentBtn = document.getElementById(`filter-${currentFilters.contentType}`)
+  if (activeContentBtn) {
+    activeContentBtn.classList.add('active', 'bg-primary-600', 'text-white')
+    activeContentBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300')
   }
 
-  // Display search results
-  function displayResults(episodes, guests, query) {
-    const resultsContainer = document.getElementById('search-results');
-    const emptyState = document.getElementById('empty-state');
-    const noResults = document.getElementById('no-results');
-    const resultsCount = document.getElementById('results-count');
+  // Language filters
+  document.querySelectorAll('.lang-filter').forEach(btn => {
+    btn.classList.remove('active', 'bg-primary-600', 'text-white')
+    btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300')
+  })
 
-    const totalResults = episodes.length + guests.length;
+  const activeLangBtn = document.getElementById(currentFilters.language === 'all' ? 'lang-all' : `lang-${currentFilters.language}`)
+  if (activeLangBtn) {
+    activeLangBtn.classList.add('active', 'bg-primary-600', 'text-white')
+    activeLangBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300')
+  }
+}
 
-    if (totalResults === 0) {
-      resultsContainer.classList.add('hidden');
-      emptyState.classList.add('hidden');
-      noResults.classList.remove('hidden');
-      return;
-    }
+// Search function
+function performSearch(query) {
+  if (!query || query.trim().length < 2) {
+    showEmptyState()
+    return
+  }
 
-    emptyState.classList.add('hidden');
-    noResults.classList.add('hidden');
-    resultsContainer.classList.remove('hidden');
-    
-    resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`;
-    
-    // Update live region for screen readers
-    const searchStatus = document.getElementById('search-status');
-    searchStatus.textContent = `Showing ${totalResults} result${totalResults !== 1 ? 's' : ''} for ${query}. ${episodes.length} episode${episodes.length !== 1 ? 's' : ''} and ${guests.length} guest${guests.length !== 1 ? 's' : ''}.`;
+  const episodeResults = searchData.episodes.filter(episode => {
+    return fuzzySearch(query, episode.title) ||
+           fuzzySearch(query, episode.description) ||
+           (episode.keywords && episode.keywords.some(keyword => fuzzySearch(query, keyword)))
+  })
 
-    // Display episodes
-    const episodesSection = document.getElementById('episodes-section');
-    const episodesResults = document.getElementById('episodes-results');
-    
-    if (episodes.length > 0) {
-      episodesSection.classList.remove('hidden');
-      episodesResults.innerHTML = episodes.map(episode => `
+  const guestResults = searchData.guests.filter(guest => {
+    return fuzzySearch(query, guest.name) ||
+           fuzzySearch(query, guest.bio) ||
+           fuzzySearch(query, guest.company) ||
+           fuzzySearch(query, guest.role)
+  })
+
+  // Apply filters
+  const filtered = applyFilters(episodeResults, guestResults)
+  displayResults(filtered.episodes, filtered.guests, query)
+}
+
+// Display search results
+function displayResults(episodes, guests, query) {
+  const resultsContainer = document.getElementById('search-results')
+  const emptyState = document.getElementById('empty-state')
+  const noResults = document.getElementById('no-results')
+  const resultsCount = document.getElementById('results-count')
+
+  const totalResults = episodes.length + guests.length
+
+  if (totalResults === 0) {
+    resultsContainer.classList.add('hidden')
+    emptyState.classList.add('hidden')
+    noResults.classList.remove('hidden')
+    return
+  }
+
+  emptyState.classList.add('hidden')
+  noResults.classList.add('hidden')
+  resultsContainer.classList.remove('hidden')
+
+  resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`
+
+  // Update live region for screen readers
+  const searchStatus = document.getElementById('search-status')
+  searchStatus.textContent = `Showing ${totalResults} result${totalResults !== 1 ? 's' : ''} for ${query}. ${episodes.length} episode${episodes.length !== 1 ? 's' : ''} and ${guests.length} guest${guests.length !== 1 ? 's' : ''}.`
+
+  // Display episodes
+  const episodesSection = document.getElementById('episodes-section')
+  const episodesResults = document.getElementById('episodes-results')
+
+  if (episodes.length > 0) {
+    episodesSection.classList.remove('hidden')
+    episodesResults.innerHTML = episodes.map(episode => `
         <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
           <div class="flex items-start justify-between mb-3">
             <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
@@ -348,18 +348,18 @@ const languages = [
             </svg>
           </a>
         </article>
-      `).join('');
-    } else {
-      episodesSection.classList.add('hidden');
-    }
+      `).join('')
+  } else {
+    episodesSection.classList.add('hidden')
+  }
 
-    // Display guests
-    const guestsSection = document.getElementById('guests-section');
-    const guestsResults = document.getElementById('guests-results');
-    
-    if (guests.length > 0) {
-      guestsSection.classList.remove('hidden');
-      guestsResults.innerHTML = guests.map(guest => `
+  // Display guests
+  const guestsSection = document.getElementById('guests-section')
+  const guestsResults = document.getElementById('guests-results')
+
+  if (guests.length > 0) {
+    guestsSection.classList.remove('hidden')
+    guestsResults.innerHTML = guests.map(guest => `
         <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center">
           <div class="mb-4">
             <img 
@@ -380,98 +380,98 @@ const languages = [
             ${guest.episodeCount} episode${guest.episodeCount !== 1 ? 's' : ''}
           </div>
         </article>
-      `).join('');
-    } else {
-      guestsSection.classList.add('hidden');
-    }
+      `).join('')
+  } else {
+    guestsSection.classList.add('hidden')
   }
+}
 
-  // Show empty state
-  function showEmptyState() {
-    document.getElementById('search-results').classList.add('hidden');
-    document.getElementById('no-results').classList.add('hidden');
-    document.getElementById('empty-state').classList.remove('hidden');
-  }
+// Show empty state
+function showEmptyState() {
+  document.getElementById('search-results').classList.add('hidden')
+  document.getElementById('no-results').classList.add('hidden')
+  document.getElementById('empty-state').classList.remove('hidden')
+}
 
-  // Set up event listeners
-  document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input');
-    const searchTags = document.querySelectorAll('.search-tag');
+// Set up event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search-input')
+  const searchTags = document.querySelectorAll('.search-tag')
 
-    // Auto-focus search input
-    searchInput.focus();
+  // Auto-focus search input
+  searchInput.focus()
 
-    // Handle search input
-    let searchTimeout;
-    searchInput.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        performSearch(e.target.value);
-      }, 300); // Debounce search
-    });
+  // Handle search input
+  let searchTimeout
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+      performSearch(e.target.value)
+    }, 300) // Debounce search
+  })
 
-    // Handle quick search tags
-    searchTags.forEach(tag => {
-      tag.addEventListener('click', () => {
-        const query = tag.dataset.query;
-        searchInput.value = query;
-        performSearch(query);
-      });
-    });
+  // Handle quick search tags
+  searchTags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      const query = tag.dataset.query
+      searchInput.value = query
+      performSearch(query)
+    })
+  })
 
-    // Handle filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filterId = btn.id.replace('filter-', '');
-        currentFilters.contentType = filterId;
-        updateFilterButtons();
-        
-        // Re-run search with new filters
-        const currentQuery = searchInput.value;
-        if (currentQuery && currentQuery.trim().length >= 2) {
-          performSearch(currentQuery);
-        }
-      });
-    });
+  // Handle filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filterId = btn.id.replace('filter-', '')
+      currentFilters.contentType = filterId
+      updateFilterButtons()
 
-    // Handle language filter buttons
-    document.querySelectorAll('.lang-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const langId = btn.id === 'lang-all' ? 'all' : btn.id.replace('lang-', '');
-        currentFilters.language = langId;
-        updateFilterButtons();
-        
-        // Re-run search with new filters
-        const currentQuery = searchInput.value;
-        if (currentQuery && currentQuery.trim().length >= 2) {
-          performSearch(currentQuery);
-        }
-      });
-    });
-
-    // Handle clear filters
-    document.getElementById('clear-filters').addEventListener('click', () => {
-      currentFilters = {
-        contentType: 'all',
-        language: 'all'
-      };
-      updateFilterButtons();
-      
-      // Re-run search with cleared filters
-      const currentQuery = searchInput.value;
+      // Re-run search with new filters
+      const currentQuery = searchInput.value
       if (currentQuery && currentQuery.trim().length >= 2) {
-        performSearch(currentQuery);
+        performSearch(currentQuery)
       }
-    });
+    })
+  })
 
-    // Handle URL search parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryParam = urlParams.get('q');
-    if (queryParam) {
-      searchInput.value = queryParam;
-      performSearch(queryParam);
+  // Handle language filter buttons
+  document.querySelectorAll('.lang-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const langId = btn.id === 'lang-all' ? 'all' : btn.id.replace('lang-', '')
+      currentFilters.language = langId
+      updateFilterButtons()
+
+      // Re-run search with new filters
+      const currentQuery = searchInput.value
+      if (currentQuery && currentQuery.trim().length >= 2) {
+        performSearch(currentQuery)
+      }
+    })
+  })
+
+  // Handle clear filters
+  document.getElementById('clear-filters').addEventListener('click', () => {
+    currentFilters = {
+      contentType: 'all',
+      language: 'all'
     }
-  });
+    updateFilterButtons()
+
+    // Re-run search with cleared filters
+    const currentQuery = searchInput.value
+    if (currentQuery && currentQuery.trim().length >= 2) {
+      performSearch(currentQuery)
+    }
+  })
+
+  // Handle URL search parameter
+  const urlParams = new URLSearchParams(window.location.search)
+  const queryParam = urlParams.get('q')
+  if (queryParam) {
+    searchInput.value = queryParam
+    performSearch(queryParam)
+  }
+})
 </script>
 
 <style>

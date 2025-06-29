@@ -216,33 +216,33 @@ const truncatedHeadline = truncateHeadline(linkedinHeadline, config.headlineLeng
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Handle guest card clicks
-    const guestCards = document.querySelectorAll('[data-guest-url]');
-    
-    guestCards.forEach(card => {
-      const guestUrl = card.getAttribute('data-guest-url');
-      
-      // Handle click on the card
-      card.addEventListener('click', (e) => {
-        // Don't navigate if clicking on a link inside the card
-        if (e.target.closest('a')) {
-          return;
-        }
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle guest card clicks
+  const guestCards = document.querySelectorAll('[data-guest-url]')
+
+  guestCards.forEach(card => {
+    const guestUrl = card.getAttribute('data-guest-url')
+
+    // Handle click on the card
+    card.addEventListener('click', (e) => {
+      // Don't navigate if clicking on a link inside the card
+      if (e.target.closest('a')) {
+        return
+      }
+      if (guestUrl) {
+        window.location.href = guestUrl
+      }
+    })
+
+    // Handle keyboard navigation
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.target.closest('a')) {
+        e.preventDefault()
         if (guestUrl) {
-          window.location.href = guestUrl;
+          window.location.href = guestUrl
         }
-      });
-      
-      // Handle keyboard navigation
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.target.closest('a')) {
-          e.preventDefault();
-          if (guestUrl) {
-            window.location.href = guestUrl;
-          }
-        }
-      });
-    });
-  });
+      }
+    })
+  })
+})
 </script>

@@ -31,7 +31,7 @@ export class NocoDBService {
       maxSize: 1000,
       evictionPolicy: 'lru'
     })
-    
+
     // Start auto-reconnect if configured
     if (config.connection.keepAlive) {
       this.startAutoReconnect()
@@ -42,7 +42,7 @@ export class NocoDBService {
     if (this.isConnecting) {
       throw new Error('Connection already in progress')
     }
-    
+
     this.isConnecting = true
     try {
       await this.adapter.connect(this.config)
@@ -72,77 +72,77 @@ export class NocoDBService {
   // Episode operations
   async getEpisodes(params: QueryParams = {}): Promise<Episode[]> {
     const cacheKey = this.cache.generateKey({ type: 'episodes', params })
-    
+
     // Check cache first
     const cached = await this.cache.get<Episode[]>(cacheKey)
-    if (cached) return cached
-    
+    if (cached) {return cached}
+
     // Query through adapter
     const result = await this.adapter.query<Episode>({
       table: 'Episodes',
       ...params
     })
-    
+
     // Validate and filter results
     const validated = result.filter(episode => this.validateEpisode(episode))
-    
+
     // Cache results
     await this.cache.set(cacheKey, validated, params.ttl)
-    
+
     return validated
   }
 
   // Guest operations
   async getGuests(params: QueryParams = {}): Promise<Guest[]> {
     const cacheKey = this.cache.generateKey({ type: 'guests', params })
-    
+
     const cached = await this.cache.get<Guest[]>(cacheKey)
-    if (cached) return cached
-    
+    if (cached) {return cached}
+
     const result = await this.adapter.query<Guest>({
       table: 'Guests',
       ...params
     })
-    
+
     const validated = result.filter(guest => this.validateGuest(guest))
     await this.cache.set(cacheKey, validated, params.ttl)
-    
+
     return validated
   }
 
   // Host operations
   async getHosts(params: QueryParams = {}): Promise<Host[]> {
     const cacheKey = this.cache.generateKey({ type: 'hosts', params })
-    
+
     const cached = await this.cache.get<Host[]>(cacheKey)
-    if (cached) return cached
-    
+    if (cached) {return cached}
+
     const result = await this.adapter.query<Host>({
       table: 'Hosts',
       ...params
     })
-    
+
     const validated = result.filter(host => this.validateHost(host))
     await this.cache.set(cacheKey, validated, params.ttl)
-    
+
     return validated
   }
 
   // Platform operations
   async getPlatforms(params: QueryParams = {}): Promise<Platform[]> {
     const cacheKey = this.cache.generateKey({ type: 'platforms', params })
-    
+
     const cached = await this.cache.get<Platform[]>(cacheKey)
-    if (cached) return cached
-    
+    if (cached) {return cached}
+
     const result = await this.adapter.query<Platform>({
       table: 'Platforms',
       ...params
     })
-    
+
     const validated = result.filter(platform => this.validatePlatform(platform))
     await this.cache.set(cacheKey, validated, params.ttl)
-    
+
     return validated
   }
 
@@ -150,7 +150,7 @@ export class NocoDBService {
   subscribeToChanges(callback: ChangeCallback): Subscription {
     const id = Math.random().toString(36).substr(2, 9)
     this.subscriptions.set(id, callback)
-    
+
     return {
       id,
       unsubscribe: () => {
@@ -167,7 +167,7 @@ export class NocoDBService {
       },
       sort: [{ field: 'timestamp', order: 'asc' }]
     })
-    
+
     return result
   }
 

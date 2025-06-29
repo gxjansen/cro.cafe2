@@ -183,61 +183,61 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
   // Enhanced error handling and performance monitoring
   document.addEventListener('DOMContentLoaded', () => {
     // Monitor image loading performance
-    const profilePictures = document.querySelectorAll('.guest-profile-picture img');
-    
-    profilePictures.forEach(img => {
-      const startTime = performance.now();
-      
+    const profilePictures = document.querySelectorAll('.guest-profile-picture img')
+  
+  profilePictures.forEach(img => {
+      const startTime = performance.now()
+  
       // Track loading performance
       img.addEventListener('load', () => {
-        const loadTime = performance.now() - startTime;
+        const loadTime = performance.now() - startTime
         if (loadTime > 3000) {
-          console.warn(`Slow profile picture load: ${loadTime}ms for ${img.src}`);
+          console.warn(`Slow profile picture load: ${loadTime}ms for ${img.src}`)
         }
-      });
+      })
 
       // Implement retry logic for failed loads
-      let retryCount = 0;
-      const maxRetries = 1; // Reduced since we're trying different extensions
-      
+      let retryCount = 0
+      const maxRetries = 1 // Reduced since we're trying different extensions
+  
       img.addEventListener('error', function handleError() {
         // Skip retry if we're already trying different extensions
         if (img.dataset.triedJpg || img.dataset.triedJpeg) {
-          return;
+          return
         }
-        
+  
         if (retryCount < maxRetries && !img.src.includes('default-guest')) {
-          retryCount++;
-          console.log(`Retrying profile picture load (${retryCount}/${maxRetries}): ${img.src}`);
-          
+          retryCount++
+          console.log(`Retrying profile picture load (${retryCount}/${maxRetries}): ${img.src}`)
+  
           // Add a small delay before retry
           setTimeout(() => {
-            img.src = img.src + '?retry=' + retryCount;
-          }, 1000 * retryCount);
+            img.src = `${img.src  }?retry=${  retryCount}`
+          }, 1000 * retryCount)
         }
-      });
-    });
+      })
+  })
 
-    // Intersection Observer for lazy loading optimization
-    if ('IntersectionObserver' in window) {
+  // Intersection Observer for lazy loading optimization
+  if ('IntersectionObserver' in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const img = entry.target.querySelector('img[loading="lazy"]');
+            const img = entry.target.querySelector('img[loading="lazy"]')
             if (img && img.dataset.src) {
-              img.src = img.dataset.src;
-              observer.unobserve(entry.target);
+              img.src = img.dataset.src
+              observer.unobserve(entry.target)
             }
           }
-        });
+        })
       }, {
         rootMargin: '50px 0px',
         threshold: 0.01
-      });
+      })
 
       document.querySelectorAll('.guest-profile-picture').forEach(picture => {
-        imageObserver.observe(picture);
-      });
-    }
-  });
+        imageObserver.observe(picture)
+      })
+  }
+  })
 </script>

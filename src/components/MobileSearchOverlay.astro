@@ -97,266 +97,266 @@ const { searchId = 'mobile-search' } = Astro.props;
 </div>
 
 <script define:vars={{ searchId }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById(`${searchId}-overlay`);
-    const searchInput = document.getElementById(`${searchId}-input`);
-    const resultsContainer = document.getElementById(`${searchId}-results`);
-    const recentContainer = document.getElementById(`${searchId}-recent`);
-    const closeBtn = overlay.querySelector('.close-search');
-    
-    // Recent searches from localStorage
-    let recentSearches = JSON.parse(localStorage.getItem('croRecent') || '[]');
-    
-    // Update recent searches display
-    function updateRecentSearches() {
-      if (recentSearches.length === 0) {
-        recentContainer.parentElement.classList.add('hidden');
-        return;
-      }
-      
-      recentContainer.parentElement.classList.remove('hidden');
-      recentContainer.innerHTML = recentSearches.slice(0, 5).map(term => `
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById(`${searchId}-overlay`)
+  const searchInput = document.getElementById(`${searchId}-input`)
+  const resultsContainer = document.getElementById(`${searchId}-results`)
+  const recentContainer = document.getElementById(`${searchId}-recent`)
+  const closeBtn = overlay.querySelector('.close-search')
+
+  // Recent searches from localStorage
+  let recentSearches = JSON.parse(localStorage.getItem('croRecent') || '[]')
+
+  // Update recent searches display
+  function updateRecentSearches() {
+    if (recentSearches.length === 0) {
+      recentContainer.parentElement.classList.add('hidden')
+      return
+    }
+
+    recentContainer.parentElement.classList.remove('hidden')
+    recentContainer.innerHTML = recentSearches.slice(0, 5).map(term => `
         <button class="recent-term px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
           ${term}
         </button>
-      `).join('');
-      
-      // Add click handlers
-      recentContainer.querySelectorAll('.recent-term').forEach(btn => {
-        btn.addEventListener('click', () => {
-          searchInput.value = btn.textContent.trim();
-          performQuickSearch(btn.textContent.trim());
-        });
-      });
+      `).join('')
+
+    // Add click handlers
+    recentContainer.querySelectorAll('.recent-term').forEach(btn => {
+      btn.addEventListener('click', () => {
+        searchInput.value = btn.textContent.trim()
+        performQuickSearch(btn.textContent.trim())
+      })
+    })
+  }
+
+  // Save search to recent
+  function saveToRecent(term) {
+    if (!term || term.length < 3) {return}
+
+    // Remove if already exists
+    recentSearches = recentSearches.filter(t => t !== term)
+
+    // Add to beginning
+    recentSearches.unshift(term)
+
+    // Keep only 10 most recent
+    recentSearches = recentSearches.slice(0, 10)
+
+    localStorage.setItem('croRecent', JSON.stringify(recentSearches))
+    updateRecentSearches()
+  }
+
+  // Enhanced search function with fuzzy matching
+  function fuzzySearch(query, text) {
+    if (!query || !text) {return false}
+
+    const normalizedQuery = query.toLowerCase().trim()
+    const normalizedText = text.toLowerCase()
+
+    // Exact match gets highest score
+    if (normalizedText.includes(normalizedQuery)) {
+      return true
     }
-    
-    // Save search to recent
-    function saveToRecent(term) {
-      if (!term || term.length < 3) return;
-      
-      // Remove if already exists
-      recentSearches = recentSearches.filter(t => t !== term);
-      
-      // Add to beginning
-      recentSearches.unshift(term);
-      
-      // Keep only 10 most recent
-      recentSearches = recentSearches.slice(0, 10);
-      
-      localStorage.setItem('croRecent', JSON.stringify(recentSearches));
-      updateRecentSearches();
-    }
-    
-    // Enhanced search function with fuzzy matching
-    function fuzzySearch(query, text) {
-      if (!query || !text) return false;
-      
-      const normalizedQuery = query.toLowerCase().trim();
-      const normalizedText = text.toLowerCase();
-      
-      // Exact match gets highest score
-      if (normalizedText.includes(normalizedQuery)) {
-        return true;
-      }
-      
-      // Word-based fuzzy matching
-      const queryWords = normalizedQuery.split(/\s+/);
-      return queryWords.some(word => 
-        word.length > 2 && normalizedText.includes(word)
-      );
-    }
-    
-    // Perform quick search with real data
-    function performQuickSearch(query) {
-      if (!query || query.length < 2) {
-        resultsContainer.innerHTML = `
-          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            <p class="text-sm">Start typing to search</p>
-          </div>
-        `;
-        return;
-      }
-      
-      // Show loading state briefly
+
+    // Word-based fuzzy matching
+    const queryWords = normalizedQuery.split(/\s+/)
+    return queryWords.some(word =>
+      word.length > 2 && normalizedText.includes(word)
+    )
+  }
+
+  // Perform quick search with real data
+  function performQuickSearch(query) {
+    if (!query || query.length < 2) {
       resultsContainer.innerHTML = `
-        <div class="text-center py-8">
-          <div class="inline-flex items-center text-gray-500 dark:text-gray-400">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Searching...
-          </div>
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <p class="text-sm">Start typing to search</p>
         </div>
-      `;
-      
-      // For now, we'll use placeholder results, but this can be enhanced with real data
-      setTimeout(() => {
-        const currentLang = window.location.pathname.split('/')[1] || 'en';
-        const isValidLang = ['en', 'nl', 'de', 'es'].includes(currentLang);
-        const basePath = isValidLang ? `/${currentLang}` : '';
-        
-        // Create sample results
-        const episodeResults = [];
-        const guestResults = [];
-        
-        // Add some example episodes based on query
-        if (fuzzySearch(query, 'conversion optimization experimentation analytics')) {
-          episodeResults.push({
-            title: 'Advanced Experimentation Techniques',
-            description: 'Learn about cutting-edge methods in A/B testing and conversion optimization',
-            slug: 'advanced-experimentation',
-            lang: currentLang
-          });
-        }
-        
-        if (fuzzySearch(query, 'analytics data analysis metrics')) {
-          episodeResults.push({
-            title: 'Data-Driven Decision Making',
-            description: 'How to use analytics effectively for business growth',
-            slug: 'data-driven-decisions',
-            lang: currentLang
-          });
-        }
-        
-        // Build results HTML
-        let html = '<div class="space-y-6">';
-        
-        // Episodes
-        if (episodeResults.length > 0) {
+      `
+      return
+    }
+
+    // Show loading state briefly
+    resultsContainer.innerHTML = `
+      <div class="text-center py-8">
+        <div class="inline-flex items-center text-gray-500 dark:text-gray-400">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Searching...
+        </div>
+      </div>
+    `
+
+    // For now, we'll use placeholder results, but this can be enhanced with real data
+    setTimeout(() => {
+      const currentLang = window.location.pathname.split('/')[1] || 'en'
+      const isValidLang = ['en', 'nl', 'de', 'es'].includes(currentLang)
+      const basePath = isValidLang ? `/${currentLang}` : ''
+
+      // Create sample results
+      const episodeResults = []
+      const guestResults = []
+
+      // Add some example episodes based on query
+      if (fuzzySearch(query, 'conversion optimization experimentation analytics')) {
+        episodeResults.push({
+          title: 'Advanced Experimentation Techniques',
+          description: 'Learn about cutting-edge methods in A/B testing and conversion optimization',
+          slug: 'advanced-experimentation',
+          lang: currentLang
+        })
+      }
+
+      if (fuzzySearch(query, 'analytics data analysis metrics')) {
+        episodeResults.push({
+          title: 'Data-Driven Decision Making',
+          description: 'How to use analytics effectively for business growth',
+          slug: 'data-driven-decisions',
+          lang: currentLang
+        })
+      }
+
+      // Build results HTML
+      let html = '<div class="space-y-6">'
+
+      // Episodes
+      if (episodeResults.length > 0) {
+        html += `
+          <div>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Episodes</h3>
+            <div class="space-y-3">
+        `
+
+        episodeResults.forEach(episode => {
           html += `
-            <div>
-              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Episodes</h3>
-              <div class="space-y-3">
-          `;
-          
-          episodeResults.forEach(episode => {
-            html += `
               <a href="${basePath}/episodes/${episode.slug}/" class="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <h4 class="font-medium text-gray-900 dark:text-white mb-1">${episode.title}</h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${episode.description}</p>
-              </a>
-            `;
-          });
-          
-          html += '</div></div>';
-        }
-        
-        // Guests placeholder
-        html += `
-          <div>
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Guests</h3>
-            <div class="space-y-3">
-              <div class="text-sm text-gray-500 dark:text-gray-400 italic">Guest search coming soon...</div>
-            </div>
+            </a>
+          `
+        })
+
+        html += '</div></div>'
+      }
+
+      // Guests placeholder
+      html += `
+        <div>
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Guests</h3>
+          <div class="space-y-3">
+            <div class="text-sm text-gray-500 dark:text-gray-400 italic">Guest search coming soon...</div>
           </div>
-        `;
-        
-        // View all link
-        const searchPath = isValidLang ? `/${currentLang}/search/` : '/search/';
-        html += `
+        </div>
+      `
+
+      // View all link
+      const searchPath = isValidLang ? `/${currentLang}/search/` : '/search/'
+      html += `
           <div class="pt-4">
             <a href="${searchPath}?q=${encodeURIComponent(query)}" class="text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">
               View all results for "${query}" →
-            </a>
-          </div>
+          </a>
         </div>
-        `;
-        
-        resultsContainer.innerHTML = html;
-        
-        // Save to recent searches
-        saveToRecent(query);
-      }, 150);
+      </div>
+      `
+
+      resultsContainer.innerHTML = html
+
+      // Save to recent searches
+      saveToRecent(query)
+    }, 150)
+  }
+
+  // Open search overlay
+  function openSearch() {
+    overlay.classList.remove('translate-x-full')
+    overlay.classList.add('translate-x-0')
+    overlay.setAttribute('aria-hidden', 'false')
+    document.body.classList.add('overflow-hidden')
+
+    // Focus input after animation
+    setTimeout(() => {
+      searchInput.focus()
+    }, 300)
+
+    // Animate backdrop
+    const backdrop = overlay.querySelector('.bg-black')
+    setTimeout(() => {
+      backdrop.classList.add('opacity-100')
+    }, 50)
+  }
+
+  // Close search overlay
+  function closeSearch() {
+    overlay.classList.add('translate-x-full')
+    overlay.classList.remove('translate-x-0')
+    overlay.setAttribute('aria-hidden', 'true')
+    document.body.classList.remove('overflow-hidden')
+
+    // Animate backdrop
+    const backdrop = overlay.querySelector('.bg-black')
+    backdrop.classList.remove('opacity-100')
+
+    // Clear search after animation
+    setTimeout(() => {
+      searchInput.value = ''
+      resultsContainer.innerHTML = `
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <p class="text-sm">Start typing to search</p>
+        </div>
+      `
+    }, 300)
+  }
+
+  // Event listeners
+  closeBtn.addEventListener('click', closeSearch)
+
+  // Close on backdrop click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay || e.target.classList.contains('bg-black')) {
+      closeSearch()
     }
-    
-    // Open search overlay
-    function openSearch() {
-      overlay.classList.remove('translate-x-full');
-      overlay.classList.add('translate-x-0');
-      overlay.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('overflow-hidden');
-      
-      // Focus input after animation
-      setTimeout(() => {
-        searchInput.focus();
-      }, 300);
-      
-      // Animate backdrop
-      const backdrop = overlay.querySelector('.bg-black');
-      setTimeout(() => {
-        backdrop.classList.add('opacity-100');
-      }, 50);
+  })
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.classList.contains('translate-x-full')) {
+      closeSearch()
     }
-    
-    // Close search overlay
-    function closeSearch() {
-      overlay.classList.add('translate-x-full');
-      overlay.classList.remove('translate-x-0');
-      overlay.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('overflow-hidden');
-      
-      // Animate backdrop
-      const backdrop = overlay.querySelector('.bg-black');
-      backdrop.classList.remove('opacity-100');
-      
-      // Clear search after animation
-      setTimeout(() => {
-        searchInput.value = '';
-        resultsContainer.innerHTML = `
-          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            <p class="text-sm">Start typing to search</p>
-          </div>
-        `;
-      }, 300);
-    }
-    
-    // Event listeners
-    closeBtn.addEventListener('click', closeSearch);
-    
-    // Close on backdrop click
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay || e.target.classList.contains('bg-black')) {
-        closeSearch();
-      }
-    });
-    
-    // Close on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !overlay.classList.contains('translate-x-full')) {
-        closeSearch();
-      }
-    });
-    
-    // Handle search input
-    let searchTimeout;
-    searchInput.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        performQuickSearch(e.target.value);
-      }, 300);
-    });
-    
-    // Handle quick filters
-    overlay.querySelectorAll('.quick-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.dataset.filter;
-        window.location.href = `/search/?filter=${filter}`;
-      });
-    });
-    
-    // Initialize recent searches
-    updateRecentSearches();
-    
-    // Expose open method globally
-    window[`open${searchId.charAt(0).toUpperCase() + searchId.slice(1)}Overlay`] = openSearch;
-  });
+  })
+
+  // Handle search input
+  let searchTimeout
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+      performQuickSearch(e.target.value)
+    }, 300)
+  })
+
+  // Handle quick filters
+  overlay.querySelectorAll('.quick-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter
+      window.location.href = `/search/?filter=${filter}`
+    })
+  })
+
+  // Initialize recent searches
+  updateRecentSearches()
+
+  // Expose open method globally
+  window[`open${searchId.charAt(0).toUpperCase() + searchId.slice(1)}Overlay`] = openSearch
+})
 </script>
 
 <style>

@@ -88,14 +88,14 @@ export class NocoDBAPIClient {
 
   private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const url = `${this.config.baseUrl}/api/v2${endpoint}`
-    
+
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
         'xc-token': this.config.apiKey,
-        ...options.headers,
-      },
+        ...options.headers
+      }
     })
 
     if (!response.ok) {
@@ -135,11 +135,11 @@ export class NocoDBAPIClient {
     // Use actual NocoDB table names (capitalized)
     const tableMap: Record<string, string> = {
       episodes: 'Episodes',
-      guests: 'Guests', 
+      guests: 'Guests',
       hosts: 'Hosts',
       platforms: 'Platforms'
     }
-    
+
     return tableMap[tableName] || tableName
   }
 

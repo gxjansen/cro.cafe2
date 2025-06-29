@@ -1,14 +1,14 @@
 /**
  * LinkedIn Data Sanitization Rules for CRO.CAFE
- * 
+ *
  * This file contains sanitization functions for each LinkedIn field
  * to ensure data consistency and prevent display issues on the website.
  */
 
 // Helper function to convert styled Unicode text to regular text
 function convertStyledText(text) {
-  if (!text) return text;
-  
+  if (!text) {return text}
+
   // Unicode mathematical alphanumeric symbols mapping
   const styledTextMap = {
     // Bold letters
@@ -25,20 +25,20 @@ function convertStyledText(text) {
     '𝒂': 'a', '𝒃': 'b', '𝒄': 'c', '𝒅': 'd', '𝒆': 'e', '𝒇': 'f', '𝒈': 'g', '𝒉': 'h', '𝒊': 'i', '𝒋': 'j',
     '𝒌': 'k', '𝒍': 'l', '𝒎': 'm', '𝒏': 'n', '𝒐': 'o', '𝒑': 'p', '𝒒': 'q', '𝒓': 'r', '𝒔': 's', '𝒕': 't',
     '𝒖': 'u', '𝒗': 'v', '𝒘': 'w', '𝒙': 'x', '𝒚': 'y', '𝒛': 'z'
-  };
-  
-  let result = text;
-  for (const [styled, normal] of Object.entries(styledTextMap)) {
-    result = result.replace(new RegExp(styled, 'g'), normal);
   }
-  
-  return result;
+
+  let result = text
+  for (const [styled, normal] of Object.entries(styledTextMap)) {
+    result = result.replace(new RegExp(styled, 'g'), normal)
+  }
+
+  return result
 }
 
 // Helper function to remove or replace problematic symbols
 function sanitizeSymbols(text, preserveEmojis = false) {
-  if (!text) return text;
-  
+  if (!text) {return text}
+
   // Replace specific problematic symbols
   let result = text
     .replace(/⌆/g, '') // Remove the ⌆ symbol
@@ -55,31 +55,31 @@ function sanitizeSymbols(text, preserveEmojis = false) {
     .replace(/🌎🌴🥥/g, '') // Remove travel emojis
     .replace(/🍹🍺🌞/g, '') // Remove vacation emojis
     .replace(/\*\*/g, '') // Remove markdown bold markers
-    .replace(/\n{3,}/g, '\n\n'); // Limit consecutive newlines to 2
-  
+    .replace(/\n{3,}/g, '\n\n') // Limit consecutive newlines to 2
+
   // Optionally remove all emojis
   if (!preserveEmojis) {
     // Remove most common emoji ranges
-    result = result.replace(/[\u{1F600}-\u{1F64F}]/gu, ''); // Emoticons
-    result = result.replace(/[\u{1F300}-\u{1F5FF}]/gu, ''); // Symbols & pictographs
-    result = result.replace(/[\u{1F680}-\u{1F6FF}]/gu, ''); // Transport & map symbols
-    result = result.replace(/[\u{1F700}-\u{1F77F}]/gu, ''); // Alchemical symbols
-    result = result.replace(/[\u{1F780}-\u{1F7FF}]/gu, ''); // Geometric shapes extended
-    result = result.replace(/[\u{1F800}-\u{1F8FF}]/gu, ''); // Supplemental arrows-C
-    result = result.replace(/[\u{2600}-\u{26FF}]/gu, ''); // Miscellaneous symbols
-    result = result.replace(/[\u{2700}-\u{27BF}]/gu, ''); // Dingbats
+    result = result.replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+    result = result.replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Symbols & pictographs
+    result = result.replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport & map symbols
+    result = result.replace(/[\u{1F700}-\u{1F77F}]/gu, '') // Alchemical symbols
+    result = result.replace(/[\u{1F780}-\u{1F7FF}]/gu, '') // Geometric shapes extended
+    result = result.replace(/[\u{1F800}-\u{1F8FF}]/gu, '') // Supplemental arrows-C
+    result = result.replace(/[\u{2600}-\u{26FF}]/gu, '') // Miscellaneous symbols
+    result = result.replace(/[\u{2700}-\u{27BF}]/gu, '') // Dingbats
   }
-  
+
   // Clean up extra spaces
-  result = result.replace(/\s+/g, ' ').trim();
-  
-  return result;
+  result = result.replace(/\s+/g, ' ').trim()
+
+  return result
 }
 
 // Helper function to clean up HTML and formatting
 function cleanFormatting(text) {
-  if (!text) return text;
-  
+  if (!text) {return text}
+
   return text
     .replace(/<[^>]*>/g, '') // Remove any HTML tags
     .replace(/&nbsp;/g, ' ') // Replace HTML spaces
@@ -90,198 +90,198 @@ function cleanFormatting(text) {
     .replace(/&#39;/g, "'") // Replace HTML apostrophes
     .replace(/\r\n/g, '\n') // Normalize line endings
     .replace(/\r/g, '\n') // Normalize line endings
-    .trim();
+    .trim()
 }
 
 // Sanitization rules for each LinkedIn field
 const sanitizationRules = {
   // Names and titles - remove all special characters
   linkedin_full_name: (value) => {
-    if (!value) return value;
-    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)));
+    if (!value) {return value}
+    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)))
   },
-  
+
   linkedin_first_name: (value) => {
-    if (!value) return value;
-    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)));
+    if (!value) {return value}
+    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)))
   },
-  
+
   // Headlines - preserve some formatting but remove problematic symbols
   linkedin_headline: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     // Allow emojis in headlines for personality, but remove problematic symbols
-    let cleaned = cleanFormatting(convertStyledText(value));
+    let cleaned = cleanFormatting(convertStyledText(value))
     // Remove specific problematic symbols while keeping useful emojis
-    cleaned = cleaned.replace(/⌆/g, '').replace(/\*\*/g, '');
+    cleaned = cleaned.replace(/⌆/g, '').replace(/\*\*/g, '')
     // Limit length to prevent layout issues
     if (cleaned.length > 200) {
-      cleaned = cleaned.substring(0, 197) + '...';
+      cleaned = `${cleaned.substring(0, 197)  }...`
     }
-    return cleaned.trim();
+    return cleaned.trim()
   },
-  
+
   // Email - strict sanitization
   linkedin_email: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     // Remove all non-email characters
-    return value.toLowerCase().trim().replace(/[^a-z0-9@._+-]/gi, '');
+    return value.toLowerCase().trim().replace(/[^a-z0-9@._+-]/gi, '')
   },
-  
+
   // Bio - preserve formatting but clean up
   linkedin_bio: (value) => {
-    if (!value) return value;
-    let cleaned = cleanFormatting(convertStyledText(value));
+    if (!value) {return value}
+    let cleaned = cleanFormatting(convertStyledText(value))
     // Remove all emojis and special symbols from bio
-    cleaned = sanitizeSymbols(cleaned, false);
+    cleaned = sanitizeSymbols(cleaned, false)
     // Preserve paragraph structure
-    cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-    return cleaned.trim();
+    cleaned = cleaned.replace(/\n{3,}/g, '\n\n')
+    return cleaned.trim()
   },
-  
+
   // URLs - ensure valid URLs
   linkedin_profile_pic: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     // Basic URL validation and cleaning
-    return value.trim().replace(/\s/g, '%20');
+    return value.trim().replace(/\s/g, '%20')
   },
-  
+
   linkedin_url: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     // Ensure it's a valid LinkedIn URL
-    const cleaned = value.trim();
+    const cleaned = value.trim()
     if (cleaned.includes('linkedin.com')) {
-      return cleaned;
+      return cleaned
     }
-    return null;
+    return null
   },
-  
+
   // Job titles and companies - moderate cleaning
   linkedin_current_role: (value) => {
-    if (!value) return value;
-    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)));
+    if (!value) {return value}
+    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)))
   },
-  
+
   linkedin_current_company: (value) => {
-    if (!value) return value;
-    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)));
+    if (!value) {return value}
+    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)))
   },
-  
+
   // Location data - basic cleaning
   linkedin_country: (value) => {
-    if (!value) return value;
-    return cleanFormatting(value).replace(/[^a-zA-Z\s-]/g, '');
+    if (!value) {return value}
+    return cleanFormatting(value).replace(/[^a-zA-Z\s-]/g, '')
   },
-  
+
   // Skills - clean list format
   linkedin_skills: (value) => {
-    if (!value) return value;
-    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)));
+    if (!value) {return value}
+    return cleanFormatting(convertStyledText(sanitizeSymbols(value, false)))
   },
-  
+
   // Company website - ensure valid URL
   linkedin_company_website: (value) => {
-    if (!value) return value;
-    const cleaned = value.trim().toLowerCase();
+    if (!value) {return value}
+    const cleaned = value.trim().toLowerCase()
     // Add https:// if missing
     if (cleaned && !cleaned.startsWith('http')) {
-      return `https://${cleaned}`;
+      return `https://${cleaned}`
     }
-    return cleaned;
+    return cleaned
   },
-  
+
   // JSON fields - ensure valid JSON
   linkedin_experiences: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     try {
       // If it's already a string, try to parse and re-stringify to ensure valid JSON
       if (typeof value === 'string') {
-        const parsed = JSON.parse(value);
+        const parsed = JSON.parse(value)
         // Clean the text content within the JSON
         const cleanJson = (obj) => {
           if (typeof obj === 'string') {
-            return cleanFormatting(convertStyledText(sanitizeSymbols(obj, false)));
+            return cleanFormatting(convertStyledText(sanitizeSymbols(obj, false)))
           } else if (Array.isArray(obj)) {
-            return obj.map(cleanJson);
+            return obj.map(cleanJson)
           } else if (obj && typeof obj === 'object') {
-            const cleaned = {};
+            const cleaned = {}
             for (const [key, val] of Object.entries(obj)) {
-              cleaned[key] = cleanJson(val);
+              cleaned[key] = cleanJson(val)
             }
-            return cleaned;
+            return cleaned
           }
-          return obj;
-        };
-        return JSON.stringify(cleanJson(parsed));
+          return obj
+        }
+        return JSON.stringify(cleanJson(parsed))
       }
-      return JSON.stringify(value);
+      return JSON.stringify(value)
     } catch (e) {
-      console.error('Error processing experiences JSON:', e);
-      return '[]';
+      console.error('Error processing experiences JSON:', e)
+      return '[]'
     }
   },
-  
+
   linkedin_personal_website: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     try {
       if (typeof value === 'string') {
-        const parsed = JSON.parse(value);
+        const parsed = JSON.parse(value)
         if (parsed.name) {
-          parsed.name = cleanFormatting(convertStyledText(sanitizeSymbols(parsed.name, false)));
+          parsed.name = cleanFormatting(convertStyledText(sanitizeSymbols(parsed.name, false)))
         }
         if (parsed.link && !parsed.link.startsWith('http')) {
-          parsed.link = `https://${parsed.link}`;
+          parsed.link = `https://${parsed.link}`
         }
-        return JSON.stringify(parsed);
+        return JSON.stringify(parsed)
       }
-      return JSON.stringify(value);
+      return JSON.stringify(value)
     } catch (e) {
-      console.error('Error processing personal website JSON:', e);
-      return '{}';
+      console.error('Error processing personal website JSON:', e)
+      return '{}'
     }
   },
-  
+
   linkedin_publications: (value) => {
-    if (!value) return value;
+    if (!value) {return value}
     try {
       if (typeof value === 'string') {
-        const parsed = JSON.parse(value);
+        const parsed = JSON.parse(value)
         const cleanJson = (obj) => {
           if (typeof obj === 'string') {
-            return cleanFormatting(convertStyledText(sanitizeSymbols(obj, false)));
+            return cleanFormatting(convertStyledText(sanitizeSymbols(obj, false)))
           } else if (Array.isArray(obj)) {
-            return obj.map(cleanJson);
+            return obj.map(cleanJson)
           } else if (obj && typeof obj === 'object') {
-            const cleaned = {};
+            const cleaned = {}
             for (const [key, val] of Object.entries(obj)) {
-              cleaned[key] = cleanJson(val);
+              cleaned[key] = cleanJson(val)
             }
-            return cleaned;
+            return cleaned
           }
-          return obj;
-        };
-        return JSON.stringify(cleanJson(parsed));
+          return obj
+        }
+        return JSON.stringify(cleanJson(parsed))
       }
-      return JSON.stringify(value);
+      return JSON.stringify(value)
     } catch (e) {
-      console.error('Error processing publications JSON:', e);
-      return '[]';
+      console.error('Error processing publications JSON:', e)
+      return '[]'
     }
   }
-};
+}
 
 // Main sanitization function
 function sanitizeLinkedInData(data) {
-  const sanitized = {};
-  
+  const sanitized = {}
+
   for (const [field, value] of Object.entries(data)) {
     if (field.startsWith('linkedin_') && sanitizationRules[field]) {
-      sanitized[field] = sanitizationRules[field](value);
+      sanitized[field] = sanitizationRules[field](value)
     } else {
-      sanitized[field] = value;
+      sanitized[field] = value
     }
   }
-  
-  return sanitized;
+
+  return sanitized
 }
 
 // Export for use in n8n
@@ -290,4 +290,4 @@ module.exports = {
   convertStyledText,
   sanitizeSymbols,
   cleanFormatting
-};
+}

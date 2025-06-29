@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useStore } from '@nanostores/react';
+import React, { useState } from 'react'
+import { useStore } from '@nanostores/react'
 import {
   offlineAudioStore,
   offlineAudioActions,
@@ -7,48 +7,48 @@ import {
   totalStorageUsed,
   storageQuota,
   offlineEpisodes
-} from '../stores/offlineAudioStore';
+} from '../stores/offlineAudioStore'
 
 interface OfflineStorageManagerProps {
   className?: string;
 }
 
 const OfflineStorageManager: React.FC<OfflineStorageManagerProps> = ({ className = '' }) => {
-  const episodes = useStore(offlineEpisodes);
-  const storageUsed = useStore(totalStorageUsed);
-  const quota = useStore(storageQuota);
-  const percentUsed = useStore(storagePercentUsed);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const episodes = useStore(offlineEpisodes)
+  const storageUsed = useStore(totalStorageUsed)
+  const quota = useStore(storageQuota)
+  const percentUsed = useStore(storagePercentUsed)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
   const handleDeleteEpisode = async (episodeId: string) => {
     if (confirm('Remove this episode from offline storage?')) {
-      setIsDeleting(episodeId);
+      setIsDeleting(episodeId)
       try {
-        await offlineAudioActions.deleteOfflineEpisode(episodeId);
+        await offlineAudioActions.deleteOfflineEpisode(episodeId)
       } catch (error) {
-        console.error('Failed to delete episode:', error);
+        console.error('Failed to delete episode:', error)
       } finally {
-        setIsDeleting(null);
+        setIsDeleting(null)
       }
     }
-  };
+  }
 
   const handleClearAll = async () => {
     if (confirm('Remove all offline episodes? This cannot be undone.')) {
       try {
-        await offlineAudioActions.clearAllOfflineEpisodes();
+        await offlineAudioActions.clearAllOfflineEpisodes()
       } catch (error) {
-        console.error('Failed to clear offline episodes:', error);
+        console.error('Failed to clear offline episodes:', error)
       }
     }
-  };
+  }
 
   const getStorageColor = () => {
-    if (percentUsed < 50) return 'bg-green-500';
-    if (percentUsed < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
+    if (percentUsed < 50) {return 'bg-green-500'}
+    if (percentUsed < 80) {return 'bg-yellow-500'}
+    return 'bg-red-500'
+  }
 
   return (
     <div className={`offline-storage-manager ${className} bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6`}>
@@ -125,7 +125,7 @@ const OfflineStorageManager: React.FC<OfflineStorageManagerProps> = ({ className
                     {episode.title}
                   </h5>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {offlineAudioActions.formatBytes(episode.fileSize)} • 
+                    {offlineAudioActions.formatBytes(episode.fileSize)} •
                     Downloaded {new Date(episode.downloadedAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -163,7 +163,7 @@ const OfflineStorageManager: React.FC<OfflineStorageManagerProps> = ({ className
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default OfflineStorageManager;
+export default OfflineStorageManager

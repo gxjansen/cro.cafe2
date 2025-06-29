@@ -478,36 +478,36 @@ const getDateLocale = (lang: Language) => {
 </style>
 
 <script>
-  // Initialize swipe gestures for episode navigation
-  import { SwipeGestures } from '../../../scripts/swipe-gestures.js';
-  
-  // Initialize swipe gestures when DOM is ready
-  if (typeof window !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-      const swipeGestures = new SwipeGestures({
-        threshold: 50,
-        velocity: 0.3,
-        restraint: 100,
-        allowedTime: 300
-      });
-      
-      // Show swipe hint on first visit
-      const hasSeenHint = localStorage.getItem('swipeHintShown');
-      if (!hasSeenHint && 'ontouchstart' in window) {
+// Initialize swipe gestures for episode navigation
+import { SwipeGestures } from '../../../scripts/swipe-gestures.js'
+
+// Initialize swipe gestures when DOM is ready
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const swipeGestures = new SwipeGestures({
+      threshold: 50,
+      velocity: 0.3,
+      restraint: 100,
+      allowedTime: 300
+    })
+
+    // Show swipe hint on first visit
+    const hasSeenHint = localStorage.getItem('swipeHintShown')
+    if (!hasSeenHint && 'ontouchstart' in window) {
+      setTimeout(() => {
+        const hint = document.createElement('div')
+        hint.className = 'swipe-hint show'
+        hint.textContent = 'Swipe left or right to navigate episodes'
+        document.body.appendChild(hint)
+
         setTimeout(() => {
-          const hint = document.createElement('div');
-          hint.className = 'swipe-hint show';
-          hint.textContent = 'Swipe left or right to navigate episodes';
-          document.body.appendChild(hint);
-          
-          setTimeout(() => {
-            hint.classList.remove('show');
-            setTimeout(() => hint.remove(), 300);
-          }, 3000);
-          
-          localStorage.setItem('swipeHintShown', 'true');
-        }, 2000);
-      }
-    });
-  }
+          hint.classList.remove('show')
+          setTimeout(() => hint.remove(), 300)
+        }, 3000)
+
+        localStorage.setItem('swipeHintShown', 'true')
+      }, 2000)
+    }
+  })
+}
 </script>

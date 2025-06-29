@@ -296,24 +296,59 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
           )}
           
           {/* LinkedIn Skills Section */}
-          {guestWithLinkedIn?.linkedInData?.skills && guestWithLinkedIn.linkedInData.skills.length > 0 && (() => {
-            const filteredSkills = filterExcludedSkills(guestWithLinkedIn.linkedInData.skills);
-            return filteredSkills.length > 0 && (
-              <section class="mb-lg">
-                <h3 class="text-xl lg:text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-md">Skills & Expertise</h3>
-                <div class="flex flex-wrap gap-xs">
-                  {filteredSkills.map((skill: string) => (
-                    <a 
-                      href={`/all/guests/?expertise=${encodeURIComponent(skill)}`}
-                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors duration-200 cursor-pointer"
-                      title={`View all guests with ${skill} expertise`}
-                    >
-                      {skill}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            );
+          {(() => {
+            // Handle both linkedInData.skills (array) and guest.data.linkedin_skills (string)
+            let skills: string[] = [];
+            
+            // Try to get skills from LinkedIn data first
+            if (guestWithLinkedIn?.linkedInData?.skills && Array.isArray(guestWithLinkedIn.linkedInData.skills)) {
+              skills = guestWithLinkedIn.linkedInData.skills;
+            } 
+            // Fall back to parsing guest.data.linkedin_skills if available
+            else if (guest.data.linkedin_skills) {
+              try {
+                // Handle both JSON array and comma-separated string formats
+                const skillsData = guest.data.linkedin_skills;
+                if (typeof skillsData === 'string') {
+                  // Try parsing as JSON first
+                  try {
+                    const parsed = JSON.parse(skillsData);
+                    if (Array.isArray(parsed)) {
+                      skills = parsed.filter(skill => typeof skill === 'string');
+                    }
+                  } catch {
+                    // If JSON parsing fails, treat as comma-separated string
+                    skills = skillsData.split(',').map(skill => skill.trim()).filter(Boolean);
+                  }
+                }
+              } catch (error) {
+                console.error('Error parsing skills:', error);
+              }
+            }
+            
+            // Filter and render skills if we have any
+            if (skills.length > 0) {
+              const filteredSkills = filterExcludedSkills(skills);
+              if (filteredSkills.length > 0) {
+                return (
+                  <section class="mb-lg">
+                    <h3 class="text-xl lg:text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-md">Skills & Expertise</h3>
+                    <div class="flex flex-wrap gap-xs">
+                      {filteredSkills.map((skill: string) => (
+                        <a 
+                          href={`/all/guests/?expertise=${encodeURIComponent(skill)}`}
+                          class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors duration-200 cursor-pointer"
+                          title={`View all guests with ${skill} expertise`}
+                        >
+                          {skill}
+                        </a>
+                      ))}
+                    </div>
+                  </section>
+                );
+              }
+            }
+            return null;
           })()}
           
           {/* Career Timeline */}

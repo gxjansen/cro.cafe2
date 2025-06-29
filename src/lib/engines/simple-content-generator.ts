@@ -44,7 +44,7 @@ export class SimpleContentGenerator {
       defaultLanguage: 'en',
       ...config
     }
-    
+
     this.stats = {
       episodesGenerated: 0,
       guestsGenerated: 0,
@@ -58,7 +58,7 @@ export class SimpleContentGenerator {
 
   async generateAll(): Promise<GenerationStats> {
     console.log('🚀 Starting simple content generation...')
-    
+
     // Reset stats for this generation run
     this.stats = {
       episodesGenerated: 0,
@@ -69,7 +69,7 @@ export class SimpleContentGenerator {
       errors: [],
       startTime: new Date()
     }
-    
+
     try {
       // Test connection first
       const connected = await this.client.testConnection()
@@ -82,7 +82,7 @@ export class SimpleContentGenerator {
 
       // Initialize deletion tracker
       const deletionTracker = new DeletionTracker(this.config.outputDir)
-      
+
       // Get existing content files mapped by ID/slug BEFORE generation
       const existingContentMap = await deletionTracker.getExistingContentMap()
       console.log(`📁 Found ${existingContentMap.size} existing content files`)
@@ -95,7 +95,7 @@ export class SimpleContentGenerator {
         this.client.getHosts({ limit: 100 }),
         this.client.getPlatforms({ limit: 100 })
       ])
-      
+
       console.log(`📊 NocoDB records: ${episodes.length} episodes, ${guests.length} guests, ${hosts.length} hosts, ${platforms.length} platforms`)
 
       // Generate content by type and collect generated files
@@ -104,7 +104,7 @@ export class SimpleContentGenerator {
       await this.generateGuestsWithTracking(guests, generatedFiles)
       await this.generateHostsWithTracking(hosts, generatedFiles)
       await this.generatePlatformsWithTracking(platforms, generatedFiles)
-      
+
       console.log(`📝 Generated ${generatedFiles.size} files in this sync`)
 
       // Identify files to delete based on active records
@@ -114,11 +114,11 @@ export class SimpleContentGenerator {
         hosts,
         platforms
       })
-      
+
       if (filesToDelete.length > 0) {
         console.log(`🗑️ Found ${filesToDelete.length} orphaned files to delete:`)
         filesToDelete.forEach(file => console.log(`  - ${file}`))
-        
+
         // Delete orphaned files
         this.stats.filesDeleted = await deletionTracker.deleteOrphanedFiles(filesToDelete)
       } else {
@@ -127,13 +127,13 @@ export class SimpleContentGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Content generation complete in ${duration}ms`)
       console.log(`📊 Generated: ${this.stats.episodesGenerated} episodes, ${this.stats.guestsGenerated} guests, ${this.stats.hostsGenerated} hosts, ${this.stats.platformsGenerated} platforms`)
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted: ${this.stats.filesDeleted} orphaned files`)
       }
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred:`)
         this.stats.errors.forEach(error => console.log(`  - ${error}`))
@@ -170,11 +170,11 @@ export class SimpleContentGenerator {
     if (!episode.slug && !episode.Id) {
       throw new Error('Episode missing both slug and ID - cannot generate file')
     }
-    
+
     if (!episode.title) {
       console.warn(`Warning: Episode ${episode.Id} missing title`)
     }
-    
+
     const language = episode.language as Language || this.config.defaultLanguage
     const seasonDir = `season-${episode.season || 1}`
     const episodePath = join(
@@ -194,7 +194,7 @@ export class SimpleContentGenerator {
 
     await this.ensureDirectoryExists(dirname(episodePath))
     await fs.writeFile(episodePath, mdxContent, 'utf8')
-    
+
     return episodePath
   }
 
@@ -203,7 +203,7 @@ export class SimpleContentGenerator {
     if (episode.Id === 1 || episode.episode_number === 1) {
       console.log('📊 Sample episode data structure:', JSON.stringify(episode, null, 2))
     }
-    
+
     // Debug duration fields to ensure we're using the right one (only for first few episodes)
     if (this.stats.episodesGenerated < 5) {
       console.log(`🔍 Episode ${episode.Id || episode.episode_number} duration fields:`, {
@@ -215,17 +215,17 @@ export class SimpleContentGenerator {
         allKeys: Object.keys(episode).filter(k => k.toLowerCase().includes('duration'))
       })
     }
-    
+
     // Extract hosts from relationship data and deduplicate
     // Collect all host data first to find slugs
     const hostData: Array<{slug?: string, name?: string}> = []
-    
+
     if (episode.host && Array.isArray(episode.host)) {
       episode.host.forEach((h: any) => {
         hostData.push({ slug: h.slug, name: h.name })
       })
     }
-    
+
     if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
       episode._nc_m2m_Episodes_Hosts.forEach((rel: any) => {
         if (rel.Hosts) {
@@ -233,18 +233,18 @@ export class SimpleContentGenerator {
         }
       })
     }
-    
+
     // Create a map of names to slugs for deduplication
     const nameToSlugMap = new Map<string, string>()
     const finalHostsSet = new Set<string>()
-    
+
     // First pass: collect all name->slug mappings
     hostData.forEach(h => {
       if (h.slug && h.name) {
         nameToSlugMap.set(h.name, h.slug)
       }
     })
-    
+
     // Second pass: add hosts, preferring slugs
     hostData.forEach(h => {
       if (h.slug) {
@@ -255,19 +255,19 @@ export class SimpleContentGenerator {
         finalHostsSet.add(slug || h.name)
       }
     })
-    
+
     const hosts = Array.from(finalHostsSet)
 
     // Extract guests from relationship data and deduplicate
     // Collect all guest data first to find slugs
     const guestData: Array<{slug?: string, name?: string}> = []
-    
+
     if (episode.guest && Array.isArray(episode.guest)) {
       episode.guest.forEach((g: any) => {
         guestData.push({ slug: g.slug, name: g.name })
       })
     }
-    
+
     if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
       episode._nc_m2m_Episodes_Guests.forEach((rel: any) => {
         if (rel.Guests) {
@@ -275,18 +275,18 @@ export class SimpleContentGenerator {
         }
       })
     }
-    
+
     // Create a map of names to slugs for deduplication
     const guestNameToSlugMap = new Map<string, string>()
     const finalGuestsSet = new Set<string>()
-    
+
     // First pass: collect all name->slug mappings
     guestData.forEach(g => {
       if (g.slug && g.name) {
         guestNameToSlugMap.set(g.name, g.slug)
       }
     })
-    
+
     // Second pass: add guests, preferring slugs
     guestData.forEach(g => {
       if (g.slug) {
@@ -297,17 +297,17 @@ export class SimpleContentGenerator {
         finalGuestsSet.add(slug || g.name)
       }
     })
-    
+
     const guests = Array.from(finalGuestsSet)
 
     // Clean description and summary by removing HTML first, then escaping for YAML
     const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
     const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
-    
+
     // Try to find the duration in seconds from various possible field names
     // Check for duration_seconds, Duration (capitalized), or numeric duration
     let durationInSeconds = '0'
-    
+
     // First try to find a numeric duration field
     if (episode.duration_seconds && !episode.duration_seconds.toString().includes(':')) {
       durationInSeconds = episode.duration_seconds.toString()
@@ -323,7 +323,7 @@ export class SimpleContentGenerator {
         duration_seconds: episode.duration_seconds,
         duration_formatted: episode.duration_formatted
       })
-      
+
       // As a fallback, try to convert MM:SS to seconds
       const formatted = episode.duration || episode.Duration || episode.duration_formatted || '0'
       if (formatted.toString().includes(':')) {
@@ -388,7 +388,7 @@ export class SimpleContentGenerator {
   }
 
   private cleanHtmlContent(html: string): string {
-    if (!html) return ''
+    if (!html) {return ''}
     // Basic HTML to markdown conversion
     return html
       // Remove HTML comments first
@@ -436,12 +436,12 @@ export class SimpleContentGenerator {
   private async generateGuestsWithTracking(guests: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('👥 Generating guests...')
     console.log(`🔍 Processing ${guests.length} guests from NocoDB`)
-    
+
     // Log first guest structure to understand data format
     if (guests.length > 0) {
       console.log('🔍 FIRST GUEST STRUCTURE:', JSON.stringify(guests[0], null, 2))
     }
-    
+
     // Look specifically for Amber Taal to debug image URL issue
     const amberGuest = guests.find(g => g.name && g.name.toLowerCase().includes('amber'))
     if (amberGuest) {
@@ -468,7 +468,7 @@ export class SimpleContentGenerator {
     if (!guest.slug && !guest.name) {
       throw new Error('Guest missing both slug and name - cannot generate file')
     }
-    
+
     const slug = guest.slug || guest.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const guestPath = join(this.config.outputDir, 'guests', `${slug}.mdx`)
 
@@ -480,7 +480,7 @@ export class SimpleContentGenerator {
 
     await this.ensureDirectoryExists(dirname(guestPath))
     await fs.writeFile(guestPath, mdxContent, 'utf8')
-    
+
     return guestPath
   }
 
@@ -496,16 +496,16 @@ export class SimpleContentGenerator {
         allFields: Object.keys(guest)
       }, null, 2))
     }
-    
+
     // Also log if this is specifically the amber-taal guest
     if (guest.name && guest.name.toLowerCase().includes('amber')) {
-      console.log(`🔍 DEBUG AMBER TAAL guest data:`, JSON.stringify(guest, null, 2))
+      console.log('🔍 DEBUG AMBER TAAL guest data:', JSON.stringify(guest, null, 2))
     }
-    
+
     // Try different possible image field names
     const imageValue = guest.image_url || guest.imageUrl || guest.image || guest.Image || guest.photo_url || guest.picture
     if (guest.name && guest.name.toLowerCase().includes('amber')) {
-      console.log(`🔍 AMBER IMAGE FIELD CHECK:`, {
+      console.log('🔍 AMBER IMAGE FIELD CHECK:', {
         image_url: guest.image_url,
         imageUrl: guest.imageUrl,
         image: guest.image,
@@ -515,15 +515,15 @@ export class SimpleContentGenerator {
         finalValue: imageValue
       })
     }
-    
+
     // Filter episodes to only include published ones
     const allEpisodes = Array.isArray(guest.Episodes) ? guest.Episodes : []
     const publishedEpisodes = allEpisodes.filter((e: any) => e.status === 'published' || !e.status) // Default to published if no status
     const episodes = publishedEpisodes.map((e: any) => e.slug || e.Id)
     const episodeCount = publishedEpisodes.length
-    
+
     const languages = Array.isArray(guest.Language) ? guest.Language : [this.config.defaultLanguage]
-    
+
     // Create social links array from individual fields
     const socialLinks = []
     if (guest.LinkedIn) {
@@ -557,8 +557,8 @@ export class SimpleContentGenerator {
     if (guest.company || guest.role) {
       content.push('## Professional Background')
       content.push('')
-      if (guest.company) content.push(`**Company**: ${guest.company}`)
-      if (guest.role) content.push(`**Role**: ${guest.role}`)
+      if (guest.company) {content.push(`**Company**: ${guest.company}`)}
+      if (guest.role) {content.push(`**Role**: ${guest.role}`)}
       content.push('')
     }
 
@@ -588,7 +588,7 @@ export class SimpleContentGenerator {
     if (!host.slug && !host.name) {
       throw new Error('Host missing both slug and name - cannot generate file')
     }
-    
+
     const slug = host.slug || host.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const hostPath = join(this.config.outputDir, 'hosts', `${slug}.mdx`)
 
@@ -600,13 +600,13 @@ export class SimpleContentGenerator {
 
     await this.ensureDirectoryExists(dirname(hostPath))
     await fs.writeFile(hostPath, mdxContent, 'utf8')
-    
+
     return hostPath
   }
 
   private generateHostFrontmatter(host: any, slug: string): string {
     const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
-    
+
     // Debug logging for first few hosts to see the data structure
     if (this.stats.hostsGenerated < 3) {
       console.log(`🔍 Debug host #${this.stats.hostsGenerated + 1} data:`, JSON.stringify({
@@ -618,7 +618,7 @@ export class SimpleContentGenerator {
         allFields: Object.keys(host)
       }, null, 2))
     }
-    
+
     // Handle LinkedIn field - NocoDB only has 'linkedin' field now
     let linkedinValue = ''
     if (host.linkedin || host.LinkedIn) {
@@ -627,7 +627,7 @@ export class SimpleContentGenerator {
       const linkedinUrl = linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`
       linkedinValue = linkedinUrl
     }
-    
+
     // Create social links array for backward compatibility
     const socialLinks = []
     if (host.website || host.Website) {
@@ -677,7 +677,7 @@ export class SimpleContentGenerator {
   private async generatePlatformsWithTracking(platforms: any[], generatedFiles: Set<string>): Promise<void> {
     console.log('🎵 Generating platforms...')
     console.log(`🔍 Processing ${platforms.length} platforms from NocoDB`)
-    
+
     // Debug: Log first platform structure
     if (platforms.length > 0) {
       console.log('📊 Sample platform data structure:', JSON.stringify(platforms[0], null, 2))
@@ -716,10 +716,10 @@ export class SimpleContentGenerator {
 
     // Get iconUrl - check for logo_url field or use default local icon path
     const iconUrl = this.isValidUrl(platform.logo_url) ? platform.logo_url :
-                   this.isValidUrl(platform.icon_url) ? platform.icon_url :
-                   this.isValidUrl(platform.icon) ? platform.icon :
-                   `/images/platforms/${slug}.png` // Use relative path for local icons
-    
+      this.isValidUrl(platform.icon_url) ? platform.icon_url :
+        this.isValidUrl(platform.icon) ? platform.icon :
+          `/images/platforms/${slug}.png` // Use relative path for local icons
+
     // Use proper field mapping for actual NocoDB data structure
     const platformData: any = {
       id: platform.Id,
@@ -737,7 +737,7 @@ export class SimpleContentGenerator {
 
     await this.ensureDirectoryExists(dirname(platformPath))
     await fs.writeFile(platformPath, JSON.stringify(platformData, null, 2), 'utf8')
-    
+
     return platformPath
   }
 
@@ -779,17 +779,17 @@ export class SimpleContentGenerator {
   }
 
   private cleanHtmlForYaml(html: string): string {
-    if (!html) return ''
-    
+    if (!html) {return ''}
+
     // First clean HTML thoroughly
     const cleaned = this.cleanHtmlContent(html)
-    
+
     // Then escape for YAML
     return this.escapeYaml(cleaned)
   }
 
   private escapeYaml(str: string): string {
-    if (!str) return ''
+    if (!str) {return ''}
     // Clean and escape for YAML safely
     return str
       .replace(/\\/g, '\\\\') // Escape backslashes first
@@ -800,7 +800,7 @@ export class SimpleContentGenerator {
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
-    if (!url) return false
+    if (!url) {return false}
     try {
       new URL(url)
       return true
@@ -814,18 +814,18 @@ export class SimpleContentGenerator {
     if (Math.random() < 0.02 || !imageUrl) { // Log 2% of guests or all empty cases
       console.log('🔍 PROCESSING imageUrl:', { imageUrl, type: typeof imageUrl })
     }
-    
+
     // If no imageUrl, return empty
     if (!imageUrl) {
       return ''
     }
-    
+
     // If it's already a full URL, use it as-is
     if (this.isValidUrl(imageUrl)) {
       console.log('🔍 Found valid URL imageUrl:', imageUrl)
       return `imageUrl: "${imageUrl}"`
     }
-    
+
     // If it's a relative filename, construct the path to /images/guests/
     if (imageUrl && typeof imageUrl === 'string') {
       // Check if it already contains the path
@@ -833,11 +833,11 @@ export class SimpleContentGenerator {
         console.log('🔍 ImageUrl already has path:', imageUrl)
         return `imageUrl: "${imageUrl}"`
       } else {
-        console.log('🔍 Converting relative imageUrl:', imageUrl, '-> /images/guests/' + imageUrl)
+        console.log('🔍 Converting relative imageUrl:', imageUrl, `-> /images/guests/${  imageUrl}`)
         return `imageUrl: "/images/guests/${imageUrl}"`
       }
     }
-    
+
     return ''
   }
 

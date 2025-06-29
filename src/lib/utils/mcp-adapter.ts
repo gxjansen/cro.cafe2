@@ -8,14 +8,12 @@ if (process.env.NODE_ENV !== 'test') {
   import('@modelcontextprotocol/sdk/client/stdio.js').then(m => StdioClientTransport = m.StdioClientTransport)
 }
 import {
-  ConnectionError
-} from '../types/database'
-import type {
-  MCPConfiguration,
-  QueryParams,
-  HealthStatus,
-  RetryPolicy,
-  NocoDBError
+  ConnectionError,
+  type MCPConfiguration,
+  type QueryParams,
+  type HealthStatus,
+  type RetryPolicy,
+  type NocoDBError
 } from '../types/database'
 import crypto from 'crypto'
 
@@ -48,7 +46,7 @@ export class MCPAdapter {
 
   private async doConnect(config: MCPConfiguration): Promise<void> {
     this.config = config
-    
+
     try {
       // Use mock in test environment
       if (process.env.NODE_ENV === 'test') {
@@ -64,13 +62,13 @@ export class MCPAdapter {
             throw new Error('MCP SDK not loaded')
           }
         }
-        
+
         // Create transport
         this.transport = new StdioClientTransport({
           command: 'npx',
           args: ['@modelcontextprotocol/server-nocodb', '--api-key', config.nocodb.apiKey, '--base-url', config.nocodb.server]
         })
-        
+
         // Create client
         this.client = new Client(
           {
@@ -81,11 +79,11 @@ export class MCPAdapter {
             capabilities: {}
           }
         )
-        
+
         // Connect
         await this.client.connect(this.transport)
       }
-      
+
       this.healthStatus.connected = true
       this.healthStatus.lastCheck = new Date()
       this.healthStatus.errors = []
@@ -138,7 +136,7 @@ export class MCPAdapter {
     if (!params.table) {
       throw new Error('Invalid query parameters: table is required')
     }
-    
+
     // Validate parameters
     if (params.limit !== undefined && params.limit < 0) {
       throw new Error('Invalid query parameters: limit must be non-negative')
@@ -151,7 +149,7 @@ export class MCPAdapter {
     const cacheKey = this.generateCacheKey(params)
     if (params.ttl) {
       const cached = this.getFromCache(cacheKey)
-      if (cached) return cached
+      if (cached) {return cached}
     }
 
     // Execute query with retry
@@ -163,13 +161,13 @@ export class MCPAdapter {
       // Call the appropriate tool based on table
       const toolName = this.getToolName(params.table)
       const response = await this.client.callTool(toolName, this.buildToolParams(params))
-      
+
       // Parse response
       if (response.content?.[0]?.type === 'text') {
         const data = JSON.parse(response.content[0].text)
         return Array.isArray(data) ? data : data.list || []
       }
-      
+
       return []
     })
 
@@ -188,12 +186,12 @@ export class MCPAdapter {
   }
 
   private normalizeObject(obj: any): any {
-    if (obj === null || obj === undefined) return obj
-    if (typeof obj !== 'object') return obj
-    if (obj instanceof Date) return obj.toISOString()
-    if (obj instanceof RegExp) return obj.toString()
-    if (Array.isArray(obj)) return obj.map(item => this.normalizeObject(item))
-    
+    if (obj === null || obj === undefined) {return obj}
+    if (typeof obj !== 'object') {return obj}
+    if (obj instanceof Date) {return obj.toISOString()}
+    if (obj instanceof RegExp) {return obj.toString()}
+    if (Array.isArray(obj)) {return obj.map(item => this.normalizeObject(item))}
+
     // Sort object keys
     const sorted: any = {}
     Object.keys(obj).sort().forEach(key => {
@@ -206,13 +204,13 @@ export class MCPAdapter {
 
   private getFromCache(key: string): any | null {
     const entry = this.cache.get(key)
-    if (!entry) return null
-    
+    if (!entry) {return null}
+
     if (entry.expiresAt < new Date()) {
       this.cache.delete(key)
       return null
     }
-    
+
     return entry.value
   }
 
@@ -237,7 +235,7 @@ export class MCPAdapter {
         return await operation()
       } catch (error) {
         lastError = error as Error
-        
+
         if (attempt === policy.maxAttempts) {
           throw lastError
         }
@@ -264,7 +262,7 @@ export class MCPAdapter {
       'Platforms': 'nocodb-get-records',
       '_changes': 'nocodb-get-records'
     }
-    
+
     return toolMap[table] || 'nocodb-get-records'
   }
 
@@ -300,7 +298,7 @@ export class MCPAdapter {
 
   private buildFilterString(filters: Record<string, any>): string {
     const filterParts: string[] = []
-    
+
     for (const [field, value] of Object.entries(filters)) {
       if (typeof value === 'object' && value !== null) {
         // Handle operators like $gt, $lt, etc.
@@ -312,7 +310,7 @@ export class MCPAdapter {
         filterParts.push(`(${field},eq,${value})`)
       }
     }
-    
+
     return filterParts.join('~and')
   }
 
@@ -327,7 +325,7 @@ export class MCPAdapter {
       '$in': 'in',
       '$like': 'like'
     }
-    
+
     return operatorMap[op] || 'eq'
   }
 }

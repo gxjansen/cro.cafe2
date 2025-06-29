@@ -186,48 +186,48 @@ const pwaNavigationItems = [
 
 <!-- Header JavaScript -->
 <script>
-  // Mobile menu toggle for browser mode
-  document.addEventListener('DOMContentLoaded', () => {
-    const mobileMenuButton = document.querySelector('[data-mobile-menu-button]');
-    const mobileMenu = document.querySelector('[data-mobile-menu]');
-    
-    if (mobileMenuButton && mobileMenu) {
-      mobileMenuButton.addEventListener('click', () => {
-        const isHidden = mobileMenu.classList.contains('hidden');
-        mobileMenu.classList.toggle('hidden', !isHidden);
-        mobileMenuButton.setAttribute('aria-expanded', isHidden.toString());
-      });
+// Mobile menu toggle for browser mode
+document.addEventListener('DOMContentLoaded', () => {
+  const mobileMenuButton = document.querySelector('[data-mobile-menu-button]')
+  const mobileMenu = document.querySelector('[data-mobile-menu]')
+
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden')
+      mobileMenu.classList.toggle('hidden', !isHidden)
+      mobileMenuButton.setAttribute('aria-expanded', isHidden.toString())
+    })
+  }
+
+  // PWA menu toggle
+  const pwaMenuButton = document.querySelector('[data-pwa-menu-button]')
+  const pwaMenu = document.querySelector('[data-pwa-menu]')
+
+  if (pwaMenuButton && pwaMenu) {
+    pwaMenuButton.addEventListener('click', () => {
+      const isHidden = pwaMenu.classList.contains('hidden')
+      pwaMenu.classList.toggle('hidden', !isHidden)
+      pwaMenuButton.setAttribute('aria-expanded', isHidden.toString())
+    })
+  }
+
+  // Close menus when clicking outside
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element
+
+    // Close mobile menu if clicking outside
+    if (mobileMenu && !mobileMenu.contains(target) && !mobileMenuButton?.contains(target)) {
+      mobileMenu.classList.add('hidden')
+      mobileMenuButton?.setAttribute('aria-expanded', 'false')
     }
 
-    // PWA menu toggle
-    const pwaMenuButton = document.querySelector('[data-pwa-menu-button]');
-    const pwaMenu = document.querySelector('[data-pwa-menu]');
-    
-    if (pwaMenuButton && pwaMenu) {
-      pwaMenuButton.addEventListener('click', () => {
-        const isHidden = pwaMenu.classList.contains('hidden');
-        pwaMenu.classList.toggle('hidden', !isHidden);
-        pwaMenuButton.setAttribute('aria-expanded', isHidden.toString());
-      });
+    // Close PWA menu if clicking outside
+    if (pwaMenu && !pwaMenu.contains(target) && !pwaMenuButton?.contains(target)) {
+      pwaMenu.classList.add('hidden')
+      pwaMenuButton?.setAttribute('aria-expanded', 'false')
     }
-
-    // Close menus when clicking outside
-    document.addEventListener('click', (event) => {
-      const target = event.target as Element;
-      
-      // Close mobile menu if clicking outside
-      if (mobileMenu && !mobileMenu.contains(target) && !mobileMenuButton?.contains(target)) {
-        mobileMenu.classList.add('hidden');
-        mobileMenuButton?.setAttribute('aria-expanded', 'false');
-      }
-      
-      // Close PWA menu if clicking outside
-      if (pwaMenu && !pwaMenu.contains(target) && !pwaMenuButton?.contains(target)) {
-        pwaMenu.classList.add('hidden');
-        pwaMenuButton?.setAttribute('aria-expanded', 'false');
-      }
-    });
-  });
+  })
+})
 </script>
 
 <style>

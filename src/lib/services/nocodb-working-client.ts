@@ -1,5 +1,5 @@
 /**
- * Working NocoDB API Client 
+ * Working NocoDB API Client
  * Based on diagnostic results from GitHub Actions
  */
 
@@ -19,14 +19,14 @@ export class NocoDBWorkingClient {
 
   private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
     const url = `${this.config.baseUrl}${endpoint}`
-    
+
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
         'xc-token': this.config.apiKey,
-        ...options.headers,
-      },
+        ...options.headers
+      }
     })
 
     if (!response.ok) {
@@ -55,7 +55,7 @@ export class NocoDBWorkingClient {
     // Get table list from the working endpoint
     const response = await this.request(`/api/v2/meta/bases/${this.config.baseId}/tables`)
     const tables = response.list || []
-    
+
     // Find the table by name
     const table = tables.find((t: any) => t.table_name === tableName || t.title === tableName)
     if (!table) {
@@ -71,7 +71,7 @@ export class NocoDBWorkingClient {
   async getEpisodes(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 1000 } = options
     const tableId = await this.getTableId('Episodes')
-    
+
     // Use the working table data endpoint pattern
     const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
     return response.list || []
@@ -80,24 +80,24 @@ export class NocoDBWorkingClient {
   async getGuests(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 1000 } = options
     const tableId = await this.getTableId('Guests')
-    
+
     // Don't specify fields to get all available fields and avoid 404 errors
     // This will help us debug what fields are actually available
     console.log('📋 Fetching guests from table:', tableId)
     const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
-    
+
     // Debug: log available fields from first record
     if (response.list && response.list.length > 0) {
       console.log('🔍 Available fields in NocoDB:', Object.keys(response.list[0]))
     }
-    
+
     return response.list || []
   }
 
   async getHosts(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 100 } = options
     const tableId = await this.getTableId('Hosts')
-    
+
     const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
     return response.list || []
   }
@@ -105,7 +105,7 @@ export class NocoDBWorkingClient {
   async getPlatforms(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 100 } = options
     const tableId = await this.getTableId('Platforms')
-    
+
     const response = await this.request(`/api/v2/tables/${tableId}/records?limit=${limit}&offset=0`)
     return response.list || []
   }

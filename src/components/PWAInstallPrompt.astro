@@ -60,76 +60,76 @@ const t = translations[language];
 </div>
 
 <script>
-  // PWA Install Prompt
-  let deferredPrompt: any;
-  const installPrompt = document.getElementById('pwa-install-prompt');
-  const installBtn = document.getElementById('pwa-install-btn');
-  const dismissBtn = document.getElementById('pwa-dismiss-btn');
+// PWA Install Prompt
+let deferredPrompt: any
+const installPrompt = document.getElementById('pwa-install-prompt')
+const installBtn = document.getElementById('pwa-install-btn')
+const dismissBtn = document.getElementById('pwa-dismiss-btn')
 
-  // Check if already installed
-  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
-                     window.navigator.standalone || 
-                     document.referrer.includes('android-app://');
+// Check if already installed
+const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
+                     window.navigator.standalone ||
+                     document.referrer.includes('android-app://')
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later
-    deferredPrompt = e;
-    
-    // Show the install prompt if not already dismissed
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
-    const dismissedTime = dismissed ? parseInt(dismissed) : 0;
-    const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
-    
-    if (!isInstalled && (!dismissed || daysSinceDismissed > 7)) {
-      setTimeout(() => {
-        installPrompt?.classList.remove('hidden');
-        installPrompt?.classList.remove('translate-y-full');
-      }, 2000);
-    }
-  });
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault()
+  // Stash the event so it can be triggered later
+  deferredPrompt = e
 
-  installBtn?.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    
-    // Show the install prompt
-    deferredPrompt.prompt();
-    
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
-    } else {
-      console.log('User dismissed the install prompt');
-    }
-    
-    // Clear the deferred prompt
-    deferredPrompt = null;
-    
-    // Hide the custom prompt
-    installPrompt?.classList.add('translate-y-full');
+  // Show the install prompt if not already dismissed
+  const dismissed = localStorage.getItem('pwa-install-dismissed')
+  const dismissedTime = dismissed ? parseInt(dismissed) : 0
+  const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24)
+
+  if (!isInstalled && (!dismissed || daysSinceDismissed > 7)) {
     setTimeout(() => {
-      installPrompt?.classList.add('hidden');
-    }, 300);
-  });
-
-  dismissBtn?.addEventListener('click', () => {
-    // Remember dismissal
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
-    
-    // Hide the prompt
-    installPrompt?.classList.add('translate-y-full');
-    setTimeout(() => {
-      installPrompt?.classList.add('hidden');
-    }, 300);
-  });
-
-  // iOS specific install instructions
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS && !isInstalled) {
-    // Could show iOS-specific install instructions here
-    console.log('iOS device detected - manual install required');
+      installPrompt?.classList.remove('hidden')
+      installPrompt?.classList.remove('translate-y-full')
+    }, 2000)
   }
+})
+
+installBtn?.addEventListener('click', async () => {
+  if (!deferredPrompt) {return}
+
+  // Show the install prompt
+  deferredPrompt.prompt()
+
+  // Wait for the user to respond to the prompt
+  const { outcome } = await deferredPrompt.userChoice
+
+  if (outcome === 'accepted') {
+    console.log('User accepted the install prompt')
+  } else {
+    console.log('User dismissed the install prompt')
+  }
+
+  // Clear the deferred prompt
+  deferredPrompt = null
+
+  // Hide the custom prompt
+  installPrompt?.classList.add('translate-y-full')
+  setTimeout(() => {
+    installPrompt?.classList.add('hidden')
+  }, 300)
+})
+
+dismissBtn?.addEventListener('click', () => {
+  // Remember dismissal
+  localStorage.setItem('pwa-install-dismissed', Date.now().toString())
+
+  // Hide the prompt
+  installPrompt?.classList.add('translate-y-full')
+  setTimeout(() => {
+    installPrompt?.classList.add('hidden')
+  }, 300)
+})
+
+// iOS specific install instructions
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+if (isIOS && !isInstalled) {
+  // Could show iOS-specific install instructions here
+  console.log('iOS device detected - manual install required')
+}
 </script>

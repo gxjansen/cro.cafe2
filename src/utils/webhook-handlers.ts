@@ -1,20 +1,20 @@
 /**
  * Webhook handlers for Transistor.FM real-time updates
- * 
+ *
  * This module provides webhook handlers for real-time episode updates from Transistor.FM.
  * It integrates with the RSS parser and content generation system to automatically
  * update content when episodes are published, updated, or deleted.
  */
 
-import type { Language } from '../types';
-import { parseRSSFeed, type ParsedEpisode } from './rss-parser.js';
+import type { Language } from '../types'
+import { parseRSSFeed, type ParsedEpisode } from './rss-parser.js'
 
 /**
  * Transistor webhook event types
  */
-export type WebhookEventType = 
+export type WebhookEventType =
   | 'episode_created'
-  | 'episode_updated' 
+  | 'episode_updated'
   | 'episode_published'
   | 'episode_unpublished'
   | 'episode_deleted';
@@ -89,10 +89,10 @@ export interface WebhookProcessResult {
 const SHOW_LANGUAGE_MAP: Record<string, Language> = {
   // These IDs would need to be replaced with actual Transistor show IDs
   'cro-cafe-english': 'en',
-  'cro-cafe-dutch': 'nl', 
+  'cro-cafe-dutch': 'nl',
   'cro-cafe-german': 'de',
-  'cro-cafe-spanish': 'es',
-};
+  'cro-cafe-spanish': 'es'
+}
 
 /**
  * RSS feed URLs by show ID
@@ -101,8 +101,8 @@ const SHOW_RSS_MAP: Record<string, string> = {
   'cro-cafe-english': 'https://feeds.transistor.fm/cro-cafe-english',
   'cro-cafe-dutch': 'https://feeds.transistor.fm/cro-cafe-dutch',
   'cro-cafe-german': 'https://feeds.transistor.fm/cro-cafe-german',
-  'cro-cafe-spanish': 'https://feeds.transistor.fm/cro-cafe-spanish',
-};
+  'cro-cafe-spanish': 'https://feeds.transistor.fm/cro-cafe-spanish'
+}
 
 /**
  * Webhook configuration
@@ -122,8 +122,8 @@ const DEFAULT_WEBHOOK_CONFIG: WebhookConfig = {
   autoRegenerate: true,
   maxRetries: 3,
   retryDelay: 5000,
-  enableLogging: true,
-};
+  enableLogging: true
+}
 
 /**
  * Validate webhook payload signature (if secret key is provided)
@@ -135,8 +135,8 @@ export function validateWebhookSignature(
 ): boolean {
   // This would implement HMAC-SHA256 signature validation
   // For now, returning true as a placeholder
-  console.log('Webhook signature validation not implemented');
-  return true;
+  console.log('Webhook signature validation not implemented')
+  return true
 }
 
 /**
@@ -146,8 +146,8 @@ function convertTransistorEpisode(
   data: TransistorWebhookPayload['data'],
   language: Language
 ): ParsedEpisode {
-  const attributes = data.attributes;
-  
+  const attributes = data.attributes
+
   return {
     title: attributes.title,
     description: attributes.description || attributes.formatted_description,
@@ -167,15 +167,15 @@ function convertTransistorEpisode(
     embedHtml: attributes.embed_html,
     featured: false,
     episodeType: attributes.type,
-    summary: attributes.summary || attributes.formatted_summary,
-  };
+    summary: attributes.summary || attributes.formatted_summary
+  }
 }
 
 /**
  * Determine language from show ID
  */
 function getLanguageFromShow(showId: string): Language | null {
-  return SHOW_LANGUAGE_MAP[showId] || null;
+  return SHOW_LANGUAGE_MAP[showId] || null
 }
 
 /**
@@ -186,39 +186,39 @@ async function processEpisodeCreated(
   config: WebhookConfig
 ): Promise<WebhookProcessResult> {
   try {
-    const showId = payload.data.relationships.show.data.id;
-    const language = getLanguageFromShow(showId);
-    
+    const showId = payload.data.relationships.show.data.id
+    const language = getLanguageFromShow(showId)
+
     if (!language) {
       return {
         success: false,
         action: 'ignored',
-        error: `Unknown show ID: ${showId}`,
-      };
+        error: `Unknown show ID: ${showId}`
+      }
     }
-    
-    const episode = convertTransistorEpisode(payload.data, language);
-    
+
+    const episode = convertTransistorEpisode(payload.data, language)
+
     if (config.enableLogging) {
-      console.log(`Processing episode creation: ${episode.title} (${language})`);
+      console.log(`Processing episode creation: ${episode.title} (${language})`)
     }
-    
+
     // Here you would trigger content generation for the new episode
     // For now, we'll just return a success result
-    
+
     return {
       success: true,
       action: 'created',
       episodeSlug: episode.slug,
-      language,
-    };
-    
+      language
+    }
+
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: (error as Error).message,
-    };
+      error: (error as Error).message
+    }
   }
 }
 
@@ -230,38 +230,38 @@ async function processEpisodeUpdated(
   config: WebhookConfig
 ): Promise<WebhookProcessResult> {
   try {
-    const showId = payload.data.relationships.show.data.id;
-    const language = getLanguageFromShow(showId);
-    
+    const showId = payload.data.relationships.show.data.id
+    const language = getLanguageFromShow(showId)
+
     if (!language) {
       return {
         success: false,
         action: 'ignored',
-        error: `Unknown show ID: ${showId}`,
-      };
+        error: `Unknown show ID: ${showId}`
+      }
     }
-    
-    const episode = convertTransistorEpisode(payload.data, language);
-    
+
+    const episode = convertTransistorEpisode(payload.data, language)
+
     if (config.enableLogging) {
-      console.log(`Processing episode update: ${episode.title} (${language})`);
+      console.log(`Processing episode update: ${episode.title} (${language})`)
     }
-    
+
     // Here you would trigger content regeneration for the updated episode
-    
+
     return {
       success: true,
       action: 'updated',
       episodeSlug: episode.slug,
-      language,
-    };
-    
+      language
+    }
+
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: (error as Error).message,
-    };
+      error: (error as Error).message
+    }
   }
 }
 
@@ -273,49 +273,49 @@ async function processEpisodePublished(
   config: WebhookConfig
 ): Promise<WebhookProcessResult> {
   try {
-    const showId = payload.data.relationships.show.data.id;
-    const language = getLanguageFromShow(showId);
-    
+    const showId = payload.data.relationships.show.data.id
+    const language = getLanguageFromShow(showId)
+
     if (!language) {
       return {
         success: false,
         action: 'ignored',
-        error: `Unknown show ID: ${showId}`,
-      };
+        error: `Unknown show ID: ${showId}`
+      }
     }
-    
+
     if (config.enableLogging) {
-      console.log(`Processing episode publication: ${payload.data.attributes.title} (${language})`);
+      console.log(`Processing episode publication: ${payload.data.attributes.title} (${language})`)
     }
-    
+
     // For published episodes, we want to trigger a full RSS refresh
     // to ensure we have the latest data
     if (config.autoRegenerate) {
-      const rssUrl = SHOW_RSS_MAP[showId];
+      const rssUrl = SHOW_RSS_MAP[showId]
       if (rssUrl) {
         try {
-          const episodes = await parseRSSFeed(rssUrl, language);
+          const episodes = await parseRSSFeed(rssUrl, language)
           // Here you would trigger content generation for all episodes
-          console.log(`Refreshed ${episodes.length} episodes from RSS feed`);
+          console.log(`Refreshed ${episodes.length} episodes from RSS feed`)
         } catch (error) {
-          console.error(`Failed to refresh RSS feed for ${language}:`, error);
+          console.error(`Failed to refresh RSS feed for ${language}:`, error)
         }
       }
     }
-    
+
     return {
       success: true,
       action: 'updated',
       episodeSlug: payload.data.attributes.slug || payload.data.id,
-      language,
-    };
-    
+      language
+    }
+
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: (error as Error).message,
-    };
+      error: (error as Error).message
+    }
   }
 }
 
@@ -327,36 +327,36 @@ async function processEpisodeUnpublished(
   config: WebhookConfig
 ): Promise<WebhookProcessResult> {
   try {
-    const showId = payload.data.relationships.show.data.id;
-    const language = getLanguageFromShow(showId);
-    
+    const showId = payload.data.relationships.show.data.id
+    const language = getLanguageFromShow(showId)
+
     if (!language) {
       return {
         success: false,
         action: 'ignored',
-        error: `Unknown show ID: ${showId}`,
-      };
+        error: `Unknown show ID: ${showId}`
+      }
     }
-    
+
     if (config.enableLogging) {
-      console.log(`Processing episode unpublication: ${payload.data.attributes.title} (${language})`);
+      console.log(`Processing episode unpublication: ${payload.data.attributes.title} (${language})`)
     }
-    
+
     // Here you would remove or mark the episode as unpublished
-    
+
     return {
       success: true,
       action: 'updated',
       episodeSlug: payload.data.attributes.slug || payload.data.id,
-      language,
-    };
-    
+      language
+    }
+
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: (error as Error).message,
-    };
+      error: (error as Error).message
+    }
   }
 }
 
@@ -368,36 +368,36 @@ async function processEpisodeDeleted(
   config: WebhookConfig
 ): Promise<WebhookProcessResult> {
   try {
-    const showId = payload.data.relationships.show.data.id;
-    const language = getLanguageFromShow(showId);
-    
+    const showId = payload.data.relationships.show.data.id
+    const language = getLanguageFromShow(showId)
+
     if (!language) {
       return {
         success: false,
         action: 'ignored',
-        error: `Unknown show ID: ${showId}`,
-      };
+        error: `Unknown show ID: ${showId}`
+      }
     }
-    
+
     if (config.enableLogging) {
-      console.log(`Processing episode deletion: ${payload.data.attributes.title} (${language})`);
+      console.log(`Processing episode deletion: ${payload.data.attributes.title} (${language})`)
     }
-    
+
     // Here you would delete the episode file
-    
+
     return {
       success: true,
       action: 'deleted',
       episodeSlug: payload.data.attributes.slug || payload.data.id,
-      language,
-    };
-    
+      language
+    }
+
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: (error as Error).message,
-    };
+      error: (error as Error).message
+    }
   }
 }
 
@@ -409,39 +409,39 @@ export async function handleTransistorWebhook(
   config: WebhookConfig = DEFAULT_WEBHOOK_CONFIG
 ): Promise<WebhookProcessResult> {
   if (config.enableLogging) {
-    console.log(`Received webhook: ${payload.event} for episode ${payload.data.id}`);
+    console.log(`Received webhook: ${payload.event} for episode ${payload.data.id}`)
   }
-  
+
   try {
     switch (payload.event) {
       case 'episode_created':
-        return await processEpisodeCreated(payload, config);
-        
+        return await processEpisodeCreated(payload, config)
+
       case 'episode_updated':
-        return await processEpisodeUpdated(payload, config);
-        
+        return await processEpisodeUpdated(payload, config)
+
       case 'episode_published':
-        return await processEpisodePublished(payload, config);
-        
+        return await processEpisodePublished(payload, config)
+
       case 'episode_unpublished':
-        return await processEpisodeUnpublished(payload, config);
-        
+        return await processEpisodeUnpublished(payload, config)
+
       case 'episode_deleted':
-        return await processEpisodeDeleted(payload, config);
-        
+        return await processEpisodeDeleted(payload, config)
+
       default:
         return {
           success: false,
           action: 'ignored',
-          error: `Unknown event type: ${payload.event}`,
-        };
+          error: `Unknown event type: ${payload.event}`
+        }
     }
   } catch (error) {
     return {
       success: false,
       action: 'ignored',
-      error: `Webhook processing failed: ${(error as Error).message}`,
-    };
+      error: `Webhook processing failed: ${(error as Error).message}`
+    }
   }
 }
 
@@ -461,7 +461,7 @@ export function validateWebhookPayload(payload: any): payload is TransistorWebho
     payload.data.relationships.show &&
     payload.data.relationships.show.data &&
     typeof payload.data.relationships.show.data.id === 'string'
-  );
+  )
 }
 
 /**
@@ -472,73 +472,73 @@ export function createWebhookMiddleware(config: WebhookConfig = DEFAULT_WEBHOOK_
     try {
       // Validate content type
       if (req.headers['content-type'] !== 'application/json') {
-        return res.status(400).json({ error: 'Invalid content type' });
+        return res.status(400).json({ error: 'Invalid content type' })
       }
-      
+
       // Get raw body for signature validation
-      const rawBody = JSON.stringify(req.body);
-      
+      const rawBody = JSON.stringify(req.body)
+
       // Validate signature if secret key is provided
       if (config.secretKey) {
-        const signature = req.headers['x-transistor-signature'];
+        const signature = req.headers['x-transistor-signature']
         if (!signature || !validateWebhookSignature(rawBody, signature, config.secretKey)) {
-          return res.status(401).json({ error: 'Invalid signature' });
+          return res.status(401).json({ error: 'Invalid signature' })
         }
       }
-      
+
       // Validate payload structure
       if (!validateWebhookPayload(req.body)) {
-        return res.status(400).json({ error: 'Invalid payload structure' });
+        return res.status(400).json({ error: 'Invalid payload structure' })
       }
-      
+
       // Process webhook
-      const result = await handleTransistorWebhook(req.body, config);
-      
+      const result = await handleTransistorWebhook(req.body, config)
+
       if (result.success) {
         res.status(200).json({
           success: true,
           action: result.action,
           episodeSlug: result.episodeSlug,
-          language: result.language,
-        });
+          language: result.language
+        })
       } else {
         res.status(400).json({
           success: false,
-          error: result.error,
-        });
+          error: result.error
+        })
       }
-      
+
     } catch (error) {
-      console.error('Webhook middleware error:', error);
+      console.error('Webhook middleware error:', error)
       res.status(500).json({
         success: false,
-        error: 'Internal server error',
-      });
+        error: 'Internal server error'
+      })
     }
-  };
+  }
 }
 
 /**
  * Webhook URL generation helper
  */
 export function generateWebhookUrls(baseUrl: string): Record<WebhookEventType, string> {
-  const webhookPath = '/api/webhooks/transistor';
-  
+  const webhookPath = '/api/webhooks/transistor'
+
   return {
     episode_created: `${baseUrl}${webhookPath}`,
     episode_updated: `${baseUrl}${webhookPath}`,
     episode_published: `${baseUrl}${webhookPath}`,
     episode_unpublished: `${baseUrl}${webhookPath}`,
-    episode_deleted: `${baseUrl}${webhookPath}`,
-  };
+    episode_deleted: `${baseUrl}${webhookPath}`
+  }
 }
 
 /**
  * Webhook setup instructions
  */
 export function getWebhookSetupInstructions(baseUrl: string): string {
-  const urls = generateWebhookUrls(baseUrl);
-  
+  const urls = generateWebhookUrls(baseUrl)
+
   return `
 # Transistor Webhook Setup Instructions
 
@@ -584,5 +584,5 @@ const SHOW_LANGUAGE_MAP: Record<string, Language> = {
   'your-spanish-show-id': 'es',
 };
 \`\`\`
-`.trim();
+`.trim()
 }

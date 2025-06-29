@@ -102,252 +102,252 @@ const { audioUrl, episodeId, episodeTitle, duration } = Astro.props;
 </div>
 
 <script>
-  class SimpleAudioPlayer {
-    constructor(container: HTMLElement) {
-      this.container = container;
-      this.episodeId = container.dataset.episodeId!;
-      this.audio = container.querySelector('audio') as HTMLAudioElement;
-      this.playPauseBtn = container.querySelector('.play-pause') as HTMLButtonElement;
-      this.playIcon = container.querySelector('.play-icon') as SVGElement;
-      this.pauseIcon = container.querySelector('.pause-icon') as SVGElement;
-      this.skipBackwardBtn = container.querySelector('.skip-backward') as HTMLButtonElement;
-      this.skipForwardBtn = container.querySelector('.skip-forward') as HTMLButtonElement;
-      this.progressBar = container.querySelector('.progress-bar') as HTMLDivElement;
-      this.progressFill = container.querySelector('.progress-fill') as HTMLDivElement;
-      this.progressHandle = container.querySelector('.progress-handle') as HTMLDivElement;
-      this.currentTimeEl = container.querySelector('.current-time') as HTMLSpanElement;
-      this.durationEl = container.querySelector('.duration') as HTMLSpanElement;
-      this.speedControl = container.querySelector('.speed-control') as HTMLSelectElement;
+class SimpleAudioPlayer {
+  constructor(container: HTMLElement) {
+    this.container = container
+    this.episodeId = container.dataset.episodeId!
+    this.audio = container.querySelector('audio') as HTMLAudioElement
+    this.playPauseBtn = container.querySelector('.play-pause') as HTMLButtonElement
+    this.playIcon = container.querySelector('.play-icon') as SVGElement
+    this.pauseIcon = container.querySelector('.pause-icon') as SVGElement
+    this.skipBackwardBtn = container.querySelector('.skip-backward') as HTMLButtonElement
+    this.skipForwardBtn = container.querySelector('.skip-forward') as HTMLButtonElement
+    this.progressBar = container.querySelector('.progress-bar') as HTMLDivElement
+    this.progressFill = container.querySelector('.progress-fill') as HTMLDivElement
+    this.progressHandle = container.querySelector('.progress-handle') as HTMLDivElement
+    this.currentTimeEl = container.querySelector('.current-time') as HTMLSpanElement
+    this.durationEl = container.querySelector('.duration') as HTMLSpanElement
+    this.speedControl = container.querySelector('.speed-control') as HTMLSelectElement
 
-      this.init();
-    }
+    this.init()
+  }
 
-    private container: HTMLElement;
-    private episodeId: string;
-    private audio: HTMLAudioElement;
-    private playPauseBtn: HTMLButtonElement;
-    private playIcon: SVGElement;
-    private pauseIcon: SVGElement;
-    private skipBackwardBtn: HTMLButtonElement;
-    private skipForwardBtn: HTMLButtonElement;
-    private progressBar: HTMLDivElement;
-    private progressFill: HTMLDivElement;
-    private progressHandle: HTMLDivElement;
-    private currentTimeEl: HTMLSpanElement;
-    private durationEl: HTMLSpanElement;
-    private speedControl: HTMLSelectElement;
-    private isDragging = false;
+  private container: HTMLElement
+  private episodeId: string
+  private audio: HTMLAudioElement
+  private playPauseBtn: HTMLButtonElement
+  private playIcon: SVGElement
+  private pauseIcon: SVGElement
+  private skipBackwardBtn: HTMLButtonElement
+  private skipForwardBtn: HTMLButtonElement
+  private progressBar: HTMLDivElement
+  private progressFill: HTMLDivElement
+  private progressHandle: HTMLDivElement
+  private currentTimeEl: HTMLSpanElement
+  private durationEl: HTMLSpanElement
+  private speedControl: HTMLSelectElement
+  private isDragging = false
 
-    private init() {
-      // Load saved position and speed from localStorage
-      this.loadSavedState();
+  private init() {
+    // Load saved position and speed from localStorage
+    this.loadSavedState()
 
-      // Event listeners
-      this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-      this.skipBackwardBtn.addEventListener('click', () => this.skip(-15));
-      this.skipForwardBtn.addEventListener('click', () => this.skip(30));
-      this.speedControl.addEventListener('change', () => this.setPlaybackRate());
-      
-      // Progress bar interactions
-      this.progressBar.addEventListener('click', (e) => this.seek(e));
-      this.progressBar.addEventListener('mousedown', (e) => this.startDragging(e));
-      this.progressBar.addEventListener('mouseenter', () => this.progressHandle.style.opacity = '1');
-      this.progressBar.addEventListener('mouseleave', () => {
-        if (!this.isDragging) this.progressHandle.style.opacity = '0';
-      });
-      
-      // Keyboard navigation for progress bar
-      this.progressBar.addEventListener('keydown', (e) => this.handleKeyDown(e));
+    // Event listeners
+    this.playPauseBtn.addEventListener('click', () => this.togglePlayPause())
+    this.skipBackwardBtn.addEventListener('click', () => this.skip(-15))
+    this.skipForwardBtn.addEventListener('click', () => this.skip(30))
+    this.speedControl.addEventListener('change', () => this.setPlaybackRate())
 
-      // Audio events
-      this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
-      this.audio.addEventListener('timeupdate', () => this.updateProgress());
-      this.audio.addEventListener('play', () => this.updatePlayPauseButton(true));
-      this.audio.addEventListener('pause', () => this.updatePlayPauseButton(false));
-      this.audio.addEventListener('ended', () => this.handleEnded());
+    // Progress bar interactions
+    this.progressBar.addEventListener('click', (e) => this.seek(e))
+    this.progressBar.addEventListener('mousedown', (e) => this.startDragging(e))
+    this.progressBar.addEventListener('mouseenter', () => this.progressHandle.style.opacity = '1')
+    this.progressBar.addEventListener('mouseleave', () => {
+      if (!this.isDragging) {this.progressHandle.style.opacity = '0'}
+    })
 
-      // Save state periodically
-      setInterval(() => this.saveState(), 1000);
+    // Keyboard navigation for progress bar
+    this.progressBar.addEventListener('keydown', (e) => this.handleKeyDown(e))
 
-      // Handle page unload
-      window.addEventListener('beforeunload', () => this.saveState());
-    }
+    // Audio events
+    this.audio.addEventListener('loadedmetadata', () => this.updateDuration())
+    this.audio.addEventListener('timeupdate', () => this.updateProgress())
+    this.audio.addEventListener('play', () => this.updatePlayPauseButton(true))
+    this.audio.addEventListener('pause', () => this.updatePlayPauseButton(false))
+    this.audio.addEventListener('ended', () => this.handleEnded())
 
-    private togglePlayPause() {
-      if (this.audio.paused) {
-        this.audio.play();
-      } else {
-        this.audio.pause();
-      }
-    }
+    // Save state periodically
+    setInterval(() => this.saveState(), 1000)
 
-    private updatePlayPauseButton(isPlaying: boolean) {
-      if (isPlaying) {
-        this.playIcon.classList.add('hidden');
-        this.pauseIcon.classList.remove('hidden');
-      } else {
-        this.playIcon.classList.remove('hidden');
-        this.pauseIcon.classList.add('hidden');
-      }
-    }
+    // Handle page unload
+    window.addEventListener('beforeunload', () => this.saveState())
+  }
 
-    private skip(seconds: number) {
-      this.audio.currentTime = Math.max(0, Math.min(this.audio.duration, this.audio.currentTime + seconds));
-    }
-
-    private setPlaybackRate() {
-      this.audio.playbackRate = parseFloat(this.speedControl.value);
-      this.saveState();
-    }
-
-    private seek(e: MouseEvent) {
-      const rect = this.progressBar.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      this.audio.currentTime = percent * this.audio.duration;
-    }
-
-    private startDragging(e: MouseEvent) {
-      this.isDragging = true;
-      this.progressHandle.style.opacity = '1';
-      this.seek(e);
-
-      const handleMouseMove = (e: MouseEvent) => {
-        if (this.isDragging) this.seek(e);
-      };
-
-      const handleMouseUp = () => {
-        this.isDragging = false;
-        this.progressHandle.style.opacity = '0';
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    }
-
-    private updateDuration() {
-      const minutes = Math.floor(this.audio.duration / 60);
-      const seconds = Math.floor(this.audio.duration % 60);
-      this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    private updateProgress() {
-      const percent = (this.audio.currentTime / this.audio.duration) * 100;
-      this.progressFill.style.width = `${percent}%`;
-      this.progressHandle.style.left = `${percent}%`;
-
-      const minutes = Math.floor(this.audio.currentTime / 60);
-      const seconds = Math.floor(this.audio.currentTime % 60);
-      this.currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      
-      // Update ARIA attributes
-      this.progressBar.setAttribute('aria-valuenow', percent.toFixed(0));
-      const currentMinutes = Math.floor(this.audio.currentTime / 60);
-      const currentSeconds = Math.floor(this.audio.currentTime % 60);
-      const totalMinutes = Math.floor(this.audio.duration / 60);
-      const totalSeconds = Math.floor(this.audio.duration % 60);
-      this.progressBar.setAttribute('aria-valuetext', 
-        `${currentMinutes} minutes ${currentSeconds} seconds of ${totalMinutes} minutes ${totalSeconds} seconds`);
-    }
-
-    private handleEnded() {
-      this.updatePlayPauseButton(false);
-      // Clear saved position when episode ends
-      localStorage.removeItem(`audio-position-${this.episodeId}`);
-    }
-
-    private loadSavedState() {
-      // Load saved position
-      const savedPosition = localStorage.getItem(`audio-position-${this.episodeId}`);
-      if (savedPosition) {
-        const position = parseFloat(savedPosition);
-        // Wait for metadata to load before setting position
-        this.audio.addEventListener('loadedmetadata', () => {
-          this.audio.currentTime = position;
-        }, { once: true });
-      }
-
-      // Load saved speed
-      const savedSpeed = localStorage.getItem(`audio-speed-${this.episodeId}`);
-      if (savedSpeed) {
-        this.speedControl.value = savedSpeed;
-        this.audio.playbackRate = parseFloat(savedSpeed);
-      }
-    }
-
-    private saveState() {
-      if (this.audio.currentTime > 0 && !this.audio.ended) {
-        localStorage.setItem(`audio-position-${this.episodeId}`, this.audio.currentTime.toString());
-        localStorage.setItem(`audio-speed-${this.episodeId}`, this.speedControl.value);
-      }
-    }
-    
-    private handleKeyDown(e: KeyboardEvent) {
-      const percent = (this.audio.currentTime / this.audio.duration) * 100;
-      let newPercent = percent;
-      
-      switch(e.key) {
-        case 'ArrowLeft':
-          e.preventDefault();
-          newPercent = Math.max(0, percent - (e.shiftKey ? 10 : 1));
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          newPercent = Math.min(100, percent + (e.shiftKey ? 10 : 1));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          newPercent = Math.max(0, percent - (e.shiftKey ? 10 : 1));
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          newPercent = Math.min(100, percent + (e.shiftKey ? 10 : 1));
-          break;
-        case 'Home':
-          e.preventDefault();
-          newPercent = 0;
-          break;
-        case 'End':
-          e.preventDefault();
-          newPercent = 100;
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          newPercent = Math.max(0, percent - 10);
-          break;
-        case 'PageUp':
-          e.preventDefault();
-          newPercent = Math.min(100, percent + 10);
-          break;
-        default:
-          return;
-      }
-      
-      this.audio.currentTime = (newPercent / 100) * this.audio.duration;
-      this.progressHandle.style.opacity = '1';
-      setTimeout(() => {
-        if (!this.isDragging) this.progressHandle.style.opacity = '0';
-      }, 1000);
+  private togglePlayPause() {
+    if (this.audio.paused) {
+      this.audio.play()
+    } else {
+      this.audio.pause()
     }
   }
 
-  // Initialize all audio players on the page
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.simple-audio-player').forEach(player => {
-      new SimpleAudioPlayer(player as HTMLElement);
-    });
-  });
+  private updatePlayPauseButton(isPlaying: boolean) {
+    if (isPlaying) {
+      this.playIcon.classList.add('hidden')
+      this.pauseIcon.classList.remove('hidden')
+    } else {
+      this.playIcon.classList.remove('hidden')
+      this.pauseIcon.classList.add('hidden')
+    }
+  }
 
-  // Re-initialize after view transitions
-  document.addEventListener('astro:page-load', () => {
-    document.querySelectorAll('.simple-audio-player').forEach(player => {
-      if (!player.hasAttribute('data-initialized')) {
-        new SimpleAudioPlayer(player as HTMLElement);
-        player.setAttribute('data-initialized', 'true');
-      }
-    });
-  });
+  private skip(seconds: number) {
+    this.audio.currentTime = Math.max(0, Math.min(this.audio.duration, this.audio.currentTime + seconds))
+  }
+
+  private setPlaybackRate() {
+    this.audio.playbackRate = parseFloat(this.speedControl.value)
+    this.saveState()
+  }
+
+  private seek(e: MouseEvent) {
+    const rect = this.progressBar.getBoundingClientRect()
+    const percent = (e.clientX - rect.left) / rect.width
+    this.audio.currentTime = percent * this.audio.duration
+  }
+
+  private startDragging(e: MouseEvent) {
+    this.isDragging = true
+    this.progressHandle.style.opacity = '1'
+    this.seek(e)
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (this.isDragging) {this.seek(e)}
+    }
+
+    const handleMouseUp = () => {
+      this.isDragging = false
+      this.progressHandle.style.opacity = '0'
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }
+
+  private updateDuration() {
+    const minutes = Math.floor(this.audio.duration / 60)
+    const seconds = Math.floor(this.audio.duration % 60)
+    this.durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  private updateProgress() {
+    const percent = (this.audio.currentTime / this.audio.duration) * 100
+    this.progressFill.style.width = `${percent}%`
+    this.progressHandle.style.left = `${percent}%`
+
+    const minutes = Math.floor(this.audio.currentTime / 60)
+    const seconds = Math.floor(this.audio.currentTime % 60)
+    this.currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+
+    // Update ARIA attributes
+    this.progressBar.setAttribute('aria-valuenow', percent.toFixed(0))
+    const currentMinutes = Math.floor(this.audio.currentTime / 60)
+    const currentSeconds = Math.floor(this.audio.currentTime % 60)
+    const totalMinutes = Math.floor(this.audio.duration / 60)
+    const totalSeconds = Math.floor(this.audio.duration % 60)
+    this.progressBar.setAttribute('aria-valuetext',
+      `${currentMinutes} minutes ${currentSeconds} seconds of ${totalMinutes} minutes ${totalSeconds} seconds`)
+  }
+
+  private handleEnded() {
+    this.updatePlayPauseButton(false)
+    // Clear saved position when episode ends
+    localStorage.removeItem(`audio-position-${this.episodeId}`)
+  }
+
+  private loadSavedState() {
+    // Load saved position
+    const savedPosition = localStorage.getItem(`audio-position-${this.episodeId}`)
+    if (savedPosition) {
+      const position = parseFloat(savedPosition)
+      // Wait for metadata to load before setting position
+      this.audio.addEventListener('loadedmetadata', () => {
+        this.audio.currentTime = position
+      }, { once: true })
+    }
+
+    // Load saved speed
+    const savedSpeed = localStorage.getItem(`audio-speed-${this.episodeId}`)
+    if (savedSpeed) {
+      this.speedControl.value = savedSpeed
+      this.audio.playbackRate = parseFloat(savedSpeed)
+    }
+  }
+
+  private saveState() {
+    if (this.audio.currentTime > 0 && !this.audio.ended) {
+      localStorage.setItem(`audio-position-${this.episodeId}`, this.audio.currentTime.toString())
+      localStorage.setItem(`audio-speed-${this.episodeId}`, this.speedControl.value)
+    }
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    const percent = (this.audio.currentTime / this.audio.duration) * 100
+    let newPercent = percent
+
+    switch(e.key) {
+      case 'ArrowLeft':
+        e.preventDefault()
+        newPercent = Math.max(0, percent - (e.shiftKey ? 10 : 1))
+        break
+      case 'ArrowRight':
+        e.preventDefault()
+        newPercent = Math.min(100, percent + (e.shiftKey ? 10 : 1))
+        break
+      case 'ArrowDown':
+        e.preventDefault()
+        newPercent = Math.max(0, percent - (e.shiftKey ? 10 : 1))
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        newPercent = Math.min(100, percent + (e.shiftKey ? 10 : 1))
+        break
+      case 'Home':
+        e.preventDefault()
+        newPercent = 0
+        break
+      case 'End':
+        e.preventDefault()
+        newPercent = 100
+        break
+      case 'PageDown':
+        e.preventDefault()
+        newPercent = Math.max(0, percent - 10)
+        break
+      case 'PageUp':
+        e.preventDefault()
+        newPercent = Math.min(100, percent + 10)
+        break
+      default:
+        return
+    }
+
+    this.audio.currentTime = (newPercent / 100) * this.audio.duration
+    this.progressHandle.style.opacity = '1'
+    setTimeout(() => {
+      if (!this.isDragging) {this.progressHandle.style.opacity = '0'}
+    }, 1000)
+  }
+}
+
+// Initialize all audio players on the page
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.simple-audio-player').forEach(player => {
+    new SimpleAudioPlayer(player as HTMLElement)
+  })
+})
+
+// Re-initialize after view transitions
+document.addEventListener('astro:page-load', () => {
+  document.querySelectorAll('.simple-audio-player').forEach(player => {
+    if (!player.hasAttribute('data-initialized')) {
+      new SimpleAudioPlayer(player as HTMLElement)
+      player.setAttribute('data-initialized', 'true')
+    }
+  })
+})
 </script>
 
 <style>

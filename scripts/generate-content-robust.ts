@@ -42,7 +42,7 @@ async function main() {
 
     // Test data retrieval for each table
     console.log('\n🧪 Testing data retrieval...')
-    
+
     try {
       const episodes = await client.getEpisodes({ limit: 1 })
       console.log(`✅ Episodes: Found ${episodes.length} records`)
@@ -89,12 +89,12 @@ async function main() {
   } catch (error) {
     console.error('\n❌ Robust content generation failed:')
     console.error(error instanceof Error ? error.message : String(error))
-    
+
     if (error instanceof Error && error.stack) {
       console.error('\nStack trace:')
       console.error(error.stack)
     }
-    
+
     process.exit(1)
   }
 }

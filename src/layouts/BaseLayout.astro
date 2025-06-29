@@ -133,33 +133,33 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- Theme Script (inline to prevent flash) -->
     <script is:inline>
-      // Theme initialization function
-      function initTheme() {
-        const theme = (() => {
-          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-            return localStorage.getItem('theme');
-          }
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-          }
-          return 'dark'; // Default to dark mode
-        })();
-        
-        if (theme === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
-          document.documentElement.classList.add('dark');
-        }
-        window.__theme = theme;
-        return theme;
-      }
-      
-      // Initialize theme immediately
-      initTheme();
-      
-      // Store the function globally for View Transitions
-      window.__initTheme = initTheme;
-    </script>
+// Theme initialization function
+function initTheme() {
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme')
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark'
+    }
+    return 'dark' // Default to dark mode
+  })()
+
+  if (theme === 'light') {
+    document.documentElement.classList.remove('dark')
+  } else {
+    document.documentElement.classList.add('dark')
+  }
+  window.__theme = theme
+  return theme
+}
+
+// Initialize theme immediately
+initTheme()
+
+// Store the function globally for View Transitions
+window.__initTheme = initTheme
+</script>
     
   </head>
   
@@ -181,89 +181,89 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- Theme management and View Transitions -->
     <script>
-      // Theme toggle functionality
-      function toggleTheme() {
-        const element = document.documentElement;
-        const isDark = element.classList.contains('dark');
-        
-        if (isDark) {
-          element.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        } else {
-          element.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        }
-        
-        // Update global theme reference
-        window.__theme = isDark ? 'light' : 'dark';
-      }
-      
-      // Make toggleTheme available globally
-      window.toggleTheme = toggleTheme;
-      
-      // View Transitions event handlers for theme persistence
-      document.addEventListener('astro:before-preparation', () => {
-        // Store current theme state before navigation
-        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        sessionStorage.setItem('currentTheme', currentTheme);
-      });
-      
-      document.addEventListener('astro:after-swap', () => {
-        // Restore theme state after navigation
-        const savedTheme = sessionStorage.getItem('currentTheme') || localStorage.getItem('theme') || 'dark';
-        
-        if (savedTheme === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
-          document.documentElement.classList.add('dark');
-        }
-        
-        // Re-initialize theme if the global function is available
-        if (typeof window.__initTheme === 'function') {
-          window.__initTheme();
-        }
-        
-        // Clean up session storage
-        sessionStorage.removeItem('currentTheme');
-      });
-      
-      // Also handle page load for non-transition navigation
-      document.addEventListener('astro:page-load', () => {
-        // Ensure theme is properly set on direct page loads
-        if (typeof window.__initTheme === 'function') {
-          window.__initTheme();
-        }
-      });
-      
-      // Handle DOMContentLoaded as a fallback
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          if (typeof window.__initTheme === 'function') {
-            window.__initTheme();
-          }
-        });
-      }
-    </script>
+// Theme toggle functionality
+function toggleTheme() {
+  const element = document.documentElement
+  const isDark = element.classList.contains('dark')
+
+  if (isDark) {
+    element.classList.remove('dark')
+    localStorage.setItem('theme', 'light')
+  } else {
+    element.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
+  }
+
+  // Update global theme reference
+  window.__theme = isDark ? 'light' : 'dark'
+}
+
+// Make toggleTheme available globally
+window.toggleTheme = toggleTheme
+
+// View Transitions event handlers for theme persistence
+document.addEventListener('astro:before-preparation', () => {
+  // Store current theme state before navigation
+  const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  sessionStorage.setItem('currentTheme', currentTheme)
+})
+
+document.addEventListener('astro:after-swap', () => {
+  // Restore theme state after navigation
+  const savedTheme = sessionStorage.getItem('currentTheme') || localStorage.getItem('theme') || 'dark'
+
+  if (savedTheme === 'light') {
+    document.documentElement.classList.remove('dark')
+  } else {
+    document.documentElement.classList.add('dark')
+  }
+
+  // Re-initialize theme if the global function is available
+  if (typeof window.__initTheme === 'function') {
+    window.__initTheme()
+  }
+
+  // Clean up session storage
+  sessionStorage.removeItem('currentTheme')
+})
+
+// Also handle page load for non-transition navigation
+document.addEventListener('astro:page-load', () => {
+  // Ensure theme is properly set on direct page loads
+  if (typeof window.__initTheme === 'function') {
+    window.__initTheme()
+  }
+})
+
+// Handle DOMContentLoaded as a fallback
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.__initTheme === 'function') {
+      window.__initTheme()
+    }
+  })
+}
+</script>
     
     <!-- PWA Service Worker Registration -->
     <script>
-      if ('serviceWorker' in navigator) {
-        import('virtual:pwa-register').then(({ registerSW }) => {
-          registerSW({
-            immediate: true,
-            onRegisteredSW(swScriptUrl) {
-              console.log('SW registered:', swScriptUrl);
-            },
-            onOfflineReady() {
-              console.log('PWA application ready to work offline');
-            },
-            onNeedRefresh() {
-              // Optionally prompt user to refresh for updates
-              console.log('New content available, refresh to update');
-            }
-          });
-        });
-      }
-    </script>
+  if ('serviceWorker' in navigator) {
+    import('virtual:pwa-register').then(({ registerSW }) => {
+      registerSW({
+        immediate: true,
+        onRegisteredSW(swScriptUrl) {
+          console.log('SW registered:', swScriptUrl)
+        },
+        onOfflineReady() {
+          console.log('PWA application ready to work offline')
+        },
+        onNeedRefresh() {
+          // Optionally prompt user to refresh for updates
+          console.log('New content available, refresh to update')
+        }
+      })
+  })
+  }
+  </script>
   </body>
 </html>

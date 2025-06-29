@@ -38,7 +38,7 @@ class HostGenerator {
 
   async generate(): Promise<HostGenerationStats> {
     console.log('🎙️ Starting host generation...')
-    
+
     try {
       // Test connection
       const connected = await this.client.testConnection()
@@ -57,7 +57,7 @@ class HostGenerator {
       console.log('📥 Fetching hosts from NocoDB...')
       const hosts = await this.client.getHosts({ limit: 100 })
       console.log(`📊 Found ${hosts.length} hosts in NocoDB`)
-      
+
       // Always debug gxjansen host regardless of changes
       const gxjansenHost = hosts.find(h => h.slug === 'gxjansen' || h.name?.toLowerCase().includes('guido'))
       if (gxjansenHost) {
@@ -105,14 +105,14 @@ class HostGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Host generation complete in ${duration}ms`)
       console.log(`✅ Generated ${this.stats.hostsGenerated} hosts`)
-      
+
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted ${this.stats.filesDeleted} orphaned files`)
       }
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred`)
       }
@@ -129,7 +129,7 @@ class HostGenerator {
     if (!host.slug && !host.name) {
       throw new Error('Host missing both slug and name - cannot generate file')
     }
-    
+
     const slug = host.slug || host.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const hostPath = join(this.outputDir, `${slug}.mdx`)
 
@@ -149,20 +149,20 @@ class HostGenerator {
     console.log(`📝 Force updating host: ${slug}`)
 
     await fs.writeFile(hostPath, mdxContent, 'utf8')
-    
+
     return hostPath
   }
 
   private generateHostFrontmatter(host: any, slug: string): string {
     const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
-    
+
     // Handle LinkedIn field
     let linkedinValue = ''
     if (host.linkedin || host.LinkedIn) {
       const linkedin = host.linkedin || host.LinkedIn
       linkedinValue = linkedin.startsWith('http') ? linkedin : `https://linkedin.com/in/${linkedin}`
     }
-    
+
     // Create social links array
     const socialLinks = []
     if (host.website || host.Website) {
@@ -234,7 +234,7 @@ class HostGenerator {
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
-    if (!url) return false
+    if (!url) {return false}
     try {
       new URL(url)
       return true
@@ -244,7 +244,7 @@ class HostGenerator {
   }
 
   private escapeYaml(str: string): string {
-    if (!str) return ''
+    if (!str) {return ''}
     return str
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')

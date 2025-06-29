@@ -19,27 +19,27 @@ interface ValidationResult {
 async function validateMDXFile(filePath: string): Promise<{ valid: boolean; error?: string }> {
   try {
     const content = await fs.readFile(filePath, 'utf-8')
-    
+
     // Check if file has frontmatter
     if (!content.startsWith('---')) {
       return { valid: false, error: 'Missing frontmatter' }
     }
-    
+
     // Extract frontmatter
     const frontmatterEnd = content.indexOf('---', 3)
     if (frontmatterEnd === -1) {
       return { valid: false, error: 'Invalid frontmatter' }
     }
-    
+
     const frontmatterContent = content.substring(3, frontmatterEnd).trim()
-    
+
     // Parse YAML frontmatter
     try {
       const data = parse(frontmatterContent)
-      
+
       // Basic validation based on file type
       const fileName = filePath.split('/').pop()
-      
+
       if (filePath.includes('/episodes/')) {
         // Validate episode required fields
         const required = ['title', 'language', 'pubDate', 'hosts']
@@ -55,7 +55,7 @@ async function validateMDXFile(filePath: string): Promise<{ valid: boolean; erro
           return { valid: false, error: `Missing required fields: ${missing.join(', ')}` }
         }
       }
-      
+
       return { valid: true }
     } catch (yamlError) {
       return { valid: false, error: `Invalid YAML: ${yamlError}` }
@@ -82,7 +82,7 @@ async function validateCollection(collectionPath: string, extension: string): Pr
     invalid: 0,
     errors: []
   }
-  
+
   try {
     // Check if directory exists
     try {
@@ -92,16 +92,16 @@ async function validateCollection(collectionPath: string, extension: string): Pr
       console.log(`⚠️  ${result.collection} directory not found (this may be expected)`)
       return result
     }
-    
+
     // Read all files recursively
     const files: string[] = []
-    
+
     async function readDir(dir: string) {
       const entries = await fs.readdir(dir, { withFileTypes: true })
-      
+
       for (const entry of entries) {
         const fullPath = join(dir, entry.name)
-        
+
         if (entry.isDirectory()) {
           await readDir(fullPath)
         } else if (entry.name.endsWith(extension)) {
@@ -109,15 +109,15 @@ async function validateCollection(collectionPath: string, extension: string): Pr
         }
       }
     }
-    
+
     await readDir(collectionPath)
-    
+
     // Validate each file
     for (const file of files) {
-      const validation = extension === '.mdx' 
+      const validation = extension === '.mdx'
         ? await validateMDXFile(file)
         : await validateJSONFile(file)
-      
+
       if (validation.valid) {
         result.valid++
       } else {
@@ -128,15 +128,15 @@ async function validateCollection(collectionPath: string, extension: string): Pr
   } catch (error) {
     result.errors.push(`Failed to read collection: ${error}`)
   }
-  
+
   return result
 }
 
 async function validateAllContent() {
   console.log('🔍 Validating content collections...\n')
-  
+
   const contentDir = join(process.cwd(), 'src/content')
-  
+
   // Define collections to validate
   const collections = [
     { path: join(contentDir, 'episodes'), extension: '.mdx' },
@@ -144,23 +144,23 @@ async function validateAllContent() {
     { path: join(contentDir, 'hosts'), extension: '.mdx' },
     { path: join(contentDir, 'platforms'), extension: '.json' }
   ]
-  
+
   const results: ValidationResult[] = []
   let hasErrors = false
-  
+
   for (const collection of collections) {
     console.log(`Validating ${collection.path.split('/').pop()} collection...`)
     const result = await validateCollection(collection.path, collection.extension)
     results.push(result)
-    
+
     if (result.invalid > 0) {
       hasErrors = true
       console.log(`❌ ${result.collection}: ${result.valid} valid, ${result.invalid} invalid`)
-      
+
       // Show first 5 errors
       const errorSample = result.errors.slice(0, 5)
       errorSample.forEach(error => console.log(`   - ${error}`))
-      
+
       if (result.errors.length > 5) {
         console.log(`   ... and ${result.errors.length - 5} more errors`)
       }
@@ -168,22 +168,22 @@ async function validateAllContent() {
       console.log(`✅ ${result.collection}: ${result.valid} valid entries`)
     }
   }
-  
+
   console.log('\n📊 Validation Summary:')
   console.log('─'.repeat(50))
-  
+
   let totalValid = 0
   let totalInvalid = 0
-  
+
   results.forEach(result => {
     totalValid += result.valid
     totalInvalid += result.invalid
     console.log(`${result.collection.padEnd(15)} ${result.valid} valid, ${result.invalid} invalid`)
   })
-  
+
   console.log('─'.repeat(50))
   console.log(`Total:          ${totalValid} valid, ${totalInvalid} invalid`)
-  
+
   if (hasErrors) {
     console.log('\n❌ Content validation failed!')
     process.exit(1)

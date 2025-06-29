@@ -32,8 +32,8 @@ interface GenerationStats {
  * Helper function to extract a string value from a TranslatedField
  */
 function getTranslatedValue(field: TranslatedField<string> | string | undefined, language: Language = 'en', fallback: string = ''): string {
-  if (!field) return fallback
-  if (typeof field === 'string') return field
+  if (!field) {return fallback}
+  if (typeof field === 'string') {return field}
   return field[language] || field.en || field.nl || field.de || field.es || fallback
 }
 
@@ -56,7 +56,7 @@ export class ContentGenerator {
       defaultLanguage: 'en',
       ...config
     }
-    
+
     this.stats = {
       episodesGenerated: 0,
       guestsGenerated: 0,
@@ -72,7 +72,7 @@ export class ContentGenerator {
    */
   async generateAll(): Promise<GenerationStats> {
     console.log('🚀 Starting content generation...')
-    
+
     try {
       // Ensure NocoDB connection
       if (!this.nocodbService.isConnected()) {
@@ -90,10 +90,10 @@ export class ContentGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Content generation complete in ${duration}ms`)
       console.log(`📊 Generated: ${this.stats.episodesGenerated} episodes, ${this.stats.guestsGenerated} guests, ${this.stats.hostsGenerated} hosts, ${this.stats.platformsGenerated} platforms`)
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred:`)
         this.stats.errors.forEach(error => console.log(`  - ${error}`))
@@ -112,7 +112,7 @@ export class ContentGenerator {
    */
   private async generateEpisodes(): Promise<void> {
     console.log('📝 Generating episodes...')
-    
+
     const episodes = await this.nocodbService.getEpisodes({
       include: ['hosts', 'guests', 'platforms'],
       limit: 1000
@@ -227,7 +227,7 @@ export class ContentGenerator {
    */
   private async generateGuests(): Promise<void> {
     console.log('👥 Generating guests...')
-    
+
     const guests = await this.nocodbService.getGuests({
       include: ['episodes'],
       limit: 1000
@@ -299,8 +299,8 @@ export class ContentGenerator {
     if (guest.company || guest.role) {
       content.push('## Professional Background')
       content.push('')
-      if (guest.company) content.push(`**Company**: ${guest.company}`)
-      if (guest.role) content.push(`**Role**: ${guest.role}`)
+      if (guest.company) {content.push(`**Company**: ${guest.company}`)}
+      if (guest.role) {content.push(`**Role**: ${guest.role}`)}
       content.push('')
     }
 
@@ -312,7 +312,7 @@ export class ContentGenerator {
    */
   private async generateHosts(): Promise<void> {
     console.log('🎙️ Generating hosts...')
-    
+
     const hosts = await this.nocodbService.getHosts({
       include: ['episodes'],
       limit: 100
@@ -377,7 +377,7 @@ export class ContentGenerator {
    */
   private async generatePlatforms(): Promise<void> {
     console.log('🎵 Generating platforms...')
-    
+
     const platforms = await this.nocodbService.getPlatforms({
       limit: 100
     })
@@ -460,7 +460,7 @@ export class ContentGenerator {
   }
 
   private escapeYaml(str: string): string {
-    if (!str) return ''
+    if (!str) {return ''}
     return str.replace(/"/g, '\\"').replace(/\n/g, '\\n')
   }
 

@@ -167,90 +167,90 @@ const gridClass = {
 </style>
 
 <script>
-  // Enhanced carousel functionality with smooth scrolling
-  document.addEventListener('DOMContentLoaded', () => {
-    const carousels = document.querySelectorAll('[data-carousel]');
-    
-    carousels.forEach(carousel => {
-      const container = carousel.querySelector('.carousel-container');
-      const track = carousel.querySelector('[data-carousel-track]');
-      const prevBtn = carousel.querySelector('[data-carousel-prev]');
-      const nextBtn = carousel.querySelector('[data-carousel-next]');
-      
-      if (!track || !container || !prevBtn || !nextBtn) return;
-      
-      const updateButtons = () => {
-        const scrollLeft = container.scrollLeft;
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        
-        prevBtn.disabled = scrollLeft <= 0;
-        nextBtn.disabled = scrollLeft >= maxScroll - 1;
-      };
-      
-      const scrollToIndex = (direction) => {
-        const containerWidth = container.clientWidth;
-        const currentScroll = container.scrollLeft;
-        const items = track.children;
-        let targetScroll = currentScroll;
-        
-        if (direction === 'next') {
-          // Find the first item that's partially out of view
-          for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            const itemLeft = item.offsetLeft;
-            const itemRight = itemLeft + item.offsetWidth;
-            
-            if (itemRight > currentScroll + containerWidth + 10) {
-              targetScroll = Math.min(itemLeft, container.scrollWidth - containerWidth);
-              break;
-            }
+// Enhanced carousel functionality with smooth scrolling
+document.addEventListener('DOMContentLoaded', () => {
+  const carousels = document.querySelectorAll('[data-carousel]')
+
+  carousels.forEach(carousel => {
+    const container = carousel.querySelector('.carousel-container')
+    const track = carousel.querySelector('[data-carousel-track]')
+    const prevBtn = carousel.querySelector('[data-carousel-prev]')
+    const nextBtn = carousel.querySelector('[data-carousel-next]')
+
+    if (!track || !container || !prevBtn || !nextBtn) {return}
+
+    const updateButtons = () => {
+      const scrollLeft = container.scrollLeft
+      const maxScroll = container.scrollWidth - container.clientWidth
+
+      prevBtn.disabled = scrollLeft <= 0
+      nextBtn.disabled = scrollLeft >= maxScroll - 1
+    }
+
+    const scrollToIndex = (direction) => {
+      const containerWidth = container.clientWidth
+      const currentScroll = container.scrollLeft
+      const items = track.children
+      let targetScroll = currentScroll
+
+      if (direction === 'next') {
+        // Find the first item that's partially out of view
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i]
+          const itemLeft = item.offsetLeft
+          const itemRight = itemLeft + item.offsetWidth
+
+          if (itemRight > currentScroll + containerWidth + 10) {
+            targetScroll = Math.min(itemLeft, container.scrollWidth - containerWidth)
+            break
           }
+        }
+      } else {
+        // Find the first item that's partially out of view on the left
+        for (let i = items.length - 1; i >= 0; i--) {
+          const item = items[i]
+          const itemLeft = item.offsetLeft
+
+          if (itemLeft < currentScroll - 10) {
+            targetScroll = itemLeft
+            break
+          }
+        }
+      }
+
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      })
+    }
+
+    prevBtn.addEventListener('click', () => scrollToIndex('prev'))
+    nextBtn.addEventListener('click', () => scrollToIndex('next'))
+    container.addEventListener('scroll', updateButtons)
+
+    // Initial button state
+    updateButtons()
+
+    // Touch/swipe support for mobile
+    let touchStartX = 0
+    let touchEndX = 0
+
+    container.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX
+    }, { passive: true })
+
+    container.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX
+      const diff = touchStartX - touchEndX
+
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          scrollToIndex('next')
         } else {
-          // Find the first item that's partially out of view on the left
-          for (let i = items.length - 1; i >= 0; i--) {
-            const item = items[i];
-            const itemLeft = item.offsetLeft;
-            
-            if (itemLeft < currentScroll - 10) {
-              targetScroll = itemLeft;
-              break;
-            }
-          }
+          scrollToIndex('prev')
         }
-        
-        container.scrollTo({
-          left: targetScroll,
-          behavior: 'smooth'
-        });
-      };
-      
-      prevBtn.addEventListener('click', () => scrollToIndex('prev'));
-      nextBtn.addEventListener('click', () => scrollToIndex('next'));
-      container.addEventListener('scroll', updateButtons);
-      
-      // Initial button state
-      updateButtons();
-      
-      // Touch/swipe support for mobile
-      let touchStartX = 0;
-      let touchEndX = 0;
-      
-      container.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-      
-      container.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) {
-            scrollToIndex('next');
-          } else {
-            scrollToIndex('prev');
-          }
-        }
-      }, { passive: true });
-    });
-  });
+      }
+    }, { passive: true })
+  })
+})
 </script>

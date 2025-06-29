@@ -7,7 +7,7 @@ import type { Language } from '../src/types/index.js'
 
 /**
  * CROCAFE Content Generation Script
- * 
+ *
  * Generates MDX files from NocoDB data for Astro Content Collections
  * Supports multi-language content and cross-references
  */
@@ -72,7 +72,7 @@ async function main() {
     console.log(`Guests: ${stats.guestsGenerated}`)
     console.log(`Hosts: ${stats.hostsGenerated}`)
     console.log(`Platforms: ${stats.platformsGenerated}`)
-    
+
     if (stats.endTime) {
       const duration = stats.endTime.getTime() - stats.startTime.getTime()
       console.log(`Duration: ${duration}ms`)
@@ -87,19 +87,19 @@ async function main() {
     }
 
     console.log('\n✅ Content generation completed successfully!')
-    
+
     // Disconnect from NocoDB
     await nocodbService.disconnect()
 
   } catch (error) {
     console.error('\n❌ Content generation failed:')
     console.error(error instanceof Error ? error.message : String(error))
-    
+
     if (error instanceof Error && error.stack) {
       console.error('\nStack trace:')
       console.error(error.stack)
     }
-    
+
     process.exit(1)
   }
 }

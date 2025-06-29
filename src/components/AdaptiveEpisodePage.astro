@@ -250,41 +250,41 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
 
 <!-- Episode Page JavaScript -->
 <script>
-  import { audioPlayerActions } from '../stores/audioPlayerStore';
+import { audioPlayerActions } from '../stores/audioPlayerStore'
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Handle play episode buttons
-    const playButtons = document.querySelectorAll('[data-play-episode]');
-    
-    playButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const episodeData = {
-          id: button.getAttribute('data-episode-id') || '',
-          title: button.getAttribute('data-episode-title') || '',
-          audioUrl: button.getAttribute('data-episode-audio') || '',
-          imageUrl: button.getAttribute('data-episode-image') || '',
-          slug: button.getAttribute('data-episode-id') || '',
-        };
-        
-        audioPlayerActions.loadEpisode(episodeData);
-        audioPlayerActions.play();
-      });
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle play episode buttons
+  const playButtons = document.querySelectorAll('[data-play-episode]')
 
-    // Handle description expansion in PWA mode
-    const expandButton = document.querySelector('[data-expand-description]');
-    if (expandButton) {
-      expandButton.addEventListener('click', () => {
-        const description = expandButton.previousElementSibling;
-        if (description) {
-          description.classList.toggle('line-clamp-3');
-          expandButton.textContent = description.classList.contains('line-clamp-3') 
-            ? 'Show more' 
-            : 'Show less';
-        }
-      });
-    }
-  });
+  playButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const episodeData = {
+        id: button.getAttribute('data-episode-id') || '',
+        title: button.getAttribute('data-episode-title') || '',
+        audioUrl: button.getAttribute('data-episode-audio') || '',
+        imageUrl: button.getAttribute('data-episode-image') || '',
+        slug: button.getAttribute('data-episode-id') || ''
+      }
+
+      audioPlayerActions.loadEpisode(episodeData)
+      audioPlayerActions.play()
+    })
+  })
+
+  // Handle description expansion in PWA mode
+  const expandButton = document.querySelector('[data-expand-description]')
+  if (expandButton) {
+    expandButton.addEventListener('click', () => {
+      const description = expandButton.previousElementSibling
+      if (description) {
+        description.classList.toggle('line-clamp-3')
+        expandButton.textContent = description.classList.contains('line-clamp-3')
+          ? 'Show more'
+          : 'Show less'
+      }
+    })
+  }
+})
 </script>
 
 <style>

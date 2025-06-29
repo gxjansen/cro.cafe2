@@ -65,47 +65,47 @@ const t = translations[language];
 </div>
 
 <script>
-  import { registerSW } from 'virtual:pwa-register';
+import { registerSW } from 'virtual:pwa-register'
 
-  const updateNotification = document.getElementById('pwa-update-notification');
-  const updateBtn = document.getElementById('pwa-update-btn');
-  const updateLaterBtn = document.getElementById('pwa-update-later-btn');
+const updateNotification = document.getElementById('pwa-update-notification')
+const updateBtn = document.getElementById('pwa-update-btn')
+const updateLaterBtn = document.getElementById('pwa-update-later-btn')
 
-  // Register service worker with update handling
-  const updateSW = registerSW({
-    onNeedRefresh() {
-      // Show update notification
-      if (updateNotification) {
-        updateNotification.classList.remove('-top-full', 'invisible');
-        updateNotification.classList.add('top-4');
-        updateNotification.setAttribute('data-visible', 'true');
-      }
-    },
-    onOfflineReady() {
-      console.log('App ready to work offline');
-    },
-  });
-
-  // Handle update button click
-  updateBtn?.addEventListener('click', () => {
-    updateSW(true);
-  });
-
-  // Handle later button click
-  updateLaterBtn?.addEventListener('click', () => {
-    // Hide notification
+// Register service worker with update handling
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // Show update notification
     if (updateNotification) {
-      updateNotification.classList.add('-top-full', 'invisible');
-      updateNotification.classList.remove('top-4');
-      updateNotification.setAttribute('data-visible', 'false');
+      updateNotification.classList.remove('-top-full', 'invisible')
+      updateNotification.classList.add('top-4')
+      updateNotification.setAttribute('data-visible', 'true')
     }
-  });
+  },
+  onOfflineReady() {
+    console.log('App ready to work offline')
+  }
+})
 
-  // Also listen for visibility change to prompt for update when user returns
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      // Check for updates when page becomes visible
-      updateSW();
-    }
-  });
+// Handle update button click
+updateBtn?.addEventListener('click', () => {
+  updateSW(true)
+})
+
+// Handle later button click
+updateLaterBtn?.addEventListener('click', () => {
+  // Hide notification
+  if (updateNotification) {
+    updateNotification.classList.add('-top-full', 'invisible')
+    updateNotification.classList.remove('top-4')
+    updateNotification.setAttribute('data-visible', 'false')
+  }
+})
+
+// Also listen for visibility change to prompt for update when user returns
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    // Check for updates when page becomes visible
+    updateSW()
+  }
+})
 </script>

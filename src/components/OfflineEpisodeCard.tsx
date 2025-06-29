@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useStore } from '@nanostores/react';
+import React, { useState, useEffect } from 'react'
+import { useStore } from '@nanostores/react'
 import {
   offlineAudioStore,
   offlineAudioActions,
   type OfflineEpisode
-} from '../stores/offlineAudioStore';
-import type { Episode } from '../stores/audioPlayerStore';
+} from '../stores/offlineAudioStore'
+import type { Episode } from '../stores/audioPlayerStore'
 
 interface OfflineEpisodeCardProps {
   episode: Episode;
@@ -13,46 +13,46 @@ interface OfflineEpisodeCardProps {
 }
 
 const OfflineEpisodeCard: React.FC<OfflineEpisodeCardProps> = ({ episode, className = '' }) => {
-  const state = useStore(offlineAudioStore);
-  const [isOffline, setIsOffline] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
+  const state = useStore(offlineAudioStore)
+  const [isOffline, setIsOffline] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
     // Check if episode is offline
     const checkOfflineStatus = async () => {
-      const offline = await offlineAudioActions.isEpisodeOffline(episode.id);
-      setIsOffline(offline);
-      setIsChecking(false);
-    };
-    
-    checkOfflineStatus();
-  }, [episode.id, state.offlineEpisodes]);
+      const offline = await offlineAudioActions.isEpisodeOffline(episode.id)
+      setIsOffline(offline)
+      setIsChecking(false)
+    }
 
-  const downloadProgress = offlineAudioActions.getDownloadProgress(episode.id);
-  const isDownloading = offlineAudioActions.isDownloading(episode.id);
+    checkOfflineStatus()
+  }, [episode.id, state.offlineEpisodes])
+
+  const downloadProgress = offlineAudioActions.getDownloadProgress(episode.id)
+  const isDownloading = offlineAudioActions.isDownloading(episode.id)
 
   const handleDownload = async () => {
     try {
-      await offlineAudioActions.downloadEpisode(episode);
+      await offlineAudioActions.downloadEpisode(episode)
     } catch (error) {
-      console.error('Failed to download episode:', error);
+      console.error('Failed to download episode:', error)
       // You might want to show a toast notification here
     }
-  };
+  }
 
   const handleDelete = async () => {
     if (confirm('Remove this episode from offline storage?')) {
       try {
-        await offlineAudioActions.deleteOfflineEpisode(episode.id);
+        await offlineAudioActions.deleteOfflineEpisode(episode.id)
       } catch (error) {
-        console.error('Failed to delete offline episode:', error);
+        console.error('Failed to delete offline episode:', error)
       }
     }
-  };
+  }
 
   const handleCancelDownload = () => {
-    offlineAudioActions.cancelDownload(episode.id);
-  };
+    offlineAudioActions.cancelDownload(episode.id)
+  }
 
   if (isChecking) {
     return (
@@ -61,7 +61,7 @@ const OfflineEpisodeCard: React.FC<OfflineEpisodeCardProps> = ({ episode, classN
           <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -113,20 +113,20 @@ const OfflineEpisodeCard: React.FC<OfflineEpisodeCardProps> = ({ episode, classN
               Cancel
             </button>
           </div>
-          
+
           <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <div
               className="absolute top-0 left-0 h-full bg-primary-600 rounded-full transition-all duration-300"
               style={{ width: `${downloadProgress.progress}%` }}
             />
           </div>
-          
+
           <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
             <span>
               {offlineAudioActions.formatBytes(downloadProgress.bytesDownloaded)}
             </span>
             <span>
-              {downloadProgress.totalBytes > 0 
+              {downloadProgress.totalBytes > 0
                 ? offlineAudioActions.formatBytes(downloadProgress.totalBytes)
                 : 'Calculating...'}
             </span>
@@ -154,7 +154,7 @@ const OfflineEpisodeCard: React.FC<OfflineEpisodeCardProps> = ({ episode, classN
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default OfflineEpisodeCard;
+export default OfflineEpisodeCard

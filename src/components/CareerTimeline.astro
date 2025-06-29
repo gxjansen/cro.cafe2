@@ -487,24 +487,24 @@ function formatDate(dateStr?: string | null): string {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const timelines = document.querySelectorAll('[data-timeline]');
-    
-    timelines.forEach(timeline => {
-      const toggle = timeline.querySelector('[data-timeline-toggle]');
-      const container = timeline.querySelector('[data-timeline-container]');
-      
-      if (toggle && container) {
-        toggle.addEventListener('click', () => {
-          const isCollapsed = timeline.hasAttribute('data-collapsed');
-          
-          if (isCollapsed) {
-            timeline.removeAttribute('data-collapsed');
-          } else {
-            timeline.setAttribute('data-collapsed', '');
-          }
-        });
-      }
-    });
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  const timelines = document.querySelectorAll('[data-timeline]')
+
+  timelines.forEach(timeline => {
+    const toggle = timeline.querySelector('[data-timeline-toggle]')
+    const container = timeline.querySelector('[data-timeline-container]')
+
+    if (toggle && container) {
+      toggle.addEventListener('click', () => {
+        const isCollapsed = timeline.hasAttribute('data-collapsed')
+
+        if (isCollapsed) {
+          timeline.removeAttribute('data-collapsed')
+        } else {
+          timeline.setAttribute('data-collapsed', '')
+        }
+      })
+    }
+  })
+})
 </script>

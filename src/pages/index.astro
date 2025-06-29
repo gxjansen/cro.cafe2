@@ -84,9 +84,9 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
 >
   <Header language="en" currentPath="/" />
   
-  <main id="main-content" class="flex-1" tabindex="-1">
+  <main id="main-content" class="flex-1 bg-white dark:bg-gray-900" tabindex="-1">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-lg lg:py-xl">
+    <section class="bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 py-lg lg:py-xl">
       <div class="container-xl">
         <div class="text-center">
           <h1 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-md balance-text">
@@ -161,7 +161,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
     <BrandLogoBar language="en" />
 
     <!-- Language Selection -->
-    <section class="py-12 lg:py-16 bg-white dark:bg-gray-800">
+    <section class="py-12 lg:py-16">
       <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-8">
           <h2 class="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-3">
@@ -436,10 +436,10 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
 
     <!-- Latest Episodes from Each Language -->
     {latestFromEachLanguage.length > 0 && (
-      <section id="latest-episodes" class="section-spacing bg-surface-alt">
-        <div class="container-xl">
-          <div class="text-center mb-lg">
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-md">
+      <section id="latest-episodes" class="py-12 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-3">
               Latest Episodes
             </h2>
             <p class="text-base lg:text-lg text-gray-600 dark:text-gray-300">
@@ -447,7 +447,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             </p>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md lg:gap-lg">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {latestFromEachLanguage.map((episode) => (
               <EpisodeCard 
                 episode={episode} 
@@ -462,10 +462,10 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
 
     <!-- Recently Popular Episodes from Each Language -->
     {popularFromEachLanguage.length > 0 && (
-      <section class="section-spacing bg-surface">
-        <div class="container-xl">
-          <div class="text-center mb-lg">
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-md">
+      <section class="py-12 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-3">
               Recently Popular Episodes
             </h2>
             <p class="text-base lg:text-lg text-gray-600 dark:text-gray-300">
@@ -473,7 +473,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
             </p>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md lg:gap-lg">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {popularFromEachLanguage.map((episode) => (
               <EpisodeCard 
                 episode={episode} 
@@ -566,42 +566,74 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
   .card-colored * {
     pointer-events: auto;
   }
+  
+  /* Subtle section dividers for unified design */
+  main > section:not(:first-child) {
+    position: relative;
+  }
+  
+  main > section:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+  }
+  
+  .dark main > section:not(:first-child)::before {
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+  }
+  
+  /* Special treatment for sections that need more visual weight */
+  #latest-episodes,
+  .live-events-section {
+    position: relative;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.02), transparent);
+  }
+  
+  .dark #latest-episodes,
+  .dark .live-events-section {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), transparent);
+  }
 </style>
 
 <script>
-  // Initialize swipe gestures for language navigation
-  import { SwipeGestures } from '../scripts/swipe-gestures.js';
-  
-  // Initialize swipe gestures when DOM is ready
-  if (typeof window !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-      // Custom swipe handler for homepage - cycle through language sections
-      const swipeGestures = new SwipeGestures({
-        threshold: 50,
-        velocity: 0.3,
-        restraint: 100,
-        allowedTime: 300
-      });
-      
-      // Override navigation for homepage to scroll to language sections
-      const languageSection = document.querySelector('.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4');
-      if (languageSection) {
-        // Listen to swipe events
-        document.addEventListener('swipe:left', (e) => {
-          e.preventDefault();
-          // Scroll to next language section or episodes
-          const latestEpisodesSection = document.querySelector('#latest-episodes');
-          if (latestEpisodesSection) {
-            latestEpisodesSection.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-        
-        document.addEventListener('swipe:right', (e) => {
-          e.preventDefault();
-          // Scroll back to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      }
-    });
-  }
+// Initialize swipe gestures for language navigation
+import { SwipeGestures } from '../scripts/swipe-gestures.js'
+
+// Initialize swipe gestures when DOM is ready
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Custom swipe handler for homepage - cycle through language sections
+    const swipeGestures = new SwipeGestures({
+      threshold: 50,
+      velocity: 0.3,
+      restraint: 100,
+      allowedTime: 300
+    })
+
+    // Override navigation for homepage to scroll to language sections
+    const languageSection = document.querySelector('.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4')
+    if (languageSection) {
+      // Listen to swipe events
+      document.addEventListener('swipe:left', (e) => {
+        e.preventDefault()
+        // Scroll to next language section or episodes
+        const latestEpisodesSection = document.querySelector('#latest-episodes')
+        if (latestEpisodesSection) {
+          latestEpisodesSection.scrollIntoView({ behavior: 'smooth' })
+        }
+      })
+
+      document.addEventListener('swipe:right', (e) => {
+        e.preventDefault()
+        // Scroll back to top
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
+    }
+  })
+}
 </script>

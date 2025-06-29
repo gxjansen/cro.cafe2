@@ -220,84 +220,84 @@ const isActive = (href: string) => {
 </style>
 
 <script>
-  // More menu functionality
-  document.addEventListener('DOMContentLoaded', () => {
-    const moreButton = document.querySelector('[data-action="more-menu"]');
-    const modal = document.getElementById('more-menu-modal');
-    const closeButton = document.querySelector('[data-close-menu]');
-    
-    if (!moreButton || !modal || !closeButton) return;
-    
-    function openMenu() {
-      modal.classList.remove('hidden');
-      modal.setAttribute('aria-hidden', 'false');
-      // Force reflow before adding active class for animation
-      modal.offsetHeight;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+// More menu functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const moreButton = document.querySelector('[data-action="more-menu"]')
+  const modal = document.getElementById('more-menu-modal')
+  const closeButton = document.querySelector('[data-close-menu]')
+
+  if (!moreButton || !modal || !closeButton) {return}
+
+  function openMenu() {
+    modal.classList.remove('hidden')
+    modal.setAttribute('aria-hidden', 'false')
+    // Force reflow before adding active class for animation
+    modal.offsetHeight
+    modal.classList.add('active')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeMenu() {
+    modal.classList.remove('active')
+    setTimeout(() => {
+      modal.classList.add('hidden')
+      modal.setAttribute('aria-hidden', 'true')
+      document.body.style.overflow = ''
+    }, 300) // Match transition duration
+  }
+
+  moreButton.addEventListener('click', openMenu)
+  closeButton.addEventListener('click', closeMenu)
+
+  // Close on backdrop click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeMenu()
     }
-    
-    function closeMenu() {
-      modal.classList.remove('active');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }, 300); // Match transition duration
+  })
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeMenu()
     }
-    
-    moreButton.addEventListener('click', openMenu);
-    closeButton.addEventListener('click', closeMenu);
-    
-    // Close on backdrop click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeMenu();
-      }
-    });
-    
-    // Close on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeMenu();
-      }
-    });
-  });
-  
-  // Re-initialize after view transitions
-  document.addEventListener('astro:after-swap', () => {
-    const moreButton = document.querySelector('[data-action="more-menu"]');
-    const modal = document.getElementById('more-menu-modal');
-    const closeButton = document.querySelector('[data-close-menu]');
-    
-    if (!moreButton || !modal || !closeButton) return;
-    
-    // Remove any existing event listeners by cloning
-    const newMoreButton = moreButton.cloneNode(true);
-    moreButton.parentNode?.replaceChild(newMoreButton, moreButton);
-    
-    const newCloseButton = closeButton.cloneNode(true);
-    closeButton.parentNode?.replaceChild(newCloseButton, closeButton);
-    
-    // Re-attach event listeners
-    function openMenu() {
-      modal.classList.remove('hidden');
-      modal.setAttribute('aria-hidden', 'false');
-      modal.offsetHeight;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeMenu() {
-      modal.classList.remove('active');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }, 300);
-    }
-    
-    newMoreButton.addEventListener('click', openMenu);
-    newCloseButton.addEventListener('click', closeMenu);
-  });
+  })
+})
+
+// Re-initialize after view transitions
+document.addEventListener('astro:after-swap', () => {
+  const moreButton = document.querySelector('[data-action="more-menu"]')
+  const modal = document.getElementById('more-menu-modal')
+  const closeButton = document.querySelector('[data-close-menu]')
+
+  if (!moreButton || !modal || !closeButton) {return}
+
+  // Remove any existing event listeners by cloning
+  const newMoreButton = moreButton.cloneNode(true)
+  moreButton.parentNode?.replaceChild(newMoreButton, moreButton)
+
+  const newCloseButton = closeButton.cloneNode(true)
+  closeButton.parentNode?.replaceChild(newCloseButton, closeButton)
+
+  // Re-attach event listeners
+  function openMenu() {
+    modal.classList.remove('hidden')
+    modal.setAttribute('aria-hidden', 'false')
+    modal.offsetHeight
+    modal.classList.add('active')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeMenu() {
+    modal.classList.remove('active')
+    setTimeout(() => {
+      modal.classList.add('hidden')
+      modal.setAttribute('aria-hidden', 'true')
+      document.body.style.overflow = ''
+    }, 300)
+  }
+
+  newMoreButton.addEventListener('click', openMenu)
+  newCloseButton.addEventListener('click', closeMenu)
+})
 </script>

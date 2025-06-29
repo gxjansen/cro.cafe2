@@ -34,7 +34,7 @@ class GuestGenerator {
 
   async generate(): Promise<GuestGenerationStats> {
     console.log('👥 Starting guest generation...')
-    
+
     try {
       // Test connection
       const connected = await this.client.testConnection()
@@ -56,12 +56,12 @@ class GuestGenerator {
 
       // Generate guest files
       const generatedFiles = new Set<string>()
-      
+
       // Debug: Log first guest to see field names
       if (guests.length > 0) {
         console.log('📋 Sample guest data structure:')
         console.log(JSON.stringify(guests[0], null, 2))
-        
+
         // Debug: Check for LinkedIn fields specifically
         const guest = guests[0]
         console.log('🔍 LinkedIn field check:')
@@ -71,7 +71,7 @@ class GuestGenerator {
         console.log('- linkedin_current_company:', guest.linkedin_current_company)
         console.log('- last_linkedin_sync:', guest.last_linkedin_sync)
       }
-      
+
       for (const guest of guests) {
         try {
           const filePath = await this.generateGuestMDX(guest)
@@ -103,14 +103,14 @@ class GuestGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Guest generation complete in ${duration}ms`)
       console.log(`✅ Generated ${this.stats.guestsGenerated} guests`)
-      
+
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted ${this.stats.filesDeleted} orphaned files`)
       }
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred`)
       }
@@ -127,7 +127,7 @@ class GuestGenerator {
     if (!guest.slug && !guest.name) {
       throw new Error('Guest missing both slug and name - cannot generate file')
     }
-    
+
     const slug = guest.slug || guest.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     const guestPath = join(this.outputDir, `${slug}.mdx`)
 
@@ -138,22 +138,22 @@ class GuestGenerator {
     console.log(`📝 Creating guest: ${slug}`)
 
     await fs.writeFile(guestPath, mdxContent, 'utf8')
-    
+
     return guestPath
   }
 
   private generateGuestFrontmatter(guest: any, slug: string): string {
     // Try different possible image field names
     const imageValue = guest.image_url || guest.imageUrl || guest.image || guest.Image || guest.photo_url || guest.picture
-    
+
     // Filter episodes to only include published ones
     const allEpisodes = Array.isArray(guest.Episodes) ? guest.Episodes : []
     const publishedEpisodes = allEpisodes.filter((e: any) => e.status === 'published' || !e.status)
     const episodes = publishedEpisodes.map((e: any) => e.slug || e.Id)
     const episodeCount = publishedEpisodes.length
-    
+
     const languages = Array.isArray(guest.Language) ? guest.Language : ['en']
-    
+
     // Create social links array
     const socialLinks = []
     if (guest.LinkedIn) {
@@ -161,8 +161,8 @@ class GuestGenerator {
     }
 
     // Check for isFeatured in different possible field names
-    const isFeatured = guest.isFeatured ?? guest.is_featured ?? guest.IsFeatured ?? guest.Featured ?? false;
-    
+    const isFeatured = guest.isFeatured ?? guest.is_featured ?? guest.IsFeatured ?? guest.Featured ?? false
+
     // Debug log for first few guests
     if (this.stats.guestsGenerated < 3) {
       console.log(`Guest ${guest.name}: isFeatured=${isFeatured}, raw fields:`, {
@@ -170,9 +170,9 @@ class GuestGenerator {
         is_featured: guest.is_featured,
         IsFeatured: guest.IsFeatured,
         Featured: guest.Featured
-      });
+      })
     }
-    
+
     return [
       `name: "${this.escapeYaml(guest.name || '')}"`,
       `slug: "${slug}"`,
@@ -218,8 +218,8 @@ class GuestGenerator {
     if (guest.company || guest.role) {
       content.push('## Professional Background')
       content.push('')
-      if (guest.company) content.push(`**Company**: ${guest.company}`)
-      if (guest.role) content.push(`**Role**: ${guest.role}`)
+      if (guest.company) {content.push(`**Company**: ${guest.company}`)}
+      if (guest.role) {content.push(`**Role**: ${guest.role}`)}
       content.push('')
     }
 
@@ -230,12 +230,12 @@ class GuestGenerator {
     if (!imageUrl) {
       return ''
     }
-    
+
     // If it's already a full URL, use it as-is
     if (this.isValidUrl(imageUrl)) {
       return `imageUrl: "${imageUrl}"`
     }
-    
+
     // If it's a relative filename, construct the path
     if (imageUrl && typeof imageUrl === 'string') {
       if (imageUrl.startsWith('/images/guests/')) {
@@ -244,7 +244,7 @@ class GuestGenerator {
         return `imageUrl: "/images/guests/${imageUrl}"`
       }
     }
-    
+
     return ''
   }
 
@@ -274,7 +274,7 @@ class GuestGenerator {
   }
 
   private isValidUrl(url: string | null | undefined): boolean {
-    if (!url) return false
+    if (!url) {return false}
     try {
       new URL(url)
       return true
@@ -284,7 +284,7 @@ class GuestGenerator {
   }
 
   private escapeYaml(str: string): string {
-    if (!str) return ''
+    if (!str) {return ''}
     return str
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')

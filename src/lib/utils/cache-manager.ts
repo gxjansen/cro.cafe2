@@ -29,13 +29,13 @@ export class CacheManager {
     // Initialize L1 cache
     this.policies.set('l1', l1Policy)
     this.stores.set('l1', new Map())
-    
+
     // Initialize L2 and L3 if configured
     if (multiLevel?.l2) {
       this.policies.set('l2', multiLevel.l2)
       this.stores.set('l2', new Map())
     }
-    
+
     if (multiLevel?.l3) {
       this.policies.set('l3', multiLevel.l3)
       this.stores.set('l3', new Map())
@@ -49,28 +49,28 @@ export class CacheManager {
     const level = options?.level || 'l1'
     const store = this.stores.get(level)
     const policy = this.policies.get(level)
-    
-    if (!store || !policy) return null
-    
+
+    if (!store || !policy) {return null}
+
     const entry = store.get(key)
-    
+
     if (!entry) {
       this.stats.misses++
       return null
     }
-    
+
     // Check expiration
     if (entry.expiresAt < new Date()) {
       store.delete(key)
       this.stats.misses++
       return null
     }
-    
+
     // Update stats and access time
     this.stats.hits++
     entry.hitCount++
     entry.lastAccessed = new Date()
-    
+
     // Update position for LRU (refresh TTL on access)
     if (policy.evictionPolicy === 'lru') {
       // Refresh expiration time on access
@@ -78,7 +78,7 @@ export class CacheManager {
       store.delete(key)
       store.set(key, entry)
     }
-    
+
     return entry.value
   }
 
@@ -86,12 +86,12 @@ export class CacheManager {
     const level: CacheLevel = 'l1' // Default to L1
     const store = this.stores.get(level)!
     const policy = this.policies.get(level)!
-    
+
     // Check size limit
     if (store.size >= policy.maxSize) {
       this.evict(level)
     }
-    
+
     const entry: CacheEntry<T> = {
       key,
       value,
@@ -99,19 +99,19 @@ export class CacheManager {
       hitCount: 0,
       lastAccessed: new Date()
     }
-    
+
     store.set(key, entry)
   }
 
   async delete(key: string): Promise<boolean> {
     let deleted = false
-    
+
     for (const [_, store] of this.stores) {
       if (store.delete(key)) {
         deleted = true
       }
     }
-    
+
     return deleted
   }
 
@@ -119,13 +119,13 @@ export class CacheManager {
     for (const [_, store] of this.stores) {
       store.clear()
     }
-    
+
     this.stats = {
       hits: 0,
       misses: 0,
       evictions: 0
     }
-    
+
     // Clear cleanup timer
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer)
@@ -155,7 +155,7 @@ export class CacheManager {
     // Find entry in lower levels
     let entry: CacheEntry<any> | undefined
     let fromLevel: CacheLevel | undefined
-    
+
     for (const [level, store] of this.stores) {
       if (store.has(key)) {
         entry = store.get(key)
@@ -163,22 +163,22 @@ export class CacheManager {
         break
       }
     }
-    
-    if (!entry || !fromLevel) return
-    
+
+    if (!entry || !fromLevel) {return}
+
     // Remove from current level
     this.stores.get(fromLevel)!.delete(key)
-    
+
     // Add to new level
     const targetStore = this.stores.get(toLevel)
     const targetPolicy = this.policies.get(toLevel)
-    
+
     if (targetStore && targetPolicy) {
       // Check size limit
       if (targetStore.size >= targetPolicy.maxSize) {
         this.evict(toLevel)
       }
-      
+
       // Update TTL for new level
       entry.expiresAt = new Date(Date.now() + targetPolicy.ttl)
       targetStore.set(key, entry)
@@ -188,15 +188,15 @@ export class CacheManager {
   private evict(level: CacheLevel): void {
     const store = this.stores.get(level)!
     const policy = this.policies.get(level)!
-    
+
     let keyToEvict: string | undefined
-    
+
     switch (policy.evictionPolicy) {
       case 'lru':
         // First key is least recently used (Map maintains insertion order)
         keyToEvict = store.keys().next().value
         break
-        
+
       case 'lfu':
         // Find least frequently used
         let minHits = Infinity
@@ -207,13 +207,13 @@ export class CacheManager {
           }
         }
         break
-        
+
       case 'fifo':
         // First key is oldest
         keyToEvict = store.keys().next().value
         break
     }
-    
+
     if (keyToEvict) {
       store.delete(keyToEvict)
       this.stats.evictions++
@@ -221,14 +221,14 @@ export class CacheManager {
   }
 
   private normalizeObject(obj: any): any {
-    if (obj === null || obj === undefined) return obj
-    if (typeof obj !== 'object') return obj
-    if (obj instanceof Date) return obj.toISOString()
-    if (obj instanceof RegExp) return obj.toString()
+    if (obj === null || obj === undefined) {return obj}
+    if (typeof obj !== 'object') {return obj}
+    if (obj instanceof Date) {return obj.toISOString()}
+    if (obj instanceof RegExp) {return obj.toString()}
     if (Array.isArray(obj)) {
       return obj.map(item => this.normalizeObject(item))
     }
-    
+
     // Sort object keys for consistent hashing
     const sorted: any = {}
     Object.keys(obj).sort().forEach(key => {
@@ -236,7 +236,7 @@ export class CacheManager {
         sorted[key] = this.normalizeObject(obj[key])
       }
     })
-    
+
     return sorted
   }
 

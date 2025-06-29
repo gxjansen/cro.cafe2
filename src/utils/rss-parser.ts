@@ -1,4 +1,4 @@
-import type { Language } from '../types';
+import type { Language } from '../types'
 
 export interface ParsedEpisode {
   id: string;
@@ -14,17 +14,17 @@ export interface ParsedEpisode {
 export function parseRSSFeed(feedUrl: string): Promise<ParsedEpisode[]> {
   // This is a placeholder implementation
   // In a real implementation, you would parse the RSS feed
-  return Promise.resolve([]);
+  return Promise.resolve([])
 }
 
 export function extractEpisodeImages(episodes: ParsedEpisode[]): Record<string, string> {
-  const imageMap: Record<string, string> = {};
-  
+  const imageMap: Record<string, string> = {}
+
   episodes.forEach(episode => {
     if (episode.imageUrl) {
-      imageMap[episode.id] = episode.imageUrl;
+      imageMap[episode.id] = episode.imageUrl
     }
-  });
-  
-  return imageMap;
+  })
+
+  return imageMap
 }

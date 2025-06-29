@@ -151,66 +151,66 @@ const componentId = `skills-${Math.random().toString(36).substring(2, 11)}`;
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Handle show more/less functionality
-    document.querySelectorAll('.skills-tags-container').forEach(container => {
-      const showMoreBtn = container.querySelector('.show-more-btn') as HTMLButtonElement;
-      const hiddenSkills = container.querySelector('.hidden-skills');
-      
-      if (showMoreBtn && hiddenSkills) {
-        const showText = showMoreBtn.querySelector('.show-text') as HTMLElement;
-        const hideText = showMoreBtn.querySelector('.hide-text') as HTMLElement;
-        
-        showMoreBtn.addEventListener('click', () => {
-          const isExpanded = showMoreBtn.dataset.expanded === 'true';
-          
-          if (isExpanded) {
-            // Collapse
-            hiddenSkills.classList.add('hidden');
-            showText.classList.remove('hidden');
-            hideText.classList.add('hidden');
-            showMoreBtn.dataset.expanded = 'false';
-            showMoreBtn.setAttribute('aria-expanded', 'false');
-          } else {
-            // Expand
-            hiddenSkills.classList.remove('hidden');
-            showText.classList.add('hidden');
-            hideText.classList.remove('hidden');
-            showMoreBtn.dataset.expanded = 'true';
-            showMoreBtn.setAttribute('aria-expanded', 'true');
-          }
-        });
-      }
-      
-      // Handle clickable skills
-      const clickableSkills = container.querySelectorAll('[data-clickable="true"]');
-      clickableSkills.forEach(skill => {
-        const skillElement = skill as HTMLElement;
-        
-        // Add keyboard support
-        skillElement.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            skillElement.click();
-          }
-        });
-        
-        // Dispatch custom event when clicked
-        skillElement.addEventListener('click', () => {
-          const skillName = skillElement.dataset.skill;
-          const event = new CustomEvent('skill-clicked', {
-            detail: { skill: skillName },
-            bubbles: true
-          });
-          skillElement.dispatchEvent(event);
-          
-          // Visual feedback
-          skillElement.style.transform = 'scale(0.95)';
-          setTimeout(() => {
-            skillElement.style.transform = '';
-          }, 100);
-        });
-      });
-    });
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle show more/less functionality
+  document.querySelectorAll('.skills-tags-container').forEach(container => {
+    const showMoreBtn = container.querySelector('.show-more-btn') as HTMLButtonElement
+    const hiddenSkills = container.querySelector('.hidden-skills')
+
+    if (showMoreBtn && hiddenSkills) {
+      const showText = showMoreBtn.querySelector('.show-text') as HTMLElement
+      const hideText = showMoreBtn.querySelector('.hide-text') as HTMLElement
+
+      showMoreBtn.addEventListener('click', () => {
+        const isExpanded = showMoreBtn.dataset.expanded === 'true'
+
+        if (isExpanded) {
+          // Collapse
+          hiddenSkills.classList.add('hidden')
+          showText.classList.remove('hidden')
+          hideText.classList.add('hidden')
+          showMoreBtn.dataset.expanded = 'false'
+          showMoreBtn.setAttribute('aria-expanded', 'false')
+        } else {
+          // Expand
+          hiddenSkills.classList.remove('hidden')
+          showText.classList.add('hidden')
+          hideText.classList.remove('hidden')
+          showMoreBtn.dataset.expanded = 'true'
+          showMoreBtn.setAttribute('aria-expanded', 'true')
+        }
+      })
+    }
+
+    // Handle clickable skills
+    const clickableSkills = container.querySelectorAll('[data-clickable="true"]')
+    clickableSkills.forEach(skill => {
+      const skillElement = skill as HTMLElement
+
+      // Add keyboard support
+      skillElement.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          skillElement.click()
+        }
+      })
+
+      // Dispatch custom event when clicked
+      skillElement.addEventListener('click', () => {
+        const skillName = skillElement.dataset.skill
+        const event = new CustomEvent('skill-clicked', {
+          detail: { skill: skillName },
+          bubbles: true
+        })
+        skillElement.dispatchEvent(event)
+
+        // Visual feedback
+        skillElement.style.transform = 'scale(0.95)'
+        setTimeout(() => {
+          skillElement.style.transform = ''
+        }, 100)
+      })
+    })
+  })
+})
 </script>

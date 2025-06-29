@@ -1,5 +1,5 @@
 // Re-export Content Collection types
-export type { Episode, Guest, Quote, Brand, Platform } from '../content/config';
+export type { Episode, Guest, Quote, Brand, Platform } from '../content/config'
 
 // Language and utility types
 export type Language = 'en' | 'nl' | 'de' | 'es';

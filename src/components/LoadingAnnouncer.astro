@@ -28,43 +28,43 @@ const {
 </div>
 
 <script>
-  // Utility to announce loading states dynamically
-  window.announceLoadingState = (status: 'loading' | 'success' | 'error', customMessage?: string) => {
-    const announcer = document.querySelector('.loading-announcer') as HTMLDivElement;
-    if (!announcer) return;
-    
-    const messages = {
-      loading: customMessage || "Loading content, please wait...",
-      success: customMessage || "Content loaded successfully",
-      error: customMessage || "Error loading content. Please try again."
-    };
-    
-    announcer.textContent = messages[status];
-    announcer.setAttribute('data-status', status);
-  };
-  
-  // Auto-announce on AJAX/fetch operations
-  const originalFetch = window.fetch;
-  window.fetch = async (...args) => {
-    // Don't announce for background operations
-    const url = args[0]?.toString() || '';
-    const isBackgroundOperation = url.includes('analytics') || url.includes('telemetry');
-    
+// Utility to announce loading states dynamically
+window.announceLoadingState = (status: 'loading' | 'success' | 'error', customMessage?: string) => {
+  const announcer = document.querySelector('.loading-announcer') as HTMLDivElement
+  if (!announcer) {return}
+
+  const messages = {
+    loading: customMessage || 'Loading content, please wait...',
+    success: customMessage || 'Content loaded successfully',
+    error: customMessage || 'Error loading content. Please try again.'
+  }
+
+  announcer.textContent = messages[status]
+  announcer.setAttribute('data-status', status)
+}
+
+// Auto-announce on AJAX/fetch operations
+const originalFetch = window.fetch
+window.fetch = async (...args) => {
+  // Don't announce for background operations
+  const url = args[0]?.toString() || ''
+  const isBackgroundOperation = url.includes('analytics') || url.includes('telemetry')
+
+  if (!isBackgroundOperation) {
+    window.announceLoadingState?.('loading')
+  }
+
+  try {
+    const response = await originalFetch(...args)
     if (!isBackgroundOperation) {
-      window.announceLoadingState?.('loading');
+      window.announceLoadingState?.('success')
     }
-    
-    try {
-      const response = await originalFetch(...args);
-      if (!isBackgroundOperation) {
-        window.announceLoadingState?.('success');
-      }
-      return response;
-    } catch (error) {
-      if (!isBackgroundOperation) {
-        window.announceLoadingState?.('error');
-      }
-      throw error;
+    return response
+  } catch (error) {
+    if (!isBackgroundOperation) {
+      window.announceLoadingState?.('error')
     }
-  };
+    throw error
+  }
+}
 </script>

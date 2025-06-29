@@ -8,7 +8,7 @@ import { glob } from 'glob'
  */
 
 function cleanHtmlContent(html: string): string {
-  if (!html) return ''
+  if (!html) {return ''}
   // Basic HTML to markdown conversion
   return html
     // Remove HTML comments first
@@ -56,28 +56,28 @@ function cleanHtmlContent(html: string): string {
 async function cleanMDXFile(filePath: string): Promise<boolean> {
   try {
     const content = await fs.readFile(filePath, 'utf8')
-    
+
     // Check if file contains HTML tags in the body (not in frontmatter)
     const frontmatterEnd = content.indexOf('---', 3)
-    if (frontmatterEnd === -1) return false
-    
+    if (frontmatterEnd === -1) {return false}
+
     const bodyContent = content.substring(frontmatterEnd + 4)
     if (!bodyContent.match(/<[^>]+>/)) {
       return false
     }
-    
+
     // Split frontmatter and body
     const frontmatter = content.substring(0, frontmatterEnd + 3)
-    
+
     // Clean the body content
     const cleanedBody = cleanHtmlContent(bodyContent)
-    
+
     // Reconstruct the file
-    const newContent = frontmatter + '\n\n' + cleanedBody
-    
+    const newContent = `${frontmatter  }\n\n${  cleanedBody}`
+
     // Write back the cleaned content
     await fs.writeFile(filePath, newContent, 'utf8')
-    
+
     console.log(`✅ Cleaned: ${filePath}`)
     return true
   } catch (error) {
@@ -88,22 +88,22 @@ async function cleanMDXFile(filePath: string): Promise<boolean> {
 
 async function main() {
   console.log('🧹 Cleaning HTML tags from MDX files...\n')
-  
+
   // Find all MDX files in the content directory
   const mdxFiles = await glob('src/content/**/*.mdx')
-  
+
   console.log(`Found ${mdxFiles.length} MDX files to check\n`)
-  
+
   let cleanedCount = 0
-  let errorCount = 0
-  
+  const errorCount = 0
+
   for (const file of mdxFiles) {
     const wasCleaned = await cleanMDXFile(file)
     if (wasCleaned) {
       cleanedCount++
     }
   }
-  
+
   console.log('\n📊 Summary:')
   console.log(`- Total MDX files: ${mdxFiles.length}`)
   console.log(`- Files cleaned: ${cleanedCount}`)

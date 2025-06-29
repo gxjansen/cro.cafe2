@@ -10,6 +10,7 @@ import GuestOtherCompany from '../../../components/GuestOtherCompany.astro';
 import CountryFlag from '../../../components/CountryFlag.astro';
 import { getGuestEpisodes, getGuestWithLinkedIn } from '../../../utils/content';
 import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../../../utils/guest-display-utils';
+import { filterExcludedSkills } from '../../../utils/excludedSkills';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -150,27 +151,30 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
   />
   
   <main class="flex-grow">
-    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="container-xl py-md md:py-lg lg:py-xl">
+      <div class="layout-with-sidebar">
+        <!-- Main Content -->
+        <article class="min-w-0">
       <!-- Guest Header -->
-      <header class="mb-8">
-        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
+      <header class="mb-lg">
+        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-md">
           <a href={`/${language}/guests/`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             {t.backToGuests}
           </a>
         </div>
         
-        <div class="flex flex-col md:flex-row gap-8 items-start">
-          <div class="relative">
+        <div class="flex flex-col md:flex-row gap-md items-start">
+          <div class="relative flex-shrink-0">
             <GuestProfilePicture 
               guest={guestWithLinkedIn || guest}
               size="lg"
-              class="w-32 h-32 rounded-full object-cover flex-shrink-0"
+              class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
               showLinkedInBadge={false}
             />
           </div>
           
           <div class="flex-1">
-            <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-2">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-sm balance-text">
               {guestName}
             </h1>
             
@@ -188,14 +192,14 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
   );
   
   return (
-    <div class="mb-2">
+    <div class="mb-sm">
       {professionalDisplay.primary && (
-        <p class="text-xl text-gray-600 dark:text-gray-400">
+        <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-400">
           {professionalDisplay.primary}
         </p>
       )}
       {professionalDisplay.showBoth && professionalDisplay.secondary && (
-        <p class="text-lg text-gray-500 dark:text-gray-400 italic mt-1">
+        <p class="text-lg lg:text-xl text-gray-500 dark:text-gray-400 italic mt-1">
           {professionalDisplay.secondary}
         </p>
       )}
@@ -205,7 +209,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             
             {/* Country flag */}
             {guestWithLinkedIn?.linkedInData?.country && (
-              <div class="mb-4">
+              <div class="mb-md">
                 <CountryFlag 
                   country={guestWithLinkedIn.linkedInData.country} 
                   size="md"
@@ -215,7 +219,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             )}
             
             {/* Social Links */}
-            <div class="flex gap-4 mb-6">
+            <div class="flex flex-wrap gap-3 mt-md">
               {guest.data.website && (
                 <a 
                   href={guest.data.website} 
@@ -264,12 +268,12 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
 
       <!-- Bio Section -->
       {(guestWithLinkedIn?.linkedInData?.bio || guest.data.bio) && (
-        <div class="prose prose-lg dark:prose-invert max-w-none mb-8">
-          <h2>{t.about} {guestName}</h2>
+        <section class="prose prose-lg dark:prose-invert max-w-none mb-lg content-spacing">
+          <h2 class="text-2xl lg:text-3xl">{t.about} {guestName}</h2>
           
           {/* LinkedIn bio if available */}
           {guestWithLinkedIn?.linkedInData?.bio && (
-            <div class="mb-6">
+            <div class="mb-md">
               <p class="whitespace-pre-wrap">{guestWithLinkedIn.linkedInData.bio}</p>
             </div>
           )}
@@ -277,29 +281,71 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
           {/* Original bio if different or LinkedIn bio not available */}
           {(!guestWithLinkedIn?.linkedInData?.bio || 
             (guest.data.bio && guest.data.bio !== guestWithLinkedIn.linkedInData.bio)) && (
-            <div class="mt-6">
+            <div class="mt-md">
               {guestWithLinkedIn?.linkedInData?.bio && (
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Additional information:</p>
               )}
               <p>{guest.data.bio}</p>
             </div>
           )}
-        </div>
+        </section>
       )}
       
       {/* LinkedIn Skills Section */}
-      {guestWithLinkedIn?.linkedInData?.skills && guestWithLinkedIn.linkedInData.skills.length > 0 && (
-        <div class="mb-8">
-          <h3 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-4">Skills & Expertise</h3>
-          <div class="flex flex-wrap gap-2">
-            {guestWithLinkedIn.linkedInData.skills.map((skill: string) => (
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {(() => {
+        // Handle both linkedInData.skills (array) and guest.data.linkedin_skills (string)
+        let skills: string[] = [];
+        
+        // Try to get skills from LinkedIn data first
+        if (guestWithLinkedIn?.linkedInData?.skills && Array.isArray(guestWithLinkedIn.linkedInData.skills)) {
+          skills = guestWithLinkedIn.linkedInData.skills;
+        } 
+        // Fall back to parsing guest.data.linkedin_skills if available
+        else if (guest.data.linkedin_skills) {
+          try {
+            // Handle both JSON array and comma-separated string formats
+            const skillsData = guest.data.linkedin_skills;
+            if (typeof skillsData === 'string') {
+              // Try parsing as JSON first
+              try {
+                const parsed = JSON.parse(skillsData);
+                if (Array.isArray(parsed)) {
+                  skills = parsed.filter(skill => typeof skill === 'string');
+                }
+              } catch {
+                // If JSON parsing fails, treat as comma-separated string
+                skills = skillsData.split(',').map(skill => skill.trim()).filter(Boolean);
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing skills:', error);
+          }
+        }
+        
+        // Filter and render skills if we have any
+        if (skills.length > 0) {
+          const filteredSkills = filterExcludedSkills(skills);
+          if (filteredSkills.length > 0) {
+            return (
+              <section class="mb-lg">
+                <h3 class="text-xl lg:text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-md">Skills & Expertise</h3>
+                <div class="flex flex-wrap gap-xs">
+                  {filteredSkills.map((skill: string) => (
+                    <a 
+                      href={`/all/guests/?expertise=${encodeURIComponent(skill)}`}
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors duration-200 cursor-pointer"
+                      title={`View all guests with ${skill} expertise`}
+                    >
+                      {skill}
+                    </a>
+                  ))}
+                </div>
+              </section>
+            );
+          }
+        }
+        return null;
+      })()}
       
       {/* Career Timeline */}
       {guestWithLinkedIn?.linkedInData?.experiences && 
@@ -322,30 +368,51 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
       <!-- Other Guests from Same Company -->
       <GuestOtherCompany guest={guest} language={language} />
 
+      <!-- Mobile Episodes Section (Hidden on Desktop) -->
+      <div class="lg:hidden">
+        {guestEpisodes.length > 0 && (
+          <section class="mt-lg">
+            <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
+              {t.episodesWith} {guest.data.name}
+            </h2>
+            
+            <div class="space-y-md">
+              {guestEpisodes.map((episode) => (
+                <EpisodeCard episode={episode} size="medium" showLanguage={false} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </article>
+
+    <!-- Desktop Sidebar (Hidden on Mobile) -->
+    <aside class="hidden lg:block sidebar-sticky">
       <!-- Episodes Section -->
       {guestEpisodes.length > 0 && (
-        <div>
-          <h2 class="text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-6">
+        <section>
+          <h2 class="text-xl lg:text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
             {t.episodesWith} {guest.data.name}
           </h2>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-sm">
             {guestEpisodes.map((episode) => (
-              <EpisodeCard episode={episode} size="medium" />
+              <EpisodeCard episode={episode} size="small" showLanguage={false} />
             ))}
           </div>
-        </div>
+        </section>
       )}
-
-    </article>
+    </aside>
+  </div>
+</div>
 
     <!-- Call to Action -->
-    <section class="py-16 bg-accent-500 dark:bg-accent-700 mt-16">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-heading font-bold text-white mb-4">
+    <section class="section-spacing bg-accent-500 dark:bg-accent-700">
+      <div class="container text-center">
+        <h2 class="text-3xl lg:text-4xl font-heading font-bold text-white mb-md balance-text">
           {t.discoverMore}
         </h2>
-        <p class="text-xl text-white/90 mb-8">
+        <p class="text-xl lg:text-2xl text-white/90 mb-lg max-w-prose mx-auto">
           {t.exploreAll}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">

@@ -31,7 +31,7 @@ export class NocoDBDirectClient {
     for (const url of possibleUrls) {
       try {
         console.log(`Trying NocoDB URL: ${url.replace(this.config.apiKey, 'xxx')}`)
-        
+
         const response = await fetch(url, {
           ...options,
           headers: {
@@ -39,8 +39,8 @@ export class NocoDBDirectClient {
             'xc-token': this.config.apiKey,
             'xc-auth': this.config.apiKey,
             'Authorization': `Bearer ${this.config.apiKey}`,
-            ...options.headers,
-          },
+            ...options.headers
+          }
         })
 
         if (response.ok) {
@@ -81,7 +81,7 @@ export class NocoDBDirectClient {
 
   async getEpisodes(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 1000 } = options
-    
+
     // Try different endpoint patterns for Episodes table
     const endpoints = [
       `/tables/Episodes/records?limit=${limit}`,
@@ -109,7 +109,7 @@ export class NocoDBDirectClient {
 
   async getGuests(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 1000 } = options
-    
+
     const endpoints = [
       `/tables/Guests/records?limit=${limit}`,
       `/meta/tables/Guests/rows?limit=${limit}`,
@@ -136,7 +136,7 @@ export class NocoDBDirectClient {
 
   async getHosts(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 100 } = options
-    
+
     const endpoints = [
       `/tables/Hosts/records?limit=${limit}`,
       `/meta/tables/Hosts/rows?limit=${limit}`,
@@ -163,7 +163,7 @@ export class NocoDBDirectClient {
 
   async getPlatforms(options: { limit?: number } = {}): Promise<any[]> {
     const { limit = 100 } = options
-    
+
     const endpoints = [
       `/tables/Platforms/records?limit=${limit}`,
       `/meta/tables/Platforms/rows?limit=${limit}`,

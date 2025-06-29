@@ -78,17 +78,17 @@ async function main() {
     console.log(`Guests: ${stats.guestsGenerated}`)
     console.log(`Hosts: ${stats.hostsGenerated}`)
     console.log(`Platforms: ${stats.platformsGenerated}`)
-    
+
     // Add the format expected by the GitHub Action
     console.log(`📊 Generated: ${stats.episodesGenerated} episodes, ${stats.guestsGenerated} guests, ${stats.hostsGenerated} hosts, ${stats.platformsGenerated} platforms`)
-    
+
     if (stats.endTime) {
       const duration = stats.endTime.getTime() - stats.startTime.getTime()
       console.log(`Duration: ${duration}ms`)
     }
 
     if (stats.errors.length > 0) {
-      console.log(`\\n⚠️ Errors (${stats.errors.length}):`);
+      console.log(`\\n⚠️ Errors (${stats.errors.length}):`)
       stats.errors.forEach((error, index) => {
         console.log(`${index + 1}. ${error}`)
       })
@@ -100,12 +100,12 @@ async function main() {
   } catch (error) {
     console.error('\\n❌ Content generation failed:')
     console.error(error instanceof Error ? error.message : String(error))
-    
+
     if (error instanceof Error && error.stack) {
       console.error('\\nStack trace:')
       console.error(error.stack)
     }
-    
+
     process.exit(1)
   }
 }

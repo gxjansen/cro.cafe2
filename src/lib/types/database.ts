@@ -4,7 +4,7 @@
 export type Language = 'en' | 'nl' | 'de' | 'es'
 export type EpisodeStatus = 'draft' | 'published' | 'scheduled'
 export type ConflictStrategy = 'local' | 'remote' | 'merge' | 'manual'
-export type EventType = 'episode.created' | 'episode.updated' | 'episode.deleted' | 
+export type EventType = 'episode.created' | 'episode.updated' | 'episode.deleted' |
   'guest.created' | 'guest.updated' | 'guest.deleted' |
   'host.created' | 'host.updated' | 'host.deleted' |
   'platform.created' | 'platform.updated' | 'platform.deleted'
@@ -33,18 +33,18 @@ export interface Episode {
   mediaUrl: string
   imageUrl?: string
   publishedAt: Date
-  
+
   // AI Enhancement Fields
   aiKeywords?: string[]
   aiTopics?: string[]
   aiSummary?: TranslatedField<string>
   aiTranscript?: TranslatedField<string>
-  
+
   // Relationships
   hosts: Host[]
   guests: Guest[]
   platforms: Platform[]
-  
+
   // Metadata
   createdAt: Date
   updatedAt: Date
@@ -60,12 +60,12 @@ export interface Guest {
   role?: string
   imageUrl?: string
   socialLinks: SocialLink[]
-  
+
   // Aggregated Data
   episodeCount: number
   episodes: Episode[]
   languages: Language[]
-  
+
   // Metadata
   createdAt: Date
   updatedAt: Date
@@ -78,10 +78,10 @@ export interface Host {
   bio: TranslatedField<string>
   imageUrl?: string
   socialLinks: SocialLink[]
-  
+
   // Relationships
   episodes: Episode[]
-  
+
   // Metadata
   createdAt: Date
   updatedAt: Date
@@ -94,10 +94,10 @@ export interface Platform {
   displayOrder: number
   isActive: boolean
   iconUrl?: string
-  
+
   // Language-specific URLs
   urls: TranslatedField<string>
-  
+
   // Metadata
   createdAt: Date
   updatedAt: Date

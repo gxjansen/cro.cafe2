@@ -42,7 +42,7 @@ class EpisodeGenerator {
   async generate(): Promise<EpisodeGenerationStats> {
     console.log('📝 Starting episode generation...')
     console.log(`🌍 Languages: ${this.languages.join(', ')}`)
-    
+
     try {
       // Test connection
       const connected = await this.client.testConnection()
@@ -63,13 +63,13 @@ class EpisodeGenerator {
       console.log(`📊 Found ${episodes.length} episodes in NocoDB`)
 
       // Filter episodes by language if specified
-      const filteredEpisodes = this.languages.includes('en' as Language) && 
-                               this.languages.includes('nl' as Language) && 
-                               this.languages.includes('de' as Language) && 
+      const filteredEpisodes = this.languages.includes('en' as Language) &&
+                               this.languages.includes('nl' as Language) &&
+                               this.languages.includes('de' as Language) &&
                                this.languages.includes('es' as Language)
         ? episodes
         : episodes.filter(ep => this.languages.includes(ep.language as Language))
-      
+
       console.log(`🔍 Processing ${filteredEpisodes.length} episodes for selected languages`)
 
       // Generate episode files
@@ -94,7 +94,7 @@ class EpisodeGenerator {
         const isRelevantLanguage = this.languages.some(lang => file.includes(`/episodes/${lang}/`))
         return isRelevantLanguage && !generatedFiles.has(file)
       })
-      
+
       if (filesToDelete.length > 0) {
         console.log(`🗑️ Found ${filesToDelete.length} orphaned episode files to delete`)
         for (const file of filesToDelete) {
@@ -110,14 +110,14 @@ class EpisodeGenerator {
 
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
-      
+
       console.log(`✅ Episode generation complete in ${duration}ms`)
       console.log(`✅ Generated ${this.stats.episodesGenerated} episodes`)
-      
+
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted ${this.stats.filesDeleted} orphaned files`)
       }
-      
+
       if (this.stats.errors.length > 0) {
         console.log(`⚠️ ${this.stats.errors.length} errors occurred`)
       }
@@ -134,11 +134,11 @@ class EpisodeGenerator {
     if (!episode.slug && !episode.Id) {
       throw new Error('Episode missing both slug and ID - cannot generate file')
     }
-    
+
     if (!episode.title) {
       console.warn(`Warning: Episode ${episode.Id} missing title`)
     }
-    
+
     const language = episode.language as Language || 'en'
     const seasonDir = `season-${episode.season || 1}`
     const episodePath = join(
@@ -154,22 +154,22 @@ class EpisodeGenerator {
 
     await this.ensureDirectoryExists(dirname(episodePath))
     await fs.writeFile(episodePath, mdxContent, 'utf8')
-    
+
     console.log(`📝 Created episode: ${language}/${seasonDir}/${episode.slug || episode.Id}`)
-    
+
     return episodePath
   }
 
   private generateEpisodeFrontmatter(episode: any): string {
     // Extract hosts from relationship data and deduplicate
     const hostData: Array<{slug?: string, name?: string}> = []
-    
+
     if (episode.host && Array.isArray(episode.host)) {
       episode.host.forEach((h: any) => {
         hostData.push({ slug: h.slug, name: h.name })
       })
     }
-    
+
     if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
       episode._nc_m2m_Episodes_Hosts.forEach((rel: any) => {
         if (rel.Hosts) {
@@ -177,17 +177,17 @@ class EpisodeGenerator {
         }
       })
     }
-    
+
     // Deduplicate hosts
     const nameToSlugMap = new Map<string, string>()
     const finalHostsSet = new Set<string>()
-    
+
     hostData.forEach(h => {
       if (h.slug && h.name) {
         nameToSlugMap.set(h.name, h.slug)
       }
     })
-    
+
     hostData.forEach(h => {
       if (h.slug) {
         finalHostsSet.add(h.slug)
@@ -196,18 +196,18 @@ class EpisodeGenerator {
         finalHostsSet.add(slug || h.name)
       }
     })
-    
+
     const hosts = Array.from(finalHostsSet)
 
     // Extract guests similarly
     const guestData: Array<{slug?: string, name?: string}> = []
-    
+
     if (episode.guest && Array.isArray(episode.guest)) {
       episode.guest.forEach((g: any) => {
         guestData.push({ slug: g.slug, name: g.name })
       })
     }
-    
+
     if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
       episode._nc_m2m_Episodes_Guests.forEach((rel: any) => {
         if (rel.Guests) {
@@ -215,17 +215,17 @@ class EpisodeGenerator {
         }
       })
     }
-    
+
     // Deduplicate guests
     const guestNameToSlugMap = new Map<string, string>()
     const finalGuestsSet = new Set<string>()
-    
+
     guestData.forEach(g => {
       if (g.slug && g.name) {
         guestNameToSlugMap.set(g.name, g.slug)
       }
     })
-    
+
     guestData.forEach(g => {
       if (g.slug) {
         finalGuestsSet.add(g.slug)
@@ -234,16 +234,16 @@ class EpisodeGenerator {
         finalGuestsSet.add(slug || g.name)
       }
     })
-    
+
     const guests = Array.from(finalGuestsSet)
 
     // Clean description and summary
     const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
     const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
-    
+
     // Get duration in seconds
     let durationInSeconds = '0'
-    
+
     if (episode.duration_seconds && !episode.duration_seconds.toString().includes(':')) {
       durationInSeconds = episode.duration_seconds.toString()
     } else if (episode.Duration && !episode.Duration.toString().includes(':')) {
@@ -316,7 +316,7 @@ class EpisodeGenerator {
 
   private async getExistingFiles(): Promise<Set<string>> {
     const files = new Set<string>()
-    
+
     for (const lang of this.languages) {
       const langDir = join(this.outputDir, lang)
       try {
@@ -325,17 +325,17 @@ class EpisodeGenerator {
         // Language directory might not exist yet
       }
     }
-    
+
     return files
   }
 
   private async scanDirectory(dir: string, files: Set<string>): Promise<void> {
     try {
       const entries = await fs.readdir(dir, { withFileTypes: true })
-      
+
       for (const entry of entries) {
         const fullPath = join(dir, entry.name)
-        
+
         if (entry.isDirectory()) {
           await this.scanDirectory(fullPath, files)
         } else if (entry.name.endsWith('.mdx')) {
@@ -365,7 +365,7 @@ class EpisodeGenerator {
   }
 
   private cleanHtmlContent(html: string): string {
-    if (!html) return ''
+    if (!html) {return ''}
     return html
       .replace(/<!--[\s\S]*?-->/g, '')
       .replace(/<ul>/g, '\n')
@@ -401,13 +401,13 @@ class EpisodeGenerator {
   }
 
   private cleanHtmlForYaml(html: string): string {
-    if (!html) return ''
+    if (!html) {return ''}
     const cleaned = this.cleanHtmlContent(html)
     return this.escapeYaml(cleaned)
   }
 
   private escapeYaml(str: string): string {
-    if (!str) return ''
+    if (!str) {return ''}
     return str
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
@@ -421,7 +421,7 @@ class EpisodeGenerator {
 function parseArgs(): EpisodeGenerationConfig {
   const args = process.argv.slice(2)
   const config: EpisodeGenerationConfig = {}
-  
+
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--languages' && i + 1 < args.length) {
       const langs = args[i + 1].split(',').map(l => l.trim()) as Language[]
@@ -429,7 +429,7 @@ function parseArgs(): EpisodeGenerationConfig {
       i++
     }
   }
-  
+
   return config
 }
 
