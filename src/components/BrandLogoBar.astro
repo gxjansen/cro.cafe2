@@ -3,6 +3,38 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import type { Language } from '../types';
 
+// Import all brand images
+import accentureLogo from '../images/brands/accenture.png';
+import adobeLogo from '../images/brands/adobe.png';
+import autodeskLogo from '../images/brands/autodesk.png';
+import bolcomLogo from '../images/brands/bol-com.png';
+import bookingLogo from '../images/brands/booking.png';
+import googleLogo from '../images/brands/google.png';
+import hunkemollerLogo from '../images/brands/hunkemoller.png';
+import ikeaLogo from '../images/brands/ikea.png';
+import kasperskyLogo from '../images/brands/kaspersky.png';
+import lorealLogo from '../images/brands/loreal.png';
+import philipsLogo from '../images/brands/philips.png';
+import tomtomLogo from '../images/brands/tomtom.png';
+import wetransferLogo from '../images/brands/wetransfer.png';
+
+// Map brand names to imported images
+const brandImages: Record<string, ImageMetadata> = {
+  'accenture': accentureLogo,
+  'adobe': adobeLogo,
+  'autodesk': autodeskLogo,
+  'bol-com': bolcomLogo,
+  'booking': bookingLogo,
+  'google': googleLogo,
+  'hunkemoller': hunkemollerLogo,
+  'ikea': ikeaLogo,
+  'kaspersky': kasperskyLogo,
+  'loreal': lorealLogo,
+  'philips': philipsLogo,
+  'tomtom': tomtomLogo,
+  'wetransfer': wetransferLogo
+};
+
 export interface Props {
   language?: Language;
 }
@@ -12,7 +44,10 @@ const { language = 'en' } = Astro.props;
 // Get all brands and sort by order
 const brands = await getCollection('brands');
 const sortedBrands = brands
-  .filter(brand => brand.data.featured && brand.data.logoUrl && !brand.data.logoUrl.includes('example.com'))
+  .filter(brand => {
+    const brandKey = brand.id.toLowerCase().replace('.json', '');
+    return brand.data.featured && brandImages[brandKey] && !brand.data.logoUrl.includes('example.com');
+  })
   .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
   .slice(0, 8); // Show max 8 brands
 
@@ -27,26 +62,33 @@ const translations = {
 const tagline = translations[language];
 ---
 
-<section class="py-12 bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <p class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-8">
-      {tagline}
-    </p>
-    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-8 items-center">
-      {sortedBrands.map((brand) => (
-        <div class="flex items-center justify-center">
-          <Image 
-            src={brand.data.logoUrl} 
-            alt={`${brand.data.name} - CRO.CAFE partner`}
-            width={150}
-            height={40}
-            class="max-h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 dark:invert dark:grayscale dark:opacity-80 dark:hover:invert dark:hover:grayscale dark:hover:opacity-100 transition-all duration-300"
-            loading="lazy"
-            format="webp"
-            quality={85}
-          />
-        </div>
-      ))}
+{sortedBrands.length > 0 && (
+  <section class="py-12 bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-8">
+        {tagline}
+      </p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-8 items-center">
+        {sortedBrands.map((brand) => {
+          const brandKey = brand.id.toLowerCase().replace('.json', '');
+          const brandImage = brandImages[brandKey];
+          
+          return brandImage ? (
+            <div class="flex items-center justify-center">
+              <Image 
+                src={brandImage} 
+                alt={`${brand.data.name} - CRO.CAFE partner`}
+                width={150}
+                height={40}
+                class="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 dark:invert dark:grayscale dark:opacity-80 dark:hover:invert dark:hover:grayscale dark:hover:opacity-100 transition-all duration-300"
+                loading="lazy"
+                format="webp"
+                quality={85}
+              />
+            </div>
+          ) : null;
+        })}
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+)}

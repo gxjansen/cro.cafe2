@@ -65,7 +65,7 @@ const t = translations[language];
     <!-- Header with logo -->
     <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       <div class="container mx-auto px-4 py-4">
-        <a href={`/${language}/`} class="inline-flex items-center space-x-2">
+        <a href="/" class="inline-flex items-center space-x-2">
           <img src="/images/crocafe-logo.svg" alt="CRO.CAFE" class="h-8 w-auto" />
           <span class="text-xl font-semibold text-gray-900 dark:text-white">CRO.CAFE</span>
         </a>
@@ -110,7 +110,7 @@ const t = translations[language];
             </button>
             
             <a 
-              href={`/${language}/`}
+              href="/"
               class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,79 +183,79 @@ const t = translations[language];
 </style>
 
 <script>
-  // Check connection status
-  const retryButton = document.getElementById('retry-connection');
-  const cachedContentDiv = document.getElementById('cached-content');
-  
-  // Retry connection
-  retryButton?.addEventListener('click', async () => {
-    retryButton.disabled = true;
-    retryButton.innerHTML = `
-      <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-      </svg>
-      <span>Checking...</span>
-    `;
-    
-    try {
-      const response = await fetch('/api/health', { method: 'HEAD' });
-      if (response.ok) {
-        window.location.reload();
-      }
-    } catch (error) {
-      // Still offline
+// Check connection status
+const retryButton = document.getElementById('retry-connection')
+const cachedContentDiv = document.getElementById('cached-content')
+
+// Retry connection
+retryButton?.addEventListener('click', async () => {
+  retryButton.disabled = true
+  retryButton.innerHTML = `
+    <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+    </svg>
+    <span>Checking...</span>
+  `
+
+  try {
+    const response = await fetch('/api/health', { method: 'HEAD' })
+    if (response.ok) {
+      window.location.reload()
     }
-    
-    setTimeout(() => {
-      retryButton.disabled = false;
-      retryButton.innerHTML = `
+  } catch (error) {
+    // Still offline
+  }
+
+  setTimeout(() => {
+    retryButton.disabled = false
+    retryButton.innerHTML = `
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
         </svg>
         <span>${retryButton.dataset.originalText || 'Try Again'}</span>
-      `;
-    }, 2000);
-  });
-  
-  // List cached pages
-  async function listCachedPages() {
-    if ('caches' in window) {
-      try {
-        const cacheNames = await caches.keys();
-        const cachePromises = cacheNames.map(async (cacheName) => {
-          const cache = await caches.open(cacheName);
-          const requests = await cache.keys();
-          return requests;
-        });
-        
-        const allRequests = (await Promise.all(cachePromises)).flat();
-        const uniqueUrls = [...new Set(allRequests.map(req => req.url))];
-        
-        // Filter and categorize URLs
-        const pages = uniqueUrls
-          .filter(url => {
-            const pathname = new URL(url).pathname;
-            return pathname.endsWith('/') || pathname.includes('/episodes/') || pathname.includes('/guests/');
-          })
-          .map(url => {
-            const urlObj = new URL(url);
-            const pathname = urlObj.pathname;
-            let type = 'page';
-            let title = pathname;
-            
-            if (pathname.includes('/episodes/')) {
-              type = 'episode';
-              title = pathname.split('/').pop() || 'Episode';
-            } else if (pathname.includes('/guests/')) {
-              type = 'guest';
-              title = pathname.split('/').pop() || 'Guest';
-            }
-            
-            return { url, pathname, type, title };
-          })
-          .slice(0, 10); // Limit to 10 items
-        
-        if (pages.length > 0) {
+    `
+  }, 2000)
+})
+
+// List cached pages
+async function listCachedPages() {
+  if ('caches' in window) {
+    try {
+      const cacheNames = await caches.keys()
+      const cachePromises = cacheNames.map(async (cacheName) => {
+        const cache = await caches.open(cacheName)
+        const requests = await cache.keys()
+        return requests
+      })
+
+      const allRequests = (await Promise.all(cachePromises)).flat()
+      const uniqueUrls = [...new Set(allRequests.map(req => req.url))]
+
+      // Filter and categorize URLs
+      const pages = uniqueUrls
+        .filter(url => {
+          const pathname = new URL(url).pathname
+          return pathname.endsWith('/') || pathname.includes('/episodes/') || pathname.includes('/guests/')
+        })
+        .map(url => {
+          const urlObj = new URL(url)
+          const pathname = urlObj.pathname
+          let type = 'page'
+          let title = pathname
+
+          if (pathname.includes('/episodes/')) {
+            type = 'episode'
+            title = pathname.split('/').pop() || 'Episode'
+          } else if (pathname.includes('/guests/')) {
+            type = 'guest'
+            title = pathname.split('/').pop() || 'Guest'
+          }
+
+          return { url, pathname, type, title }
+        })
+        .slice(0, 10) // Limit to 10 items
+
+      if (pages.length > 0) {
           cachedContentDiv!.innerHTML = pages.map(page => `
             <a href="${page.pathname}" class="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div class="flex items-center space-x-3">
@@ -286,44 +286,44 @@ const t = translations[language];
                 </svg>
               </div>
             </a>
-          `).join('');
-        } else {
+          `).join('')
+      } else {
           cachedContentDiv!.innerHTML = `
-            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-              <p>No cached pages found.</p>
-              <p class="text-sm mt-2">Visit pages while online to cache them for offline access.</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        console.error('Error listing cached pages:', error);
-        cachedContentDiv!.innerHTML = `
           <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            <p>Unable to access cached content.</p>
+            <p>No cached pages found.</p>
+            <p class="text-sm mt-2">Visit pages while online to cache them for offline access.</p>
           </div>
-        `;
-      }
-    } else {
-      cachedContentDiv!.innerHTML = `
-        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-          <p>Offline storage not supported in this browser.</p>
-        </div>
-      `;
-    }
-  }
-  
-  // List cached pages on load
-  listCachedPages();
-  
-  // Periodically check connection
-  setInterval(async () => {
-    try {
-      const response = await fetch('/api/health', { method: 'HEAD' });
-      if (response.ok) {
-        window.location.reload();
+        `
       }
     } catch (error) {
-      // Still offline
+      console.error('Error listing cached pages:', error)
+      cachedContentDiv!.innerHTML = `
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+          <p>Unable to access cached content.</p>
+        </div>
+      `
     }
-  }, 30000); // Check every 30 seconds
+  } else {
+      cachedContentDiv!.innerHTML = `
+      <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+        <p>Offline storage not supported in this browser.</p>
+      </div>
+    `
+  }
+}
+
+// List cached pages on load
+listCachedPages()
+
+// Periodically check connection
+setInterval(async () => {
+  try {
+    const response = await fetch('/api/health', { method: 'HEAD' })
+    if (response.ok) {
+      window.location.reload()
+    }
+  } catch (error) {
+    // Still offline
+  }
+}, 30000) // Check every 30 seconds
 </script>

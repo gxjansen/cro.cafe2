@@ -45,7 +45,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        navigateFallback: '/offline/',
+        navigateFallback: process.env.NODE_ENV === 'production' ? '/offline/' : null,
         globPatterns: process.env.NODE_ENV === 'production' 
           ? ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}']
           : ['**/*.js'], // Only JS files in dev-dist during development
@@ -110,7 +110,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true
+        enabled: false
       }
     }),
     sitemap({
