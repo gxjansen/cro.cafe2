@@ -127,7 +127,7 @@ const classes = sizeClasses[size];
 
 <a 
   href={getGuestUrl(guest, language)} 
-  class={`card card-interactive ${classes.container} block group relative`}
+  class={`card card-interactive ${classes.container} block group relative h-full focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
   aria-label={`View ${guestName}'s profile`}
 >
 
@@ -188,23 +188,3 @@ const classes = sizeClasses[size];
   </div>
 </a>
 
-<style>
-  /* Enhanced hover effects */
-  .card-interactive {
-    @apply transition-all duration-300;
-  }
-  
-  .card-interactive:hover {
-    @apply shadow-lg scale-[1.02];
-  }
-  
-  /* Ensure cards have consistent height in grid */
-  .card-interactive {
-    height: 100%;
-  }
-  
-  /* Focus styles for accessibility */
-  .card-interactive:focus-visible {
-    @apply ring-2 ring-primary-500 ring-offset-2;
-  }
-</style>

@@ -20,10 +20,10 @@
     "initials": "WS",
     "name": "Wesley Singh"
   },
-  "weiwi-liu-schröder": {
-    "hasImage": false,
-    "imageUrl": null,
-    "fallbackUrl": "/images/guests/generated/weiwi-liu-schröder-initials.svg",
+  "weiwi-liu-schröder ": {
+    "hasImage": true,
+    "imageUrl": "/images/guests/weiwi-liu-schröder .jpeg",
+    "fallbackUrl": "/images/guests/generated/weiwi-liu-schröder -initials.svg",
     "initials": "WL",
     "name": "WeiWi Liu-Schröder "
   },
@@ -664,10 +664,10 @@
     "initials": "MM",
     "name": "Milan Meurs"
   },
-  "mike-wilms": {
+  "mike-wilms ": {
     "hasImage": true,
-    "imageUrl": "/images/guests/mike-wilms.jpeg",
-    "fallbackUrl": "/images/guests/generated/mike-wilms-initials.svg",
+    "imageUrl": "/images/guests/mike-wilms .jpeg",
+    "fallbackUrl": "/images/guests/generated/mike-wilms -initials.svg",
     "initials": "MW",
     "name": "Mike Wilms"
   },
@@ -825,10 +825,10 @@
     "initials": "MT",
     "name": "Mark Tijssen"
   },
-  "marijke-van-spaendonck": {
-    "hasImage": true,
-    "imageUrl": "/images/guests/marijke-van-spaendonck.jpg",
-    "fallbackUrl": "/images/guests/generated/marijke-van-spaendonck-initials.svg",
+  "marijke-van-spaendonck ": {
+    "hasImage": false,
+    "imageUrl": null,
+    "fallbackUrl": "/images/guests/generated/marijke-van-spaendonck -initials.svg",
     "initials": "MV",
     "name": "Marijke van Spaendonck"
   },
@@ -909,10 +909,10 @@
     "initials": "MW",
     "name": "Maaike Wittebrood"
   },
-  "luke-carthy": {
+  "luke-carthy ": {
     "hasImage": true,
-    "imageUrl": "/images/guests/luke-carthy.jpeg",
-    "fallbackUrl": "/images/guests/generated/luke-carthy-initials.svg",
+    "imageUrl": "/images/guests/luke-carthy .jpeg",
+    "fallbackUrl": "/images/guests/generated/luke-carthy -initials.svg",
     "initials": "LC",
     "name": "Luke Carthy "
   },
@@ -2001,10 +2001,10 @@
     "initials": "AO",
     "name": "Alexander Osterwalder"
   },
-  "alexander-ivaniuk": {
-    "hasImage": false,
-    "imageUrl": null,
-    "fallbackUrl": "/images/guests/generated/alexander-ivaniuk-initials.svg",
+  "alexander-ivaniuk ": {
+    "hasImage": true,
+    "imageUrl": "/images/guests/alexander-ivaniuk .jpeg",
+    "fallbackUrl": "/images/guests/generated/alexander-ivaniuk -initials.svg",
     "initials": "AI",
     "name": "Alexander Ivaniuk "
   },

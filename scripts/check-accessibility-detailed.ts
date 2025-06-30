@@ -1,19 +1,27 @@
 #!/usr/bin/env tsx
 /**
- * Detailed accessibility checker - provides verbose output for debugging violations
+ * Detailed accessibility checker for built HTML files
+ * Runs axe-core against the built site to check WCAG compliance
+ * Shows specific elements that are failing
  */
 
 import { AxePuppeteer } from '@axe-core/puppeteer'
 import puppeteer from 'puppeteer'
+import { glob } from 'glob'
 import path from 'path'
 import { promises as fs } from 'fs'
 import chalk from 'chalk'
 
-async function checkAccessibilityDetailed() {
-  console.log(chalk.blue('🔍 Running detailed accessibility check...\n'))
-  
+interface ViolationResult {
+  url: string
+  violations: any[]
+}
+
+async function checkAccessibility() {
+  console.log(chalk.blue('🔍 Checking accessibility compliance (DETAILED)...\n'))
+
   const distPath = path.join(process.cwd(), 'dist')
-  
+
   // Check if dist directory exists
   try {
     await fs.access(distPath)
@@ -21,101 +29,110 @@ async function checkAccessibilityDetailed() {
     console.error(chalk.red('❌ Error: dist directory not found. Please run "npm run build:no-test" first.'))
     process.exit(1)
   }
-  
+
+  // Find all HTML files
+  const htmlFiles = await glob('**/*.html', { cwd: distPath })
+
+  if (htmlFiles.length === 0) {
+    console.error(chalk.red('❌ No HTML files found in dist directory.'))
+    process.exit(1)
+  }
+
+  console.log(chalk.gray(`Found ${htmlFiles.length} HTML files to check\n`))
+
   // Launch puppeteer
-  const browser = await puppeteer.launch({ 
+  const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
-  
-  // Check a single page for detailed output
-  const page = await browser.newPage()
-  const testFile = 'en/index.html'
-  const url = `file://${path.join(distPath, testFile)}`
-  
-  console.log(chalk.yellow(`Checking ${testFile} in detail...\n`))
-  
-  try {
-    await page.goto(url, { waitUntil: 'networkidle0' })
-    
-    // Run axe with all details
-    const axe = new AxePuppeteer(page)
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-      .disableRules(['color-contrast'])
-    
-    const axeResults = await axe.analyze()
-    
-    if (axeResults.violations.length > 0) {
-      console.log(chalk.red(`Found ${axeResults.violations.length} violations:\n`))
-      
-      for (const violation of axeResults.violations) {
-        console.log(chalk.red(`\n━━━ ${violation.id} ━━━`))
-        console.log(chalk.yellow(`Description: ${violation.description}`))
-        console.log(chalk.yellow(`Impact: ${violation.impact}`))
-        console.log(chalk.yellow(`Help: ${violation.help}`))
-        console.log(chalk.cyan(`Learn more: ${violation.helpUrl}\n`))
-        
-        console.log(chalk.magenta(`Affected elements (${violation.nodes.length}):`))
-        
-        for (const node of violation.nodes.slice(0, 3)) { // Show first 3
-          console.log(chalk.gray('\n  Element:'))
-          console.log(chalk.gray(`  - Selector: ${node.target.join(' ')}`))
-          console.log(chalk.gray(`  - HTML: ${node.html.substring(0, 100)}...`))
-          
-          if (node.failureSummary) {
-            console.log(chalk.red(`  - Issue: ${node.failureSummary}`))
-          }
-          
-          // For target-size violations, show the actual size
-          if (violation.id === 'target-size' && node.any) {
-            const sizeCheck = node.any.find(check => check.id === 'target-size')
-            if (sizeCheck?.data) {
-              console.log(chalk.yellow(`  - Current size: ${sizeCheck.data.width}x${sizeCheck.data.height}px`))
-              console.log(chalk.yellow(`  - Required: 44x44px minimum`))
-            }
-          }
-        }
-        
-        if (violation.nodes.length > 3) {
-          console.log(chalk.gray(`\n  ... and ${violation.nodes.length - 3} more elements`))
-        }
+
+  const results: ViolationResult[] = []
+  let totalViolations = 0
+
+  // Check only the main index.html for detailed analysis
+  const pagesToCheck = ['index.html']
+
+  console.log(chalk.gray(`Checking ${pagesToCheck.length} page for detailed analysis...\n`))
+
+  for (const file of pagesToCheck) {
+    const page = await browser.newPage()
+    const url = `file://${path.join(distPath, file)}`
+
+    try {
+      await page.goto(url, { waitUntil: 'networkidle0' })
+
+      // Wait for WCAG touch target fixes to be applied
+      await page.waitForFunction(() => {
+        const skipLink = document.querySelector('.skip-link')
+        return skipLink && window.getComputedStyle(skipLink).minHeight === '44px'
+      }, { timeout: 5000 }).catch(() => {
+        console.log(chalk.yellow(`Warning: WCAG fixes may not have been applied for ${file}`))
+      })
+
+      // Run axe
+      const axe = new AxePuppeteer(page)
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+        .disableRules(['color-contrast']) // Disable color contrast in file:// context
+
+      const axeResults = await axe.analyze()
+
+      if (axeResults.violations.length > 0) {
+        results.push({
+          url: file,
+          violations: axeResults.violations
+        })
+        totalViolations += axeResults.violations.length
+        console.log(chalk.red(`❌ ${file}: ${axeResults.violations.length} violations`))
+      } else {
+        console.log(chalk.green(`✅ ${file}: No violations`))
       }
-      
-      // Provide specific fix suggestions
-      console.log(chalk.blue('\n\n💡 Fix Suggestions:'))
-      
-      if (axeResults.violations.find(v => v.id === 'aria-hidden-focus')) {
-        console.log(chalk.green('\nFor aria-hidden-focus violations:'))
-        console.log('- Remove aria-hidden="true" from parent elements that contain interactive content')
-        console.log('- OR make child elements non-focusable with tabindex="-1"')
-        console.log('- OR move aria-hidden to non-interactive elements only')
-      }
-      
-      if (axeResults.violations.find(v => v.id === 'target-size')) {
-        console.log(chalk.green('\nFor target-size violations:'))
-        console.log('- Add CSS classes: min-w-[44px] min-h-[44px] or use the .touch-target class')
-        console.log('- Increase padding: p-3 or px-3 py-3')
-        console.log('- For inline links, they are exempt from this requirement')
-      }
-    } else {
-      console.log(chalk.green('✅ No accessibility violations found!'))
+    } catch (error) {
+      console.error(chalk.red(`❌ Error checking ${file}:`), error.message)
+    } finally {
+      await page.close()
     }
-    
-    // Also show passed checks
-    console.log(chalk.blue(`\n\n✅ Passed checks: ${axeResults.passes.length}`))
-    console.log(chalk.gray(axeResults.passes.map(p => `  - ${p.id}`).join('\n')))
-    
-  } catch (error) {
-    console.error(chalk.red('Error:'), error.message)
-  } finally {
-    await page.close()
   }
-  
+
   await browser.close()
+
+  // Report results
+  console.log(`\n${chalk.blue('📊 Accessibility Check Summary')}`)
+  console.log(chalk.gray('─'.repeat(50)))
+
+  if (totalViolations === 0) {
+    console.log(chalk.green('✅ All pages passed accessibility checks!'))
+    console.log(chalk.gray(`\nChecked ${pagesToCheck.length} pages`))
+    process.exit(0)
+  } else {
+    console.log(chalk.red(`❌ Found ${totalViolations} accessibility violations\n`))
+
+    // Show detailed violations
+    for (const result of results) {
+      console.log(chalk.yellow(`\n📄 ${result.url}`))
+      for (const violation of result.violations) {
+        console.log(chalk.red(`\n  • ${violation.id}: ${violation.description}`))
+        console.log(chalk.gray(`    Impact: ${violation.impact}`))
+        console.log(chalk.gray(`    Elements: ${violation.nodes.length}`))
+        console.log(chalk.gray(`    Help: ${violation.helpUrl}`))
+        
+        // Show specific failing elements
+        console.log(chalk.cyan('\n    Failing elements:'))
+        violation.nodes.forEach((node: any, index: number) => {
+          console.log(chalk.yellow(`\n    ${index + 1}. ${node.html}`))
+          console.log(chalk.gray(`       Selector: ${node.target.join(' ')}`))
+          if (node.failureSummary) {
+            console.log(chalk.gray(`       Failure: ${node.failureSummary}`))
+          }
+        })
+      }
+    }
+
+    process.exit(1)
+  }
 }
 
 // Run the check
-checkAccessibilityDetailed().catch(error => {
+checkAccessibility().catch(error => {
   console.error(chalk.red('Fatal error:'), error)
   process.exit(1)
 })

@@ -1,0 +1,41 @@
+services:
+  claude-code:
+    build:
+      context: .devcontainer
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-Europe/Amsterdam}
+    container_name: cro-cafe-claude-code
+    working_dir: /workspace
+    user: node
+    volumes:
+      - .:/workspace:delegated
+      - cro-cafe-bashhistory:/commandhistory
+      - cro-cafe-claude-config:/home/node/.claude
+      - cro-cafe-npm-cache:/home/node/.npm
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=4096
+      - CLAUDE_CONFIG_DIR=/home/node/.claude
+      - POWERLEVEL9K_DISABLE_GITSTATUS=true
+      - CLAUDE_NOTIFICATION_SOUND=true
+      - CLAUDE_AUTOCONFIRM=true  # Auto-approve all Claude actions
+      # Pass through Claude authentication from host
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-}
+    ports:
+      - "3000:3000"
+      - "4321:4321"
+      - "5173:5173"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    stdin_open: true
+    tty: true
+    command: /bin/zsh
+
+volumes:
+  cro-cafe-bashhistory:
+  cro-cafe-claude-config:
+  cro-cafe-npm-cache:

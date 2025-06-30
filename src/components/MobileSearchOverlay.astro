@@ -22,7 +22,7 @@ const { searchId = 'mobile-search' } = Astro.props;
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Search</h2>
       <button 
         type="button"
-        class="close-search p-2 -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        class="close-search touch-target -mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         aria-label="Close search"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,13 +51,13 @@ const { searchId = 'mobile-search' } = Astro.props;
       
       <!-- Quick Filters -->
       <div class="mt-4 flex flex-wrap gap-2">
-        <button class="quick-filter px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="episodes">
+        <button class="quick-filter touch-target-nav text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="episodes">
           Episodes
         </button>
-        <button class="quick-filter px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="guests">
+        <button class="quick-filter touch-target-nav text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="guests">
           Guests
         </button>
-        <button class="quick-filter px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="topics">
+        <button class="quick-filter touch-target-nav text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-filter="topics">
           Topics
         </button>
       </div>
@@ -88,7 +88,7 @@ const { searchId = 'mobile-search' } = Astro.props;
     <div class="border-t border-gray-200 dark:border-gray-700 p-4">
       <a 
         href="/search/"
-        class="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+        class="block w-full text-center px-4 py-2 h-11 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium flex items-center justify-center"
       >
         Advanced Search →
       </a>
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         episodeResults.forEach(episode => {
           html += `
-              <a href="${basePath}/episodes/${episode.slug}/" class="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <a href="${basePath}/episodes/${episode.slug}/" class="block min-h-[44px] p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <h4 class="font-medium text-gray-900 dark:text-white mb-1">${episode.title}</h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${episode.description}</p>
             </a>
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const searchPath = isValidLang ? `/${currentLang}/search/` : '/search/'
       html += `
           <div class="pt-4">
-            <a href="${searchPath}?q=${encodeURIComponent(query)}" class="text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">
+            <a href="${searchPath}?q=${encodeURIComponent(query)}" class="inline-flex items-center touch-target-inline px-2 text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">
               View all results for "${query}" →
           </a>
         </div>
@@ -273,11 +273,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 150)
   }
 
+  // Manage focusable elements in the overlay
+  function setFocusableElements(disabled) {
+    const focusableElements = overlay.querySelectorAll('button, input, a, select, textarea, [tabindex]:not([tabindex="-1"])')
+    focusableElements.forEach(element => {
+      if (disabled) {
+        element.setAttribute('tabindex', '-1')
+        element.setAttribute('aria-hidden', 'true')
+      } else {
+        element.removeAttribute('tabindex')
+        element.removeAttribute('aria-hidden')
+      }
+    })
+  }
+
   // Open search overlay
   function openSearch() {
     overlay.classList.remove('translate-x-full')
     overlay.classList.add('translate-x-0')
     overlay.setAttribute('aria-hidden', 'false')
+    setFocusableElements(false) // Make elements focusable
     document.body.classList.add('overflow-hidden')
 
     // Focus input after animation
@@ -297,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.add('translate-x-full')
     overlay.classList.remove('translate-x-0')
     overlay.setAttribute('aria-hidden', 'true')
+    setFocusableElements(true) // Make elements non-focusable
     document.body.classList.remove('overflow-hidden')
 
     // Animate backdrop
@@ -353,6 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize recent searches
   updateRecentSearches()
+
+  // Initialize overlay with focusable elements disabled (since it starts aria-hidden="true")
+  setFocusableElements(true)
 
   // Expose open method globally
   window[`open${searchId.charAt(0).toUpperCase() + searchId.slice(1)}Overlay`] = openSearch

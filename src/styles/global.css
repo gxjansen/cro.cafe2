@@ -522,6 +522,17 @@ textarea:focus-visible {
   transform: perspective(1000px) translateZ(20px) translateY(-4px) scale(1.02);
 }
 
+/* Ensure guest cards have space to grow on hover */
+.guest-card {
+  @apply overflow-visible;
+  /* Allow content to expand beyond boundaries during hover */
+}
+
+.guest-card .card-interactive {
+  @apply overflow-visible;
+  /* Ensure the inner card can expand freely */
+}
+
 /* Pressed state for tactile feedback */
 .card-interactive:active {
   transform: perspective(1000px) translateZ(10px) translateY(-2px) scale(1.01);
@@ -1127,6 +1138,15 @@ textarea:focus-visible {
 /* Guest cards spacing in episode detail pages */
 .guest-card + .guest-card {
   @apply mt-4; /* Fallback spacing between guest cards */
+}
+
+/* Fix for guest card grid alignment */
+#guestsGrid {
+  @apply items-start; /* Ensure all cards align to the top */
+}
+
+#guestsGrid .guest-card {
+  @apply h-full; /* Ensure cards fill their grid cell */
 }
 
 /* ===================================

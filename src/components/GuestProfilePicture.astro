@@ -75,7 +75,7 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <div 
-  class={`guest-profile-picture relative rounded-full overflow-hidden ${sizeClasses[size]} ${className}`}
+  class={`relative rounded-full overflow-hidden transition-transform duration-300 hover:scale-105 ${sizeClasses[size]} ${className}`}
   data-guest-picture={instanceId}
 >
   <!-- Loading placeholder with initials -->
@@ -97,7 +97,7 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
       alt={altText}
       width={imageSizes[size]}
       height={imageSizes[size]}
-      class={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ${grayscale ? 'grayscale' : ''}`}
+      class={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 hover:brightness-110 ${grayscale ? 'grayscale' : ''}`}
       loading={loading}
       data-image={instanceId}
       onload={`
@@ -143,40 +143,21 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 </div>
 
 <style>
-  /* Ensure images maintain aspect ratio and cover the container */
-  .guest-profile-picture img {
-    object-fit: cover;
-  }
-
-  /* Hover effect for interactive contexts */
-  .guest-profile-picture {
-    @apply transition-transform duration-300;
-  }
-  
-  .guest-profile-picture:hover {
-    @apply scale-105;
-  }
-  
-  .guest-profile-picture:hover img {
-    @apply brightness-110;
-  }
-
   /* Accessibility: High contrast mode support */
   @media (prefers-contrast: high) {
-    .guest-profile-picture img {
+    [data-guest-picture] img {
       filter: grayscale(100%) contrast(1.2);
     }
   }
 
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    .guest-profile-picture * {
+    [data-guest-picture] * {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
-
 </style>
 
 <script>

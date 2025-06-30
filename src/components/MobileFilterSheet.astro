@@ -93,15 +93,28 @@ function initializeMobileFilterSheets() {
     const applyBtn = sheet.querySelector('.apply-filters')
     const clearBtn = sheet.querySelector('.clear-filters')
 
+    function setFocusableElements(disabled: boolean) {
+      const focusableElements = sheet.querySelectorAll('button, input, a, select, textarea, [tabindex]:not([tabindex="-1"])')
+      focusableElements.forEach(element => {
+        if (disabled) {
+          element.setAttribute('tabindex', '-1')
+        } else {
+          element.removeAttribute('tabindex')
+        }
+      })
+    }
+
     function openSheet() {
       sheet.setAttribute('data-state', 'open')
       sheet.setAttribute('aria-hidden', 'false')
+      setFocusableElements(false) // Enable focusable elements
       document.body.classList.add('filter-sheet-open')
     }
 
     function closeSheet() {
       sheet.setAttribute('data-state', 'closed')
       sheet.setAttribute('aria-hidden', 'true')
+      setFocusableElements(true) // Disable focusable elements
       document.body.classList.remove('filter-sheet-open')
     }
 
@@ -130,7 +143,10 @@ function initializeMobileFilterSheets() {
       if (e.key === 'Escape' && sheet.getAttribute('data-state') === 'open') {
         closeSheet()
       }
-    });
+    })
+
+    // Initialize with disabled focusable elements (sheet starts closed)
+    setFocusableElements(true)
 
     // Expose open method globally
     (window as any)[`openFilterSheet_${sheet.id}`] = openSheet

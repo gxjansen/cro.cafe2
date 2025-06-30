@@ -1,0 +1,14 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-alexander-ivaniuk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:hsl(19, 65%, 45%);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:hsl(49, 65%, 35%);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad-alexander-ivaniuk)" />
+  <text x="200" y="230" text-anchor="middle" fill="white" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="120" font-weight="600" font-style="normal">
+    AI
+  </text>
+</svg>

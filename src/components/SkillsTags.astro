@@ -71,7 +71,7 @@ const hasHiddenSkills = hiddenCount > 0;
 const componentId = `skills-${Math.random().toString(36).substring(2, 11)}`;
 ---
 
-<div class={`skills-tags-container ${className}`} data-component-id={componentId}>
+<div class={`relative ${className}`} data-component-id={componentId}>
   <div class="flex flex-wrap gap-2 items-center">
     {visibleSkills.map((skill, index) => (
       <span 
@@ -113,7 +113,7 @@ const componentId = `skills-${Math.random().toString(36).substring(2, 11)}`;
   
   {/* Hidden skills container */}
   {hasHiddenSkills && (
-    <div class="hidden-skills hidden mt-2">
+    <div class="hidden-skills hidden mt-2 transition-all duration-300 ease-in-out opacity-0 max-h-0 overflow-hidden [&:not(.hidden)]:opacity-100 [&:not(.hidden)]:max-h-[500px]">
       <div class="flex flex-wrap gap-2">
         {skillsArray.slice(maxItems).map((skill, index) => (
           <span 
@@ -132,28 +132,11 @@ const componentId = `skills-${Math.random().toString(36).substring(2, 11)}`;
   )}
 </div>
 
-<style>
-  .skills-tags-container {
-    @apply relative;
-  }
-  
-  .hidden-skills {
-    @apply transition-all duration-300 ease-in-out;
-  }
-  
-  .hidden-skills.hidden {
-    @apply opacity-0 max-h-0 overflow-hidden;
-  }
-  
-  .hidden-skills:not(.hidden) {
-    @apply opacity-100 max-h-[500px];
-  }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // Handle show more/less functionality
-  document.querySelectorAll('.skills-tags-container').forEach(container => {
+  document.querySelectorAll('[data-component-id^="skills-"]').forEach(container => {
     const showMoreBtn = container.querySelector('.show-more-btn') as HTMLButtonElement
     const hiddenSkills = container.querySelector('.hidden-skills')
 

@@ -8,8 +8,9 @@
 /* Guest cards have fixed dimensions and independent layout */
 .guest-card,
 [class*="guest-card"] {
-  contain: layout style paint;
-  /* Cards don't affect outside layout and have predictable size */
+  contain: style;
+  /* Allow layout changes for hover effects, but contain style changes */
+  /* This allows the card to grow on hover without being clipped */
 }
 
 /* Optimize the guest image container */
@@ -29,8 +30,9 @@
 #guestsGrid,
 .guests-grid,
 [data-guest-grid] {
-  contain: layout;
-  /* Grid layout is independent */
+  /* Remove containment to allow cards to grow on hover */
+  /* contain: layout; */
+  /* Grid needs to accommodate card growth */
 }
 
 /* ===================================

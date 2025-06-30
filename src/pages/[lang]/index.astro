@@ -334,7 +334,7 @@ const hreflang = {
                 {
                   <a 
                     href={getEpisodeUrl(featuredEpisode, language)}
-                    class="inline-flex items-center px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
+                    class="inline-flex items-center h-11 px-8 py-3 bg-lang-600 hover:bg-lang-700 dark:bg-lang-500 dark:hover:bg-lang-600 text-white font-medium rounded-full transition-colors shadow-lg group"
                   >
                     <svg class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
@@ -353,7 +353,7 @@ const hreflang = {
                       href={platform.data.urls[language] || platform.data.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="hover:opacity-80 transition-opacity"
+                      class="inline-flex items-center justify-center h-11 w-11 hover:opacity-80 transition-opacity"
                       aria-label={`Subscribe on ${platform.data.name}`}
                     >
                       <img 
@@ -365,7 +365,7 @@ const hreflang = {
                   ))}
                   <a 
                     href={`/${language}/subscribe/`}
-                    class="text-lang-600 dark:text-lang-300 hover:underline"
+                    class="inline-flex items-center h-11 px-2 text-lang-600 dark:text-lang-300 hover:underline"
                   >
                     +{platforms.length - 2} more
                   </a>
@@ -430,7 +430,7 @@ const hreflang = {
             <div class="text-center">
               <a 
                 href={`/${language}/episodes/`}
-                class="inline-flex items-center px-6 py-3 text-lang-600 dark:text-lang-300 hover:text-lang-700 dark:hover:text-lang-200 font-medium text-lg group"
+                class="inline-flex items-center h-11 px-6 py-3 text-lang-600 dark:text-lang-300 hover:text-lang-700 dark:hover:text-lang-200 font-medium text-lg group"
               >
                 {t.viewAllEpisodes}
                 <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -472,7 +472,7 @@ const hreflang = {
               href={platform.data.urls[language] || platform.data.websiteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="transition-all hover:scale-110"
+              class="inline-flex items-center justify-center h-11 w-11 transition-all hover:scale-110"
               aria-label={`Listen on ${platform.data.name}`}
             >
               <img 

@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/accessibility-setup.ts'],
     include: ['tests/**/*.a11y.test.{js,ts,jsx,tsx}'],
-    pool: 'forks', // Use forks to avoid esbuild issues
+    pool: 'forks' // Use forks to avoid esbuild issues
   },
   resolve: {
     alias: {
@@ -19,7 +19,7 @@ export default defineConfig({
       // Mock astro:content to avoid server-only module errors
       'astro:content': path.resolve(__dirname, './tests/mocks/astro-content.ts'),
       // Mock content utilities
-      '@/utils/content': path.resolve(__dirname, './tests/mocks/content-utils.ts'),
+      '@/utils/content': path.resolve(__dirname, './tests/mocks/content-utils.ts')
     }
   }
 })

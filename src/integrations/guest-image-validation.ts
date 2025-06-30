@@ -1,5 +1,5 @@
 import type { AstroIntegration } from 'astro'
-import { validateGuestImages } from '../../scripts/validate-guest-images'
+import { validateGuestImages } from '../../scripts/validate-guest-images.ts'
 
 export function guestImageValidation(): AstroIntegration {
   return {
