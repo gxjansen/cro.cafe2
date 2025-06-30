@@ -9,6 +9,9 @@
 /* Tailwind CSS v4 */
 @import "tailwindcss";
 
+/* Enable dark mode variant */
+@variant dark (&:where(.dark, .dark *));
+
 /* Tailwind v4 Theme Configuration */
 @theme {
   /* Primary colors - teal palette */
