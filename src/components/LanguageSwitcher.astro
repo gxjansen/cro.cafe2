@@ -171,6 +171,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
                 ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200'
                 : 'text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700'
             }`}
+            style="display: flex; width: 100%;"
             role="menuitem"
             aria-current={isCurrent ? 'page' : undefined}
           >
@@ -495,6 +496,18 @@ if (!window.__languageSwitcherManager) {
 </script>
 
 <style>
+  /* Ensure gap works with fallback for older browsers */
+  .language-switcher-menu [role="none"] {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  /* Fallback for browsers without gap support */
+  .language-switcher-menu [role="none"] > a:not(:first-child) {
+    margin-top: 8px;
+  }
+  
   /* Ensure dropdown is always clickable */
   .language-switcher-container {
     position: relative;
