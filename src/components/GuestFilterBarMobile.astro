@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import type { Language } from '../types';
 import MobileFilterSheet from './MobileFilterSheet.astro';
 import { SKILL_GROUPS, countGuestsInGroup, getGroupDisplay } from '../utils/skillGroups';
+import { checkIsFreelancer } from '../utils/guest-display-utils';
 
 interface Props {
   guests: CollectionEntry<'guests'>[];
@@ -167,6 +168,14 @@ const filterTranslations = {
 };
 
 const t = filterTranslations[language || 'en'];
+
+// Count freelancers for display
+let freelancerCount = 0;
+guestsWithEpisodes.forEach(guest => {
+  if (checkIsFreelancer(guest.data.linkedin_headline, guest.data.role)) {
+    freelancerCount++;
+  }
+});
 ---
 
 <!-- Mobile Filter Bar -->
@@ -259,6 +268,23 @@ const t = filterTranslations[language || 'en'];
         ))}
       </div>
     </div>
+    
+    <!-- Freelancer Filter Section -->
+    <div>
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Type</h3>
+      <label class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <div class="flex items-center gap-3">
+          <input 
+            type="checkbox" 
+            id={`mobile-freelancerFilter-${instanceId}`}
+            class="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 mobile-freelancer-checkbox"
+            data-filter-type="freelancer"
+          />
+          <span class="text-gray-900 dark:text-white">Freelancers Only</span>
+        </div>
+        <span class="text-sm text-gray-500 dark:text-gray-400">({freelancerCount})</span>
+      </label>
+    </div>
   </div>
 </MobileFilterSheet>
 
@@ -279,6 +305,7 @@ function initializeMobileGuestFilters() {
     const showCheckboxes = document.querySelectorAll(`input[name="mobile-show-${instanceId}"]`)
     const countryFilter = document.getElementById(`mobile-countryFilter-${instanceId}`) as HTMLSelectElement
     const skillCheckboxes = document.querySelectorAll('.mobile-skill-checkbox')
+    const freelancerCheckbox = document.getElementById(`mobile-freelancerFilter-${instanceId}`) as HTMLInputElement
 
     // Global elements to filter
     const resultsInfo = document.getElementById('resultsInfo')
@@ -306,6 +333,7 @@ function initializeMobileGuestFilters() {
       if (selectedShows.length < 4 && selectedShows.length > 0) {activeCount += selectedShows.length}
       if (selectedCountry) {activeCount += 1}
       if (selectedSkills.length > 0) {activeCount += selectedSkills.length}
+      if (freelancerCheckbox?.checked) {activeCount += 1}
 
       if (activeCountElement) {
         activeCountElement.textContent = activeCount > 0 ? `${activeCount} active` : ''
@@ -325,6 +353,7 @@ function initializeMobileGuestFilters() {
       const selectedSkills = Array.from(skillCheckboxes)
         .filter((cb): cb is HTMLInputElement => cb instanceof HTMLInputElement && cb.checked)
         .map((cb) => cb.value)
+      const freelancerOnly = freelancerCheckbox?.checked || false
 
       const guestCards = guestsGrid?.querySelectorAll('.guest-card') || []
       let visibleCount = 0
@@ -353,6 +382,7 @@ function initializeMobileGuestFilters() {
         const languages = JSON.parse(card.getAttribute('data-languages') || '[]')
         const country = card.getAttribute('data-country') || ''
         const skills = card.getAttribute('data-skills') || ''
+        const isFreelancer = card.getAttribute('data-freelancer') === 'true'
 
         // Language filter
         const showMatch = selectedShows === null ||
@@ -374,7 +404,10 @@ function initializeMobileGuestFilters() {
               }
             })
 
-        const shouldShow = showMatch && countryMatch && skillMatch
+        // Freelancer filter
+        const freelancerMatch = !freelancerOnly || isFreelancer
+
+        const shouldShow = showMatch && countryMatch && skillMatch && freelancerMatch
 
         card.style.display = shouldShow ? '' : 'none'
         if (shouldShow) {visibleCount++}
@@ -409,6 +442,7 @@ function initializeMobileGuestFilters() {
             : `${selectedSkills.length} expertise`
           )
         }
+        if (freelancerOnly) {filterText.push('Freelancers')}
 
         const filterDescription = filterText.length > 0
           ? ` (${filterText.join(', ')})`
@@ -435,6 +469,7 @@ function initializeMobileGuestFilters() {
           cb.checked = false
         }
       })
+      if (freelancerCheckbox) {freelancerCheckbox.checked = false}
       filterGuests()
     }
 
@@ -442,6 +477,7 @@ function initializeMobileGuestFilters() {
     showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests))
     countryFilter?.addEventListener('change', filterGuests)
     skillCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests))
+    freelancerCheckbox?.addEventListener('change', filterGuests)
 
     // Listen for custom events
     document.addEventListener('filters:apply', (e: CustomEvent) => {

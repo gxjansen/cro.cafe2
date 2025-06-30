@@ -6,6 +6,7 @@ import GuestCardVertical from '../../../components/GuestCardVertical.astro';
 import GuestFilterBar from '../../../components/GuestFilterBar.astro';
 import GuestFilterBarMobile from '../../../components/GuestFilterBarMobile.astro';
 import { getGuestsByLanguage, getGuestUrl } from '../../../utils/content';
+import { checkIsFreelancer } from '../../../utils/guest-display-utils';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -120,6 +121,7 @@ const t = translations[language];
               data-languages={JSON.stringify(guest.data.languages)}
               data-country={guest.data.linkedin_country || ''}
               data-skills={guest.data.linkedin_skills || ''}
+              data-freelancer={checkIsFreelancer(guest.data.linkedin_headline, guest.data.role).toString()}
             >
               <GuestCardVertical guest={guest} language={language} size="large" showEpisodeCount={true} />
             </div>

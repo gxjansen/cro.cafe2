@@ -247,6 +247,7 @@ function initializeGuestFilters() {
     const showCheckboxes = filterBar.querySelectorAll('.show-checkbox')
     const countryFilter = filterBar.querySelector('.country-filter') as HTMLSelectElement
     const expertiseFilter = filterBar.querySelector('.expertise-filter') as HTMLSelectElement
+    const freelancerCheckbox = filterBar.querySelector('.freelancer-checkbox') as HTMLInputElement
     const clearButton = filterBar.querySelector('.clear-filters-btn')
 
     // Global elements to filter
@@ -266,6 +267,7 @@ function initializeGuestFilters() {
 
       const selectedCountry = countryFilter?.value || ''
       const selectedExpertise = expertiseFilter?.value || ''
+      const freelancerOnly = freelancerCheckbox?.checked || false
 
       const guestCards = guestsGrid?.querySelectorAll('.guest-card') || []
       let visibleCount = 0
@@ -294,6 +296,7 @@ function initializeGuestFilters() {
         const languages = JSON.parse(card.getAttribute('data-languages') || '[]')
         const country = card.getAttribute('data-country') || ''
         const skills = card.getAttribute('data-skills') || ''
+        const isFreelancer = card.getAttribute('data-freelancer') === 'true'
 
         // Language filter (only if showing language checkboxes)
         const showMatch = selectedShows === null ||
@@ -315,7 +318,10 @@ function initializeGuestFilters() {
           expertiseMatch = skills.toLowerCase().includes(selectedExpertise.toLowerCase())
         }
 
-        const shouldShow = showMatch && countryMatch && expertiseMatch
+        // Freelancer filter
+        const freelancerMatch = !freelancerOnly || isFreelancer
+
+        const shouldShow = showMatch && countryMatch && expertiseMatch && freelancerMatch
 
         card.style.display = shouldShow ? '' : 'none'
         if (shouldShow) {visibleCount++}
@@ -355,6 +361,7 @@ function initializeGuestFilters() {
             filterText.push(selectedExpertise)
           }
         }
+        if (freelancerOnly) {filterText.push('Freelancers')}
 
         const filterDescription = filterText.length > 0
           ? ` (${filterText.join(', ')})`
@@ -374,6 +381,7 @@ function initializeGuestFilters() {
       })
       if (countryFilter) {countryFilter.value = ''}
       if (expertiseFilter) {expertiseFilter.value = ''}
+      if (freelancerCheckbox) {freelancerCheckbox.checked = false}
       filterGuests()
     }
 
@@ -381,6 +389,7 @@ function initializeGuestFilters() {
     showCheckboxes.forEach(cb => cb.addEventListener('change', filterGuests))
     countryFilter?.addEventListener('change', filterGuests)
     expertiseFilter?.addEventListener('change', filterGuests)
+    freelancerCheckbox?.addEventListener('change', filterGuests)
     clearButton?.addEventListener('click', clearFilters)
 
     // Read URL parameters on initialization
