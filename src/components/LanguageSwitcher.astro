@@ -133,8 +133,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
 ---
 
 <div 
-  class="relative inline-block text-left language-switcher-container" 
-  style="z-index: 60;"
+  class="relative inline-block text-left language-switcher-container z-[60]" 
   transition:name="language-switcher"
   transition:animate="none"
 >
@@ -155,12 +154,11 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   </button>
 
   <div
-    class="language-switcher-menu hidden absolute right-0 z-[9999] mt-2 w-60 sm:w-64 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-w-[calc(100vw-2rem)]"
+    class="language-switcher-menu hidden absolute right-0 z-[9999] mt-2 w-60 sm:w-64 min-w-[220px] origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-w-[calc(100vw-2rem)] isolate"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="language-switcher-button"
     data-language-menu
-    style="min-width: 220px; isolation: isolate;"
   >
     <div class="py-1" role="none">
       {languages.map((lang) => {
@@ -168,7 +166,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
         return (
           <a
             href={getLanguageUrl(lang.code)}
-            class={`flex items-center px-4 py-2 text-sm transition-colors ${
+            class={`flex items-center touch-target-inline px-4 py-2 text-sm transition-colors ${
               isCurrent
                 ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200'
                 : 'text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700'
@@ -308,7 +306,7 @@ class LanguageSwitcherManager {
       button.setAttribute('aria-expanded', 'true')
 
       // Force high z-index to ensure visibility above audio player and view transitions
-      menu.style.zIndex = '9999'
+      menu.style.zIndex = '99999'
       container.style.zIndex = '9998'
 
       // Add temporary class to boost z-index during transitions
@@ -481,7 +479,7 @@ class LanguageSwitcherManager {
       const menu = container.querySelector('[data-language-menu]')
       if (menu) {
         menu.style.position = 'absolute'
-        menu.style.zIndex = '100'
+        menu.style.zIndex = '99999'
         menu.style.pointerEvents = 'auto'
       }
     })
@@ -521,7 +519,7 @@ if (!window.__languageSwitcherManager) {
 
   .language-switcher-menu {
     position: absolute;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     pointer-events: auto !important;
     /* Ensure menu is above view transition layer */
     transform: translateZ(0);
@@ -531,7 +529,7 @@ if (!window.__languageSwitcherManager) {
 
   /* When dropdown is active, ensure it's above everything */
   .dropdown-active .language-switcher-menu {
-    z-index: 9999 !important;
+    z-index: 99999 !important;
   }
 
   /* Prevent any interference from other elements */
@@ -541,13 +539,13 @@ if (!window.__languageSwitcherManager) {
 
   /* Fix for view transitions */
   :global(::view-transition-group(language-switcher)) {
-    z-index: 9999 !important;
+    z-index: 99999 !important;
   }
 
   :global(::view-transition-old(language-switcher)),
   :global(::view-transition-new(language-switcher)) {
     mix-blend-mode: normal;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
   }
 
   /* Ensure proper stacking during transitions */
