@@ -966,11 +966,15 @@ textarea:focus-visible {
 
   /* Ensure proper focus visibility */
   .touch-target:focus,
-  .touch-target-inline:focus,
   .touch-target-nav:focus,
   .btn:focus,
   .btn-icon:focus {
     @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+  
+  /* Remove focus ring from breadcrumb links */
+  .breadcrumb-link.touch-target-inline:focus {
+    @apply outline-none ring-0;
   }
 }
 
@@ -1021,8 +1025,7 @@ textarea:focus-visible {
 .breadcrumb-link {
   @apply hover:text-primary-600 dark:hover:text-primary-300 
          focus:text-primary-600 dark:focus:text-primary-300 
-         focus:outline-none focus:ring-2 focus:ring-primary-500 
-         focus:ring-offset-2 dark:focus:ring-offset-gray-900 
+         focus:outline-none focus:ring-0 focus-visible:ring-0
          rounded-md px-1 -mx-1 transition-colors font-medium;
 }
 
@@ -1237,9 +1240,24 @@ textarea:focus-visible {
   @apply mt-6; /* Ensures 24px spacing between cards */
 }
 
+/* Ensure cards in sidebar don't overlap on hover */
+.sidebar-sticky .card-interactive {
+  @apply relative z-10;
+}
+
+.sidebar-sticky .card-interactive:hover {
+  @apply z-20; /* Bring hovered card to front */
+  margin-bottom: 4px; /* Compensate for upward transform */
+}
+
 /* Guest cards spacing in episode detail pages */
 .guest-card + .guest-card {
   @apply mt-4; /* Fallback spacing between guest cards */
+}
+
+/* Mobile guest/host card sections - ensure no overlap */
+.lg\:hidden .card-interactive:hover {
+  margin-bottom: 4px; /* Compensate for upward transform */
 }
 
 /* Fix for guest card grid alignment */

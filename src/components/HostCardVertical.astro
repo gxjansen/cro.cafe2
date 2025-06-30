@@ -1,0 +1,171 @@
+---
+import HostImage from './HostImage.astro';
+import CountryFlag from './CountryFlag.astro';
+import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../utils/guest-display-utils';
+import type { Language } from '../types';
+
+export interface Props {
+  host: any;
+  language?: Language;
+  size?: 'small' | 'medium' | 'large';
+  showEpisodeCount?: boolean;
+}
+
+const { host, language = 'en', size = 'medium', showEpisodeCount = false } = Astro.props;
+
+// Translations for the "at" text
+const translations = {
+  en: { at: 'at' },
+  nl: { at: 'bij' },
+  de: { at: 'bei' },
+  es: { at: 'en' }
+};
+
+// Helper function to get host URL
+function getHostUrl(host: any): string {
+  const slug = host.data.slug || host.slug;
+  return `/hosts/${slug}/`;
+}
+
+// Get LinkedIn URL from socialLinks
+function getLinkedInUrl(host: any): string | null {
+  if (host.data.linkedin) {
+    return host.data.linkedin;
+  }
+  if (host.data.socialLinks) {
+    const linkedinLink = host.data.socialLinks.find((link: any) => link.platform === 'linkedin');
+    return linkedinLink ? linkedinLink.url : null;
+  }
+  return null;
+}
+
+const linkedInUrl = getLinkedInUrl(host);
+
+// Get host data
+const hostName = host.data.name;
+const hostRole = host.data.role || host.data.title;
+const hostCompany = host.data.company;
+const isFreelancer = checkIsFreelancer(null, hostRole);
+
+// Get optimized professional display using smart deduplication
+const professionalDisplay = getOptimalProfessionalDisplay(
+  { role: hostRole, company: hostCompany, headline: null, isFreelancer },
+  language,
+  translations
+);
+
+// Truncate text based on size
+function truncateText(text: string | null, maxLength: number): string | null {
+  if (!text) return null;
+  if (text.length <= maxLength) return text;
+  
+  // Smart truncation at word boundary
+  const truncated = text.substr(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return text.substr(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+}
+
+// Get truncated lengths based on screen size (vertical cards have more space)
+const getTextLengths = () => {
+  switch(size) {
+    case 'small': return { primary: 60, headline: 80 };
+    case 'medium': return { primary: 80, headline: 120 };
+    case 'large': return { primary: 100, headline: 150 };
+    default: return { primary: 80, headline: 120 };
+  }
+};
+
+const textLengths = getTextLengths();
+const truncatedPrimaryText = truncateText(professionalDisplay.primary, textLengths.primary);
+
+// Size-specific classes
+const sizeClasses = {
+  small: {
+    container: 'p-4',
+    imageSize: 96,
+    title: 'text-base font-semibold',
+    subtitle: 'text-sm',
+    headline: 'text-xs',
+    linkedin: 'w-5 h-5',
+    flagSize: 'sm' as const,
+    gap: 'gap-3'
+  },
+  medium: {
+    container: 'p-5',
+    imageSize: 128,
+    title: 'text-lg font-semibold',
+    subtitle: 'text-sm',
+    headline: 'text-sm',
+    linkedin: 'w-5 h-5',
+    flagSize: 'sm' as const,
+    gap: 'gap-4'
+  },
+  large: {
+    container: 'p-6',
+    imageSize: 192,
+    title: 'text-xl font-semibold',
+    subtitle: 'text-base',
+    headline: 'text-base',
+    linkedin: 'w-6 h-6',
+    flagSize: 'md' as const,
+    gap: 'gap-4'
+  }
+};
+
+const classes = sizeClasses[size];
+
+// Get host image URL
+const imageUrl = host.data.imageUrl || `/images/hosts/${host.data.slug || host.slug}.webp`;
+---
+
+<a 
+  href={getHostUrl(host)} 
+  class={`card card-interactive ${classes.container} block group relative h-full focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+  aria-label={`View ${hostName}'s profile`}
+>
+
+  <div class={`flex flex-col items-center text-center ${classes.gap}`}>
+    <!-- Host Image - Centered -->
+    <div class="group-hover:scale-105 transition-transform duration-300">
+      <HostImage 
+        imageUrl={imageUrl}
+        alt={`Photo of ${hostName}, host`}
+        class={`${size === 'small' ? 'w-24 h-24' : size === 'large' ? 'w-48 h-48' : 'w-32 h-32'} rounded-full object-cover grayscale`}
+        width={classes.imageSize}
+        height={classes.imageSize}
+      />
+    </div>
+    
+    <!-- Host Info -->
+    <div class="w-full">
+      <!-- Host Name -->
+      <h3 class={`${classes.title} text-gray-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors`}>
+        {hostName}
+      </h3>
+      
+      <!-- Primary Professional Information -->
+      {truncatedPrimaryText && (
+        <p class={`${classes.subtitle} text-gray-600 dark:text-gray-400 mb-3`}
+           title={professionalDisplay.primary}>
+          {truncatedPrimaryText}
+        </p>
+      )}
+      
+      <!-- Episode Count (optional) -->
+      {showEpisodeCount && host.data.episodes && (
+        <p class={`${classes.subtitle} text-gray-500 dark:text-gray-400 mt-2`}>
+          {host.data.episodes.length} episode{host.data.episodes.length !== 1 ? 's' : ''}
+        </p>
+      )}
+    </div>
+  </div>
+</a>
+
+<style>
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .grayscale {
+      filter: grayscale(100%) contrast(1.2);
+    }
+  }
+</style>

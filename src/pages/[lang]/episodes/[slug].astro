@@ -4,12 +4,12 @@ import Header from '../../../components/Header.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import EpisodeImage from '../../../components/EpisodeImage.astro';
 import GuestCardVertical from '../../../components/GuestCardVertical.astro';
-import HostCard from '../../../components/HostCard.astro';
+import HostCardVertical from '../../../components/HostCardVertical.astro';
 import SchemaPodcastEpisode from '../../../components/schema/SchemaPodcastEpisode.astro';
 import RelatedEpisodes from '../../../components/RelatedEpisodes.astro';
 import EpisodeNavigation from '../../../components/EpisodeNavigation.astro';
 import SimpleAudioPlayer from '../../../components/SimpleAudioPlayer.astro';
-import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug } from '../../../utils/content';
+import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug, getHostImageUrl } from '../../../utils/content';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -304,7 +304,7 @@ const getDateLocale = (lang: Language) => {
                 <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                   {guestDetails.length === 1 ? t.guest : t.guests}
                 </h2>
-                <div class="space-y-4">
+                <div class="space-y-6">
                   {guestDetails.map((guest) => guest && (
                     <GuestCardVertical guest={guest} language={language} size="small" showEpisodeCount={false} />
                   ))}
@@ -317,9 +317,20 @@ const getDateLocale = (lang: Language) => {
                 <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                   {hostDetails.length === 1 ? t.host : t.hosts}
                 </h2>
-                <div class="space-y-4">
+                <div class="space-y-6">
                   {hostDetails.map((host) => host && (
-                    <HostCard host={host} language={language} size="medium" />
+                    <HostCardVertical 
+                      host={{
+                        ...host,
+                        data: {
+                          ...host.data,
+                          imageUrl: getHostImageUrl(host.data.slug || host.slug)
+                        }
+                      }} 
+                      language={language} 
+                      size="small" 
+                      showEpisodeCount={false} 
+                    />
                   ))}
                 </div>
               </section>
@@ -418,7 +429,7 @@ const getDateLocale = (lang: Language) => {
               <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {guestDetails.length === 1 ? t.guest : t.guests}
               </h2>
-              <div class="space-y-4">
+              <div class="space-y-6">
                 {guestDetails.map((guest) => guest && (
                   <GuestCardVertical guest={guest} language={language} size="small" showEpisodeCount={false} />
                 ))}
@@ -432,9 +443,20 @@ const getDateLocale = (lang: Language) => {
               <h2 class="text-xl font-heading font-semibold text-gray-900 dark:text-white mb-md">
                 {hostDetails.length === 1 ? t.host : t.hosts}
               </h2>
-              <div class="space-y-4">
+              <div class="space-y-6">
                 {hostDetails.map((host) => host && (
-                  <HostCard host={host} language={language} size="small" />
+                  <HostCardVertical 
+                    host={{
+                      ...host,
+                      data: {
+                        ...host.data,
+                        imageUrl: getHostImageUrl(host.data.slug || host.slug)
+                      }
+                    }} 
+                    language={language} 
+                    size="small" 
+                    showEpisodeCount={false} 
+                  />
                 ))}
               </div>
             </section>
