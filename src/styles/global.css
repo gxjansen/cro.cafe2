@@ -97,6 +97,53 @@
 
 /* WCAG accessibility styles now consolidated below using @apply */
 
+/* Section Layout and Dividers */
+.section-container {
+  @apply py-16 lg:py-20;
+}
+
+/* Automatic alternating backgrounds for sections */
+.auto-alternate-sections > section:nth-child(odd) {
+  @apply bg-white dark:bg-gray-900;
+}
+
+.auto-alternate-sections > section:nth-child(even) {
+  @apply bg-gray-50 dark:bg-gray-800/50;
+}
+
+/* Override for sections that should maintain specific backgrounds */
+.auto-alternate-sections > section.hero-section,
+.auto-alternate-sections > section.cta-section {
+  /* These sections keep their custom backgrounds */
+  background: inherit;
+}
+
+/* Section dividers */
+.section-divider {
+  @apply relative my-0 overflow-hidden;
+  height: 1px;
+}
+
+.section-divider-ornament {
+  @apply relative py-8;
+}
+
+.section-divider-ornament::before {
+  content: '';
+  @apply absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent;
+  transform: translateY(-50%);
+}
+
+.section-divider-dots {
+  @apply flex justify-center items-center py-8 text-gray-300 dark:text-gray-700;
+  letter-spacing: 0.5em;
+}
+
+/* Subtle top border for sections without dividers */
+.section-border-top {
+  @apply border-t border-gray-100 dark:border-gray-800;
+}
+
 /* Mobile Navigation Responsive Utilities */
 /* Extra small screens (below 475px) */
 @media (max-width: 474px) {

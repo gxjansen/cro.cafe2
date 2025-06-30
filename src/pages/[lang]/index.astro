@@ -294,9 +294,9 @@ const hreflang = {
   <Header language={language} currentPath={`/${language}/`} />
   <Breadcrumb language={language} currentPath={`/${language}/`} />
   
-  <main id="main-content" class="flex-1" tabindex="-1">
+  <main id="main-content" class="flex-1 auto-alternate-sections" tabindex="-1">
     <!-- Hero Section with Featured Player -->
-    <section class="bg-gradient-to-br from-lang-50 via-white to-lang-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
+    <section class="hero-section bg-gradient-to-br from-lang-50 via-white to-lang-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
           <h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-6">
@@ -404,8 +404,11 @@ const hreflang = {
       subtitle={t.hostSectionSubtitle}
     />
 
+    <!-- Section Divider -->
+    <div class="section-divider-ornament" aria-hidden="true"></div>
+
     <!-- Essential Episodes -->
-    <section class="py-16 essential-episodes-section">
+    <section class="section-container essential-episodes-section">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
@@ -445,8 +448,18 @@ const hreflang = {
       </div>
     </section>
 
+    <!-- Section Divider -->
+    <div class="section-divider-dots" aria-hidden="true">
+      <span>•</span>
+      <span>•</span>
+      <span>•</span>
+    </div>
+
     <!-- Featured Guests -->
     <NotableGuestsSection language={language} limit={6} />
+
+    <!-- Section Divider -->
+    <div class="section-divider-ornament" aria-hidden="true"></div>
 
     <!-- Testimonials -->
     <TestimonialsSection language={language} limit={3} />
@@ -457,8 +470,11 @@ const hreflang = {
     <!-- Brand Logo Bar -->
     <BrandLogoBar language={language} />
 
+    <!-- Section Divider -->
+    <div class="section-divider-ornament" aria-hidden="true"></div>
+
     <!-- Platform Section -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <section class="section-container bg-gray-50 dark:bg-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
