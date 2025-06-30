@@ -469,8 +469,10 @@ const hreflang = {
     <!-- Live Events Section -->
     <LiveEventsSection language={language} />
 
-    <!-- Section Divider -->
-    <div class="section-divider" aria-hidden="true"></div>
+    <!-- Section Divider (only show if LiveEvents section is visible) -->
+    {(language === 'en' || language === 'nl') && (
+      <div class="section-divider" aria-hidden="true"></div>
+    )}
 
     <!-- Brand Logo Bar -->
     <BrandLogoBar language={language} />
