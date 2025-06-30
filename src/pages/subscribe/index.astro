@@ -8,6 +8,9 @@ import type { Language } from '../../types';
 // This is the international subscribe page, so we don't have a specific language
 const language: Language = 'en'; // Used for fallback text only
 
+// Debug: Log that we're actually rendering the international subscribe page
+console.log('RENDERING INTERNATIONAL SUBSCRIBE PAGE at /subscribe/');
+
 // Get platform counts for each language
 const platformCounts = await getPlatformCountsByLanguage();
 

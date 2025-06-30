@@ -480,14 +480,16 @@ function initializeMobileGuestFilters() {
     freelancerCheckbox?.addEventListener('change', filterGuests)
 
     // Listen for custom events
-    document.addEventListener('filters:apply', (e: CustomEvent) => {
-      if (e.detail.sheetId === filterSheetId) {
+    document.addEventListener('filters:apply', (e: Event) => {
+      const customEvent = e as CustomEvent
+      if (customEvent.detail.sheetId === filterSheetId) {
         filterGuests()
       }
     })
 
-    document.addEventListener('filters:clear', (e: CustomEvent) => {
-      if (e.detail.sheetId === filterSheetId) {
+    document.addEventListener('filters:clear', (e: Event) => {
+      const customEvent = e as CustomEvent
+      if (customEvent.detail.sheetId === filterSheetId) {
         clearFilters()
       }
     })
