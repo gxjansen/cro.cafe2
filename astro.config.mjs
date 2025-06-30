@@ -4,12 +4,12 @@ import sitemap from '@astrojs/sitemap';
 // import AstroPWA from '@vite-pwa/astro';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
-import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
+// import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
-    guestImageValidation(),
+    // guestImageValidation(),
     react(),
     mdx(),
     // PWA temporarily disabled to debug homepage reload issue
