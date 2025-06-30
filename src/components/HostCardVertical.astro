@@ -45,11 +45,11 @@ const linkedInUrl = getLinkedInUrl(host);
 const hostName = host.data.name;
 const hostRole = host.data.role || host.data.title;
 const hostCompany = host.data.company;
-const isFreelancer = checkIsFreelancer(null, hostRole);
+const isFreelancer = checkIsFreelancer(undefined, hostRole);
 
 // Get optimized professional display using smart deduplication
 const professionalDisplay = getOptimalProfessionalDisplay(
-  { role: hostRole, company: hostCompany, headline: null, isFreelancer },
+  { role: hostRole, company: hostCompany, headline: undefined, isFreelancer },
   language,
   translations
 );

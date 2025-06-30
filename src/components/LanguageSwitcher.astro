@@ -109,6 +109,11 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   
   // Handle episode, guest, subscribe, and search pages (both detail and listing pages)
   if (basePath.includes('/episodes') || basePath.includes('/guests') || basePath.includes('/subscribe') || basePath.includes('/search')) {
+    // Special handling for international subscribe page - keep users on it when switching languages
+    if (basePath === '/subscribe/' && langCode !== 'global') {
+      return '/subscribe/'; // Stay on the international subscribe page
+    }
+    
     // For detail pages, redirect to the listing page for that language
     if (langCode === 'en') {
       if (basePath.includes('/episodes')) return '/en/episodes/';
