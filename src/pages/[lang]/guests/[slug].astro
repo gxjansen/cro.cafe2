@@ -43,6 +43,12 @@ const guestWithLinkedIn = await getGuestWithLinkedIn(guestSlug);
 // Get all episodes featuring this guest in the current language
 const guestEpisodes = await getGuestEpisodes(guestSlug, language);
 
+// Get popular platform links
+const { getCollection: getContentCollection } = await import('astro:content');
+const platforms = await getContentCollection('platforms');
+const spotify = platforms.find(p => p.data.slug === 'spotify');
+const applePodcasts = platforms.find(p => p.data.slug === 'apple-podcasts');
+
 // Translations
 const translations = {
   en: {
@@ -55,7 +61,10 @@ const translations = {
     discoverMore: 'Discover More CRO Insights',
     exploreAll: 'Explore all episodes and learn from industry experts',
     browseAllEpisodes: 'Browse All Episodes',
-    meetMoreGuests: 'Meet More Guests'
+    meetMoreGuests: 'Meet More Guests',
+    subscribe: 'Subscribe to CRO.CAFE',
+    listenOn: 'Listen on',
+    morePlatforms: 'More platforms →'
   },
   nl: {
     backToGuests: '← Terug naar Alle Gasten',
@@ -67,7 +76,10 @@ const translations = {
     discoverMore: 'Ontdek Meer CRO Inzichten',
     exploreAll: 'Verken alle afleveringen en leer van industrie experts',
     browseAllEpisodes: 'Bekijk Alle Afleveringen',
-    meetMoreGuests: 'Ontmoet Meer Gasten'
+    meetMoreGuests: 'Ontmoet Meer Gasten',
+    subscribe: 'Abonneer je op CRO.CAFE',
+    listenOn: 'Luister op',
+    morePlatforms: 'Meer platforms →'
   },
   de: {
     backToGuests: '← Zurück zu Allen Gästen',
@@ -79,7 +91,10 @@ const translations = {
     discoverMore: 'Entdecken Sie mehr CRO Einblicke',
     exploreAll: 'Entdecken Sie alle Folgen und lernen Sie von Branchenexperten',
     browseAllEpisodes: 'Alle Folgen durchsuchen',
-    meetMoreGuests: 'Mehr Gäste kennenlernen'
+    meetMoreGuests: 'Mehr Gäste kennenlernen',
+    subscribe: 'CRO.CAFE abonnieren',
+    listenOn: 'Anhören auf',
+    morePlatforms: 'Weitere Plattformen →'
   },
   es: {
     backToGuests: '← Volver a Todos los Invitados',
@@ -91,7 +106,10 @@ const translations = {
     discoverMore: 'Descubre más perspectivas de CRO',
     exploreAll: 'Explora todos los episodios y aprende de expertos de la industria',
     browseAllEpisodes: 'Ver todos los episodios',
-    meetMoreGuests: 'Conoce más invitados'
+    meetMoreGuests: 'Conoce más invitados',
+    subscribe: 'Suscríbete a CRO.CAFE',
+    listenOn: 'Escuchar en',
+    morePlatforms: 'Más plataformas →'
   }
 };
 
@@ -392,7 +410,59 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
     </article>
 
     <!-- Desktop Sidebar (Hidden on Mobile) -->
-    <aside class="hidden lg:block sidebar-sticky">
+    <aside class="hidden lg:block sidebar-sticky space-y-lg">
+      <!-- Subscribe Section -->
+      <section class="bg-gray-50 dark:bg-gray-800 rounded-xl p-lg">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-md">
+          {t.subscribe}
+        </h3>
+        <div class="space-y-4">
+          {/* Spotify */}
+          {spotify && spotify.data.urls[language] && (
+            <a 
+              href={spotify.data.urls[language]}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 px-4 py-3 bg-[#1DB954] hover:bg-[#1aa34a] text-white rounded-lg transition-colors w-full"
+              aria-label={`${t.listenOn} Spotify`}
+            >
+              <img 
+                src={spotify.data.iconUrl} 
+                alt="Spotify" 
+                class="w-6 h-6 brightness-0 invert"
+              />
+              <span class="font-medium">Spotify</span>
+            </a>
+          )}
+          
+          {/* Apple Podcasts */}
+          {applePodcasts && applePodcasts.data.urls[language] && (
+            <a 
+              href={applePodcasts.data.urls[language]}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 px-4 py-3 bg-[#872EC4] hover:bg-[#7326ad] text-white rounded-lg transition-colors w-full"
+              aria-label={`${t.listenOn} Apple Podcasts`}
+            >
+              <img 
+                src={applePodcasts.data.iconUrl} 
+                alt="Apple Podcasts" 
+                class="w-6 h-6"
+              />
+              <span class="font-medium">Apple Podcasts</span>
+            </a>
+          )}
+          
+          {/* More options link */}
+          <a 
+            href={`/${language}/subscribe/`} 
+            class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium underline block text-center mt-md"
+          >
+            {t.morePlatforms}
+          </a>
+        </div>
+      </section>
+
       <!-- Episodes Section -->
       {guestEpisodes.length > 0 && (
         <section>

@@ -238,12 +238,10 @@ window.__initTheme = initTheme
     
   </head>
   
-  <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
+  <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col">
     <SkipLink />
-    <div class="min-h-screen flex flex-col">
-      <slot />
-      <Footer language={language} currentPath={currentPath} />
-    </div>
+    <slot />
+    <Footer language={language} currentPath={currentPath} />
     
     <!-- PWA Install Prompt -->
     {/* PWA temporarily disabled
