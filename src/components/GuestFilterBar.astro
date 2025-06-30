@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Language } from '../types';
 import { SKILL_GROUPS, countGuestsInGroup, getGroupDisplay } from '../utils/skillGroups';
+import { checkIsFreelancer } from '../utils/guest-display-utils';
 
 interface Props {
   guests: CollectionEntry<'guests'>[];
@@ -15,6 +16,14 @@ const { guests, showLanguageFilter = true, language } = Astro.props;
 const guestsWithEpisodes = guests.filter(guest => 
   guest.data.episodes && guest.data.episodes.length > 0
 );
+
+// Count freelancers
+let freelancerCount = 0;
+guestsWithEpisodes.forEach(guest => {
+  if (checkIsFreelancer(guest.data.linkedin_headline, guest.data.role)) {
+    freelancerCount++;
+  }
+});
 
 // Prepare filter data
 const showFilters = showLanguageFilter ? {
@@ -201,6 +210,25 @@ const instanceId = Math.random().toString(36).substring(7);
               </option>
             ))}
           </select>
+        </div>
+
+        <!-- Freelancer Toggle -->
+        <div class="flex items-center gap-2">
+          <label class="inline-flex items-center cursor-pointer touch-target">
+            <input 
+              type="checkbox" 
+              id={`freelancerFilter-${instanceId}`}
+              class="hidden peer freelancer-checkbox"
+              data-filter-type="freelancer"
+            />
+            <div class="flex items-center gap-2 px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 transition-all
+              peer-checked:bg-primary-100 peer-checked:border-primary-500 peer-checked:text-primary-700 
+              dark:peer-checked:bg-primary-900/30 dark:peer-checked:border-primary-400 dark:peer-checked:text-primary-300
+              hover:border-primary-300 dark:hover:border-primary-500">
+              <span class="font-medium">Freelancers</span>
+              <span class="opacity-70">({freelancerCount})</span>
+            </div>
+          </label>
         </div>
       </div>
     </div>

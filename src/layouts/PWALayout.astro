@@ -181,24 +181,25 @@ import('../utils/pwa-context.js').then(({ initializePWAContext }) => {
 })
 
 // PWA Service Worker Registration with enhanced features
-if ('serviceWorker' in navigator) {
-  import('virtual:pwa-register').then(({ registerSW }) => {
-    registerSW({
-      immediate: true,
-      onRegisteredSW(swScriptUrl) {
-        console.log('PWA SW registered:', swScriptUrl)
-      },
-      onOfflineReady() {
-        console.log('PWA ready for offline use')
-        // Show offline indicator if needed
-      },
-      onNeedRefresh() {
-        // Auto-refresh in PWA mode for better UX
-        window.location.reload()
-      }
-    })
-  })
-}
+// PWA temporarily disabled to debug homepage reload issue
+// if ('serviceWorker' in navigator) {
+//   import('virtual:pwa-register').then(({ registerSW }) => {
+//     registerSW({
+//       immediate: true,
+//       onRegisteredSW(swScriptUrl) {
+//         console.log('PWA SW registered:', swScriptUrl)
+//       },
+//       onOfflineReady() {
+//         console.log('PWA ready for offline use')
+//         // Show offline indicator if needed
+//       },
+//       onNeedRefresh() {
+//         // Auto-refresh in PWA mode for better UX
+//         window.location.reload()
+//       }
+//     })
+//   })
+// }
 
 // Prevent zoom on double-tap (iOS PWA)
 let lastTouchEnd = 0

@@ -5,7 +5,8 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getPlatformCountsByLanguage } from '../../utils/content';
 import type { Language } from '../../types';
 
-const language: Language = 'en';
+// This is the international subscribe page, so we don't have a specific language
+const language: Language = 'en'; // Used for fallback text only
 
 // Get platform counts for each language
 const platformCounts = await getPlatformCountsByLanguage();
@@ -49,7 +50,7 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
   language={language}
   canonical="https://cro.cafe/subscribe/"
 >
-  <Header language={language} currentPath="/subscribe/" />
+  <Header currentPath="/subscribe/" />
   <Breadcrumb language={language} currentPath="/subscribe/" />
   
   <main class="flex-grow">
