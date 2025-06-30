@@ -6,9 +6,14 @@ import SkipLink from '../components/SkipLink.astro';
 import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
-import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
-import PWAUpdateNotification from '../components/PWAUpdateNotification.astro';
+// PWA temporarily disabled
+// import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
+// import PWAUpdateNotification from '../components/PWAUpdateNotification.astro';
 import BottomNav from '../components/BottomNav.astro';
+// @ts-ignore - PWA components temporarily disabled
+const PWAInstallPrompt = null;
+const PWAUpdateNotification = null;
+import '/src/styles/global.css';
 
 export interface Props {
   title: string;
@@ -103,6 +108,8 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <!-- View Transitions for seamless navigation -->
     <ViewTransitions />
     
+    <!-- WCAG Touch Target CSS Fixes are now in global.css -->
+    
     <!-- Schema.org Structured Data -->
     <!-- Organization Schema - appears on all pages -->
     <SchemaOrganization 
@@ -128,8 +135,76 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     
     <!-- Global Styles for Accessibility -->
     <style is:global>
-      @import '../styles/global.css';
+      /* Import other CSS files first (before Tailwind directives) */
+      @import '../styles/language-dropdown-fix.css';
+      @import '../styles/mobile-enhancements.css';
+      @import '../styles/containment-optimizations.css';
+      @import '../styles/desktop-hotfix.css';
+      @import '../styles/responsive-utilities.css';
+      @import '../styles/spacing-typography.css';
+
+      /* WCAG Touch Target Classes - Directly included for proper compilation */
+      /* Ensure all touch targets meet WCAG requirements */
+      .touch-target {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+      }
+
+      .touch-target-inline {
+        min-height: 44px !important;
+        height: 44px !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+      }
+
+      .touch-target-nav {
+        min-height: 44px !important;
+        height: 44px !important;
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        font-weight: 500 !important;
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition-duration: 150ms !important;
+      }
+
+      /* Ensure action buttons meet touch target requirements */
+      .action-btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Fix for inline-flex elements with min-height */
+      a[class*="inline-flex"][class*="min-h-"],
+      button[class*="inline-flex"][class*="min-h-"] {
+        min-height: 44px !important;
+        align-items: center !important;
+      }
+
+      /* Ensure skip links meet WCAG requirements */
+      .skip-link {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 0.75rem 1rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+      }
     </style>
+    
     
     <!-- Theme Script (inline to prevent flash) -->
     <script is:inline>
@@ -171,10 +246,11 @@ window.__initTheme = initTheme
     </div>
     
     <!-- PWA Install Prompt -->
+    {/* PWA temporarily disabled
     <PWAInstallPrompt language={language} />
     
     <!-- PWA Update Notification -->
-    <PWAUpdateNotification language={language} />
+    <PWAUpdateNotification language={language} /> */}
     
     <!-- Bottom Navigation for Mobile -->
     <BottomNav language={language} currentPath={currentPath} />

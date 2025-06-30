@@ -1,118 +1,18 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import AstroPWA from '@vite-pwa/astro';
+// import AstroPWA from '@vite-pwa/astro';
 import react from '@astrojs/react';
+import tailwindcss from '@tailwindcss/vite';
 import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
     guestImageValidation(),
-    tailwind(),
     react(),
     mdx(),
-    AstroPWA({
-      mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-      base: '/',
-      scope: '/',
-      includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml'],
-      registerType: 'autoUpdate',
-      manifest: {
-        name: 'CRO.CAFE Podcast',
-        short_name: 'CRO.CAFE',
-        theme_color: '#FF6B35',
-        background_color: '#0F1419',
-        display: 'standalone',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512-maskable.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ]
-      },
-      workbox: {
-        navigateFallback: process.env.NODE_ENV === 'production' ? '/offline/' : null,
-        globPatterns: process.env.NODE_ENV === 'production' 
-          ? ['**/*.{css,js,html,svg,png,ico,txt,woff,woff2}']
-          : ['**/*.js'], // Only JS files in dev-dist during development
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-        cleanupOutdatedCaches: true,
-        runtimeCaching: [
-          // Audio files - use NetworkOnly to prevent caching issues with streaming
-          // Audio streaming doesn't work well with service worker caching
-          {
-            urlPattern: /^https:\/\/media\.transistor\.fm\/.*/i,
-            handler: 'NetworkOnly',
-            options: {
-              // No caching for audio to prevent playback issues
-              // Audio files are too large and streaming doesn't work well with cache
-            }
-          },
-          {
-            urlPattern: /^https:\/\/img\.transistor\.fm\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'image-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          // Content pages - use Network First strategy
-          {
-            urlPattern: /\/(episodes|guests)\/.*$/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'content-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 3 // 3 days
-              },
-              networkTimeoutSeconds: 5,
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          // Marketing content - different strategy for PWA vs Browser
-          {
-            urlPattern: /\/(about|subscribe|privacy-policy).*$/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'marketing-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
-      },
-      devOptions: {
-        enabled: false
-      }
-    }),
+    // PWA temporarily disabled to debug homepage reload issue
     sitemap({
       i18n: {
         defaultLocale: 'en',
@@ -281,5 +181,22 @@ export default defineConfig({
   //   }
   // },
   output: 'static',
-  trailingSlash: 'always'
+  trailingSlash: 'always',
+  vite: {
+    plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ['lightningcss']
+    },
+    server: {
+      fs: {
+        // Allow serving files from these directories
+        allow: [
+          // Search for the root of the workspace
+          '..',
+          // Allow node_modules
+          './node_modules'
+        ]
+      }
+    }
+  },
 });

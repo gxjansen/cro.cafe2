@@ -1,18 +1,98 @@
-/* Import language dropdown fixes */
+/* Import other CSS files first (before Tailwind directives) */
 @import './language-dropdown-fix.css';
-
-/* Import mobile enhancements for better touch experience */
 @import './mobile-enhancements.css';
-
-/* Import CSS containment optimizations for performance */
 @import './containment-optimizations.css';
-
-/* Import desktop hotfix for layout issues */
 @import './desktop-hotfix.css';
-
-/* Import responsive design system */
 @import './responsive-utilities.css';
 @import './spacing-typography.css';
+
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Primary colors - teal palette */
+  --color-primary-50: #e8f4f3;
+  --color-primary-100: #d1e9e7;
+  --color-primary-200: #a8d5d2;
+  --color-primary-300: #95c3c0;
+  --color-primary-400: #7ba5a2;
+  --color-primary-500: #5a8a87;
+  --color-primary-600: #4a726f;
+  --color-primary-700: #3a5957;
+  --color-primary-800: #2a413f;
+  --color-primary-900: #1a2827;
+
+  /* Accent colors - coral palette */
+  --color-accent-50: #fef1f1;
+  --color-accent-100: #fce3e4;
+  --color-accent-200: #f0a5a8;
+  --color-accent-300: #dd8e91;
+  --color-accent-400: #d47175;
+  --color-accent-500: #c05559;
+  --color-accent-600: #a64549;
+  --color-accent-700: #8c3639;
+  --color-accent-800: #722629;
+  --color-accent-900: #581719;
+
+  /* Gray colors - WCAG compliant */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #6b7280;
+  --color-gray-500: #4b5563;
+  --color-gray-600: #374151;
+  --color-gray-700: #1f2937;
+  --color-gray-750: #18202f;
+  --color-gray-800: #111827;
+  --color-gray-900: #030712;
+
+  /* Font families */
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-heading: Poppins, system-ui, sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Custom spacing */
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
+}
+
+/* Custom utilities for touch targets */
+.touch-target {
+  @apply inline-flex items-center justify-center relative min-h-[44px] min-w-[44px];
+}
+
+.touch-target-inline {
+  @apply inline-flex items-center px-3 box-border min-h-[44px] h-[44px];
+}
+
+.touch-target-nav {
+  @apply inline-flex items-center px-3 min-h-[44px] h-[44px] font-medium transition-colors duration-150;
+}
+
+/* Language card components */
+.language-card {
+  @apply bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors shadow-sm hover:shadow-md p-3 sm:p-4 flex flex-col h-full;
+}
+
+.language-card .host-info {
+  @apply bg-gray-50 dark:bg-gray-800/50 rounded p-3 mb-3 flex-1 flex flex-col justify-center;
+}
+
+.language-card .stats {
+  @apply text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed;
+}
+
+.language-card .latest {
+  @apply text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed;
+}
+
+.language-card .action-btn {
+  @apply block w-full px-4 py-3 text-white text-base font-semibold rounded-md transition-all duration-200 text-center shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+/* WCAG accessibility styles now consolidated below using @apply */
 
 /* Mobile Navigation Responsive Utilities */
 /* Extra small screens (below 475px) */
@@ -72,19 +152,74 @@
   }
 }
 
+/* Ensure all touch targets meet WCAG requirements */
+.touch-target {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+.touch-target-inline {
+  min-height: 44px !important;
+  height: 44px !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.touch-target-nav {
+  min-height: 44px !important;
+  height: 44px !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  font-weight: 500 !important;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
 /* View Transition fixes for language dropdown */
 /* Ensure language switcher stays above view transitions */
 ::view-transition {
-  z-index: 10000;
+  z-index: 9990;
 }
 
 ::view-transition-group(root) {
-  z-index: 10000;
+  z-index: 9990;
 }
 
 /* Ensure interactive elements remain clickable during transitions */
 .language-switcher-container {
   contain: layout style;
+}
+
+/* Fix for episode detail pages - ensure content doesn't overlap header */
+main > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure header and its dropdown are always on top */
+header,
+header * {
+  position: relative;
+}
+
+/* Specific fix for episode hero sections */
+.hero-section,
+[class*="hero"],
+[class*="title-section"] {
+  position: relative;
+  z-index: 1;
 }
 
 /* Override view transition defaults for dropdown */
@@ -186,11 +321,7 @@ textarea:focus-visible {
   outline: none;
 }
 
-/* Skip link styles (complementing the component) */
-.skip-link:focus {
-  outline: 3px solid rgb(90, 138, 135); /* primary-500 - accessible teal */
-  outline-offset: 2px;
-}
+/* Skip link focus styles now included in WCAG component classes below */
 
 /* Ensure focus is visible in dark mode */
 .dark *:focus-visible {
@@ -614,24 +745,38 @@ textarea:focus-visible {
 
 /* Episode cards with language-specific enhancements */
 .episode-card[data-lang="en"] {
-  @apply card-lang-en;
+  box-shadow: 
+    0 1px 3px 0 rgba(59, 130, 246, 0.1),  /* blue tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
 }
 
 .episode-card[data-lang="nl"] {
-  @apply card-lang-nl;
+  box-shadow: 
+    0 1px 3px 0 rgba(249, 115, 22, 0.1),  /* orange tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(249, 115, 22, 0.05);
 }
 
 .episode-card[data-lang="de"] {
-  @apply card-lang-de;
+  box-shadow: 
+    0 1px 3px 0 rgba(20, 184, 166, 0.1),  /* teal tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(20, 184, 166, 0.05);
 }
 
 .episode-card[data-lang="es"] {
-  @apply card-lang-es;
+  box-shadow: 
+    0 1px 3px 0 rgba(239, 68, 68, 0.1),   /* red tint */
+    0 1px 2px -1px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(239, 68, 68, 0.05);
 }
 
 /* Episode cards on matching blue backgrounds */
 .episode-card-on-blue {
-  @apply card-glass;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 0.5rem;
   background: rgba(239, 246, 255, 0.9);
   border: 1px solid rgba(59, 130, 246, 0.2);
 }
@@ -657,6 +802,60 @@ textarea:focus-visible {
 .card-touch {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* ===================================
+   WCAG 2.2 Compliant Component Classes
+   =================================== */
+
+@layer components {
+
+  /* Skip links - accessible navigation */
+  .skip-link {
+    @apply inline-flex items-center justify-center relative px-4 py-3 
+           absolute left-0 top-0 z-50
+           bg-primary-600 text-white rounded-md 
+           transform -translate-y-full 
+           focus:translate-y-0 
+           transition-transform duration-200;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Button base class */
+  .btn {
+    @apply inline-flex items-center justify-center relative px-4 py-2 
+           font-medium rounded-md 
+           transition-all duration-200;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Icon button class */
+  .btn-icon {
+    @apply inline-flex items-center justify-center relative rounded-full 
+           hover:bg-gray-100 dark:hover:bg-gray-800;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Form controls */
+  .form-input, .form-select {
+    @apply block w-full min-h-[48px] 
+           px-3 py-2 
+           border border-gray-300 dark:border-gray-600 
+           rounded-md 
+           focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
+  }
+
+  /* Ensure proper focus visibility */
+  .touch-target:focus,
+  .touch-target-inline:focus,
+  .touch-target-nav:focus,
+  .btn:focus,
+  .btn-icon:focus {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
 }
 
 /* Loading state animation */
@@ -925,4 +1124,64 @@ textarea:focus-visible {
 /* Guest cards spacing in episode detail pages */
 .guest-card + .guest-card {
   @apply mt-4; /* Fallback spacing between guest cards */
+}
+
+/* ===================================
+   Language Selection Cards
+   =================================== */
+
+/* Language card container */
+.language-card {
+  @apply relative p-6 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 
+         shadow-lg hover:shadow-2xl transition-all duration-300;
+}
+
+/* Host info section */
+.language-card .host-info {
+  @apply flex-grow mb-6;
+}
+
+/* Stats section */
+.language-card .stats {
+  @apply space-y-1 mb-6 text-sm text-gray-600 dark:text-gray-400;
+}
+
+/* Latest episode section */
+.language-card .latest {
+  @apply mb-6 text-sm;
+}
+
+/* Action button */
+.language-card .action-btn {
+  @apply inline-flex items-center justify-center 
+         w-full px-6 py-3 mt-auto 
+         rounded-lg font-medium text-white transition-colors 
+         focus:outline-none focus:ring-2 focus:ring-offset-2;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Ensure action buttons meet touch target requirements */
+.action-btn {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Fix for inline-flex elements with min-height */
+a[class*="inline-flex"][class*="min-h-"],
+button[class*="inline-flex"][class*="min-h-"] {
+  min-height: 44px !important;
+  align-items: center !important;
+}
+
+/* Ensure skip links meet WCAG requirements */
+.skip-link {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  padding: 0.75rem 1rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
