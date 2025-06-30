@@ -21,8 +21,8 @@
     "name": "Wesley Singh"
   },
   "weiwi-liu-schröder": {
-    "hasImage": false,
-    "imageUrl": null,
+    "hasImage": true,
+    "imageUrl": "/images/guests/weiwi-liu-schröder.jpeg",
     "fallbackUrl": "/images/guests/generated/weiwi-liu-schröder-initials.svg",
     "initials": "WL",
     "name": "WeiWi Liu-Schröder "
@@ -2002,8 +2002,8 @@
     "name": "Alexander Osterwalder"
   },
   "alexander-ivaniuk": {
-    "hasImage": false,
-    "imageUrl": null,
+    "hasImage": true,
+    "imageUrl": "/images/guests/alexander-ivaniuk.jpeg",
     "fallbackUrl": "/images/guests/generated/alexander-ivaniuk-initials.svg",
     "initials": "AI",
     "name": "Alexander Ivaniuk "

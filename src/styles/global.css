@@ -99,49 +99,104 @@
 
 /* Section Layout and Dividers */
 .section-container {
-  @apply py-16 lg:py-20;
+  @apply py-20 lg:py-24 relative;
 }
 
-/* Automatic alternating backgrounds for sections */
-.auto-alternate-sections > section:nth-child(odd) {
+/* Automatic alternating backgrounds for all direct children sections */
+.auto-alternate-sections > *:nth-of-type(odd):where(section, .section-like) {
   @apply bg-white dark:bg-gray-900;
 }
 
-.auto-alternate-sections > section:nth-child(even) {
-  @apply bg-gray-50 dark:bg-gray-800/50;
+.auto-alternate-sections > *:nth-of-type(even):where(section, .section-like) {
+  @apply bg-gray-50/50 dark:bg-gray-800/30;
 }
 
 /* Override for sections that should maintain specific backgrounds */
-.auto-alternate-sections > section.hero-section,
-.auto-alternate-sections > section.cta-section {
+.auto-alternate-sections > .hero-section,
+.auto-alternate-sections > .cta-section {
   /* These sections keep their custom backgrounds */
-  background: inherit;
+  background: inherit !important;
 }
 
-/* Section dividers */
+/* Single, consistent section divider */
 .section-divider {
-  @apply relative my-0 overflow-hidden;
-  height: 1px;
+  @apply relative w-full my-0;
+  height: 80px;
+  overflow: hidden;
 }
 
-.section-divider-ornament {
-  @apply relative py-8;
-}
-
-.section-divider-ornament::before {
+.section-divider::before {
   content: '';
-  @apply absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent;
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  height: 1px;
   transform: translateY(-50%);
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    theme(colors.gray.200 / 0.6) 15%, 
+    theme(colors.gray.200 / 0.6) 85%, 
+    transparent 100%
+  );
 }
 
-.section-divider-dots {
-  @apply flex justify-center items-center py-8 text-gray-300 dark:text-gray-700;
-  letter-spacing: 0.5em;
+.dark .section-divider::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    theme(colors.gray.700 / 0.5) 15%, 
+    theme(colors.gray.700 / 0.5) 85%, 
+    transparent 100%
+  );
 }
 
-/* Subtle top border for sections without dividers */
-.section-border-top {
-  @apply border-t border-gray-100 dark:border-gray-800;
+/* Smooth transitions for gradient backgrounds */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    theme(colors.white) 100%
+  );
+  pointer-events: none;
+}
+
+.dark .hero-section::after {
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    theme(colors.gray.900) 100%
+  );
+}
+
+/* Footer divider - appears on all pages */
+footer::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    theme(colors.gray.200 / 0.8) 20%, 
+    theme(colors.gray.200 / 0.8) 80%, 
+    transparent 100%
+  );
+}
+
+.dark footer::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    theme(colors.gray.700 / 0.6) 20%, 
+    theme(colors.gray.700 / 0.6) 80%, 
+    transparent 100%
+  );
 }
 
 /* Mobile Navigation Responsive Utilities */
