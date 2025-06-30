@@ -147,27 +147,27 @@ export function formatLinkedInUrl(username: string, type: 'personal' | 'company'
 // Animation utility classes
 export const animationClasses = {
   fadeIn: 'animate-fade-in',
-  slideUp: 'animate-slide-up',
-  pulseSlow: 'animate-pulse-slow',
-  syncPulse: 'animate-sync-pulse'
+  slideUp: 'animate-slide-in-up',
+  pulseSlow: 'animate-pulse',
+  syncPulse: 'animate-pulse'
 } as const
 
 // Shadow utility classes
 export const shadowClasses = {
-  linkedin: 'shadow-linkedin',
-  linkedinHover: 'hover:shadow-linkedin-hover',
-  linkedinActive: 'active:shadow-linkedin-active',
-  syncPending: 'shadow-sync-pending',
-  syncSuccess: 'shadow-sync-success',
-  syncError: 'shadow-sync-error'
+  linkedin: 'shadow-md',
+  linkedinHover: 'hover:shadow-lg',
+  linkedinActive: 'active:shadow-sm',
+  syncPending: 'shadow-md',
+  syncSuccess: 'shadow-md',
+  syncError: 'shadow-md'
 } as const
 
 // Transition utility classes
 export const transitionClasses = {
   fast: 'transition-all duration-150',
-  base: 'transition-all duration-250',
-  slow: 'transition-all duration-350',
-  smooth: 'transition-all duration-250 ease-smooth',
-  colors: 'transition-colors duration-250',
-  shadow: 'transition-shadow duration-250'
+  base: 'transition-all duration-200',
+  slow: 'transition-all duration-300',
+  smooth: 'transition-all duration-200 ease-in-out',
+  colors: 'transition-colors duration-200',
+  shadow: 'transition-shadow duration-200'
 } as const
