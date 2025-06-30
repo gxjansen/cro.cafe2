@@ -313,7 +313,13 @@ const hreflang = {
           <div class="max-w-4xl mx-auto mb-10">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8">
               <div class="flex items-center gap-2 mb-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-lang-100 text-lang-700 dark:bg-lang-900 dark:text-lang-200 uppercase">
+                <span class={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase ${
+                  language === 'en' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' :
+                  language === 'nl' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-200' :
+                  language === 'de' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' :
+                  language === 'es' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200' :
+                  'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200'
+                }`}>
                   {t.newEpisode}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">
