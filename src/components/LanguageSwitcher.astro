@@ -160,13 +160,15 @@ const getLanguageUrl = (langCode: Language | 'global') => {
     aria-labelledby="language-switcher-button"
     data-language-menu
   >
-    <div class="py-1" role="none">
-      {languages.map((lang) => {
+    <div class="py-2" role="none">
+      {languages.map((lang, index) => {
         const isCurrent = (lang.code === 'global' && isGlobal) || (lang.code === currentLanguage && !isGlobal);
         return (
           <a
             href={getLanguageUrl(lang.code)}
-            class={`flex items-center touch-target-inline px-4 py-2 text-sm transition-colors ${
+            class={`flex items-center touch-target-inline px-4 py-3 text-sm transition-colors rounded-md mx-2 ${
+              index > 0 ? 'mt-1' : ''
+            } ${
               isCurrent
                 ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-200'
                 : 'text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700'
