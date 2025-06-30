@@ -155,25 +155,11 @@ export default defineConfig({
     // Removed sitemap redirect - Astro's sitemap integration handles this automatically
   },
   image: {
-    // Use passthrough service for more reliable Netlify builds
-    // This allows <Image> and <Picture> components without Sharp processing
+    // Use passthrough service for reliable Netlify builds
+    // This prevents image processing but allows components to work
     service: passthroughImageService(),
-    // Allow external images from common podcast/CDN sources
-    domains: ['transistor.fm', 'media.transistor.fm', 'images.transistor.fm', 'cdn.transistor.fm'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.transistor.fm',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.cloudinary.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.amazonaws.com',
-      }
-    ]
+    // Remove remote patterns to prevent build-time fetching of external images
+    // External images will render as regular img tags without optimization
   },
   // Disable Astro's automatic i18n routing since we're managing routes manually
   // i18n: {
