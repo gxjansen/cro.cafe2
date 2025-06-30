@@ -1,6 +1,7 @@
 # Claude-Flow and SPARC Agent Files - EXCLUDE ALL
 .claude/
 claude-flow
+claude-flow.config.json
 memory/
 memory-bank.md
 coordination/
@@ -13,10 +14,19 @@ CLAUDE.md
 
 # Development Documentation - Keep Only Implementation Docs
 devdocs/
+project-docs/
 project/implementation-plan.md
 project/0*-*.md
 backup/
 project/
+
+# Docker and Container Files
+docker-compose.yml
+DOCKER_SETUP.md
+claude-docker.sh
+start-docker.command
+.dockerignore
+.devcontainer/
 
 # Astro Website Files - INCLUDE THESE
 # (Commented out means they WILL be tracked)
@@ -179,3 +189,36 @@ dev-dist/
 
 # Synology temporary directories
 .SynologyWorkingDirectory/
+
+# Development and Test Files
+clear-service-worker.html
+dev-server.log
+sanitize-linkedin-data.js
+skills-filter-data.json
+test-episode-spacing.js
+test-touch-targets.js
+test-touch-targets.mjs
+Icon
+SEARCH_FIX_SUMMARY.md
+
+# Subdomain redirect files (handled by Netlify)
+subdomain-redirects/
+
+# Development scripts and utilities
+scripts/check-*.ts
+scripts/debug-*.ts
+scripts/diagnose-*.ts
+scripts/download-*.js
+scripts/fix-*.js
+scripts/generate-*.ts
+scripts/import-*.ts
+scripts/linkedin-*.js
+scripts/n8n-*.js
+scripts/optimize-*.ts
+scripts/sync-*.ts
+scripts/validate-*.ts
+scripts/verify-*.ts
+scripts/workflow-*.yml
+scripts/clean-*.ts
+scripts/clear-*.js
+scripts/create-*.js

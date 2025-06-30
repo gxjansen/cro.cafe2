@@ -14,39 +14,8 @@ const isInternational = !lang;
 // Only show this section on international, English, and Dutch pages
 const showSection = isInternational || lang === 'en' || lang === 'nl';
 
-// Get featured event images for carousel
-const featuredImages = lang === 'nl' ? [
-  {
-    src: '/images/events/nl/marketing-insights-event/mie-gallery-1.jpeg',
-    alt: 'Live podcast opname met gasten bij Marketing Insights Event',
-    event: 'Marketing Insights Event 2020',
-    date: 'Februari 2020'
-  },
-  {
-    src: '/images/events/nl/dutch-cro-awards/604bf7e0b36c35215654aac2_5de150d3d41c9b09d8ba3323_FB_IMG_1570131602666-min.jpeg',
-    alt: 'Guido X Jansen presenteert bij Dutch CRO Awards',
-    event: 'Dutch CRO Awards 2019',
-    date: 'Oktober 2019'
-  },
-  {
-    src: '/images/events/shared/cro-cafe-unconference/604bf772333c590548ad407e_DSC08342_lightbox.jpeg',
-    alt: 'Interactieve sessie tijdens CRO Cafe Unconference',
-    event: 'CRO Cafe Unconference',
-    date: 'Juli 2019'
-  },
-  {
-    src: '/images/events/nl/marketing-insights-event/mie-gallery-2.jpeg',
-    alt: 'Netwerken na live podcast opname',
-    event: 'Marketing Insights Event 2020',
-    date: 'Februari 2020'
-  },
-  {
-    src: '/images/events/shared/emerce-conversion/conversion-gallery-1.jpeg',
-    alt: 'Panel discussie bij Emerce Engage',
-    event: 'Emerce Engage 2019',
-    date: 'November 2019'
-  }
-] : [
+// Get featured event images for carousel - each image from a DIFFERENT event
+const allEventImages = [
   {
     src: '/images/events/en/conversion-hotel/604bf8dc80e38107060ac3c1_191123-14h22m50s-IMG_0308-CH19-SO.jpeg',
     alt: 'Live podcast recording with industry experts at Conversion Hotel',
@@ -54,10 +23,16 @@ const featuredImages = lang === 'nl' ? [
     date: 'November 2019'
   },
   {
-    src: '/images/events/en/conversion-hotel/604bf8dc80e3811ac20ac318_191122-20h45m22s-IMG_9692-CH19-SO.jpeg',
-    alt: 'Engaged audience during live CRO Cafe recording',
-    event: 'Conversion Hotel 2019', 
-    date: 'November 2019'
+    src: '/images/events/nl/dutch-cro-awards/604bf7e0b36c35215654aac2_5de150d3d41c9b09d8ba3323_FB_IMG_1570131602666-min.jpeg',
+    alt: 'Guido X Jansen presenting at Dutch CRO Awards',
+    event: 'Dutch CRO Awards 2019',
+    date: 'October 2019'
+  },
+  {
+    src: '/images/events/shared/cro-cafe-unconference/604bf772333c590548ad407e_DSC08342_lightbox.jpeg',
+    alt: 'Interactive session during CRO Cafe Unconference',
+    event: 'CRO Cafe Unconference 2019',
+    date: 'July 2019'
   },
   {
     src: '/images/events/shared/emerce-conversion/conversion-gallery-3.jpeg',
@@ -68,16 +43,43 @@ const featuredImages = lang === 'nl' ? [
   {
     src: '/images/events/nl/digital-analytics-congres/dac-gallery-1.jpeg',
     alt: 'Interactive session at Digital Analytics Congress',
-    event: 'Digital Analytics Congress',
-    date: '2019'
+    event: 'Digital Analytics Congress 2019',
+    date: 'September 2019'
+  },
+  {
+    src: '/images/events/nl/marketing-insights-event/mie-gallery-1.jpeg',
+    alt: 'Live podcast recording with guests at Marketing Insights Event',
+    event: 'Marketing Insights Event 2020',
+    date: 'February 2020'
   },
   {
     src: '/images/events/en/conversion-hotel-2021/61c5025154d0ca45e4ed6f6f_Image_3_.jpg',
     alt: 'Recording setup at Conversion Hotel 2021',
     event: 'Conversion Hotel 2021',
     date: 'November 2021'
+  },
+  {
+    src: '/images/events/nl/emerce-engage-reach-touch-retain/engage-gallery-1.jpeg',
+    alt: 'CRO insights presentation at Emerce Engage conference',
+    event: 'Emerce Engage 2020',
+    date: 'March 2020'
   }
 ];
+
+// For language-specific pages, show curated selection. For international, show diverse events from all languages
+const featuredImages = isInternational ? allEventImages : (lang === 'nl' ? [
+  allEventImages[1], // Dutch CRO Awards
+  allEventImages[2], // CRO Cafe Unconference  
+  allEventImages[4], // Digital Analytics Congress
+  allEventImages[5], // Marketing Insights Event
+  allEventImages[7]  // Emerce Engage
+] : [
+  allEventImages[0], // Conversion Hotel 2019
+  allEventImages[2], // CRO Cafe Unconference
+  allEventImages[3], // Emerce Conversion
+  allEventImages[6], // Conversion Hotel 2021
+  allEventImages[4]  // Digital Analytics Congress
+]);
 
 const content = {
   nl: {
@@ -89,10 +91,15 @@ const content = {
     heading: 'Live Recordings & Community Events',
     subheading: 'Join us at industry events where we record live podcasts with thought leaders and innovators',
     imageAlt: 'Live podcast recording at'
+  },
+  international: {
+    heading: 'Live Recordings & Community Events',
+    subheading: 'Join us at industry events across Europe where we record live podcasts with thought leaders and innovators from all our shows',
+    imageAlt: 'Live podcast recording at'
   }
 };
 
-const text = lang === 'nl' ? content.nl : content.en;
+const text = isInternational ? content.international : (lang === 'nl' ? content.nl : content.en);
 ---
 
 {showSection && (
