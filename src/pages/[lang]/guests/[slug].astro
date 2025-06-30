@@ -48,6 +48,7 @@ const { getCollection: getContentCollection } = await import('astro:content');
 const platforms = await getContentCollection('platforms');
 const spotify = platforms.find(p => p.data.slug === 'spotify');
 const applePodcasts = platforms.find(p => p.data.slug === 'apple-podcasts');
+const youtube = platforms.find(p => p.data.slug === 'youtube');
 
 // Translations
 const translations = {
@@ -450,6 +451,24 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
                 class="w-6 h-6"
               />
               <span class="font-medium">Apple Podcasts</span>
+            </a>
+          )}
+          
+          {/* YouTube */}
+          {youtube && youtube.data.urls[language] && (
+            <a 
+              href={youtube.data.urls[language]}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 px-4 py-3 bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-lg transition-colors w-full"
+              aria-label={`${t.listenOn} YouTube`}
+            >
+              <img 
+                src={youtube.data.iconUrl} 
+                alt="YouTube" 
+                class="w-6 h-6"
+              />
+              <span class="font-medium">YouTube</span>
             </a>
           )}
           

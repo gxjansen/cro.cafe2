@@ -359,6 +359,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300)
   })
 
+  // Handle Enter key press
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      clearTimeout(searchTimeout)
+      const query = e.target.value
+      if (query && query.trim().length >= 2) {
+        // Save to recent searches and navigate to search page
+        saveToRecent(query)
+        const currentLang = window.location.pathname.split('/')[1] || 'en'
+        const isValidLang = ['en', 'nl', 'de', 'es'].includes(currentLang)
+        const searchPath = isValidLang ? `/${currentLang}/search/` : '/search/'
+        window.location.href = `${searchPath}?q=${encodeURIComponent(query)}`
+      }
+    }
+  })
+
   // Handle quick filters
   overlay.querySelectorAll('.quick-filter').forEach(btn => {
     btn.addEventListener('click', () => {
