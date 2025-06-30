@@ -17,22 +17,22 @@ export type SyncStatus = 'success' | 'pending' | 'error' | 'idle';
 // Sync Status Color Map
 export const syncStatusColors = {
   success: {
-    text: 'text-sync-success-700 dark:text-sync-success-200',
-    bg: 'bg-sync-success-100 dark:bg-sync-success-900',
-    border: 'border-sync-success-200 dark:border-sync-success-700',
-    icon: 'text-sync-success-500 dark:text-sync-success-400'
+    text: 'text-green-700 dark:text-green-200',
+    bg: 'bg-green-100 dark:bg-green-900',
+    border: 'border-green-200 dark:border-green-700',
+    icon: 'text-green-500 dark:text-green-400'
   },
   pending: {
-    text: 'text-sync-pending-700 dark:text-sync-pending-200',
-    bg: 'bg-sync-pending-100 dark:bg-sync-pending-900',
-    border: 'border-sync-pending-200 dark:border-sync-pending-700',
-    icon: 'text-sync-pending-500 dark:text-sync-pending-400'
+    text: 'text-yellow-700 dark:text-yellow-200',
+    bg: 'bg-yellow-100 dark:bg-yellow-900',
+    border: 'border-yellow-200 dark:border-yellow-700',
+    icon: 'text-yellow-500 dark:text-yellow-400'
   },
   error: {
-    text: 'text-sync-error-700 dark:text-sync-error-200',
-    bg: 'bg-sync-error-100 dark:bg-sync-error-900',
-    border: 'border-sync-error-200 dark:border-sync-error-700',
-    icon: 'text-sync-error-500 dark:text-sync-error-400'
+    text: 'text-red-700 dark:text-red-200',
+    bg: 'bg-red-100 dark:bg-red-900',
+    border: 'border-red-200 dark:border-red-700',
+    icon: 'text-red-500 dark:text-red-400'
   },
   idle: {
     text: 'text-gray-600 dark:text-gray-400',
@@ -51,9 +51,9 @@ export function getSyncStatusClasses(status: SyncStatus) {
 export function getSyncBadgeClasses(status: SyncStatus): string {
   const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium'
   const statusClasses = {
-    success: 'text-sync-success-700 bg-sync-success-100 dark:text-sync-success-200 dark:bg-sync-success-900',
-    pending: 'text-sync-pending-700 bg-sync-pending-100 dark:text-sync-pending-200 dark:bg-sync-pending-900 animate-pulse-slow',
-    error: 'text-sync-error-700 bg-sync-error-100 dark:text-sync-error-200 dark:bg-sync-error-900',
+    success: 'text-green-700 bg-green-100 dark:text-green-200 dark:bg-green-900',
+    pending: 'text-yellow-700 bg-yellow-100 dark:text-yellow-200 dark:bg-yellow-900 animate-pulse',
+    error: 'text-red-700 bg-red-100 dark:text-red-200 dark:bg-red-900',
     idle: 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800'
   }
 
@@ -62,11 +62,11 @@ export function getSyncBadgeClasses(status: SyncStatus): string {
 
 // Get sync card classes
 export function getSyncCardClasses(status: SyncStatus): string {
-  const baseClasses = 'p-4 rounded-lg border-2 transition-all duration-250'
+  const baseClasses = 'p-4 rounded-lg border-2 transition-all duration-200'
   const statusClasses = {
-    success: 'bg-sync-success-50 border-sync-success-200 text-sync-success-800 dark:bg-sync-success-900 dark:border-sync-success-700 dark:text-sync-success-200',
-    pending: 'bg-sync-pending-50 border-sync-pending-200 text-sync-pending-800 dark:bg-sync-pending-900 dark:border-sync-pending-700 dark:text-sync-pending-200 animate-pulse-slow',
-    error: 'bg-sync-error-50 border-sync-error-200 text-sync-error-800 dark:bg-sync-error-900 dark:border-sync-error-700 dark:text-sync-error-200',
+    success: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900 dark:border-green-700 dark:text-green-200',
+    pending: 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-200 animate-pulse',
+    error: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-200',
     idle: 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200'
   }
 
@@ -78,12 +78,12 @@ export type LinkedInButtonVariant = 'primary' | 'outline' | 'ghost';
 
 // Get LinkedIn button classes
 export function getLinkedInButtonClasses(variant: LinkedInButtonVariant = 'primary'): string {
-  const baseClasses = 'inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-all duration-250 ease-smooth focus:outline-none focus:ring-2 focus:ring-linkedin-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900'
+  const baseClasses = 'inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900'
 
   const variantClasses = {
-    primary: 'text-white bg-linkedin-500 hover:bg-linkedin-600 active:bg-linkedin-700',
-    outline: 'text-linkedin-500 bg-transparent border-2 border-linkedin-500 hover:bg-linkedin-50 dark:hover:bg-linkedin-900 dark:text-linkedin-200 dark:border-linkedin-200',
-    ghost: 'text-linkedin-500 bg-transparent hover:bg-linkedin-50 dark:text-linkedin-200 dark:hover:bg-linkedin-900'
+    primary: 'text-white bg-[#0077B5] hover:bg-[#005885] active:bg-[#004264]',
+    outline: 'text-[#0077B5] bg-transparent border-2 border-[#0077B5] hover:bg-blue-50 dark:hover:bg-blue-900 dark:text-blue-200 dark:border-blue-200',
+    ghost: 'text-[#0077B5] bg-transparent hover:bg-blue-50 dark:text-blue-200 dark:hover:bg-blue-900'
   }
 
   return `${baseClasses} ${variantClasses[variant]}`
@@ -91,8 +91,8 @@ export function getLinkedInButtonClasses(variant: LinkedInButtonVariant = 'prima
 
 // LinkedIn card classes with hover effects
 export function getLinkedInCardClasses(interactive: boolean = true): string {
-  const baseClasses = 'bg-white dark:bg-gray-800 rounded-lg transition-all duration-250 shadow-linkedin'
-  const interactiveClasses = interactive ? 'hover:shadow-linkedin-hover active:shadow-linkedin-active cursor-pointer' : ''
+  const baseClasses = 'bg-white dark:bg-gray-800 rounded-lg transition-all duration-200 shadow-md'
+  const interactiveClasses = interactive ? 'hover:shadow-lg active:shadow-sm cursor-pointer' : ''
 
   return `${baseClasses} ${interactiveClasses}`.trim()
 }
