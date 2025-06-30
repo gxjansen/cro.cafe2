@@ -27,16 +27,20 @@ const sortedHosts = hostOrder
 >
   <Header language="en" currentPath="/about/" />
   
-  <main class="flex-1">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <article class="prose prose-lg dark:prose-invert max-w-none">
+  <main class="flex-1 bg-white dark:bg-gray-900">
+    <section class="section-spacing">
+      <div class="container-xl">
+        <article class="prose prose-lg dark:prose-invert mx-auto max-w-prose">
         <h1>About CRO.CAFE</h1>
         
         <p class="lead">CRO.CAFE is an interview-driven show about conversion rate optimization (CRO), experimentation, user research, and digital marketing, available in four languages with dedicated hosts for each region.</p>
-      </article>
+        </article>
+      </div>
+    </section>
       
-      <!-- Host Cards Section -->
-      <section class="mt-12 mb-12">
+    <!-- Host Cards Section -->
+    <section class="py-lg">
+      <div class="container-xl">
         <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-8 text-center">Meet Our Hosts</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {sortedHosts.map((host, index) => (
@@ -50,17 +54,16 @@ const sortedHosts = hostOrder
             </div>
           ))}
         </div>
-      </section>
-      
-      <!-- Close the container div to allow full-width event gallery -->
-    </div>
+      </div>
+    </section>
     
     <!-- Event Gallery Section -->
     <AboutEventGallery />
     
-    <!-- Reopen container for remaining content -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <article class="prose prose-lg dark:prose-invert max-w-none">
+    <!-- Continue with remaining content -->
+    <section class="section-spacing">
+      <div class="container-xl">
+        <article class="prose prose-lg dark:prose-invert mx-auto max-w-prose">
         <h2>Our Vision</h2>
         
         <p><strong>To create a world where having a great user experience is the norm and where we have an open, healthy and powerful CRO ecosystem.</strong></p>
@@ -117,8 +120,8 @@ const sortedHosts = hostOrder
           <p>Have questions, suggestions, or want to be a guest on the show?</p>
           <p>Email us at: <a href="mailto:crocafe@gui.do" class="text-primary-600 dark:text-primary-200 hover:underline">crocafe@gui.do</a></p>
         </div>
-      </article>
-    </div>
-    </div>
+        </article>
+      </div>
+    </section>
   </main>
 </BaseLayout>

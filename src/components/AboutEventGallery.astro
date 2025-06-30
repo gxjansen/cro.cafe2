@@ -142,8 +142,7 @@ const communityMoments = [
             <div class="lg:w-1/2">
               <PhotoGallery
                 images={period.images}
-                columns={3}
-                variant="grid"
+                variant="carousel"
                 showOverlay={true}
                 className="timeline-gallery"
               />
@@ -166,8 +165,7 @@ const communityMoments = [
       
       <PhotoGallery
         images={communityMoments}
-        columns={3}
-        variant="masonry"
+        variant="carousel"
         showOverlay={true}
         className="community-gallery"
       />
@@ -198,15 +196,25 @@ const communityMoments = [
 </div>
 
 <style>
-  .timeline-gallery :global(.photo-gallery__item) {
-    aspect-ratio: 4/3;
+  /* Set fixed heights for carousel images like LiveEventsSection */
+  .timeline-gallery :global(.photo-carousel__item img),
+  .community-gallery :global(.photo-carousel__item img) {
+    height: 12rem;
   }
   
-  .community-gallery :global(.photo-gallery__item img) {
-    border-radius: 0.5rem;
+  @media (min-width: 640px) {
+    .timeline-gallery :global(.photo-carousel__item img),
+    .community-gallery :global(.photo-carousel__item img) {
+      height: 14rem;
+    }
   }
   
-  @media (max-width: 1024px) {
+  @media (min-width: 1024px) {
+    .timeline-gallery :global(.photo-carousel__item img),
+    .community-gallery :global(.photo-carousel__item img) {
+      height: 16rem;
+    }
+    
     .timeline-period {
       text-align: center !important;
     }

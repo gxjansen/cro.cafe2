@@ -15,9 +15,10 @@ const pageDescription = "Privacy Policy for CRO.CAFE - Learn how we collect, use
 >
   <Header language="en" currentPath="/privacy-policy/" />
   
-  <main class="flex-1">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <article class="prose prose-lg dark:prose-invert max-w-none">
+  <main class="flex-1 bg-white dark:bg-gray-900">
+    <section class="section-spacing">
+      <div class="container-xl">
+        <article class="prose prose-lg dark:prose-invert mx-auto max-w-prose">
         <h1>Privacy Policy for CRO.CAFE</h1>
         
         <p><strong>The short version:</strong> CRO.CAFE is a privacy-friendly podcast website. We don't use cookies, don't track you, and don't collect personal information beyond what you explicitly provide. We only store your theme preference locally on your device.</p>
@@ -107,7 +108,8 @@ const pageDescription = "Privacy Policy for CRO.CAFE - Learn how we collect, use
         </ul>
         
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-8">Last updated: {new Date().toLocaleDateString()}</p>
-      </article>
-    </div>
+        </article>
+      </div>
+    </section>
   </main>
 </BaseLayout>
