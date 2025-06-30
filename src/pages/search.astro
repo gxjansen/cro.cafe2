@@ -265,9 +265,6 @@ function updateFilterButtons() {
 
 // Search function
 function performSearch(query) {
-  console.log('performSearch called with:', query)
-  console.log('searchData available:', !!searchData)
-  
   if (!query || query.trim().length < 2) {
     showEmptyState()
     return
@@ -401,6 +398,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input')
   const searchTags = document.querySelectorAll('.search-tag')
 
+  if (!searchInput) {
+    console.error('Search input not found')
+    return
+  }
+
   // Auto-focus search input
   searchInput.focus()
 
@@ -413,14 +415,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300) // Debounce search
   })
 
-  // Handle Enter key press
+  // Handle Enter key press  
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       clearTimeout(searchTimeout)
-      const query = e.target.value
-      console.log('Enter pressed, searching for:', query)
-      performSearch(query)
+      performSearch(e.target.value)
     }
   })
 
@@ -428,7 +428,6 @@ document.addEventListener('DOMContentLoaded', () => {
   searchTags.forEach(tag => {
     tag.addEventListener('click', () => {
       const query = tag.dataset.query
-      console.log('Quick search clicked:', query)
       searchInput.value = query
       performSearch(query)
     })
