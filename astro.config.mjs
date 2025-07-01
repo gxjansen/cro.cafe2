@@ -1,4 +1,4 @@
-import { defineConfig, passthroughImageService } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 // import AstroPWA from '@vite-pwa/astro';
@@ -155,11 +155,15 @@ export default defineConfig({
     // Removed sitemap redirect - Astro's sitemap integration handles this automatically
   },
   image: {
-    // Use passthrough service for reliable Netlify builds
-    // This prevents image processing but allows components to work
-    service: passthroughImageService(),
-    // Remove remote patterns to prevent build-time fetching of external images
-    // External images will render as regular img tags without optimization
+    // Configure allowed external domains for Astro's Image component
+    // This enables optimization of external images (like episode artwork from Transistor.fm)
+    domains: ['img.transistor.fm', 'media.transistor.fm', 'images.transistor.fm'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.transistor.fm'
+      }
+    ]
   },
   // Disable Astro's automatic i18n routing since we're managing routes manually
   // i18n: {

@@ -174,6 +174,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
             style="display: flex; width: 100%;"
             role="menuitem"
             aria-current={isCurrent ? 'page' : undefined}
+            data-language-link={lang.code}
           >
             <span class="mr-3 text-lg" aria-hidden="true">{lang.flag}</span>
             <div class="flex-1">
@@ -206,7 +207,7 @@ class LanguageSwitcherManager {
   }
 
   log(message, type = 'info') {
-    if (this.debug) {
+    if (this.debug && typeof console !== 'undefined') {
       console.log(`🌐 LanguageSwitcher [${type}]: ${message}`)
     }
   }
@@ -231,8 +232,33 @@ class LanguageSwitcherManager {
 
     // Fix z-index issues after View Transitions
     this.fixZIndexAfterTransition()
+    
+    // Add direct handlers for mobile
+    this.addDirectMobileHandlers()
 
     this.log('Initialization complete')
+  }
+  
+  addDirectMobileHandlers() {
+    // Add fallback handlers for mobile devices
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      setTimeout(() => {
+        const links = document.querySelectorAll('[data-language-link]')
+        links.forEach(link => {
+          link.addEventListener('touchend', (e) => {
+            const href = link.getAttribute('href')
+            if (href && !e.defaultPrevented) {
+              this.log(`Mobile fallback navigation to: ${href}`)
+              e.preventDefault()
+              setTimeout(() => {
+                window.location.href = href
+              }, 50)
+            }
+          }, { passive: false })
+        })
+        this.log('Added direct mobile handlers to language links')
+      }, 100)
+    }
   }
 
   setupEventDelegation() {
@@ -259,7 +285,18 @@ class LanguageSwitcherManager {
       const menuItem = event.target.closest('[data-language-menu] a[role="menuitem"]')
       if (menuItem) {
         this.log('Menu item clicked, allowing navigation')
-        // Let the link work normally, but close the menu
+        // For touchstart events, prevent default to avoid double-tap issues
+        if (event.type === 'touchstart') {
+          event.preventDefault()
+          // Manually navigate after a short delay to ensure menu closes
+          const href = menuItem.getAttribute('href')
+          if (href) {
+            setTimeout(() => {
+              window.location.href = href
+            }, 100)
+          }
+        }
+        // Close the menu
         const menu = menuItem.closest('[data-language-menu]')
         if (menu) {
           this.closeDropdown(menu)
@@ -277,7 +314,10 @@ class LanguageSwitcherManager {
     // Add the handler with capture phase to catch events early
     // Use both click and touchstart for better mobile support
     document.addEventListener('click', delegateHandler, true)
-    document.addEventListener('touchstart', delegateHandler, { capture: true, passive: false })
+    // Only add touchstart handler on mobile devices to avoid double events
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      document.addEventListener('touchstart', delegateHandler, { capture: true, passive: false })
+    }
     window.__languageSwitcherDelegateHandler = delegateHandler
 
     this.log('Event delegation set up')

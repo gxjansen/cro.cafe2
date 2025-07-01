@@ -391,7 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
   setFocusableElements(true)
 
   // Expose open method globally
-  window[`open${searchId.charAt(0).toUpperCase() + searchId.slice(1)}Overlay`] = openSearch
+  // Convert searchId to camelCase for function name (e.g., "header-search" -> "HeaderSearch")
+  const functionName = searchId.split('-').map((part, index) => 
+    part.charAt(0).toUpperCase() + part.slice(1)
+  ).join('')
+  window[`open${functionName}Overlay`] = openSearch
 })
 </script>
 

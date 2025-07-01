@@ -108,6 +108,35 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <!-- View Transitions for seamless navigation -->
     <ViewTransitions />
     
+    <!-- Optimize View Transitions on mobile -->
+    <style is:global>
+      /* Add visual feedback during navigation on mobile */
+      @media (max-width: 768px) {
+        body.is-navigating {
+          opacity: 0.95;
+        }
+        
+        /* Reduce motion for better performance */
+        body.is-navigating * {
+          animation-duration: 0.1s !important;
+          transition-duration: 0.1s !important;
+        }
+      }
+    </style>
+    
+    <script is:inline>
+    // Add loading class during navigation on mobile
+    if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+      document.addEventListener('astro:before-preparation', () => {
+        document.body.classList.add('is-navigating');
+      });
+      
+      document.addEventListener('astro:after-swap', () => {
+        document.body.classList.remove('is-navigating');
+      });
+    }
+    </script>
+    
     <!-- WCAG Touch Target CSS Fixes are now in global.css -->
     
     <!-- Schema.org Structured Data -->

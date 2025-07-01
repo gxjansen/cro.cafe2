@@ -123,10 +123,11 @@ const isActive = (href: string) => {
       ) : (
         <a
           href={item.href}
-          class={`flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors touch-target ${
+          class={`flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors touch-target nav-link ${
             isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : ''
           }`}
           aria-current={isActive(item.href) ? 'page' : undefined}
+          data-nav-link
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {item.icon === 'podcast' && (
@@ -149,10 +150,10 @@ const isActive = (href: string) => {
 <!-- More Menu Modal -->
 <div 
   id="more-menu-modal"
-  class="fixed inset-0 bg-black/50 z-50 hidden"
+  class="fixed inset-0 bg-black/50 z-50 hidden touch-none"
   aria-hidden="true"
 >
-  <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl transform translate-y-full transition-transform duration-300">
+  <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl transform translate-y-full transition-transform duration-300 max-h-[80vh] overflow-y-auto">
     <div class="p-4 border-b border-gray-200 dark:border-gray-800">
       <div class="flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">More Options</h2>
@@ -214,12 +215,72 @@ const isActive = (href: string) => {
   }
   
   /* Slide-up animation for more menu */
+  #more-menu-modal.active {
+    display: block !important;
+  }
+  
   #more-menu-modal.active > div {
     transform: translateY(0);
+  }
+  
+  /* Loading state for nav links */
+  .nav-link.loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  
+  .nav-link.loading svg {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 </style>
 
 <script>
+// Add loading states to navigation links
+function initNavLoadingStates() {
+  const navLinks = document.querySelectorAll('[data-nav-link]');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Don't add loading state if it's the current page
+      if (this.getAttribute('aria-current') === 'page') return;
+      
+      // Add loading state
+      this.classList.add('loading');
+      
+      // Also add a visual loading indicator after a short delay
+      // This prevents the loading state from showing on instant navigations
+      setTimeout(() => {
+        if (this.classList.contains('loading')) {
+          // If still loading after 100ms, show a more prominent indicator
+          const icon = this.querySelector('svg');
+          if (icon) {
+            icon.style.animation = 'pulse 1s ease-in-out infinite';
+          }
+        }
+      }, 100);
+    });
+  });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  initNavLoadingStates();
+});
+
+// Re-initialize after view transitions
+document.addEventListener('astro:after-swap', () => {
+  initNavLoadingStates();
+});
+
 // More menu functionality
 document.addEventListener('DOMContentLoaded', () => {
   const moreButton = document.querySelector('[data-action="more-menu"]')
@@ -250,6 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.offsetHeight
     modal.classList.add('active')
     document.body.style.overflow = 'hidden'
+    // Ensure modal is visible on mobile viewport
+    modal.style.display = 'block'
+    // Focus close button for accessibility
+    closeButton.focus()
   }
 
   function closeMenu() {
@@ -259,6 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.setAttribute('aria-hidden', 'true')
       setModalFocusableElements(true) // Make elements non-focusable
       document.body.style.overflow = ''
+      modal.style.display = ''
+      // Return focus to more button
+      moreButton.focus()
     }, 300) // Match transition duration
   }
 
@@ -320,6 +388,10 @@ document.addEventListener('astro:after-swap', () => {
     modal.offsetHeight
     modal.classList.add('active')
     document.body.style.overflow = 'hidden'
+    // Ensure modal is visible on mobile viewport
+    modal.style.display = 'block'
+    // Focus close button for accessibility
+    newCloseButton.focus()
   }
 
   function closeMenu() {
@@ -329,6 +401,9 @@ document.addEventListener('astro:after-swap', () => {
       modal.setAttribute('aria-hidden', 'true')
       setModalFocusableElementsAfterSwap(true) // Make elements non-focusable
       document.body.style.overflow = ''
+      modal.style.display = ''
+      // Return focus to more button
+      newMoreButton.focus()
     }, 300)
   }
 

@@ -91,16 +91,16 @@ const searchLabel = searchTranslations[language] || 'Search';
   <nav id="main-navigation" class="max-w-7xl mx-auto" aria-label="Main navigation">
     <div class="flex justify-between items-stretch min-h-[80px] py-2">
       <!-- Logo -->
-      <div class="flex-shrink-0 flex items-center">
+      <div class="flex-shrink-0 flex items-center pl-2 sm:pl-0">
         <a 
           href={isGlobalMode ? '/' : `/${language}/`}
-          class="inline-flex items-center touch-target-inline px-3 space-x-2 group"
+          class="inline-flex items-center min-h-[48px] px-3 space-x-2 group"
           aria-label="CRO.CAFE Home"
         >
           <img 
             src="/images/crocafe-logo.svg" 
             alt="CRO.CAFE Logo"
-            class="h-8 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
+            class="h-10 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
           />
         </a>
       </div>
@@ -125,7 +125,7 @@ const searchLabel = searchTranslations[language] || 'Search';
       </div>
 
       <!-- Right side controls -->
-      <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4 flex-shrink-0 min-w-0">
+      <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0 min-w-0 pr-2 sm:pr-0">
         <!-- Search Button -->
         <!-- Desktop: Link to search page -->
         <a
@@ -301,8 +301,8 @@ function initializeMobileSearch() {
 
   // Add click handler to open search overlay
   newTrigger.addEventListener('click', () => {
-    if (typeof window !== 'undefined' && window.openHeader_searchOverlay) {
-      window.openHeader_searchOverlay()
+    if (typeof window !== 'undefined' && window.openHeaderSearchOverlay) {
+      window.openHeaderSearchOverlay()
     }
   })
 }
