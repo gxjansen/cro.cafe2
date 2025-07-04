@@ -13,7 +13,7 @@ export default defineConfig({
     // guestImageValidation(),
     sentry({
       dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
-      tracesSampleRate: 0,
+      tracesSampleRate: 1.0, // 100% sampling for testing mode
       replaysSessionSampleRate: 0,
       replaysOnErrorSampleRate: 0,
       // Setting this option to true will send default PII data to Sentry.
@@ -23,6 +23,12 @@ export default defineConfig({
         project: "crocafe-dev",
         authToken: process.env.SENTRY_AUTH_TOKEN,
       },
+      // Tracing configuration
+      tracePropagationTargets: [
+        "localhost",
+        /^https:\/\/cro\.cafe/,
+        /^https:\/\/crocafe2\.netlify\.app/,
+      ],
     }),
     react(),
     mdx(),
