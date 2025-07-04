@@ -10,6 +10,19 @@ export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
     // guestImageValidation(),
+    sentry({
+      dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
+      tracesSampleRate: 0,
+      replaysSessionSampleRate: 0,
+      replaysOnErrorSampleRate: 0,
+      // Setting this option to true will send default PII data to Sentry.
+      // For example, automatic IP address collection on events
+      sendDefaultPii: true,
+      sourceMapsUploadOptions: {
+        project: "crocafe-dev",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      },
+    }),
     react(),
     mdx(),
     // PWA temporarily disabled to debug homepage reload issue
