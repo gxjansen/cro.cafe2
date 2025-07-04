@@ -20,12 +20,17 @@ project/0*-*.md
 backup/
 project/
 
-# Docker and Container Files
-docker-compose.yml
-DOCKER_SETUP.md
+# Docker and Container Files - INCLUDE THESE FOR PROJECT SETUP
+# docker-compose.yml    # INCLUDED - Docker orchestration
+# DOCKER_SETUP.md       # INCLUDED - Setup documentation  
+# Dockerfile            # INCLUDED - Production container
+# Dockerfile.dev        # INCLUDED - Development container
+# docker-start.sh       # INCLUDED - Management script
+# start-docker.command  # INCLUDED - macOS launcher
+# .dockerignore         # INCLUDED - Docker ignore rules
+
+# Exclude old/unused Docker files
 claude-docker.sh
-start-docker.command
-.dockerignore
 .devcontainer/
 
 # Astro Website Files - INCLUDE THESE

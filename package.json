@@ -40,7 +40,13 @@
     "optimize-seo": "tsx scripts/optimize-episode-seo.ts",
     "demo-seo": "tsx scripts/demo-seo-optimization.ts",
     "validate-schema": "tsx scripts/validate-schema.ts",
-    "esbuild:rebuild": "npm rebuild esbuild"
+    "esbuild:rebuild": "npm rebuild esbuild",
+    "sparc": "tsx scripts/claude-sparc-workflow.ts",
+    "sparc:research": "tsx scripts/claude-sparc-workflow.ts research",
+    "sparc:spec": "tsx scripts/claude-sparc-workflow.ts specification",
+    "sparc:arch": "tsx scripts/claude-sparc-workflow.ts architecture",
+    "sparc:refine": "tsx scripts/claude-sparc-workflow.ts refinement",
+    "sparc:complete": "tsx scripts/claude-sparc-workflow.ts completion"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

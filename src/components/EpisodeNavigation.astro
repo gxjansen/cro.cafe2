@@ -13,14 +13,62 @@ const { currentEpisode, language } = Astro.props;
 // Get all episodes for this language
 const allEpisodes = await getEpisodesByLanguage(language);
 
-// Find current episode index
-const currentIndex = allEpisodes.findIndex(ep => 
-  (ep.data.slug === currentEpisode.data.slug || ep.slug === currentEpisode.slug)
-);
+// Debug: Log current episode info
+if (import.meta.env.DEV) {
+  console.log('Current episode:', {
+    title: currentEpisode.data.title,
+    episode: currentEpisode.data.episode,
+    slug: currentEpisode.data.slug || currentEpisode.slug,
+    id: currentEpisode.id,
+    pubDate: currentEpisode.data.pubDate
+  });
+}
+
+// Find current episode index - try multiple matching strategies
+const currentIndex = allEpisodes.findIndex(ep => {
+  // Try matching by episode number if available
+  if (currentEpisode.data.episode && ep.data.episode && 
+      currentEpisode.data.episode === ep.data.episode) {
+    return true;
+  }
+  // Try matching by slug
+  const currentSlug = currentEpisode.data.slug || currentEpisode.slug;
+  const epSlug = ep.data.slug || ep.slug;
+  if (currentSlug && epSlug && currentSlug === epSlug) {
+    return true;
+  }
+  // Try matching by ID
+  if (currentEpisode.id && ep.id && currentEpisode.id === ep.id) {
+    return true;
+  }
+  // Try matching by title as fallback
+  if (currentEpisode.data.title && ep.data.title && 
+      currentEpisode.data.title === ep.data.title) {
+    return true;
+  }
+  return false;
+});
+
+// Debug: Log search results
+if (import.meta.env.DEV) {
+  console.log('Found at index:', currentIndex);
+  console.log('Total episodes:', allEpisodes.length);
+  if (currentIndex !== -1) {
+    console.log('Previous would be index:', currentIndex + 1, 
+      currentIndex + 1 < allEpisodes.length ? allEpisodes[currentIndex + 1].data.title : 'none');
+    console.log('Next would be index:', currentIndex - 1, 
+      currentIndex - 1 >= 0 ? allEpisodes[currentIndex - 1].data.title : 'none');
+  }
+}
+
+// If episode not found, don't show navigation
+if (currentIndex === -1) {
+  console.warn('Episode not found in navigation:', currentEpisode.data.slug || currentEpisode.slug);
+}
 
 // Get previous and next episodes
-const previousEpisode = currentIndex < allEpisodes.length - 1 ? allEpisodes[currentIndex + 1] : null;
-const nextEpisode = currentIndex > 0 ? allEpisodes[currentIndex - 1] : null;
+const previousEpisode = currentIndex !== -1 && currentIndex < allEpisodes.length - 1 ? allEpisodes[currentIndex + 1] : null;
+const nextEpisode = currentIndex !== -1 && currentIndex > 0 ? allEpisodes[currentIndex - 1] : null;
 
 // Translations
 const translations = {
@@ -47,40 +95,36 @@ const t = translations[language];
 
 {(previousEpisode || nextEpisode) && (
   <nav class="flex justify-between items-center py-8 border-t border-gray-200 dark:border-gray-700" aria-label="Episode navigation">
-    <div class="flex-1">
-      {previousEpisode && (
-        <a 
-          href={getEpisodeUrl(previousEpisode)}
-          class="flex flex-col group navigation-prev"
-          rel="prev"
-          data-prev-link
-        >
-          <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            ← {t.previous}
-          </span>
-          <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
-            {previousEpisode.data.title}
-          </span>
-        </a>
-      )}
-    </div>
+    {previousEpisode && (
+      <a 
+        href={getEpisodeUrl(previousEpisode)}
+        class={`flex flex-col group navigation-prev ${!nextEpisode ? 'max-w-full' : 'max-w-[48%]'}`}
+        rel="prev"
+        data-prev-link
+      >
+        <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          ← {t.previous}
+        </span>
+        <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          {previousEpisode.data.title}
+        </span>
+      </a>
+    )}
     
-    <div class="flex-1 text-right">
-      {nextEpisode && (
-        <a 
-          href={getEpisodeUrl(nextEpisode)}
-          class="flex flex-col group text-right navigation-next"
-          rel="next"
-          data-next-link
-        >
-          <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            {t.next} →
-          </span>
-          <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
-            {nextEpisode.data.title}
-          </span>
-        </a>
-      )}
-    </div>
+    {nextEpisode && (
+      <a 
+        href={getEpisodeUrl(nextEpisode)}
+        class={`flex flex-col group text-right navigation-next ml-auto ${!previousEpisode ? 'max-w-full' : 'max-w-[48%]'}`}
+        rel="next"
+        data-next-link
+      >
+        <span class="text-sm text-gray-500 dark:text-gray-400 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          {t.next} →
+        </span>
+        <span class="text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          {nextEpisode.data.title}
+        </span>
+      </a>
+    )}
   </nav>
 )}

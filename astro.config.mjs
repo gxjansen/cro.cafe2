@@ -192,4 +192,9 @@ export default defineConfig({
       }
     }
   },
+  // Dev server configuration to expose to local network
+  server: {
+    host: true, // This binds to all network interfaces (0.0.0.0)
+    port: 4321
+  },
 });

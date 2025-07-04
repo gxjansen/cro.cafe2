@@ -1,0 +1,66 @@
+{
+  "project": {
+    "name": "CRO Cafe",
+    "type": "full-stack",
+    "stack": {
+      "frontend": ["Astro", "React", "Tailwind CSS v4"],
+      "backend": ["Node.js", "TypeScript"],
+      "database": ["NocoDB"],
+      "integrations": ["LinkedIn Scraping", "n8n Workflows"]
+    }
+  },
+  "phases": {
+    "research": {
+      "depth": "standard",
+      "focus": ["content-management", "seo-optimization", "accessibility", "performance"]
+    },
+    "specification": {
+      "requirements": {
+        "functional": ["multi-language support", "episode management", "guest profiles", "PWA features"],
+        "non-functional": ["WCAG 2.2 AA compliance", "mobile-first design", "SEO optimization"]
+      }
+    },
+    "architecture": {
+      "patterns": ["component-based", "static-site-generation", "progressive-enhancement"],
+      "modules": {
+        "content": ["episodes", "guests", "hosts", "brands"],
+        "features": ["search", "filters", "language-switching", "offline-support"],
+        "integrations": ["nocodb-sync", "linkedin-enrichment", "analytics"]
+      }
+    },
+    "refinement": {
+      "testing": {
+        "unit": "vitest",
+        "integration": "jest",
+        "accessibility": "vitest-axe",
+        "e2e": "puppeteer"
+      },
+      "quality": {
+        "linting": "eslint",
+        "typecheck": "typescript",
+        "formatting": "prettier"
+      }
+    },
+    "completion": {
+      "documentation": ["CLAUDE.md", "project guides", "API docs"],
+      "deployment": ["build optimization", "sitemap generation", "PWA manifest"]
+    }
+  },
+  "workflows": {
+    "development": {
+      "mode": "iterative",
+      "commitFrequency": "feature-based",
+      "validation": ["npm run check", "npm run test:all", "npm run build"]
+    },
+    "collaboration": {
+      "branchStrategy": "feature-branches",
+      "reviewProcess": "automated-checks",
+      "mergeStrategy": "squash-and-merge"
+    }
+  },
+  "automation": {
+    "preCommit": ["npm run check:fix"],
+    "preBuild": ["npm run test:all"],
+    "postBuild": ["npm run generate-sitemaps", "npm run validate-content"]
+  }
+}

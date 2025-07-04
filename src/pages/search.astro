@@ -84,32 +84,32 @@ const languages = [
 
         <!-- Filters -->
         <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
-          <div class="flex flex-wrap items-center gap-6">
+          <div class="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4 sm:gap-6">
             <!-- Content Type Filter -->
-            <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Content type:</span>
-              <div class="flex gap-1">
-                <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Content type:</span>
+              <div class="flex flex-wrap gap-1">
+                <button id="filter-all" class="filter-btn active px-3 py-1 text-sm rounded-full bg-primary-600 text-white whitespace-nowrap">
                   All Content
                 </button>
-                <button id="filter-episodes" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                <button id="filter-episodes" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors whitespace-nowrap">
                   Episodes Only
                 </button>
-                <button id="filter-guests" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                <button id="filter-guests" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors whitespace-nowrap">
                   Guests Only
                 </button>
               </div>
             </div>
 
             <!-- Show Filter -->
-            <div class="flex items-center gap-3">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Shows:</span>
-              <div class="flex gap-1">
-                <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Shows:</span>
+              <div class="flex flex-wrap gap-1">
+                <button id="lang-all" class="lang-filter active px-3 py-1 text-sm rounded-full bg-primary-600 text-white whitespace-nowrap">
                   All Shows
                 </button>
                 {languages.map(lang => (
-                  <button id={`lang-${lang.code}`} class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                  <button id={`lang-${lang.code}`} class="lang-filter px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors whitespace-nowrap">
                     {lang.name}
                   </button>
                 ))}
@@ -117,7 +117,7 @@ const languages = [
             </div>
 
             <!-- Clear Filters -->
-            <button id="clear-filters" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline">
+            <button id="clear-filters" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline mt-2 sm:mt-0">
               Reset filters
             </button>
           </div>

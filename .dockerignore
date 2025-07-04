@@ -1,0 +1,84 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+dist/
+.astro/
+dev-dist/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# CI/CD
+.github/
+
+# Cache directories
+.cache/
+.npm/
+.next/
+.nuxt/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Documentation
+docs/
+*.md
+README*
+
+# Development files
+.claude/
+claude-flow*
+memory/
+coordination/
+backup/
+devdocs/
+project-docs/
+project/
+tests/
+scripts/
+dev-server.log
+clear-service-worker.html
+test-*.js
+test-*.mjs
+*.test.*
+
+# Netlify
+.netlify/
+netlify.toml
+
+# Subdomain redirects (handled by Netlify)
+subdomain-redirects/

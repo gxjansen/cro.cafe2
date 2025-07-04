@@ -1,0 +1,47 @@
+services:
+  cro-cafe-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: cro-cafe-dev
+    ports:
+      - "4321:4321"
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      # Use named volume for node_modules to avoid conflicts
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=4321
+    networks:
+      - cro-cafe-network
+    restart: unless-stopped
+    # Keep container running even if main process exits
+    tty: true
+    stdin_open: true
+
+  cro-cafe-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cro-cafe-prod
+    ports:
+      - "4322:4321"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4321
+    networks:
+      - cro-cafe-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  node_modules:
+
+networks:
+  cro-cafe-network:
+    driver: bridge

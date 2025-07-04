@@ -87,20 +87,20 @@ const searchTranslations = {
 const searchLabel = searchTranslations[language] || 'Search';
 ---
 
-<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 isolate">
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-2 sm:px-6 md:px-8 lg:px-10 xl:px-12 isolate">
   <nav id="main-navigation" class="max-w-7xl mx-auto" aria-label="Main navigation">
     <div class="flex justify-between items-stretch min-h-[80px] py-2">
       <!-- Logo -->
-      <div class="flex-shrink-0 flex items-center pl-2 sm:pl-0">
+      <div class="flex-shrink-0 flex items-center pl-0">
         <a 
           href={isGlobalMode ? '/' : `/${language}/`}
-          class="inline-flex items-center min-h-[48px] px-3 space-x-2 group"
+          class="inline-flex items-center min-h-[48px] px-1 sm:px-3 group"
           aria-label="CRO.CAFE Home"
         >
           <img 
             src="/images/crocafe-logo.svg" 
             alt="CRO.CAFE Logo"
-            class="h-10 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
+            class="h-8 sm:h-10 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
           />
         </a>
       </div>
@@ -125,7 +125,7 @@ const searchLabel = searchTranslations[language] || 'Search';
       </div>
 
       <!-- Right side controls -->
-      <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0 min-w-0 pr-2 sm:pr-0">
+      <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-4 flex-shrink-0 pr-0">
         <!-- Search Button -->
         <!-- Desktop: Link to search page -->
         <a
