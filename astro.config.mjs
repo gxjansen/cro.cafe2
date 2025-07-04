@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 // import AstroPWA from '@vite-pwa/astro';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import sentry from '@sentry/astro';
 // import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 
 export default defineConfig({
