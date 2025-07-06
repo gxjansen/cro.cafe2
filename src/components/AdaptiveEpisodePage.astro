@@ -57,7 +57,21 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
             loading="eager"
           />
         )}
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h1 
+          class={`${(() => {
+            const titleLength = title.length;
+            if (titleLength <= 50) {
+              // Short titles: Use larger sizes for PWA mode
+              return 'text-2xl';
+            } else if (titleLength <= 80) {
+              // Medium titles: Use moderate sizes
+              return 'text-xl';
+            } else {
+              // Long titles: Use smaller, more readable sizes
+              return 'text-lg';
+            }
+          })()} font-bold text-gray-900 dark:text-gray-100 mb-2`}
+        >
           {title}
         </h1>
         {publishDate && (

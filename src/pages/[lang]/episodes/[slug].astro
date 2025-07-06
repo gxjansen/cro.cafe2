@@ -236,7 +236,21 @@ const getDateLocale = (lang: Language) => {
               )}
             </div>
             
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-md balance-text">
+            <h1 
+              class={`${(() => {
+                const titleLength = episode.data.title.length;
+                if (titleLength <= 50) {
+                  // Short titles: Use large, prominent sizes
+                  return 'text-3xl md:text-4xl lg:text-5xl';
+                } else if (titleLength <= 80) {
+                  // Medium titles: Use moderate sizes
+                  return 'text-2xl md:text-3xl lg:text-4xl';
+                } else {
+                  // Long titles: Use smaller, more readable sizes
+                  return 'text-xl md:text-2xl lg:text-3xl';
+                }
+              })()} font-heading font-bold text-gray-900 dark:text-white mb-md balance-text`}
+            >
               {episode.data.title}
             </h1>
             
