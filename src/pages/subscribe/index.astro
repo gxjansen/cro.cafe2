@@ -11,6 +11,11 @@ const language: Language = 'en'; // Used for fallback text only
 // Debug: Log that we're actually rendering the international subscribe page
 console.log('RENDERING INTERNATIONAL SUBSCRIBE PAGE at /subscribe/');
 
+// Add client-side logging to detect any redirects
+if (import.meta.env.DEV) {
+  console.log('Subscribe page loaded at:', Astro.url.pathname);
+}
+
 // Get platform counts for each language
 const platformCounts = await getPlatformCountsByLanguage();
 
@@ -181,4 +186,42 @@ const description = 'Subscribe to the CRO.CAFE podcast in your preferred languag
     </div>
   </main>
 </BaseLayout>
+
+<script>
+// Debug: Monitor for any client-side redirects
+if (typeof window !== 'undefined') {
+  // Log the current location
+  console.log('Subscribe page client-side URL:', window.location.pathname);
+  
+  // Check if we're being redirected
+  if (window.location.pathname !== '/subscribe/') {
+    console.warn('WARNING: Subscribe page redirect detected!', {
+      expected: '/subscribe/',
+      actual: window.location.pathname,
+      referrer: document.referrer,
+      language: navigator.language
+    });
+  }
+  
+  // Monitor for any navigation away from this page
+  let isNavigatingAway = false;
+  window.addEventListener('beforeunload', (e) => {
+    if (!isNavigatingAway) {
+      console.log('Navigating away from subscribe page to:', window.location.href);
+    }
+    isNavigatingAway = true;
+  });
+  
+  // Intercept any potential JavaScript redirects
+  const originalLocation = window.location;
+  Object.defineProperty(window, 'location', {
+    get() { return originalLocation; },
+    set(value) {
+      console.warn('JavaScript redirect attempted:', value);
+      // Allow the redirect but log it
+      originalLocation.href = value;
+    }
+  });
+}
+</script>
 

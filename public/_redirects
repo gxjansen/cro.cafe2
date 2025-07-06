@@ -1,0 +1,18 @@
+# Prevent language-based redirects for global pages
+# These pages should remain in the global section regardless of browser language
+
+# Subscribe page should never redirect based on language
+/subscribe/*  /subscribe/:splat  200!
+/subscribe    /subscribe/       200!
+
+# Other global pages that should not redirect
+/            /                 200!
+/search/*    /search/:splat    200!
+/search      /search/          200!
+/about/*     /about/:splat     200!
+/about       /about/           200!
+/privacy-policy/*  /privacy-policy/:splat  200!
+/privacy-policy    /privacy-policy/        200!
+
+# Allow normal behavior for all other pages
+/*           /:splat           200
