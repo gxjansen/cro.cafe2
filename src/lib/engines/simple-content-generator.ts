@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
 import type { Language } from '../../types/index'
 import { DeletionTracker } from './deletion-tracker.js'
+import { sanitizeImageFilename, needsSanitization } from '../utils/filename-sanitizer.js'
 
 /**
  * Simple Content Generation Engine for GitHub Actions
@@ -828,13 +829,35 @@ export class SimpleContentGenerator {
 
     // If it's a relative filename, construct the path to /images/guests/
     if (imageUrl && typeof imageUrl === 'string') {
+      // Extract just the filename if it includes a path
+      let filename = imageUrl
+      if (imageUrl.includes('/')) {
+        const parts = imageUrl.split('/')
+        filename = parts[parts.length - 1]
+      }
+      
+      // Sanitize the filename to handle special characters
+      const sanitizedFilename = sanitizeImageFilename(filename)
+      
+      // Log if sanitization was needed
+      if (needsSanitization(filename)) {
+        console.log('🔄 Sanitized image filename:', {
+          original: filename,
+          sanitized: sanitizedFilename,
+          guestImageUrl: imageUrl
+        })
+      }
+      
       // Check if it already contains the path
       if (imageUrl.startsWith('/images/guests/')) {
-        console.log('🔍 ImageUrl already has path:', imageUrl)
-        return `imageUrl: "${imageUrl}"`
+        // Extract filename and sanitize
+        const pathFilename = imageUrl.replace('/images/guests/', '')
+        const sanitizedPath = sanitizeImageFilename(pathFilename)
+        console.log('🔍 ImageUrl already has path, sanitizing:', imageUrl, `-> /images/guests/${sanitizedPath}`)
+        return `imageUrl: "/images/guests/${sanitizedPath}"`
       } else {
-        console.log('🔍 Converting relative imageUrl:', imageUrl, `-> /images/guests/${  imageUrl}`)
-        return `imageUrl: "/images/guests/${imageUrl}"`
+        console.log('🔍 Converting relative imageUrl:', filename, `-> /images/guests/${sanitizedFilename}`)
+        return `imageUrl: "/images/guests/${sanitizedFilename}"`
       }
     }
 

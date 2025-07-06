@@ -15,7 +15,8 @@ const externalPatterns = [
   /^https?:\/\//,
   /^mailto:/,
   /^tel:/,
-  /^#/  // anchor links
+  /^#/,  // anchor links
+  /\$\{.*\}/  // template variables like ${basePath}
 ]
 
 // Known static assets that might be missing in dev but exist in production
@@ -23,7 +24,12 @@ const ignoredPaths = [
   /^\/images\/(favicon\.ico|crocafe-icon\.png|apple-touch-icon\.png|platforms\/.*\.png)$/,
   /^\/rss\/(en|nl|de|es)\.xml$/,
   /^\/_astro\/.*\.(css|js)$/,
-  /^\/favicon\.ico$/
+  /^\/favicon\.ico$/,
+  /^\/favicon-\d+x\d+\.png$/,  // favicon-16x16.png, favicon-32x32.png
+  /^\/manifest.*\.json$/,  // manifest.json, manifest-nl.json, etc.
+  /^\/src\//,  // development-only paths
+  /^\/images\/crocafe-logo\.svg$/,  // logo is likely in the build
+  /^\/images\/crocafe-icon-256\.png$/  // icon is likely in the build
 ]
 
 // Extract all href links from HTML content

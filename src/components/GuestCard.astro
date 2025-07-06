@@ -24,12 +24,29 @@ const translations = {
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
   const slug = guest.data.slug || guest.slug;
+  
+  // Check if guest has episodes in the requested language
+  const guestLanguages = guest.data.languages || [];
+  
   if (!lang) {
     // Use the first available language for the guest
-    const firstLang = guest.data.languages[0];
+    const firstLang = guestLanguages[0] || 'en';
     return firstLang === 'en' ? `/guests/${slug}/` : `/${firstLang}/guests/${slug}/`;
   }
-  return lang === 'en' ? `/guests/${slug}/` : `/${lang}/guests/${slug}/`;
+  
+  // If guest has episodes in the requested language, use language-specific URL
+  if (guestLanguages.includes(lang)) {
+    return lang === 'en' ? `/guests/${slug}/` : `/${lang}/guests/${slug}/`;
+  }
+  
+  // If guest has no episodes in the requested language, link to their first available language
+  if (guestLanguages.length > 0) {
+    const firstLang = guestLanguages[0];
+    return firstLang === 'en' ? `/guests/${slug}/` : `/${firstLang}/guests/${slug}/`;
+  }
+  
+  // If guest has no episodes at all, link to the all guests listing page
+  return lang === 'en' ? '/guests/' : `/${lang}/guests/`;
 }
 
 // Get LinkedIn URL from socialLinks

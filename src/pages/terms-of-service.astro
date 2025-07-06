@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const pageTitle = 'Terms of Service - CRO.CAFE';
+const pageDescription = "Terms of Service for CRO.CAFE podcast";
+const lastUpdated = new Date().toLocaleDateString('en-US', { 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+});
+---
+
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  language="en"
+  canonical="https://cro.cafe/terms-of-service/"
+  currentPath="/terms-of-service/"
+>
+  <Header currentPath="/terms-of-service/" />
+  
+  <main class="flex-1 bg-white dark:bg-gray-900">
+    <section class="section-spacing">
+      <div class="container-xl">
+        <article class="prose prose-lg dark:prose-invert mx-auto max-w-prose">
+        <h1>Terms of Service for CRO.CAFE</h1>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Last updated: {lastUpdated}</p>
+
+      <h2>1. Acceptance of Terms</h2>
+      <p>
+        By accessing and using CRO.cafe (the "Website" or "Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+      </p>
+
+      <h2>2. Podcast Content</h2>
+      <p>
+        CRO.cafe is a podcast platform featuring interviews, discussions, and content related to Conversion Rate Optimization (CRO) and digital marketing. The content provided includes:
+      </p>
+      <ul>
+        <li>Audio podcast episodes</li>
+        <li>Episode transcripts and show notes</li>
+        <li>Guest profiles and biographies</li>
+        <li>Related articles and resources</li>
+      </ul>
+
+      <h2>3. Content Disclaimer</h2>
+      <p>
+        The information, opinions, and views expressed in our podcast episodes are those of the individual speakers and guests, and do not necessarily reflect the official policy or position of CRO.cafe. We strive for accuracy but cannot guarantee that all information provided by guests or discussed in episodes is completely accurate, current, or comprehensive.
+      </p>
+      <p>
+        Any advice or strategies discussed in our podcast should not be considered as professional consulting. Listeners should conduct their own research and consult with professionals before implementing any strategies discussed in our content.
+      </p>
+
+      <h2>4. Guest Information</h2>
+      <p>
+        Guest profiles, biographies, and professional information are provided by the guests themselves or from publicly available sources. While we make reasonable efforts to ensure accuracy, we cannot guarantee the completeness or accuracy of guest information. If you believe any information about a guest is inaccurate, please contact us.
+      </p>
+
+      <h2>5. Intellectual Property</h2>
+      <p>
+        All podcast content, including audio files, transcripts, show notes, and original written content on this website, is the property of CRO.cafe unless otherwise stated. Guest-contributed content remains the property of the respective guests.
+      </p>
+      <p>
+        You may share and reference our content with proper attribution, but you may not reproduce, distribute, or create derivative works from our podcast episodes without express written permission.
+      </p>
+
+      <h2>6. User Conduct</h2>
+      <p>
+        When engaging with our content or community, you agree to:
+      </p>
+      <ul>
+        <li>Respect the intellectual property rights of CRO.cafe and our guests</li>
+        <li>Not use the content for any unlawful purpose</li>
+        <li>Not misrepresent information from our podcast</li>
+        <li>Provide accurate information if submitting feedback or guest applications</li>
+      </ul>
+
+      <h2>7. Third-Party Links</h2>
+      <p>
+        Our website and podcast content may contain links to third-party websites or services. These links are provided for your convenience and do not signify our endorsement. We have no control over the content or practices of these sites and accept no responsibility for them.
+      </p>
+
+      <h2>8. Limitation of Liability</h2>
+      <p>
+        CRO.cafe and its hosts shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the service, content, or any related services. This includes any decisions made based on information presented in our podcast episodes.
+      </p>
+
+      <h2>9. Privacy</h2>
+      <p>
+        Your use of our website is also governed by our <a href="/privacy-policy/">Privacy Policy</a>. Please review our Privacy Policy, which also governs the Site and informs users of our data collection practices.
+      </p>
+
+      <h2>10. Modifications</h2>
+      <p>
+        We reserve the right to modify these terms at any time. We will notify users of any changes by updating the "Last updated" date of these Terms of Service. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms of Service.
+      </p>
+
+      <h2>11. Contact Information</h2>
+      <p>
+        If you have any questions about these Terms of Service, please contact us through the contact information provided on our <a href="/about/">About page</a>.
+      </p>
+
+      <h2>12. Governing Law</h2>
+      <p>
+        These Terms of Service and any separate agreements whereby we provide you services shall be governed by and construed in accordance with the laws of the jurisdiction in which CRO.cafe operates.
+      </p>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

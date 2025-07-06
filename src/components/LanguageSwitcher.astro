@@ -98,7 +98,7 @@ const getLanguageUrl = (langCode: Language | 'global') => {
   }
   
   // Handle global pages - they don't have language versions
-  if (basePath.includes('/hosts') || basePath.includes('/color-test')) {
+  if (basePath.includes('/hosts') || basePath.includes('/color-test') || basePath.includes('/about') || basePath.includes('/privacy-policy') || basePath.includes('/terms-of-service')) {
     // Always return to the global (all languages) homepage when switching languages from a global page
     if (langCode === 'global') {
       return basePath; // Stay on the same page

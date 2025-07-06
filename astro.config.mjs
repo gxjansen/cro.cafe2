@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sentry from '@sentry/astro';
+import astroBrokenLinksChecker from 'astro-broken-link-checker';
 // import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 
 export default defineConfig({
@@ -60,6 +61,24 @@ export default defineConfig({
         'https://cro.cafe/all/episodes/',
         'https://cro.cafe/all/guests/'
       ]
+    }),
+    // Broken links checker - runs after build
+    astroBrokenLinksChecker({
+      logFilePath: './broken-links.log',
+      checkExternalLinks: false, // Start with internal only, enable external later
+      cache: true,
+      parallel: true,
+      excludeUrls: [
+        // Exclude known external URLs that might be flaky
+        /^https?:\/\/linkedin\.com/,
+        /^https?:\/\/twitter\.com/,
+        /^https?:\/\/youtube\.com/,
+        // Exclude anchor links
+        /^#/,
+        // Exclude mailto and tel links
+        /^mailto:/,
+        /^tel:/
+      ]
     })
   ],
   redirects: {
@@ -70,34 +89,37 @@ export default defineConfig({
     // English domain (www.cro.cafe) redirects to new structure
     '/podcast': '/en/episodes/',
     '/guest': '/en/guests/',
-    '/event': '/en/events/',
+    // Events pages have been removed - redirect to about page
+    '/event': '/about/',
     // Remove subscribe redirects - /subscribe/ is now global
     
     // Individual podcast episode redirects (English)
-    // Format: /podcast/episode-title -> /en/episodes/episode-title/
-    '/podcast/s10e01-sander-volbeda-experimentation-and-the-future-of-cro': '/en/episodes/s10e01-sander-volbeda-experimentation-and-the-future-of-cro/',
-    '/podcast/s10e02-craig-sullivan-the-psychology-of-conversion-optimization': '/en/episodes/s10e02-craig-sullivan-the-psychology-of-conversion-optimization/',
-    '/podcast/s10e03-anna-vasylyshyna-digital-maturity-and-data-driven-growth': '/en/episodes/s10e03-anna-vasylyshyna-digital-maturity-and-data-driven-growth/',
-    '/podcast/s10e04-tiffany-da-silva-advanced-ab-testing-strategies': '/en/episodes/s10e04-tiffany-da-silva-advanced-ab-testing-strategies/',
-    '/podcast/s10e05-peep-laja-evidence-based-conversion-optimization': '/en/episodes/s10e05-peep-laja-evidence-based-conversion-optimization/',
-    '/podcast/s9e18-lisa-van-der-knaap-international-expansion-strategies': '/en/episodes/s9e18-lisa-van-der-knaap-international-expansion-strategies/',
-    '/podcast/s9e17-tom-de-ruyck-user-behavior-analytics': '/en/episodes/s9e17-tom-de-ruyck-user-behavior-analytics/',
-    '/podcast/s9e16-tim-ash-persuasive-design-principles': '/en/episodes/s9e16-tim-ash-persuasive-design-principles/',
-    '/podcast/s9e15-jen-clinehens-cx-optimization-strategies': '/en/episodes/s9e15-jen-clinehens-cx-optimization-strategies/',
-    '/podcast/s9e14-dennis-van-der-heijden-product-led-growth': '/en/episodes/s9e14-dennis-van-der-heijden-product-led-growth/',
+    // NOTE: Episodes below don't exist yet - removed to prevent 404s
+    // '/podcast/s10e01-sander-volbeda-experimentation-and-the-future-of-cro': '/en/episodes/s10e01-sander-volbeda-experimentation-and-the-future-of-cro/',
+    // '/podcast/s10e02-craig-sullivan-the-psychology-of-conversion-optimization': '/en/episodes/s10e02-craig-sullivan-the-psychology-of-conversion-optimization/',
+    // '/podcast/s10e03-anna-vasylyshyna-digital-maturity-and-data-driven-growth': '/en/episodes/s10e03-anna-vasylyshyna-digital-maturity-and-data-driven-growth/',
+    // '/podcast/s10e04-tiffany-da-silva-advanced-ab-testing-strategies': '/en/episodes/s10e04-tiffany-da-silva-advanced-ab-testing-strategies/',
+    // '/podcast/s10e05-peep-laja-evidence-based-conversion-optimization': '/en/episodes/s10e05-peep-laja-evidence-based-conversion-optimization/',
+    // '/podcast/s9e18-lisa-van-der-knaap-international-expansion-strategies': '/en/episodes/s9e18-lisa-van-der-knaap-international-expansion-strategies/',
+    // '/podcast/s9e17-tom-de-ruyck-user-behavior-analytics': '/en/episodes/s9e17-tom-de-ruyck-user-behavior-analytics/',
+    // '/podcast/s9e16-tim-ash-persuasive-design-principles': '/en/episodes/s9e16-tim-ash-persuasive-design-principles/',
+    // '/podcast/s9e15-jen-clinehens-cx-optimization-strategies': '/en/episodes/s9e15-jen-clinehens-cx-optimization-strategies/',
+    // '/podcast/s9e14-dennis-van-der-heijden-product-led-growth': '/en/episodes/s9e14-dennis-van-der-heijden-product-led-growth/',
     
     // Guest profile redirects (English)
-    // Format: /guest/guest-name -> /all/guests/guest-name/
-    '/guest/sander-volbeda': '/all/guests/sander-volbeda/',
-    '/guest/craig-sullivan': '/all/guests/craig-sullivan/',
-    '/guest/anna-vasylyshyna': '/all/guests/anna-vasylyshyna/',
-    '/guest/tiffany-da-silva': '/all/guests/tiffany-da-silva/',
-    '/guest/peep-laja': '/all/guests/peep-laja/',
-    '/guest/lisa-van-der-knaap': '/all/guests/lisa-van-der-knaap/',
-    '/guest/tom-de-ruyck': '/all/guests/tom-de-ruyck/',
-    '/guest/tim-ash': '/all/guests/tim-ash/',
-    '/guest/jen-clinehens': '/all/guests/jen-clinehens/',
-    '/guest/dennis-van-der-heijden': '/all/guests/dennis-van-der-heijden/',
+    // NOTE: Redirects for guests that exist
+    '/guest/sander-volbeda': '/guests/sander-volbeda/',
+    '/guest/craig-sullivan': '/guests/craig-sullivan/',
+    '/guest/peep-laja': '/guests/peep-laja/',
+    '/guest/tim-ash': '/guests/tim-ash/',
+    
+    // NOTE: Guests below don't exist yet - redirect to all guests page
+    '/guest/anna-vasylyshyna': '/all/guests/',
+    '/guest/tiffany-da-silva': '/all/guests/',
+    '/guest/lisa-van-der-knaap': '/all/guests/',
+    '/guest/tom-de-ruyck': '/all/guests/',
+    '/guest/jen-clinehens': '/all/guests/',
+    '/guest/dennis-van-der-heijden': '/all/guests/',
     
     // ============================================================================
     // DUTCH SUBDOMAIN (nl.cro.cafe) REDIRECTS
@@ -128,7 +150,8 @@ export default defineConfig({
     // ============================================================================
     
     // Legacy paths without language prefix now redirect to global pages
-    '/events': '/en/events/',
+    // Events pages have been removed - redirect to about page
+    '/events': '/about/',
     
     // SEO-friendly redirects for common variations
     '/shows': '/en/episodes/',
@@ -139,10 +162,11 @@ export default defineConfig({
     '/newsletter': '/en/subscribe/',
     '/signup': '/en/subscribe/',
     
-    // RSS feed redirects (if moving from Webflow feeds)
-    '/feed.xml': '/rss.xml',
-    '/rss': '/rss.xml',
-    '/feeds': '/rss.xml',
+    // RSS feed redirects to Transistor feeds (English by default)
+    '/feed.xml': 'https://feeds.transistor.fm/cro-cafe',
+    '/rss': 'https://feeds.transistor.fm/cro-cafe',
+    '/feeds': 'https://feeds.transistor.fm/cro-cafe',
+    '/rss.xml': 'https://feeds.transistor.fm/cro-cafe',
     
     // About page variations
     '/about-us': '/about/',
