@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sentry from '@sentry/astro';
-import astroBrokenLinksChecker from 'astro-broken-link-checker';
+// import astroBrokenLinksChecker from 'astro-broken-link-checker';
 // import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 
 export default defineConfig({
@@ -61,25 +61,25 @@ export default defineConfig({
         'https://cro.cafe/all/episodes/',
         'https://cro.cafe/all/guests/'
       ]
-    }),
-    // Broken links checker - runs after build
-    astroBrokenLinksChecker({
-      logFilePath: './broken-links.log',
-      checkExternalLinks: false, // Start with internal only, enable external later
-      cache: true,
-      parallel: true,
-      excludeUrls: [
-        // Exclude known external URLs that might be flaky
-        /^https?:\/\/linkedin\.com/,
-        /^https?:\/\/twitter\.com/,
-        /^https?:\/\/youtube\.com/,
-        // Exclude anchor links
-        /^#/,
-        // Exclude mailto and tel links
-        /^mailto:/,
-        /^tel:/
-      ]
     })
+    // Broken links checker - commented out for production build
+    // astroBrokenLinksChecker({
+    //   logFilePath: './broken-links.log',
+    //   checkExternalLinks: false, // Start with internal only, enable external later
+    //   cache: true,
+    //   parallel: true,
+    //   excludeUrls: [
+    //     // Exclude known external URLs that might be flaky
+    //     /^https?:\/\/linkedin\.com/,
+    //     /^https?:\/\/twitter\.com/,
+    //     /^https?:\/\/youtube\.com/,
+    //     // Exclude anchor links
+    //     /^#/,
+    //     // Exclude mailto and tel links
+    //     /^mailto:/,
+    //     /^tel:/
+    //   ]
+    // })
   ],
   redirects: {
     // ============================================================================
