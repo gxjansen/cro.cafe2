@@ -46,7 +46,141 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[[headers]]
-  for = "*.woff2"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+$1
+
+# ============================================================================
+# SUBDOMAIN REDIRECTS
+# ============================================================================
+# Redirect language subdomains to their respective language paths
+
+# Dutch subdomain redirects
+[[redirects]]
+  from = "https://nl.cro.cafe/"
+  to = "https://cro.cafe/nl/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://nl.cro.cafe/*"
+  to = "https://cro.cafe/nl/:splat"
+  status = 301
+  force = true
+
+# German subdomain redirects  
+[[redirects]]
+  from = "https://de.cro.cafe/"
+  to = "https://cro.cafe/de/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/*"
+  to = "https://cro.cafe/de/:splat"
+  status = 301
+  force = true
+
+# Spanish subdomain redirects
+[[redirects]]
+  from = "https://es.cro.cafe/"
+  to = "https://cro.cafe/es/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://es.cro.cafe/*"
+  to = "https://cro.cafe/es/:splat"
+  status = 301
+  force = true
+
+# ============================================================================
+# PATH REWRITES FOR LEGACY URLS
+# ============================================================================
+# Handle old podcast URLs and redirect to new episode structure
+
+# German podcast URLs
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/*"
+  to = "https://cro.cafe/de/episodes/:splat"
+  status = 301
+  force = true
+
+# Dutch podcast URLs  
+[[redirects]]
+  from = "https://nl.cro.cafe/podcast/*"
+  to = "https://cro.cafe/nl/episodes/:splat"
+  status = 301
+  force = true
+
+# Spanish podcast URLs
+[[redirects]]
+  from = "https://es.cro.cafe/podcast/*"
+  to = "https://cro.cafe/es/episodes/:splat"
+  status = 301
+  force = true
+
+# ============================================================================
+# GUEST PROFILE REDIRECTS
+# ============================================================================
+
+# German guest URLs
+[[redirects]]
+  from = "https://de.cro.cafe/guest/*"
+  to = "https://cro.cafe/guests/:splat"
+  status = 301
+  force = true
+
+# Dutch guest URLs
+[[redirects]]
+  from = "https://nl.cro.cafe/guest/*"
+  to = "https://cro.cafe/guests/:splat"
+  status = 301
+  force = true
+
+# Spanish guest URLs  
+[[redirects]]
+  from = "https://es.cro.cafe/guest/*"
+  to = "https://cro.cafe/guests/:splat"
+  status = 301
+  force = true
+
+# ============================================================================
+# COMMON PAGE REDIRECTS
+# ============================================================================
+
+# About pages (global, no language prefix needed)
+[[redirects]]
+  from = "https://de.cro.cafe/about"
+  to = "https://cro.cafe/about/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://nl.cro.cafe/about"
+  to = "https://cro.cafe/about/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://es.cro.cafe/about"
+  to = "https://cro.cafe/about/"
+  status = 301
+  force = true
+
+# Subscribe pages redirect to language-specific versions
+[[redirects]]
+  from = "https://de.cro.cafe/subscribe"
+  to = "https://cro.cafe/de/subscribe/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://nl.cro.cafe/subscribe"
+  to = "https://cro.cafe/nl/subscribe/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://es.cro.cafe/subscribe"
+  to = "https://cro.cafe/es/subscribe/"
+  status = 301
+  force = true
