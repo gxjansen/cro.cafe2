@@ -221,11 +221,11 @@ export async function getGuestEpisodes(guestSlug: string, language?: Language) {
 
 // Format episode duration for display
 export function formatDuration(duration: string): string {
-  // Duration is in seconds, convert to minutes
-  const totalSeconds = parseInt(duration, 10)
+  // Parse duration from MM:SS or HH:MM:SS format to seconds
+  const totalSeconds = parseDurationToSeconds(duration)
 
   // Check if duration is valid
-  if (isNaN(totalSeconds) || totalSeconds <= 0) {
+  if (totalSeconds <= 0) {
     return ''
   }
 
@@ -318,7 +318,8 @@ export async function getGuestCountByLanguage(language: Language): Promise<numbe
 // Get total guest count
 export async function getTotalGuestCount(): Promise<number> {
   const guests = await getCollection('guests')
-  return guests.length
+  // Only count guests that have episodes
+  return guests.filter(guest => guest.data.episodes && guest.data.episodes.length > 0).length
 }
 
 // Get counts for all languages including global
@@ -519,14 +520,32 @@ export async function getPopularEpisodesByLanguage() {
   return result
 }
 
+// Convert duration string (MM:SS or HH:MM:SS) to seconds
+function parseDurationToSeconds(duration: string): number {
+  if (!duration || typeof duration !== 'string') return 0
+  
+  const parts = duration.split(':').map(p => parseInt(p, 10))
+  if (parts.some(isNaN)) return 0
+  
+  if (parts.length === 2) {
+    // MM:SS format
+    return parts[0] * 60 + parts[1]
+  } else if (parts.length === 3) {
+    // HH:MM:SS format
+    return parts[0] * 3600 + parts[1] * 60 + parts[2]
+  }
+  
+  return 0
+}
+
 // Get total content duration by language in hours
 export async function getTotalDurationByLanguage(language: Language): Promise<number> {
   const episodes = await getEpisodesByLanguage(language)
 
   // Sum up all durations (in seconds)
   const totalSeconds = episodes.reduce((sum, episode) => {
-    const duration = parseInt(episode.data.duration, 10)
-    return sum + (isNaN(duration) ? 0 : duration)
+    const seconds = parseDurationToSeconds(episode.data.duration)
+    return sum + seconds
   }, 0)
 
   // Convert to hours and round to 1 decimal place
@@ -643,14 +662,25 @@ export async function getHostStatistics(hostSlug: string): Promise<{
   episodesByLanguage: Record<Language, number>;
   uniqueGuestsByLanguage: Record<Language, string[]>;
 }> {
-  const [allEpisodes, allGuests] = await Promise.all([
+  const [allEpisodes, allHosts] = await Promise.all([
     getCollection('episodes'),
-    getCollection('guests')
+    getCollection('hosts')
   ])
 
-  // Filter episodes for this host (only published)
+  // Get the host data to find their episode IDs
+  const host = allHosts.find(h => (h.data.slug || h.slug) === hostSlug)
+  if (!host || !host.data.episodes) {
+    return {
+      totalEpisodes: 0,
+      totalGuests: 0,
+      episodesByLanguage: { en: 0, nl: 0, de: 0, es: 0 },
+      uniqueGuestsByLanguage: { en: [], nl: [], de: [], es: [] }
+    }
+  }
+
+  // Filter episodes for this host using their episode IDs (only published)
   const hostEpisodes = allEpisodes.filter(episode =>
-    episode.data.hosts.includes(hostSlug) && episode.data.status === 'published'
+    host.data.episodes.includes(episode.data.transistorId) && episode.data.status === 'published'
   )
 
   // Count episodes by language
