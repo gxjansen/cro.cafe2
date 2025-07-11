@@ -198,19 +198,19 @@ class EpisodeGenerator {
     // Build frontmatter - using field names that match the schema
     const frontmatter: any = {
       title: this.escapeYaml(episode.title || ''),
-      description: this.escapeYaml(episode.description || ''),
+      description: this.escapeYaml(episode.description || episode.ai_summary || episode.summary || episode.title || ''),
       pubDate: publishedAt, // Schema expects 'pubDate' not 'publishedAt'
       season: episode.season || 1, // Schema expects 'season' not 'seasonNumber'
       episode: episode.episode_number || 0, // Schema expects 'episode' not 'episodeNumber'
       duration: this.formatDuration(episode.duration_formatted || episode.duration || '00:00'),
       audioUrl: episode.media_url || '',
       language: episode.language || 'en',
-      transistorId: episode.transistor_id || episode.Id?.toString() || '', // Schema expects 'transistorId' not 'guid'
+      transistorId: String(episode.transistor_id || episode.Id || ''), // Schema expects 'transistorId' not 'guid'
       episodeType: episode.episode_type || 'full',
       // Additional fields not required by schema but useful
       slug: episode.slug || '',
       keywords: this.parseKeywords(episode.ai_keywords || episode.keywords || ''), // Schema expects array
-      summary: this.escapeYaml(episode.ai_summary || episode.summary || ''), // For SEO
+      summary: this.escapeYaml(episode.ai_summary || episode.summary || episode.description || ''), // For SEO
       featured: episode.featured || false
     }
 
@@ -224,11 +224,11 @@ class EpisodeGenerator {
     }
 
     if (episode.hosts && Array.isArray(episode.hosts)) {
-      frontmatter.hosts = episode.hosts.map((host: any) => host.slug || host.name || host)
+      frontmatter.hosts = episode.hosts.map((host: any) => String(host.slug || host.name || host))
     }
 
     if (episode.guests && Array.isArray(episode.guests)) {
-      frontmatter.guests = episode.guests.map((guest: any) => guest.slug || guest.name || guest)
+      frontmatter.guests = episode.guests.map((guest: any) => String(guest.slug || guest.name || guest))
     }
 
     if (episode.platforms && Array.isArray(episode.platforms)) {
