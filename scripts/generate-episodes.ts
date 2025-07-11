@@ -277,15 +277,22 @@ class EpisodeGenerator {
   private escapeYaml(value: string): string {
     if (!value) return ''
     
-    // If the string contains special characters, quote it
+    // For multiline content or content with special characters, use literal block scalar
+    if (value.includes('\n') || value.includes('"') || value.includes("'") || 
+        value.includes('<') || value.includes('>') || value.includes('&') ||
+        value.includes('\\') || value.length > 80) {
+      // Use literal block scalar (|) for complex content
+      // This preserves the content exactly as-is without escaping
+      return `|\n  ${value.replace(/\n/g, '\n  ')}`
+    }
+    
+    // For simple strings with special YAML characters, quote them
     if (value.includes(':') || value.includes('#') || value.includes('|') || 
-        value.includes('>') || value.includes('-') || value.includes('*') ||
-        value.includes('&') || value.includes('!') || value.includes('%') ||
-        value.includes('@') || value.includes('`') || value.includes('"') ||
-        value.includes("'") || value.includes('\n')) {
-      // Escape quotes and backslashes
-      const escaped = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
-      return `"${escaped}"`
+        value.includes('-') || value.includes('*') || value.includes('!') || 
+        value.includes('%') || value.includes('@') || value.includes('`') ||
+        value.startsWith(' ') || value.endsWith(' ')) {
+      // Simple quoting without escaping for basic special characters
+      return `"${value}"`
     }
     
     return value
