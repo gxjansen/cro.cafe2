@@ -2,27 +2,25 @@
 # SUBDOMAIN REDIRECTS - Must come first!
 # ============================================================================
 
-# Dutch subdomain redirects
-https://nl.cro.cafe/  https://cro.cafe/nl/  301!
-https://nl.cro.cafe/* https://cro.cafe/nl/:splat  301!
-
-# German subdomain redirects  
-https://de.cro.cafe/  https://cro.cafe/de/  301!
-https://de.cro.cafe/* https://cro.cafe/de/:splat  301!
-
-# Spanish subdomain redirects
-https://es.cro.cafe/  https://cro.cafe/es/  301!
-https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
-
-# Legacy URL path rewrites
+# Legacy URL path rewrites - MUST come before generic redirects
 https://de.cro.cafe/podcast/*  https://cro.cafe/de/episodes/:splat  301!
 https://nl.cro.cafe/podcast/*  https://cro.cafe/nl/episodes/:splat  301!
 https://es.cro.cafe/podcast/*  https://cro.cafe/es/episodes/:splat  301!
 
-# Guest URLs
+# Guest URLs - MUST come before generic redirects
 https://de.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
 https://nl.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
 https://es.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+
+# Generic subdomain redirects - come after specific path rewrites
+https://nl.cro.cafe/  https://cro.cafe/nl/  301!
+https://nl.cro.cafe/* https://cro.cafe/nl/:splat  301!
+
+https://de.cro.cafe/  https://cro.cafe/de/  301!
+https://de.cro.cafe/* https://cro.cafe/de/:splat  301!
+
+https://es.cro.cafe/  https://cro.cafe/es/  301!
+https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
 
 # ============================================================================
 # Prevent language-based redirects for global pages
@@ -40,6 +38,15 @@ https://es.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
 /about       /about/           200!
 /privacy-policy/*  /privacy-policy/:splat  200!
 /privacy-policy    /privacy-policy/        200!
+
+# ============================================================================
+# MAIN DOMAIN PATH REWRITES
+# ============================================================================
+# Handle podcast URLs that might already be on the main domain
+/de/podcast/*  /de/episodes/:splat  301!
+/nl/podcast/*  /nl/episodes/:splat  301!
+/es/podcast/*  /es/episodes/:splat  301!
+/en/podcast/*  /en/episodes/:splat  301!
 
 # Allow normal behavior for all other pages
 /*           /:splat           200
