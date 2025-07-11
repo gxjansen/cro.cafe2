@@ -213,7 +213,10 @@ class EpisodeGenerator {
       slug: episode.slug || '',
       keywords: this.parseKeywords(episode.ai_keywords || episode.keywords), // Schema expects array
       summary: this.escapeYaml(episode.ai_summary || episode.summary || episode.description || ''), // For SEO
-      featured: episode.featured || false
+      featured: episode.featured || false,
+      status: episode.status || 'published',
+      createdAt: createdAt,
+      updatedAt: updatedAt
     }
 
     // Add optional fields
@@ -225,11 +228,20 @@ class EpisodeGenerator {
       frontmatter.shareUrl = episode.share_url
     }
 
-    if (episode.hosts && Array.isArray(episode.hosts)) {
+    // Always include hosts and guests arrays (even if empty)
+    frontmatter.hosts = []
+    if (episode.host && Array.isArray(episode.host)) {
+      // NocoDB returns 'host' not 'hosts'
+      frontmatter.hosts = episode.host.map((host: any) => String(host.slug || host.name || host))
+    } else if (episode.hosts && Array.isArray(episode.hosts)) {
       frontmatter.hosts = episode.hosts.map((host: any) => String(host.slug || host.name || host))
     }
 
-    if (episode.guests && Array.isArray(episode.guests)) {
+    frontmatter.guests = []
+    if (episode.guest && Array.isArray(episode.guest)) {
+      // NocoDB returns 'guest' not 'guests'
+      frontmatter.guests = episode.guest.map((guest: any) => String(guest.slug || guest.name || guest))
+    } else if (episode.guests && Array.isArray(episode.guests)) {
       frontmatter.guests = episode.guests.map((guest: any) => String(guest.slug || guest.name || guest))
     }
 
@@ -250,8 +262,12 @@ class EpisodeGenerator {
       frontmatter.transcript = episode.transcript || episode.ai_transcript_text
     }
     
-    if (episode.downloads_total) {
-      frontmatter.downloads_total = episode.downloads_total
+    // Always include downloads_total (0 if not available)
+    frontmatter.downloads_total = episode.downloads_total || 0
+    
+    // Include episode_type with underscore format (for backward compatibility)
+    if (episode.episode_type) {
+      frontmatter.episode_type = episode.episode_type
     }
     
     if (episode.embed_html) {
