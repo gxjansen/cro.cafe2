@@ -26,6 +26,17 @@ https://de.cro.cafe/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-chr
 /de/podcast/willkommen-bei-cro-cafe-auf-deutsch  /de/episodes/cro-cafe-jetzt-auch-auf-deutsch/  301!
 /de/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active  /de/episodes/48-customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active/  301!
 
+# About page redirects - all languages redirect to global about page
+https://de.cro.cafe/about  https://cro.cafe/about/  301!
+https://nl.cro.cafe/about  https://cro.cafe/about/  301!
+https://es.cro.cafe/about  https://cro.cafe/about/  301!
+https://en.cro.cafe/about  https://cro.cafe/about/  301!
+# Handle with trailing slash too
+https://de.cro.cafe/about/  https://cro.cafe/about/  301!
+https://nl.cro.cafe/about/  https://cro.cafe/about/  301!
+https://es.cro.cafe/about/  https://cro.cafe/about/  301!
+https://en.cro.cafe/about/  https://cro.cafe/about/  301!
+
 # Legacy URL path rewrites - MUST come before generic redirects
 # Main podcast pages (without trailing paths)
 https://de.cro.cafe/podcast  https://cro.cafe/de/episodes/  301!
