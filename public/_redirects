@@ -1,3 +1,30 @@
+# ============================================================================
+# SUBDOMAIN REDIRECTS - Must come first!
+# ============================================================================
+
+# Dutch subdomain redirects
+https://nl.cro.cafe/  https://cro.cafe/nl/  301!
+https://nl.cro.cafe/* https://cro.cafe/nl/:splat  301!
+
+# German subdomain redirects  
+https://de.cro.cafe/  https://cro.cafe/de/  301!
+https://de.cro.cafe/* https://cro.cafe/de/:splat  301!
+
+# Spanish subdomain redirects
+https://es.cro.cafe/  https://cro.cafe/es/  301!
+https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
+
+# Legacy URL path rewrites
+https://de.cro.cafe/podcast/*  https://cro.cafe/de/episodes/:splat  301!
+https://nl.cro.cafe/podcast/*  https://cro.cafe/nl/episodes/:splat  301!
+https://es.cro.cafe/podcast/*  https://cro.cafe/es/episodes/:splat  301!
+
+# Guest URLs
+https://de.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://nl.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://es.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+
+# ============================================================================
 # Prevent language-based redirects for global pages
 # These pages should remain in the global section regardless of browser language
 
