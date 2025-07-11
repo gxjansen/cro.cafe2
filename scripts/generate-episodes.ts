@@ -209,7 +209,7 @@ class EpisodeGenerator {
       episodeType: episode.episode_type || 'full',
       // Additional fields not required by schema but useful
       slug: episode.slug || '',
-      keywords: this.parseKeywords(episode.ai_keywords || episode.keywords || ''), // Schema expects array
+      keywords: this.parseKeywords(episode.ai_keywords || episode.keywords), // Schema expects array
       summary: this.escapeYaml(episode.ai_summary || episode.summary || episode.description || ''), // For SEO
       featured: episode.featured || false
     }
@@ -275,7 +275,7 @@ class EpisodeGenerator {
   }
 
   private escapeYaml(value: string): string {
-    if (!value) return ''
+    if (!value || value === '') return '""'  // Return empty quoted string for empty values
     
     // For multiline content or content with special characters, use literal block scalar
     if (value.includes('\n') || value.includes('"') || value.includes("'") || 
@@ -309,14 +309,18 @@ class EpisodeGenerator {
     return `${minutes}:${String(seconds).padStart(2, '0')}`
   }
 
-  private parseKeywords(keywords: string): string[] {
+  private parseKeywords(keywords: string | string[] | null | undefined): string[] {
     if (!keywords) return []
     
     // If it's already an array, return it
     if (Array.isArray(keywords)) return keywords
     
-    // Split by comma and clean up
-    return keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
+    // If it's a string, split by comma and clean up
+    if (typeof keywords === 'string') {
+      return keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
+    }
+    
+    return []
   }
 
   private objectToYaml(obj: any, indent = 0): string {
@@ -349,6 +353,15 @@ class EpisodeGenerator {
         yaml += `${value}\n`
       } else if (typeof value === 'number') {
         yaml += `${value}\n`
+      } else if (typeof value === 'string') {
+        // Check if the value is already a literal block scalar
+        if (value.startsWith('|\n')) {
+          // Already formatted as literal block, just add it
+          yaml += value + '\n'
+        } else {
+          // Regular string
+          yaml += `${value}\n`
+        }
       } else {
         yaml += `${value}\n`
       }
