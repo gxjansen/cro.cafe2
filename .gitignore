@@ -170,7 +170,7 @@ coverage/
 # Test folders and documentation
 test-content-output/
 test-crud-output/
-tests/
+# tests/  # Commented out - tests should be in version control
 docs/
 
 # Demo and test files
