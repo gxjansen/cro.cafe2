@@ -75,8 +75,8 @@ jobs:
           npx tsx scripts/generate-episodes.ts $ARGS 2>&1 | tee episode-generation.log
           
           # Extract statistics
-          EPISODES_GENERATED=$(grep "✅ Generated" episode-generation.log | grep -oE '[0-9]+ episodes' | grep -oE '[0-9]+' || echo "0")
-          echo "episodes-generated=$EPISODES_GENERATED" >> $GITHUB_OUTPUT
+          EPISODES_GENERATED=$(grep "✅ Generated" episode-generation.log | grep -oE '[0-9]+ episodes' | grep -oE '[0-9]+' | head -1 || echo "0")
+          echo "episodes-generated=${EPISODES_GENERATED}" >> $GITHUB_OUTPUT
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
           NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
