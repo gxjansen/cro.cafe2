@@ -1,6 +1,14 @@
 name: Sync Episodes from NocoDB
 
 on:
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/generate-episodes.ts'
+      - '.github/workflows/sync-episodes.yml'
+  
   # Manual trigger via GitHub UI
   workflow_dispatch:
     inputs:
