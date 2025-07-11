@@ -33,9 +33,17 @@ https://nl.cro.cafe/podcast/*  https://cro.cafe/nl/episodes/:splat  301!
 https://es.cro.cafe/podcast/*  https://cro.cafe/es/episodes/:splat  301!
 
 # Guest URLs - MUST come before generic redirects
+# Handle all variations: /guest/, /gaste/, /gasten/, /invitados/
 https://de.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://de.cro.cafe/gaste/*  https://cro.cafe/guests/:splat  301!
 https://nl.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://nl.cro.cafe/gasten/*  https://cro.cafe/guests/:splat  301!
 https://es.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://es.cro.cafe/invitados/*  https://cro.cafe/guests/:splat  301!
+# English was on main domain
+https://cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://www.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
+https://en.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
 
 # Generic subdomain redirects - come after specific path rewrites
 https://nl.cro.cafe/  https://cro.cafe/nl/  301!
@@ -72,6 +80,12 @@ https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
 /nl/podcast/*  /nl/episodes/:splat  301!
 /es/podcast/*  /es/episodes/:splat  301!
 /en/podcast/*  /en/episodes/:splat  301!
+
+# Handle guest URLs on main domain (for all language variations)
+/guest/*  /guests/:splat  301!
+/gaste/*  /guests/:splat  301!
+/gasten/*  /guests/:splat  301!
+/invitados/*  /guests/:splat  301!
 
 # ============================================================================
 # COMPREHENSIVE OLD SITE REDIRECTS
