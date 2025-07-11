@@ -40,6 +40,20 @@ https://de.cro.cafe/podcast/*  https://cro.cafe/de/episodes/:splat  301!
 https://nl.cro.cafe/podcast/*  https://cro.cafe/nl/episodes/:splat  301!
 https://es.cro.cafe/podcast/*  https://cro.cafe/es/episodes/:splat  301!
 
+# Specific guest redirects - MUST come before generic patterns
+# Ricardo Tayar Lopez - redirect to hosts page
+https://es.cro.cafe/invitados/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+https://www.cro.cafe/guests/ricardo-tayar-lopez/  https://cro.cafe/hosts/ricardotayar/  301!
+https://cro.cafe/guests/ricardo-tayar-lopez/  https://cro.cafe/hosts/ricardotayar/  301!
+# Also handle without trailing slash
+https://www.cro.cafe/guests/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+https://cro.cafe/guests/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+# Handle other language subdomains that might have this URL
+https://de.cro.cafe/guest/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+https://de.cro.cafe/gaste/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+https://nl.cro.cafe/guest/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+https://nl.cro.cafe/gasten/ricardo-tayar-lopez  https://cro.cafe/hosts/ricardotayar/  301!
+
 # Guest URLs - MUST come before generic redirects
 # Handle all variations: /guest/, /gaste/, /gasten/, /invitados/
 https://de.cro.cafe/guest/*  https://cro.cafe/guests/:splat  301!
