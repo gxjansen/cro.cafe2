@@ -27,7 +27,15 @@ https://de.cro.cafe/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-chr
 /de/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active  /de/episodes/48-customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active/  301!
 
 # Legacy URL path rewrites - MUST come before generic redirects
-# Note: These generic redirects won't handle slug changes, see specific redirects above
+# Main podcast pages (without trailing paths)
+https://de.cro.cafe/podcast  https://cro.cafe/de/episodes/  301!
+https://nl.cro.cafe/podcast  https://cro.cafe/nl/episodes/  301!
+https://es.cro.cafe/podcast  https://cro.cafe/es/episodes/  301!
+https://en.cro.cafe/podcast  https://cro.cafe/en/episodes/  301!
+https://cro.cafe/podcast  https://cro.cafe/en/episodes/  301!
+https://www.cro.cafe/podcast  https://cro.cafe/en/episodes/  301!
+
+# Individual podcast episode redirects
 https://de.cro.cafe/podcast/*  https://cro.cafe/de/episodes/:splat  301!
 https://nl.cro.cafe/podcast/*  https://cro.cafe/nl/episodes/:splat  301!
 https://es.cro.cafe/podcast/*  https://cro.cafe/es/episodes/:splat  301!
@@ -76,6 +84,14 @@ https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
 # MAIN DOMAIN PATH REWRITES
 # ============================================================================
 # Handle podcast URLs that might already be on the main domain
+# Main podcast pages
+/de/podcast  /de/episodes/  301!
+/nl/podcast  /nl/episodes/  301!
+/es/podcast  /es/episodes/  301!
+/en/podcast  /en/episodes/  301!
+/podcast  /en/episodes/  301!
+
+# Individual podcast episodes
 /de/podcast/*  /de/episodes/:splat  301!
 /nl/podcast/*  /nl/episodes/:splat  301!
 /es/podcast/*  /es/episodes/:splat  301!
