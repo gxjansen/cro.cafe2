@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
 
 // Check if the URL needs a trailing slash redirect
 const url = new URL(Astro.url);
@@ -17,7 +18,10 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
   description="The page you're looking for doesn't exist."
   noIndex={true}
 >
-  <div class="min-h-[60vh] flex items-center justify-center px-4">
+  <Header currentPath="/404" />
+  
+  <main id="main-content" class="flex-1">
+    <div class="min-h-[60vh] flex items-center justify-center px-4">
     <div class="text-center max-w-2xl mx-auto">
       <h1 class="text-6xl font-bold text-brand-500 mb-4">
         404 - Page Not Found
@@ -51,4 +55,5 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
       </div>
     </div>
   </div>
+  </main>
 </BaseLayout>
