@@ -195,30 +195,28 @@ class EpisodeGenerator {
     const createdAt = episode.CreatedAt ? new Date(episode.CreatedAt).toISOString() : publishedAt
     const updatedAt = episode.UpdatedAt ? new Date(episode.UpdatedAt).toISOString() : createdAt
 
-    // Build frontmatter
+    // Build frontmatter - using field names that match the schema
     const frontmatter: any = {
       title: this.escapeYaml(episode.title || ''),
-      episodeNumber: episode.episode_number || 0,
-      seasonNumber: episode.season || 1,
-      slug: episode.slug || '',
-      guid: episode.transistor_id || episode.Id?.toString() || '',
-      audioUrl: episode.media_url || '',
-      episodeType: episode.episode_type || 'full',
       description: this.escapeYaml(episode.description || ''),
-      publishedAt,
-      language: episode.language || 'en',
+      pubDate: publishedAt, // Schema expects 'pubDate' not 'publishedAt'
+      season: episode.season || 1, // Schema expects 'season' not 'seasonNumber'
+      episode: episode.episode_number || 0, // Schema expects 'episode' not 'episodeNumber'
       duration: this.formatDuration(episode.duration_formatted || episode.duration || '00:00'),
-      isExplicit: episode.explicit || false,
-      aiGenerated: {
-        summary: this.escapeYaml(episode.ai_summary || episode.summary || ''),
-        keywords: this.escapeYaml(episode.ai_keywords || episode.keywords || ''),
-        takeaways: this.escapeYaml(episode.ai_takeaways || '')
-      }
+      audioUrl: episode.media_url || '',
+      language: episode.language || 'en',
+      transistorId: episode.transistor_id || episode.Id?.toString() || '', // Schema expects 'transistorId' not 'guid'
+      episodeType: episode.episode_type || 'full',
+      // Additional fields not required by schema but useful
+      slug: episode.slug || '',
+      keywords: this.parseKeywords(episode.ai_keywords || episode.keywords || ''), // Schema expects array
+      summary: this.escapeYaml(episode.ai_summary || episode.summary || ''), // For SEO
+      featured: episode.featured || false
     }
 
     // Add optional fields
     if (episode.image_url) {
-      frontmatter.episodeImage = episode.image_url
+      frontmatter.imageUrl = episode.image_url // Schema expects 'imageUrl' not 'episodeImage'
     }
 
     if (episode.share_url) {
@@ -237,22 +235,30 @@ class EpisodeGenerator {
       frontmatter.platforms = episode.platforms.map((platform: any) => platform.slug || platform.name || platform)
     }
 
-    // Add metadata
-    frontmatter.meta = {
-      canonicalUrl: episode.canonical_url || `https://cro.cafe/${episode.language}/episodes/season-${episode.season || 1}/${episode.slug}`,
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@type': 'PodcastEpisode',
-        name: episode.title,
-        description: episode.description,
-        datePublished: publishedAt,
-        timeRequired: episode.duration_formatted || 'PT30M'
-      }
+    // Add optional SEO fields if available
+    if (episode.seo_title) {
+      frontmatter.seoTitle = episode.seo_title
     }
-
-    // Add timestamps
-    frontmatter.createdAt = createdAt
-    frontmatter.updatedAt = updatedAt
+    
+    if (episode.meta_description) {
+      frontmatter.metaDescription = episode.meta_description
+    }
+    
+    if (episode.transcript || episode.ai_transcript_text) {
+      frontmatter.transcript = episode.transcript || episode.ai_transcript_text
+    }
+    
+    if (episode.downloads_total) {
+      frontmatter.downloads_total = episode.downloads_total
+    }
+    
+    if (episode.embed_html) {
+      frontmatter.embedHtml = episode.embed_html
+    }
+    
+    if (episode.explicit !== undefined) {
+      frontmatter.isExplicit = episode.explicit
+    }
 
     // Convert frontmatter to YAML
     let mdxContent = '---\n'
@@ -263,12 +269,6 @@ class EpisodeGenerator {
     if (episode.show_notes) {
       mdxContent += '## Show Notes\n\n'
       mdxContent += episode.show_notes + '\n\n'
-    }
-
-    // Add AI transcript if available
-    if (episode.ai_transcript_text) {
-      mdxContent += '## Transcript\n\n'
-      mdxContent += episode.ai_transcript_text + '\n'
     }
 
     return mdxContent
@@ -300,6 +300,16 @@ class EpisodeGenerator {
     const minutes = Math.floor(duration / 60)
     const seconds = duration % 60
     return `${minutes}:${String(seconds).padStart(2, '0')}`
+  }
+
+  private parseKeywords(keywords: string): string[] {
+    if (!keywords) return []
+    
+    // If it's already an array, return it
+    if (Array.isArray(keywords)) return keywords
+    
+    // Split by comma and clean up
+    return keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
   }
 
   private objectToYaml(obj: any, indent = 0): string {
