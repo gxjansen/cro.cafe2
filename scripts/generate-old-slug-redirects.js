@@ -17,6 +17,7 @@ const redirectMappings = {
     // Old slug → New slug (without /podcast/ or /episodes/ prefix)
     'willkommen-bei-cro-cafe-auf-deutsch': 'cro-cafe-jetzt-auch-auf-deutsch',
     'customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active': '48-customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active',
+    'hinter-den-kulissen-von-meta': '24-hinter-den-kulissen-von-dem-tech-giganten-meta-mit-michael-pietsch',
     // Add more German redirects here as needed
   },
   nl: {

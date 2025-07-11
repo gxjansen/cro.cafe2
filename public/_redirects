@@ -73,5 +73,44 @@ https://es.cro.cafe/* https://cro.cafe/es/:splat  301!
 /es/podcast/*  /es/episodes/:splat  301!
 /en/podcast/*  /en/episodes/:splat  301!
 
+# ============================================================================
+# COMPREHENSIVE OLD SITE REDIRECTS
+# ============================================================================
+# Generated from old sitemaps and redirect CSV files
+# See scripts/process-old-sitemaps.js for regeneration
+
+# DE redirects from old site structure
+https://de.cro.cafe/partner  https://cro.cafe/supporter  301!
+https://de.cro.cafe/events  https://cro.cafe/about/  301!
+https://de.cro.cafe/zakelijk  https://cro.cafe/business  301!
+https://de.cro.cafe/livestream  https://cro.cafe/about/  301!
+https://de.cro.cafe/guests  https://cro.cafe/all/guests/  301!
+https://de.cro.cafe/newsletter  https://cro.cafe/de/subscribe/  301!
+https://de.cro.cafe/croppuccino  https://cro.cafe/de/subscribe/  301!
+https://de.cro.cafe/cropuccino  https://cro.cafe/de/subscribe/  301!
+https://de.cro.cafe/business  https://cro.cafe/about/  301!
+
+# NL redirects from old site structure  
+https://nl.cro.cafe/gasten  https://cro.cafe/all/guests/  301!
+https://nl.cro.cafe/events  https://cro.cafe/about/  301!
+https://nl.cro.cafe/zakelijk  https://cro.cafe/business  301!
+https://nl.cro.cafe/business  https://cro.cafe/about/  301!
+https://nl.cro.cafe/nieuwsbrief  https://cro.cafe/nl/subscribe/  301!
+https://nl.cro.cafe/newsletter  https://cro.cafe/nl/subscribe/  301!
+https://nl.cro.cafe/croppuccino  https://cro.cafe/nl/subscribe/  301!
+
+# ES redirects from old site structure
+https://es.cro.cafe/invitados  https://cro.cafe/all/guests/  301!
+https://es.cro.cafe/eventos  https://cro.cafe/about/  301!
+https://es.cro.cafe/newsletter  https://cro.cafe/es/subscribe/  301!
+https://es.cro.cafe/suscribirse  https://cro.cafe/es/subscribe/  301!
+
+# EN redirects from old site structure
+https://en.cro.cafe/guests  https://cro.cafe/all/guests/  301!
+https://en.cro.cafe/events  https://cro.cafe/about/  301!
+https://en.cro.cafe/business  https://cro.cafe/about/  301!
+https://en.cro.cafe/newsletter  https://cro.cafe/en/subscribe/  301!
+https://en.cro.cafe/croppuccino  https://cro.cafe/en/subscribe/  301!
+
 # Allow normal behavior for all other pages
 /*           /:splat           200
