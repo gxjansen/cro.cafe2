@@ -29,36 +29,16 @@ export async function getFeaturedEpisodes(limit = 4) {
 // Get guests by language
 export async function getGuestsByLanguage(language: Language) {
   const guests = await getCollection('guests')
-  const episodes = await getCollection('episodes')
 
-  // Filter guests who have at least one published episode in the specified language
+  // Filter guests who have the specified language in their languages array
+  // The languages array contains the languages of episodes the guest appeared in
   return guests
     .filter(guest => {
-      // Check if guest is marked for this language
-      if (!guest.data.languages.includes(language)) {
-        return false
+      // Check if the guest has appeared in episodes of this language
+      if (guest.data.languages && Array.isArray(guest.data.languages)) {
+        return guest.data.languages.includes(language)
       }
-
-      const guestSlug = guest.data.slug || guest.slug
-
-      // Check if guest has any published episodes in this language
-      const hasPublishedEpisodes = episodes.some(episode =>
-        episode.data.language === language &&
-        episode.data.status === 'published' &&
-        episode.data.guests.includes(guestSlug)
-      )
-
-      // If no episodes found via guest array, check if guest has episode IDs
-      if (!hasPublishedEpisodes && guest.data.episodes && guest.data.episodes.length > 0) {
-        // Check if any of the guest's episode IDs correspond to published episodes in this language
-        return episodes.some(episode =>
-          episode.data.language === language &&
-          episode.data.status === 'published' &&
-          guest.data.episodes.includes(episode.data.transistorId)
-        )
-      }
-
-      return hasPublishedEpisodes
+      return false
     })
     .sort((a, b) => a.data.name.localeCompare(b.data.name))
 }
