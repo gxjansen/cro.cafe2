@@ -311,25 +311,14 @@ class EpisodeGenerator {
         continue
       }
       
-      yaml += `${spaces}${key}: `
+      // Quote keys that start with @ or contain special characters
+      const needsQuoting = key.startsWith('@') || key.includes(':') || key.includes('#')
+      const yamlKey = needsQuoting ? `'${key}'` : key
+      
+      yaml += `${spaces}${yamlKey}: `
       
       if (typeof value === 'object' && !Array.isArray(value)) {
-        // Special handling for jsonLd to ensure proper indentation
-        if (key === 'jsonLd') {
-          yaml += '\n'
-          // Handle @context separately to ensure proper indentation
-          if (value['@context']) {
-            yaml += `${spaces}  '@context': ${value['@context']}\n`
-          }
-          // Handle other jsonLd properties
-          for (const [jsonLdKey, jsonLdValue] of Object.entries(value)) {
-            if (jsonLdKey !== '@context') {
-              yaml += `${spaces}  ${jsonLdKey}: ${typeof jsonLdValue === 'string' ? this.escapeYaml(jsonLdValue) : jsonLdValue}\n`
-            }
-          }
-        } else {
-          yaml += '\n' + this.objectToYaml(value, indent + 2)
-        }
+        yaml += '\n' + this.objectToYaml(value, indent + 2)
       } else if (Array.isArray(value)) {
         if (value.length === 0) {
           yaml += '[]\n'
