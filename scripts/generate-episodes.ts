@@ -2,6 +2,7 @@
 /**
  * Episode-specific content generator for NocoDB sync
  * Handles only episode content to prevent cross-contamination
+ * Updated to ensure transistorId is always output as string
  */
 
 import { promises as fs } from 'fs'
