@@ -21,7 +21,6 @@ describe('Episode MDX Frontmatter Validation', () => {
     'audioUrl',
     'language',
     'transistorId',
-    'episodeType',
     'slug'
   ]
 
