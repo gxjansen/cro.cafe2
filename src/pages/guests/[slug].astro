@@ -363,11 +363,13 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
             (() => {
               const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
               const firstEpisodeDate = oldestEpisode.data.pubDate.toISOString();
+              const episodeDates = guestEpisodes.map(ep => ep.data.pubDate.toISOString());
               
               return (
                 <CareerTimeline
                   experiences={JSON.stringify(guestWithLinkedIn.linkedInData.experiences)}
                   firstEpisodeDate={firstEpisodeDate}
+                  episodeDates={episodeDates}
                   guestName={guestName}
                 />
               );

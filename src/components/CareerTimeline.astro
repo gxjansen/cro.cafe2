@@ -5,10 +5,11 @@ import { safeJsonParse } from '../types/linkedin';
 export interface Props {
   experiences: string;
   firstEpisodeDate: string; // Note: Currently using 2019 cutoff instead of first episode date
+  episodeDates?: string[]; // All episode dates for this guest
   guestName: string;
 }
 
-const { experiences, firstEpisodeDate, guestName } = Astro.props;
+const { experiences, firstEpisodeDate, episodeDates, guestName } = Astro.props;
 
 // Parse experiences from JSON string
 const parsedExperiences = safeJsonParse<LinkedInExperience[]>(experiences, []);
@@ -39,32 +40,52 @@ const sortedExperiences = [...cleanedExperiences].sort((a, b) => {
   return dateB - dateA;
 });
 
-// Filter experiences to show jobs since 2019 (when CRO.CAFE started)
-const relevantExperiences = sortedExperiences.filter(exp => {
-  const cutoffDate = new Date('2019-01-01'); // CRO.CAFE started in January 2019
+// Filter experiences to show:
+// 1. Current job(s)
+// 2. Jobs held during any episode recording
+const relevantExperiences = (() => {
+  // Always include current jobs
+  const currentJobs = sortedExperiences.filter(exp => !exp.endDate || exp.isCurrent);
   
-  // Parse dates
-  const expStartDate = exp.startDate ? new Date(exp.startDate) : null;
-  const expEndDate = exp.endDate ? new Date(exp.endDate) : null;
+  // If we have episode dates, find jobs active during recordings
+  const episodeTimeJobs = episodeDates ? sortedExperiences.filter(exp => {
+    // Skip if already included as current job
+    if (!exp.endDate || exp.isCurrent) return false;
+    
+    const expStartDate = exp.startDate ? new Date(exp.startDate) : null;
+    const expEndDate = exp.endDate ? new Date(exp.endDate) : null;
+    
+    // Check if this job was active during any episode recording
+    return episodeDates.some(episodeDate => {
+      const epDate = new Date(episodeDate);
+      
+      // Job was active if:
+      // - It started before or on the episode date AND
+      // - It ended after the episode date (or has no start date)
+      const startedBeforeEpisode = !expStartDate || (expStartDate <= epDate);
+      const endedAfterEpisode = !expEndDate || (expEndDate >= epDate);
+      
+      return startedBeforeEpisode && endedAfterEpisode;
+    });
+  }) : [];
   
-  // Include if:
-  // 1. Job is current (no end date), OR
-  // 2. Job ended after 2019, OR  
-  // 3. Job started after 2019
-  if (!expEndDate || exp.isCurrent) {
-    // Current job - always include
-    return true;
-  } else if (expEndDate >= cutoffDate) {
-    // Job ended after 2019 - include
-    return true;
-  } else if (expStartDate && expStartDate >= cutoffDate) {
-    // Job started after 2019 - include
-    return true;
-  }
+  // Combine and deduplicate
+  const allRelevantJobs = [...currentJobs, ...episodeTimeJobs];
+  const uniqueJobs = allRelevantJobs.filter((exp, index, self) => 
+    self.findIndex(e => 
+      e.title === exp.title && 
+      e.company === exp.company &&
+      e.startDate === exp.startDate
+    ) === index
+  );
   
-  // Exclude jobs that ended before 2019
-  return false;
-});
+  // Sort by start date (most recent first) and limit to reasonable number
+  return uniqueJobs.sort((a, b) => {
+    const dateA = a.startDate ? new Date(a.startDate).getTime() : Date.now();
+    const dateB = b.startDate ? new Date(b.startDate).getTime() : Date.now();
+    return dateB - dateA;
+  }).slice(0, 4); // Maximum 4 jobs to ensure they fit on screen
+})();
 
 // If no relevant experiences, return null
 if (relevantExperiences.length === 0) {
@@ -87,9 +108,39 @@ function formatDate(dateStr?: string | null): string {
   }
 }
 
+// Process experiences with episode information
+const processedExperiences = relevantExperiences.map(experience => {
+  const isCurrentRole = experience.isCurrent || !experience.endDate;
+  
+  // Check if this job was active during any episode
+  let wasActiveAtRecording = false;
+  if (episodeDates) {
+    for (const episodeDate of episodeDates) {
+      const epDate = new Date(episodeDate);
+      const expStartDate = experience.startDate ? new Date(experience.startDate) : null;
+      const expEndDate = experience.endDate ? new Date(experience.endDate) : null;
+      
+      const startedBeforeEpisode = !expStartDate || expStartDate.getTime() <= epDate.getTime();
+      const endedAfterEpisode = !expEndDate || expEndDate.getTime() >= epDate.getTime();
+      
+      if (startedBeforeEpisode && endedAfterEpisode) {
+        wasActiveAtRecording = true;
+        break;
+      }
+    }
+  }
+  
+  return {
+    ...experience,
+    isCurrentRole,
+    wasActiveAtRecording,
+    formattedDuration: experience.duration || `${formatDate(experience.startDate)} - ${formatDate(experience.endDate)}`
+  };
+});
+
 ---
 
-{parsedExperiences.length > 0 && relevantExperiences.length > 0 && (
+{parsedExperiences.length > 0 && relevantExperiences.length > 0 ? (
 <div class="career-timeline" data-timeline role="region" aria-label={`Career journey for ${guestName}`}>
   <div class="timeline-header">
     <h2>Career Journey</h2>
@@ -112,12 +163,9 @@ function formatDate(dateStr?: string | null): string {
     </div>
     
     <div class="timeline-items">
-      {relevantExperiences.map((experience, index) => {
-        const isCurrentRole = experience.isCurrent;
-        
-        return (
+      {processedExperiences.map((experience, index) => (
           <div 
-            class={`timeline-item ${isCurrentRole ? 'current' : ''}`}
+            class={`timeline-item ${experience.isCurrentRole ? 'current' : ''} ${experience.wasActiveAtRecording ? 'episode-time' : ''}`}
             data-timeline-item
           >
             <div class="timeline-dot"></div>
@@ -131,24 +179,29 @@ function formatDate(dateStr?: string | null): string {
               
               <div class="timeline-meta">
                 <time class="timeline-date">
-                  {experience.duration || `${formatDate(experience.startDate)} - ${formatDate(experience.endDate)}`}
+                  {experience.formattedDuration}
                 </time>
                 {experience.location && (
                   <span class="timeline-location">{experience.location}</span>
                 )}
               </div>
               
+              {experience.wasActiveAtRecording && !experience.isCurrentRole && (
+                <div class="timeline-badge">
+                  <span class="episode-badge">During CRO.CAFE episode</span>
+                </div>
+              )}
+              
               {experience.description && (
                 <p class="timeline-description">{experience.description}</p>
               )}
             </div>
           </div>
-        );
-      })}
+      ))}
     </div>
   </div>
 </div>
-)}
+) : null}
 
 <style>
   .career-timeline {
@@ -449,6 +502,34 @@ function formatDate(dateStr?: string | null): string {
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
   }
+  
+  /* Episode badge */
+  .timeline-badge {
+    margin-top: 0.5rem;
+  }
+  
+  .episode-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: 9999px;
+    gap: 0.25rem;
+  }
+  
+  .episode-badge::before {
+    content: "🎙️";
+    font-size: 0.875rem;
+  }
+  
+  /* Episode-time job styling */
+  .timeline-item.episode-time .timeline-dot {
+    border-color: #3b82f6;
+    background-color: #dbeafe;
+  }
 
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
@@ -469,6 +550,15 @@ function formatDate(dateStr?: string | null): string {
     .timeline-company,
     .timeline-description {
       color: #9ca3af;
+    }
+    
+    .episode-badge {
+      background-color: #1e3a8a;
+      color: #dbeafe;
+    }
+    
+    .timeline-item.episode-time .timeline-dot {
+      background-color: #1e3a8a;
     }
 
   }
