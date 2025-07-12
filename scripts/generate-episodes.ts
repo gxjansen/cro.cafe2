@@ -2,15 +2,12 @@
 /**
  * Episode-specific content generator for NocoDB sync
  * Handles only episode content to prevent cross-contamination
- * Updated to ensure transistorId is always output as quoted string
- * Version: 1.0.3 - Fixed: Force quotes on numeric strings in YAML
  */
 
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
-import * as yaml from 'js-yaml'
-import { NocoDBWorkingClient as NocdbClient } from '../src/lib/services/nocodb-working-client.js'
-import type { Language } from '../src/types/index.js'
+import { NocoDBWorkingClient as NocdbClient } from '../src/lib/services/nocodb-working-client'
+import type { Language } from '../src/types'
 
 interface EpisodeGenerationStats {
   episodesGenerated: number
@@ -104,9 +101,9 @@ class EpisodeGenerator {
           try {
             await fs.unlink(file)
             this.stats.filesDeleted++
-            console.log(`  Deleted: ${file}`)
+            console.log(`  - Deleted: ${file}`)
           } catch (error) {
-            console.error(`  Failed to delete ${file}:`, error)
+            console.error(`Failed to delete ${file}:`, error)
           }
         }
       }
@@ -114,9 +111,15 @@ class EpisodeGenerator {
       this.stats.endTime = new Date()
       const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime()
 
-      console.log(`✅ Generated ${this.stats.episodesGenerated} episodes in ${duration}ms`)
+      console.log(`✅ Episode generation complete in ${duration}ms`)
+      console.log(`✅ Generated ${this.stats.episodesGenerated} episodes`)
+
       if (this.stats.filesDeleted > 0) {
         console.log(`🗑️ Deleted ${this.stats.filesDeleted} orphaned files`)
+      }
+
+      if (this.stats.errors.length > 0) {
+        console.log(`⚠️ ${this.stats.errors.length} errors occurred`)
       }
 
     } catch (error) {
@@ -127,307 +130,341 @@ class EpisodeGenerator {
     return this.stats
   }
 
-  private async ensureDirectories(): Promise<void> {
-    for (const lang of this.languages) {
-      const langDir = join(this.outputDir, lang)
-      await fs.mkdir(langDir, { recursive: true })
-      
-      // Create season directories
-      for (let season = 1; season <= 5; season++) {
-        const seasonDir = join(langDir, `season-${season}`)
-        await fs.mkdir(seasonDir, { recursive: true })
+  private async generateEpisodeMDX(episode: any): Promise<string> {
+    if (!episode.slug && !episode.Id) {
+      throw new Error('Episode missing both slug and ID - cannot generate file')
+    }
+
+    if (!episode.title) {
+      console.warn(`Warning: Episode ${episode.Id} missing title`)
+    }
+
+    const language = episode.language as Language || 'en'
+    const seasonDir = `season-${episode.season || 1}`
+    const episodePath = join(
+      this.outputDir,
+      language,
+      seasonDir,
+      `episode-${String(episode.episode_number || episode.Id).padStart(3, '0')}-${episode.slug || `episode-${episode.Id}`}.mdx`
+    )
+
+    const frontmatter = this.generateEpisodeFrontmatter(episode)
+    const content = this.generateEpisodeContent(episode)
+    const mdxContent = `---\n${frontmatter}\n---\n\n${content}`
+
+    await this.ensureDirectoryExists(dirname(episodePath))
+    await fs.writeFile(episodePath, mdxContent, 'utf8')
+
+    console.log(`📝 Created episode: ${language}/${seasonDir}/${episode.slug || episode.Id}`)
+
+    return episodePath
+  }
+
+  private generateEpisodeFrontmatter(episode: any): string {
+    // Extract hosts from relationship data and deduplicate
+    const hostData: Array<{slug?: string, name?: string}> = []
+
+    if (episode.host && Array.isArray(episode.host)) {
+      episode.host.forEach((h: any) => {
+        hostData.push({ slug: h.slug, name: h.name })
+      })
+    }
+
+    if (episode._nc_m2m_Episodes_Hosts && Array.isArray(episode._nc_m2m_Episodes_Hosts)) {
+      episode._nc_m2m_Episodes_Hosts.forEach((rel: any) => {
+        if (rel.Hosts) {
+          hostData.push({ slug: rel.Hosts.slug, name: rel.Hosts.name })
+        }
+      })
+    }
+
+    // Deduplicate hosts
+    const nameToSlugMap = new Map<string, string>()
+    const finalHostsSet = new Set<string>()
+
+    hostData.forEach(h => {
+      if (h.slug && h.name) {
+        nameToSlugMap.set(h.name, h.slug)
+      }
+    })
+
+    hostData.forEach(h => {
+      if (h.slug) {
+        finalHostsSet.add(h.slug)
+      } else if (h.name) {
+        const slug = nameToSlugMap.get(h.name)
+        finalHostsSet.add(slug || h.name)
+      }
+    })
+
+    const hosts = Array.from(finalHostsSet)
+
+    // Extract guests similarly
+    const guestData: Array<{slug?: string, name?: string}> = []
+
+    if (episode.guest && Array.isArray(episode.guest)) {
+      episode.guest.forEach((g: any) => {
+        guestData.push({ slug: g.slug, name: g.name })
+      })
+    }
+
+    if (episode._nc_m2m_Episodes_Guests && Array.isArray(episode._nc_m2m_Episodes_Guests)) {
+      episode._nc_m2m_Episodes_Guests.forEach((rel: any) => {
+        if (rel.Guests) {
+          guestData.push({ slug: rel.Guests.slug, name: rel.Guests.name })
+        }
+      })
+    }
+
+    // Deduplicate guests
+    const guestNameToSlugMap = new Map<string, string>()
+    const finalGuestsSet = new Set<string>()
+
+    guestData.forEach(g => {
+      if (g.slug && g.name) {
+        guestNameToSlugMap.set(g.name, g.slug)
+      }
+    })
+
+    guestData.forEach(g => {
+      if (g.slug) {
+        finalGuestsSet.add(g.slug)
+      } else if (g.name) {
+        const slug = guestNameToSlugMap.get(g.name)
+        finalGuestsSet.add(slug || g.name)
+      }
+    })
+
+    const guests = Array.from(finalGuestsSet)
+
+    // Clean description and summary
+    const cleanDescription = this.cleanHtmlForYaml(episode.formatted_description || episode.description || '')
+    const cleanSummary = this.cleanHtmlForYaml(episode.formatted_summary || episode.summary || '')
+
+    // Get duration in seconds
+    let durationInSeconds = '0'
+
+    if (episode.duration_seconds && !episode.duration_seconds.toString().includes(':')) {
+      durationInSeconds = episode.duration_seconds.toString()
+    } else if (episode.Duration && !episode.Duration.toString().includes(':')) {
+      durationInSeconds = episode.Duration.toString()
+    } else if (episode.duration && !episode.duration.toString().includes(':')) {
+      durationInSeconds = episode.duration.toString()
+    } else {
+      // Convert MM:SS to seconds as fallback
+      const formatted = episode.duration || episode.Duration || episode.duration_formatted || '0'
+      if (formatted.toString().includes(':')) {
+        const parts = formatted.toString().split(':')
+        if (parts.length === 2) {
+          const minutes = parseInt(parts[0], 10) || 0
+          const seconds = parseInt(parts[1], 10) || 0
+          durationInSeconds = (minutes * 60 + seconds).toString()
+        }
       }
     }
+
+    return [
+      `title: "${this.escapeYaml(episode.title || '')}"`,
+      `slug: "${episode.slug || ''}"`,
+      `description: "${cleanDescription}"`,
+      `summary: "${cleanSummary}"`,
+      `episode: ${episode.episode_number || 0}`,
+      `season: ${episode.season || 1}`,
+      `language: "${episode.language || 'en'}"`,
+      `duration: "${durationInSeconds}"`,
+      `audioUrl: "${episode.media_url || ''}"`,
+      episode.image_url ? `imageUrl: "${episode.image_url}"` : '',
+      `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
+      `transistorId: "${episode.transistor_id || ''}"`,
+      episode.downloads_total ? `downloads_total: ${episode.downloads_total}` : '',
+      episode.episode_type ? `episode_type: "${episode.episode_type}"` : '',
+      `status: "${episode.status || 'published'}"`,
+      `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
+      `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
+      episode.ai_keywords ? `keywords: "${this.escapeYaml(episode.ai_keywords)}"` : '',
+      episode.ai_summary ? `aiSummary: "${this.escapeYaml(episode.ai_summary)}"` : '',
+      `createdAt: ${new Date(episode.CreatedAt || Date.now()).toISOString()}`,
+      `updatedAt: ${new Date(episode.UpdatedAt || Date.now()).toISOString()}`
+    ].filter(Boolean).join('\n')
+  }
+
+  private generateEpisodeContent(episode: any): string {
+    const content = []
+
+    const description = episode.formatted_description || episode.description
+    if (description) {
+      content.push(this.cleanHtmlContent(description))
+      content.push('')
+    }
+
+    if (episode.ai_transcript_text) {
+      content.push('## Transcript')
+      content.push('')
+      content.push(episode.ai_transcript_text)
+      content.push('')
+    }
+
+    if (episode.show_notes) {
+      content.push('## Show Notes')
+      content.push('')
+      content.push(episode.show_notes)
+      content.push('')
+    }
+
+    return content.join('\n')
   }
 
   private async getExistingFiles(): Promise<Set<string>> {
     const files = new Set<string>()
-    
+
     for (const lang of this.languages) {
       const langDir = join(this.outputDir, lang)
-      
       try {
-        // Check each season directory
-        for (let season = 1; season <= 5; season++) {
-          const seasonDir = join(langDir, `season-${season}`)
-          
-          try {
-            const entries = await fs.readdir(seasonDir)
-            for (const entry of entries) {
-              if (entry.endsWith('.mdx')) {
-                files.add(join(seasonDir, entry))
-              }
-            }
-          } catch {
-            // Season directory doesn't exist yet
-          }
-        }
-      } catch {
-        // Language directory doesn't exist yet
+        await this.scanDirectory(langDir, files)
+      } catch (error) {
+        // Language directory might not exist yet
       }
     }
-    
+
     return files
   }
 
-  private async generateEpisodeMDX(episode: any): Promise<string | null> {
-    const language = episode.language as Language
-    if (!this.languages.includes(language)) {
-      return null
-    }
+  private async scanDirectory(dir: string, files: Set<string>): Promise<void> {
+    try {
+      const entries = await fs.readdir(dir, { withFileTypes: true })
 
-    const seasonDir = `season-${episode.season || 1}`
-    const fileName = `episode-${String(episode.episode_number).padStart(3, '0')}-${episode.slug}.mdx`
-    const filePath = join(this.outputDir, language, seasonDir, fileName)
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name)
 
-    // Ensure directory exists
-    await fs.mkdir(dirname(filePath), { recursive: true })
-
-    // Generate MDX content
-    const content = this.generateMDXContent(episode)
-    
-    // Write file
-    await fs.writeFile(filePath, content, 'utf8')
-    
-    return filePath
-  }
-
-  private generateMDXContent(episode: any): string {
-    // Format dates
-    const publishedAt = episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()
-    const createdAt = episode.CreatedAt ? new Date(episode.CreatedAt).toISOString() : publishedAt
-    const updatedAt = episode.UpdatedAt ? new Date(episode.UpdatedAt).toISOString() : createdAt
-
-    // Build frontmatter - using field names that match the schema
-    const frontmatter: any = {
-      title: this.escapeYaml(episode.title || ''),
-      description: this.escapeYaml(episode.description || episode.ai_summary || episode.summary || episode.title || ''),
-      pubDate: publishedAt, // Schema expects 'pubDate' not 'publishedAt'
-      season: episode.season || 1, // Schema expects 'season' not 'seasonNumber'
-      episode: episode.episode_number || 0, // Schema expects 'episode' not 'episodeNumber'
-      duration: this.formatDuration(episode.duration_formatted || episode.duration || '00:00'),
-      audioUrl: episode.media_url || '',
-      language: episode.language || 'en',
-      transistorId: String(episode.transistor_id || episode.Id || ''), // Schema expects 'transistorId' not 'guid'
-      episodeType: episode.episode_type || 'full',
-      // Additional fields not required by schema but useful
-      slug: episode.slug || '',
-      keywords: this.parseKeywords(episode.ai_keywords || episode.keywords), // Schema expects array
-      summary: this.escapeYaml(episode.ai_summary || episode.summary || episode.description || ''), // For SEO
-      featured: episode.featured || false,
-      status: episode.status || 'published',
-      createdAt: createdAt,
-      updatedAt: updatedAt
-    }
-
-    // Add optional fields
-    if (episode.image_url) {
-      frontmatter.imageUrl = episode.image_url // Schema expects 'imageUrl' not 'episodeImage'
-    }
-
-    if (episode.share_url) {
-      frontmatter.shareUrl = episode.share_url
-    }
-
-    // Always include hosts and guests arrays (even if empty)
-    frontmatter.hosts = []
-    if (episode.host && Array.isArray(episode.host)) {
-      // NocoDB returns 'host' not 'hosts'
-      frontmatter.hosts = episode.host.map((host: any) => String(host.slug || host.name || host))
-    } else if (episode.hosts && Array.isArray(episode.hosts)) {
-      frontmatter.hosts = episode.hosts.map((host: any) => String(host.slug || host.name || host))
-    }
-
-    frontmatter.guests = []
-    if (episode.guest && Array.isArray(episode.guest)) {
-      // NocoDB returns 'guest' not 'guests'
-      frontmatter.guests = episode.guest.map((guest: any) => String(guest.slug || guest.name || guest))
-    } else if (episode.guests && Array.isArray(episode.guests)) {
-      frontmatter.guests = episode.guests.map((guest: any) => String(guest.slug || guest.name || guest))
-    }
-
-    if (episode.platforms && Array.isArray(episode.platforms)) {
-      frontmatter.platforms = episode.platforms.map((platform: any) => platform.slug || platform.name || platform)
-    }
-
-    // Add optional SEO fields if available
-    if (episode.seo_title) {
-      frontmatter.seoTitle = episode.seo_title
-    }
-    
-    if (episode.meta_description) {
-      frontmatter.metaDescription = episode.meta_description
-    }
-    
-    if (episode.transcript || episode.ai_transcript_text) {
-      frontmatter.transcript = episode.transcript || episode.ai_transcript_text
-    }
-    
-    // Always include downloads_total (0 if not available)
-    frontmatter.downloads_total = episode.downloads_total || 0
-    
-    // Include episode_type with underscore format (for backward compatibility)
-    if (episode.episode_type) {
-      frontmatter.episode_type = episode.episode_type
-    }
-    
-    if (episode.embed_html) {
-      frontmatter.embedHtml = episode.embed_html
-    }
-    
-    if (episode.explicit !== undefined) {
-      frontmatter.isExplicit = episode.explicit
-    }
-
-    // Convert frontmatter to YAML with proper string handling
-    let mdxContent = '---\n'
-    
-    // Fields that should always be quoted even if they look like numbers
-    const fieldsToQuote = ['transistorId', 'slug', 'episodeType', 'language', 'status']
-    
-    // Use js-yaml to dump the frontmatter
-    let yamlStr = yaml.dump(frontmatter, {
-      lineWidth: -1, // Disable line wrapping
-      noRefs: true,
-      sortKeys: false,
-      quotingType: '"',
-      styles: {
-        '!!str': 'literal' // Use literal style for multiline strings
+        if (entry.isDirectory()) {
+          await this.scanDirectory(fullPath, files)
+        } else if (entry.name.endsWith('.mdx')) {
+          files.add(fullPath)
+        }
       }
-    })
-    
-    // Post-process to ensure specific fields are quoted
-    // This regex approach ensures numeric-looking values are quoted for specific fields
-    fieldsToQuote.forEach(field => {
-      // Match the field at the beginning of a line, followed by colon and space, then capture the value
-      const regex = new RegExp(`^(${field}:\\s+)(\\d+)$`, 'gm')
-      yamlStr = yamlStr.replace(regex, '$1"$2"')
-    })
-    
-    mdxContent += yamlStr
-    mdxContent += '---\n\n'
-
-    // Add show notes if available
-    if (episode.show_notes) {
-      mdxContent += '## Show Notes\n\n'
-      mdxContent += episode.show_notes + '\n\n'
+    } catch (error) {
+      // Directory might not exist
     }
-
-    return mdxContent
   }
 
-  private escapeYaml(value: string): string {
-    if (!value || value === '') return '""'  // Return empty quoted string for empty values
-    
-    // For multiline content or content with special characters, use literal block scalar
-    if (value.includes('\n') || value.includes('"') || value.includes("'") || 
-        value.includes('<') || value.includes('>') || value.includes('&') ||
-        value.includes('\\') || value.length > 80) {
-      // Use literal block scalar (|) for complex content
-      // This preserves the content exactly as-is without escaping
-      return `|\n  ${value.replace(/\n/g, '\n  ')}`
+  private async ensureDirectories(): Promise<void> {
+    for (const lang of this.languages) {
+      const langDir = join(this.outputDir, lang)
+      await this.ensureDirectoryExists(langDir)
     }
-    
-    // For simple strings with special YAML characters, quote them
-    if (value.includes(':') || value.includes('#') || value.includes('|') || 
-        value.includes('-') || value.includes('*') || value.includes('!') || 
-        value.includes('%') || value.includes('@') || value.includes('`') ||
-        value.startsWith(' ') || value.endsWith(' ')) {
-      // Simple quoting without escaping for basic special characters
-      return `"${value}"`
-    }
-    
-    return value
   }
 
-  private formatDuration(duration: string | number): string {
-    if (typeof duration === 'string') {
-      return duration
+  private async ensureDirectoryExists(dir: string): Promise<void> {
+    try {
+      await fs.mkdir(dir, { recursive: true })
+    } catch (error) {
+      if ((error as any).code !== 'EEXIST') {
+        throw error
+      }
     }
-    
-    // Convert seconds to MM:SS
-    const minutes = Math.floor(duration / 60)
-    const seconds = duration % 60
-    return `${minutes}:${String(seconds).padStart(2, '0')}`
   }
 
-  private parseKeywords(keywords: string | string[] | null | undefined): string[] {
-    if (!keywords) return []
-    
-    // If it's already an array, return it
-    if (Array.isArray(keywords)) return keywords
-    
-    // If it's a string, split by comma and clean up
-    if (typeof keywords === 'string') {
-      return keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
-    }
-    
-    return []
+  private cleanHtmlContent(html: string): string {
+    if (!html) {return ''}
+    return html
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<ul>/g, '\n')
+      .replace(/<\/ul>/g, '\n')
+      .replace(/<ol>/g, '\n')
+      .replace(/<\/ol>/g, '\n')
+      .replace(/<li>/g, '- ')
+      .replace(/<\/li>/g, '\n')
+      .replace(/<div>/g, '')
+      .replace(/<\/div>/g, '\n')
+      .replace(/<p>/g, '')
+      .replace(/<\/p>/g, '\n\n')
+      .replace(/<br\s*\/?>/g, '\n')
+      .replace(/<(\w+)([^>]*)>/g, '<$1>')
+      .replace(/<strong>/g, '**')
+      .replace(/<\/strong>/g, '**')
+      .replace(/<b>/g, '**')
+      .replace(/<\/b>/g, '**')
+      .replace(/<em>/g, '*')
+      .replace(/<\/em>/g, '*')
+      .replace(/<i>/g, '*')
+      .replace(/<\/i>/g, '*')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&gt;/g, '>')
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'")
+      .replace(/&#39;/g, "'")
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
   }
 
+  private cleanHtmlForYaml(html: string): string {
+    if (!html) {return ''}
+    const cleaned = this.cleanHtmlContent(html)
+    return this.escapeYaml(cleaned)
+  }
+
+  private escapeYaml(str: string): string {
+    if (!str) {return ''}
+    return str
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+  }
 }
 
-// CLI handling
-async function main() {
-  console.log('🚀 CROCAFE Episode Generator')
-  console.log('===========================')
+// Parse command line arguments
+function parseArgs(): EpisodeGenerationConfig {
+  const args = process.argv.slice(2)
+  const config: EpisodeGenerationConfig = {}
 
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--languages' && i + 1 < args.length) {
+      const langs = args[i + 1].split(',').map(l => l.trim()) as Language[]
+      config.languages = langs
+      i++
+    }
+  }
+
+  return config
+}
+
+// Main execution
+async function main() {
   try {
-    // Get environment variables
-    const baseUrl = process.env.NOCODB_BASE_URL
     const apiKey = process.env.NOCODB_API_KEY
+    const baseUrl = process.env.NOCODB_BASE_URL
     const baseId = process.env.NOCODB_BASE_ID
 
-    if (!baseUrl || !apiKey || !baseId) {
-      throw new Error('Missing required environment variables: NOCODB_BASE_URL, NOCODB_API_KEY, NOCODB_BASE_ID')
+    if (!apiKey || !baseUrl || !baseId) {
+      throw new Error('Missing required environment variables: NOCODB_API_KEY, NOCODB_BASE_URL, NOCODB_BASE_ID')
     }
 
-    // Parse command line arguments
-    const args = process.argv.slice(2)
-    let languages: Language[] = ['en', 'nl', 'de', 'es']
-    
-    for (let i = 0; i < args.length; i++) {
-      if (args[i] === '--languages' && args[i + 1]) {
-        languages = args[i + 1].split(',') as Language[]
-        i++
-      }
-    }
+    const config = parseArgs()
 
-    console.log('🔗 Connecting to NocoDB...')
-    console.log(`📍 Base URL: ${baseUrl}`)
-    console.log(`🆔 Base ID: ${baseId}`)
-    console.log(`🔑 API Key: ${apiKey.substring(0, 8)}...`)
-
-    // Initialize NocoDB client
     const client = new NocdbClient({
-      baseUrl,
       apiKey,
+      baseUrl,
       baseId
     })
 
-    // Initialize generator
-    const generator = new EpisodeGenerator(client, { languages })
-
-    // Generate episodes
+    const generator = new EpisodeGenerator(client, config)
     const stats = await generator.generate()
 
-    // Output for GitHub Action
-    console.log(`✅ Generated ${stats.episodesGenerated} episodes`)
-
+    // Exit with error if there were any errors
     if (stats.errors.length > 0) {
-      console.error(`\n⚠️ Errors (${stats.errors.length}):`)
-      stats.errors.forEach((error, index) => {
-        console.error(`${index + 1}. ${error}`)
-      })
       process.exit(1)
     }
 
   } catch (error) {
-    console.error('\n❌ Episode generation failed:')
-    console.error(error instanceof Error ? error.message : String(error))
+    console.error('❌ Fatal error:', error)
     process.exit(1)
   }
 }
 
-// Run the script
-main().catch(console.error)
+// Run if called directly
+main()
