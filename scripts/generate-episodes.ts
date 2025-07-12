@@ -3,7 +3,7 @@
  * Episode-specific content generator for NocoDB sync
  * Handles only episode content to prevent cross-contamination
  * Updated to ensure transistorId is always output as string
- * Version: 1.0.1 - Fixed transistorId string conversion
+ * Version: 1.0.2 - Ensure transistorId is always string type
  */
 
 import { promises as fs } from 'fs'
