@@ -91,6 +91,11 @@ jobs:
           NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
           NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
       
+      - name: Fix transistorId quotes
+        run: |
+          echo "Ensuring transistorId values are properly quoted..."
+          node scripts/fix-transistor-id-quotes.js
+      
       - name: Check for changes
         id: check-changes
         run: |

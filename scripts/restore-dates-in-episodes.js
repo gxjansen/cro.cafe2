@@ -28,7 +28,13 @@ function fixEpisodeFile(filePath) {
       return match;
     });
     
-    // Fix transistorId field - remove double quotes
+    // Fix transistorId field - ensure numeric values are quoted
+    content = content.replace(/^(\s*)transistorId:\s*(\d+)$/gm, (match, indent, id) => {
+      modified = true;
+      return `${indent}transistorId: "${id}"`;
+    });
+    
+    // Fix transistorId field - remove double quotes (if they exist)
     content = content.replace(/^(\s*)transistorId:\s*"(\d+)""/gm, (match, indent, id) => {
       modified = true;
       return `${indent}transistorId: "${id}"`;

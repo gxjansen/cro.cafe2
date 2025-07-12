@@ -117,6 +117,9 @@ function fixEpisodeFile(filePath) {
         } else if (typeof value === 'string' && (value.includes('"') || value.includes(':') || value.includes('|'))) {
           // String that needs quoting
           newFrontmatterLines.push(`${field}: "${value.replace(/"/g, '\\"')}"`);
+        } else if (field === 'transistorId' && typeof value === 'string' && /^\d+$/.test(value)) {
+          // Numeric transistorId needs to be quoted to preserve string type
+          newFrontmatterLines.push(`${field}: "${value}"`);
         } else {
           newFrontmatterLines.push(`${field}: ${value}`);
         }

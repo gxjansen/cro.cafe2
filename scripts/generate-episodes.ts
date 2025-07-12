@@ -2,12 +2,13 @@
 /**
  * Episode-specific content generator for NocoDB sync
  * Handles only episode content to prevent cross-contamination
- * Updated to ensure transistorId is always output as string
- * Version: 1.0.2 - Ensure transistorId is always string type
+ * Updated to ensure transistorId is always output as quoted string
+ * Version: 1.0.3 - Fixed: Force quotes on numeric strings in YAML
  */
 
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
+import * as yaml from 'js-yaml'
 import { NocoDBWorkingClient as NocdbClient } from '../src/lib/services/nocodb-working-client.js'
 import type { Language } from '../src/types/index.js'
 
@@ -278,9 +279,32 @@ class EpisodeGenerator {
       frontmatter.isExplicit = episode.explicit
     }
 
-    // Convert frontmatter to YAML
+    // Convert frontmatter to YAML with proper string handling
     let mdxContent = '---\n'
-    mdxContent += this.objectToYaml(frontmatter)
+    
+    // Fields that should always be quoted even if they look like numbers
+    const fieldsToQuote = ['transistorId', 'slug', 'episodeType', 'language', 'status']
+    
+    // Use js-yaml to dump the frontmatter
+    let yamlStr = yaml.dump(frontmatter, {
+      lineWidth: -1, // Disable line wrapping
+      noRefs: true,
+      sortKeys: false,
+      quotingType: '"',
+      styles: {
+        '!!str': 'literal' // Use literal style for multiline strings
+      }
+    })
+    
+    // Post-process to ensure specific fields are quoted
+    // This regex approach ensures numeric-looking values are quoted for specific fields
+    fieldsToQuote.forEach(field => {
+      // Match the field at the beginning of a line, followed by colon and space, then capture the value
+      const regex = new RegExp(`^(${field}:\\s+)(\\d+)$`, 'gm')
+      yamlStr = yamlStr.replace(regex, '$1"$2"')
+    })
+    
+    mdxContent += yamlStr
     mdxContent += '---\n\n'
 
     // Add show notes if available
@@ -341,52 +365,6 @@ class EpisodeGenerator {
     return []
   }
 
-  private objectToYaml(obj: any, indent = 0): string {
-    let yaml = ''
-    const spaces = ' '.repeat(indent)
-    
-    for (const [key, value] of Object.entries(obj)) {
-      if (value === null || value === undefined) {
-        continue
-      }
-      
-      // Quote keys that start with @ or contain special characters
-      const needsQuoting = key.startsWith('@') || key.includes(':') || key.includes('#')
-      const yamlKey = needsQuoting ? `'${key}'` : key
-      
-      yaml += `${spaces}${yamlKey}: `
-      
-      if (typeof value === 'object' && !Array.isArray(value)) {
-        yaml += '\n' + this.objectToYaml(value, indent + 2)
-      } else if (Array.isArray(value)) {
-        if (value.length === 0) {
-          yaml += '[]\n'
-        } else {
-          yaml += '\n'
-          for (const item of value) {
-            yaml += `${spaces}  - ${typeof item === 'object' ? '\n' + this.objectToYaml(item, indent + 4) : item}\n`
-          }
-        }
-      } else if (typeof value === 'boolean') {
-        yaml += `${value}\n`
-      } else if (typeof value === 'number') {
-        yaml += `${value}\n`
-      } else if (typeof value === 'string') {
-        // Check if the value is already a literal block scalar
-        if (value.startsWith('|\n')) {
-          // Already formatted as literal block, just add it
-          yaml += value + '\n'
-        } else {
-          // Regular string
-          yaml += `${value}\n`
-        }
-      } else {
-        yaml += `${value}\n`
-      }
-    }
-    
-    return yaml
-  }
 }
 
 // CLI handling
