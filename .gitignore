@@ -210,20 +210,48 @@ SEARCH_FIX_SUMMARY.md
 subdomain-redirects/
 
 # Development scripts and utilities
-scripts/check-*.ts
+# IMPORTANT: Be specific about which scripts to ignore to avoid excluding critical workflow scripts
+
+# Debug and diagnostic scripts (safe to ignore)
 scripts/debug-*.ts
 scripts/diagnose-*.ts
-scripts/download-*.js
+scripts/verify-*.ts
+
+# One-off fix and cleanup scripts (safe to ignore)
 scripts/fix-*.js
-scripts/generate-*.ts
+scripts/clean-*.ts
+scripts/clear-*.js
+
+# Download scripts (keep only production ones)
+scripts/download-*.js
+!scripts/sync-images.ts              # KEEP: Used by sync-images workflow
+!scripts/sync-linkedin-profile-pictures.ts  # KEEP: Used by LinkedIn sync workflow
+
+# Critical generation scripts - DO NOT IGNORE THESE
+!scripts/generate-episodes.ts        # KEEP: Used by sync-episodes workflow
+!scripts/generate-guests.ts          # KEEP: Used by sync-guests workflow
+!scripts/generate-hosts.ts           # KEEP: Used by sync-hosts workflow
+!scripts/generate-platforms.ts       # KEEP: Used by sync-platforms workflow
+!scripts/generate-content*.ts        # KEEP: Content generation variants
+!scripts/generate-language-sitemaps.ts # KEEP: Sitemap generation
+
+# Validation scripts - keep the ones used by npm scripts
+scripts/validate-*.ts
+!scripts/validate-content.ts         # KEEP: Used by npm run validate-content
+!scripts/validate-schema.ts          # KEEP: Used by npm run validate-schema
+
+# Check scripts - keep the ones used by npm scripts
+scripts/check-*.ts
+!scripts/check-accessibility.ts      # KEEP: Used by npm run check:accessibility
+!scripts/check-accessibility-detailed.ts # KEEP: Used by npm run check:accessibility:detailed
+
+# SEO and optimization
+scripts/optimize-*.ts
+!scripts/optimize-episode-seo.ts     # KEEP: Used by npm run optimize-seo
+
+# Other utility scripts
 scripts/import-*.ts
 scripts/linkedin-*.js
 scripts/n8n-*.js
-scripts/optimize-*.ts
-scripts/sync-*.ts
-scripts/validate-*.ts
-scripts/verify-*.ts
 scripts/workflow-*.yml
-scripts/clean-*.ts
-scripts/clear-*.js
 scripts/create-*.js

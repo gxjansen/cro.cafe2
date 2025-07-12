@@ -38,6 +38,7 @@
     "sync-content": "npm run generate-content-simple && npm run validate-content",
     "validate-content": "tsx scripts/validate-content.ts",
     "validate-images": "node scripts/validate-image-filenames.js",
+    "verify-critical-files": "tsx scripts/verify-critical-files.ts",
     "check-links": "node scripts/check-links.js",
     "check-links:external": "npm run build && echo 'External link checking via astro-broken-link-checker (see broken-links.log after build)'",
     "check-links:full": "npm run build && npm run check-links",

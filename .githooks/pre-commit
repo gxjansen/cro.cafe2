@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Pre-commit hook to verify critical files are not being ignored
+echo "🔍 Verifying critical files before commit..."
+
+# Run the verification script
+npm run verify-critical-files
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Pre-commit check failed!"
+  echo "Critical files are missing or ignored by .gitignore"
+  echo "Please fix the issues above before committing."
+  exit 1
+fi
+
+echo "✅ All critical files verified!"
