@@ -6,13 +6,7 @@ import SkipLink from '../components/SkipLink.astro';
 import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
-// PWA temporarily disabled
-// import PWAInstallPrompt from '../components/PWAInstallPrompt.astro';
-// import PWAUpdateNotification from '../components/PWAUpdateNotification.astro';
 import BottomNav from '../components/BottomNav.astro';
-// @ts-ignore - PWA components temporarily disabled
-const PWAInstallPrompt = null;
-const PWAUpdateNotification = null;
 import '/src/styles/global.css';
 
 export interface Props {
@@ -85,8 +79,7 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <link rel="icon" type="image/png" sizes="256x256" href="/images/crocafe-icon-256.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href={`/manifest${language === 'en' ? '' : `-${language}`}.json`} />
+    <!-- Theme Color -->
     <meta name="theme-color" content="#FF6B35" />
     
     <!-- Fonts -->
@@ -272,13 +265,6 @@ window.__initTheme = initTheme
     <slot />
     <Footer language={language} currentPath={currentPath} />
     
-    <!-- PWA Install Prompt -->
-    {/* PWA temporarily disabled
-    <PWAInstallPrompt language={language} />
-    
-    <!-- PWA Update Notification -->
-    <PWAUpdateNotification language={language} /> */}
-    
     <!-- Bottom Navigation for Mobile -->
     <BottomNav language={language} currentPath={currentPath} />
     
@@ -348,25 +334,5 @@ if (document.readyState === 'loading') {
 }
 </script>
     
-    <!-- PWA Service Worker Registration - TEMPORARILY DISABLED -->
-    <!-- <script>
-  if ('serviceWorker' in navigator) {
-    import('virtual:pwa-register').then(({ registerSW }) => {
-      registerSW({
-        immediate: true,
-        onRegisteredSW(swScriptUrl) {
-          console.log('SW registered:', swScriptUrl)
-        },
-        onOfflineReady() {
-          console.log('PWA application ready to work offline')
-        },
-        onNeedRefresh() {
-          // Optionally prompt user to refresh for updates
-          console.log('New content available, refresh to update')
-        }
-      })
-  })
-  }
-  </script> -->
   </body>
 </html>

@@ -525,9 +525,15 @@ export async function getPopularEpisodesByLanguage() {
   return result
 }
 
-// Convert duration string (MM:SS or HH:MM:SS) to seconds
+// Convert duration string (seconds, MM:SS or HH:MM:SS) to seconds
 function parseDurationToSeconds(duration: string): number {
   if (!duration || typeof duration !== 'string') return 0
+  
+  // Check if it's a plain number (seconds)
+  if (!duration.includes(':')) {
+    const seconds = parseInt(duration, 10)
+    return isNaN(seconds) ? 0 : seconds
+  }
   
   const parts = duration.split(':').map(p => parseInt(p, 10))
   if (parts.some(isNaN)) return 0

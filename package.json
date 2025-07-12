@@ -71,7 +71,6 @@
     "@types/node-fetch": "^2.6.12",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vite-pwa/astro": "^1.1.0",
     "astro": "^5.0.0",
     "clsx": "^2.1.1",
     "csv-parse": "^5.6.0",
@@ -85,7 +84,6 @@
     "react-dom": "^19.1.0",
     "sharp": "^0.34.2",
     "tailwindcss": "^4.1.11",
-    "workbox-window": "^7.3.0",
     "xml2js": "^0.6.2",
     "zod": "^3.24.1"
   },
