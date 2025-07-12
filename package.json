@@ -32,6 +32,7 @@
     "test:mobile:headless": "jest tests/mobile-enhancements.test.js --forceExit",
     "test:brand-logos": "jest tests/brand-logos-visibility.test.js --forceExit",
     "test:brand-logos:ci": "npm run build && jest tests/brand-logos-visibility.test.js --forceExit",
+    "fix-guest-images": "tsx scripts/fix-guest-image-filenames.ts",
     "generate-content": "tsx scripts/generate-content.ts",
     "generate-content-simple": "tsx scripts/generate-content-simple.ts",
     "generate-content-robust": "tsx scripts/generate-content-robust.ts",

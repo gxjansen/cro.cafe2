@@ -399,17 +399,22 @@ export async function getHostsByLanguage(language: Language) {
     getCollection('episodes')
   ])
 
-  // Get episode IDs for this language (only published)
-  const languageEpisodeIds = new Set(
-    episodes
-      .filter(ep => ep.data.language === language && ep.data.status === 'published')
-      .map(ep => ep.data.transistorId)
-  )
+  // Get host slugs that appear in episodes for this language (only published)
+  const hostsInLanguage = new Set<string>()
+  
+  episodes
+    .filter(ep => ep.data.language === language && ep.data.status === 'published')
+    .forEach(ep => {
+      if (ep.data.hosts && Array.isArray(ep.data.hosts)) {
+        ep.data.hosts.forEach(hostSlug => hostsInLanguage.add(hostSlug))
+      }
+    })
 
-  // Filter hosts who have episodes in this language
-  return hosts.filter(host =>
-    host.data.episodes?.some(episodeId => languageEpisodeIds.has(episodeId))
-  )
+  // Filter hosts who appear in episodes for this language
+  return hosts.filter(host => {
+    const hostSlug = host.data?.slug || host.slug
+    return hostsInLanguage.has(hostSlug)
+  })
 }
 
 // Get host image URL
@@ -681,24 +686,16 @@ export async function getHostStatistics(hostSlug: string): Promise<{
   }
 
   try {
-    const [allEpisodes, allHosts] = await Promise.all([
-      getCollection('episodes'),
-      getCollection('hosts')
-    ])
+    const allEpisodes = await getCollection('episodes')
 
-    // Get the host data to find their episode IDs
-    const host = allHosts.find(h => (h.data?.slug || h.slug) === hostSlug)
-    if (!host || !host.data || !host.data.episodes || !Array.isArray(host.data.episodes)) {
-      return defaultResult
-    }
-
-    // Filter episodes for this host using their episode IDs (only published)
+    // Filter episodes where this host appears in the hosts array (only published)
     const hostEpisodes = allEpisodes.filter(episode => {
       // Ensure episode and episode.data exist
       if (!episode || !episode.data) {
         return false
       }
-      return host.data.episodes.includes(episode.data.transistorId) && episode.data.status === 'published'
+      // Check if this host is in the episode's hosts array
+      return episode.data.hosts?.includes(hostSlug) && episode.data.status === 'published'
     })
 
     // Count episodes by language
@@ -979,6 +976,6 @@ export function getGuestProfilePicture(guest: any): string {
     return guestImage.imageUrl
   }
 
-  // Return deterministic SVG fallback (generated at build time)
-  return guestImage?.fallbackUrl || `/images/guests/generated/${guestSlug}-initials.svg`
+  // Return default image - the component will handle showing initials as fallback
+  return '/images/default-guest.jpg'
 }

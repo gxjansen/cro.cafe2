@@ -25,6 +25,16 @@ const guestName = guest?.data?.name || guest?.name || 'Guest';
 const guestCompany = guest?.data?.company || guest?.company || '';
 const guestRole = guest?.data?.role || guest?.role || '';
 
+// Generate initials for fallback
+const getInitials = (name: string): string => {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+};
+
+const guestInitials = getInitials(guestName);
+
 // Size mappings
 const sizeClasses = {
   sm: 'w-16 h-16',
@@ -40,6 +50,14 @@ const imageSizes = {
   xl: 192
 };
 
+// Text size classes for initials based on component size
+const textSizeClasses = {
+  sm: 'text-lg',
+  md: 'text-2xl',
+  lg: 'text-3xl',
+  xl: 'text-5xl'
+};
+
 // Create comprehensive alt text
 const altText = [
   guestName,
@@ -50,33 +68,91 @@ const altText = [
 
 // Generate slug for unique styling
 const guestSlug = guest?.data?.slug || guest?.slug || 'guest';
+
+// Fallback gradient for placeholder using new Tailwind config
+const fallbackGradient = 'bg-gradient-teal dark:bg-gradient-teal-dark';
+
+// Generate a unique ID for this instance
+const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <div 
   class={`relative rounded-full overflow-hidden transition-transform duration-300 hover:scale-105 ${sizeClasses[size]} ${className}`}
   style={`view-transition-name: guest-${guestSlug}`}
+  data-guest-picture={instanceId}
 >
-  <img 
-    src={profilePictureUrl}
-    alt={altText}
-    width={imageSizes[size]}
-    height={imageSizes[size]}
-    class={`w-full h-full object-cover transition-transform duration-300 hover:scale-105 hover:brightness-110 ${grayscale ? 'grayscale' : ''}`}
-    loading={loading}
-  />
+  <!-- Loading placeholder with initials -->
+  <div 
+    class={`absolute inset-0 ${fallbackGradient} animate-pulse transition-opacity duration-500`}
+    data-placeholder={instanceId}
+  >
+    <div class="flex items-center justify-center w-full h-full">
+      <span class={`text-white font-semibold ${textSizeClasses[size]}`}>
+        {guestInitials}
+      </span>
+    </div>
+  </div>
+
+  <!-- Main image -->
+  {profilePictureUrl && profilePictureUrl !== '/images/default-guest.jpg' ? (
+    <img 
+      src={profilePictureUrl}
+      alt={altText}
+      width={imageSizes[size]}
+      height={imageSizes[size]}
+      class={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 hover:brightness-110 ${grayscale ? 'grayscale' : ''}`}
+      loading={loading}
+      data-image={instanceId}
+      onload={`
+        const img = event.target;
+        const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
+        if (placeholder) {
+          img.classList.remove('opacity-0');
+          placeholder.classList.add('opacity-0');
+          setTimeout(() => placeholder.remove(), 500);
+        }
+      `}
+      onerror={`
+        const img = event.target;
+        const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
+        
+        // Try alternative extension before giving up
+        if (img.src.endsWith('.jpeg') && !img.dataset.triedJpg) {
+          img.dataset.triedJpg = 'true';
+          img.src = img.src.replace('.jpeg', '.jpg');
+        } else if (img.src.endsWith('.jpg') && !img.dataset.triedJpeg) {
+          img.dataset.triedJpeg = 'true';
+          img.src = img.src.replace('.jpg', '.jpeg');
+        } else {
+          // Both extensions failed - show initials placeholder
+          img.remove();
+          if (placeholder) {
+            placeholder.classList.remove('animate-pulse');
+          }
+        }
+      `}
+    />
+  ) : (
+    <!-- Default placeholder when no image available -->
+    <div class={`flex items-center justify-center w-full h-full ${fallbackGradient}`}>
+      <span class={`text-white font-semibold ${textSizeClasses[size]}`}>
+        {guestInitials}
+      </span>
+    </div>
+  )}
 </div>
 
 <style>
   /* Accessibility: High contrast mode support */
   @media (prefers-contrast: high) {
-    img {
+    [data-guest-picture] img {
       filter: grayscale(100%) contrast(1.2);
     }
   }
 
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    * {
+    [data-guest-picture] * {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;

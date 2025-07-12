@@ -74,26 +74,16 @@ describe('Statistics Display Fixes', () => {
 
   describe('Issue 2: Host Page Statistics', () => {
     it('should calculate correct host statistics when episodes match', async () => {
+      // Episodes should have hosts array pointing to the host
       const mockEpisodes = [
-        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', guests: ['guest1', 'guest2'] } },
-        { data: { transistorId: '1002', language: 'nl' as Language, status: 'published', guests: ['guest2', 'guest3'] } },
-        { data: { transistorId: '1003', language: 'en' as Language, status: 'published', guests: ['guest1'] } },
-        { data: { transistorId: '1004', language: 'de' as Language, status: 'draft', guests: ['guest4'] } } // draft episode
-      ]
-
-      const mockHosts = [
-        {
-          data: {
-            slug: 'test-host',
-            episodes: ['1001', '1002', '1003', '1004'] // includes draft episode
-          }
-        }
+        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', hosts: ['test-host'], guests: ['guest1', 'guest2'] } },
+        { data: { transistorId: '1002', language: 'nl' as Language, status: 'published', hosts: ['test-host'], guests: ['guest2', 'guest3'] } },
+        { data: { transistorId: '1003', language: 'en' as Language, status: 'published', hosts: ['test-host'], guests: ['guest1'] } },
+        { data: { transistorId: '1004', language: 'de' as Language, status: 'draft', hosts: ['test-host'], guests: ['guest4'] } } // draft episode
       ]
 
       const { getCollection } = await import('astro:content')
-      vi.mocked(getCollection)
-        .mockResolvedValueOnce(mockEpisodes as any) // episodes collection
-        .mockResolvedValueOnce(mockHosts as any)    // hosts collection
+      vi.mocked(getCollection).mockResolvedValue(mockEpisodes as any)
 
       const stats = await getHostStatistics('test-host')
 
@@ -107,22 +97,11 @@ describe('Statistics Display Fixes', () => {
 
     it('should return zero stats for host with no matching episodes', async () => {
       const mockEpisodes = [
-        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', guests: ['guest1'] } }
-      ]
-
-      const mockHosts = [
-        {
-          data: {
-            slug: 'test-host',
-            episodes: ['9999'] // No matching transistorId
-          }
-        }
+        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', hosts: ['other-host'], guests: ['guest1'] } }
       ]
 
       const { getCollection } = await import('astro:content')
-      vi.mocked(getCollection)
-        .mockResolvedValueOnce(mockEpisodes as any)
-        .mockResolvedValueOnce(mockHosts as any)
+      vi.mocked(getCollection).mockResolvedValue(mockEpisodes as any)
 
       const stats = await getHostStatistics('test-host')
 
@@ -135,28 +114,20 @@ describe('Statistics Display Fixes', () => {
     })
 
     it('should handle host with missing episodes array', async () => {
+      // With the new implementation, we count episodes that have the host in their hosts array
+      // The host's episodes array is no longer relevant
       const mockEpisodes = [
-        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', guests: ['guest1'] } }
-      ]
-
-      const mockHosts = [
-        {
-          data: {
-            slug: 'test-host'
-            // No episodes array
-          }
-        }
+        { data: { transistorId: '1001', language: 'en' as Language, status: 'published', hosts: ['test-host'], guests: ['guest1'] } }
       ]
 
       const { getCollection } = await import('astro:content')
-      vi.mocked(getCollection)
-        .mockResolvedValueOnce(mockEpisodes as any)
-        .mockResolvedValueOnce(mockHosts as any)
+      vi.mocked(getCollection).mockResolvedValue(mockEpisodes as any)
 
       const stats = await getHostStatistics('test-host')
 
-      expect(stats.totalEpisodes).toBe(0)
-      expect(stats.totalGuests).toBe(0)
+      // Should still count the episode since it has the host in its hosts array
+      expect(stats.totalEpisodes).toBe(1)
+      expect(stats.totalGuests).toBe(1)
     })
   })
 
