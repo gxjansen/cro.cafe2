@@ -7,6 +7,19 @@ import tailwindcss from '@tailwindcss/vite';
 import sentry from '@sentry/astro';
 // import astroBrokenLinksChecker from 'astro-broken-link-checker';
 // import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
+import { config } from 'dotenv';
+
+// Load environment variables from .env file
+config();
+
+// Check if we're in a real Netlify deployment (not local Netlify CLI)
+// DEPLOY_URL is set in both local Netlify CLI and real deployments
+// NETLIFY_BUILD_BASE is only set in real deployments
+// For local builds, disable Sentry uploads to avoid auth issues
+const isRealNetlifyDeployment = process.env.NETLIFY_BUILD_BASE && process.env.DEPLOY_URL;
+const isProduction = isRealNetlifyDeployment || process.env.CI === 'true';
+
+// Sentry is only enabled for real Netlify deployments (when NETLIFY_BUILD_BASE is set)
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
@@ -20,9 +33,12 @@ export default defineConfig({
       // Setting this option to true will send default PII data to Sentry.
       // For example, automatic IP address collection on events
       sendDefaultPii: true,
-      sourceMapsUploadOptions: {
+      sourceMapsUploadOptions: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
+        org: "x-jkj", // Add your Sentry organization slug here
         project: "crocafe-dev",
         authToken: process.env.SENTRY_AUTH_TOKEN,
+      } : {
+        disable: true, // Disable source map upload in local dev
       },
       // Tracing configuration
       tracePropagationTargets: [
