@@ -28,19 +28,33 @@ export async function getFeaturedEpisodes(limit = 4) {
 
 // Get guests by language
 export async function getGuestsByLanguage(language: Language) {
-  const guests = await getCollection('guests')
+  try {
+    const guests = await getCollection('guests')
 
-  // Filter guests who have the specified language in their languages array
-  // The languages array contains the languages of episodes the guest appeared in
-  return guests
-    .filter(guest => {
-      // Check if the guest has appeared in episodes of this language
-      if (guest.data.languages && Array.isArray(guest.data.languages)) {
-        return guest.data.languages.includes(language)
-      }
-      return false
-    })
-    .sort((a, b) => a.data.name.localeCompare(b.data.name))
+    // Filter guests who have the specified language in their languages array
+    // The languages array contains the languages of episodes the guest appeared in
+    return guests
+      .filter(guest => {
+        // Ensure guest and guest.data exist
+        if (!guest || !guest.data) {
+          return false
+        }
+        
+        // Check if the guest has appeared in episodes of this language
+        if (guest.data.languages && Array.isArray(guest.data.languages)) {
+          return guest.data.languages.includes(language)
+        }
+        return false
+      })
+      .sort((a, b) => {
+        const nameA = a.data?.name || ''
+        const nameB = b.data?.name || ''
+        return nameA.localeCompare(nameB)
+      })
+  } catch (error) {
+    console.error('Error loading guests collection:', error)
+    return []
+  }
 }
 
 // Get featured quotes by language
@@ -297,9 +311,20 @@ export async function getGuestCountByLanguage(language: Language): Promise<numbe
 
 // Get total guest count
 export async function getTotalGuestCount(): Promise<number> {
-  const guests = await getCollection('guests')
-  // Only count guests that have episodes
-  return guests.filter(guest => guest.data.episodes && guest.data.episodes.length > 0).length
+  try {
+    const guests = await getCollection('guests')
+    // Only count guests that have episodes
+    return guests.filter(guest => {
+      // Ensure guest and guest.data exist
+      if (!guest || !guest.data) {
+        return false
+      }
+      return guest.data.episodes && Array.isArray(guest.data.episodes) && guest.data.episodes.length > 0
+    }).length
+  } catch (error) {
+    console.error('Error loading guests collection for total count:', error)
+    return 0
+  }
 }
 
 // Get counts for all languages including global
@@ -642,71 +667,86 @@ export async function getHostStatistics(hostSlug: string): Promise<{
   episodesByLanguage: Record<Language, number>;
   uniqueGuestsByLanguage: Record<Language, string[]>;
 }> {
-  const [allEpisodes, allHosts] = await Promise.all([
-    getCollection('episodes'),
-    getCollection('hosts')
-  ])
+  const defaultResult = {
+    totalEpisodes: 0,
+    totalGuests: 0,
+    episodesByLanguage: { en: 0, nl: 0, de: 0, es: 0 },
+    uniqueGuestsByLanguage: { en: [], nl: [], de: [], es: [] }
+  }
 
-  // Get the host data to find their episode IDs
-  const host = allHosts.find(h => (h.data.slug || h.slug) === hostSlug)
-  if (!host || !host.data.episodes) {
-    return {
-      totalEpisodes: 0,
-      totalGuests: 0,
-      episodesByLanguage: { en: 0, nl: 0, de: 0, es: 0 },
-      uniqueGuestsByLanguage: { en: [], nl: [], de: [], es: [] }
+  try {
+    const [allEpisodes, allHosts] = await Promise.all([
+      getCollection('episodes'),
+      getCollection('hosts')
+    ])
+
+    // Get the host data to find their episode IDs
+    const host = allHosts.find(h => (h.data?.slug || h.slug) === hostSlug)
+    if (!host || !host.data || !host.data.episodes || !Array.isArray(host.data.episodes)) {
+      return defaultResult
     }
-  }
 
-  // Filter episodes for this host using their episode IDs (only published)
-  const hostEpisodes = allEpisodes.filter(episode =>
-    host.data.episodes.includes(episode.data.transistorId) && episode.data.status === 'published'
-  )
+    // Filter episodes for this host using their episode IDs (only published)
+    const hostEpisodes = allEpisodes.filter(episode => {
+      // Ensure episode and episode.data exist
+      if (!episode || !episode.data) {
+        return false
+      }
+      return host.data.episodes.includes(episode.data.transistorId) && episode.data.status === 'published'
+    })
 
-  // Count episodes by language
-  const episodesByLanguage: Record<Language, number> = {
-    en: 0,
-    nl: 0,
-    de: 0,
-    es: 0
-  }
+    // Count episodes by language
+    const episodesByLanguage: Record<Language, number> = {
+      en: 0,
+      nl: 0,
+      de: 0,
+      es: 0
+    }
 
-  // Track unique guests by language
-  const uniqueGuestsByLanguage: Record<Language, string[]> = {
-    en: [],
-    nl: [],
-    de: [],
-    es: []
-  }
+    // Track unique guests by language
+    const uniqueGuestsByLanguage: Record<Language, string[]> = {
+      en: [],
+      nl: [],
+      de: [],
+      es: []
+    }
 
-  // Process each episode to count episodes and collect unique guests per language
-  hostEpisodes.forEach(episode => {
-    const language = episode.data.language
-    episodesByLanguage[language]++
+    // Process each episode to count episodes and collect unique guests per language
+    hostEpisodes.forEach(episode => {
+      const language = episode.data.language
+      if (language && episodesByLanguage.hasOwnProperty(language)) {
+        episodesByLanguage[language]++
 
-    // Add guests for this episode to the language-specific list
-    episode.data.guests.forEach(guestSlug => {
-      if (!uniqueGuestsByLanguage[language].includes(guestSlug)) {
-        uniqueGuestsByLanguage[language].push(guestSlug)
+        // Add guests for this episode to the language-specific list
+        if (episode.data.guests && Array.isArray(episode.data.guests)) {
+          episode.data.guests.forEach(guestSlug => {
+            if (guestSlug && !uniqueGuestsByLanguage[language].includes(guestSlug)) {
+              uniqueGuestsByLanguage[language].push(guestSlug)
+            }
+          })
+        }
       }
     })
-  })
 
-  // Calculate totals across all languages
-  const totalEpisodes = Object.values(episodesByLanguage).reduce((sum, count) => sum + count, 0)
+    // Calculate totals across all languages
+    const totalEpisodes = Object.values(episodesByLanguage).reduce((sum, count) => sum + count, 0)
 
-  // Get unique guests across all languages
-  const allUniqueGuests = new Set<string>()
-  Object.values(uniqueGuestsByLanguage).forEach(guestList => {
-    guestList.forEach(guestSlug => allUniqueGuests.add(guestSlug))
-  })
-  const totalGuests = allUniqueGuests.size
+    // Get unique guests across all languages
+    const allUniqueGuests = new Set<string>()
+    Object.values(uniqueGuestsByLanguage).forEach(guestList => {
+      guestList.forEach(guestSlug => allUniqueGuests.add(guestSlug))
+    })
+    const totalGuests = allUniqueGuests.size
 
-  return {
-    totalEpisodes,
-    totalGuests,
-    episodesByLanguage,
-    uniqueGuestsByLanguage
+    return {
+      totalEpisodes,
+      totalGuests,
+      episodesByLanguage,
+      uniqueGuestsByLanguage
+    }
+  } catch (error) {
+    console.error(`Error calculating host statistics for ${hostSlug}:`, error)
+    return defaultResult
   }
 }
 

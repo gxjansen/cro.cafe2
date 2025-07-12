@@ -12,15 +12,16 @@ interface Props {
 
 const { guests, showLanguageFilter = true, language } = Astro.props;
 
-// Filter out guests with zero episodes
+// For filter counts, we still use guests with episodes
+// but for display purposes, we'll show all guests
 const guestsWithEpisodes = guests.filter(guest => 
-  guest.data.episodes && guest.data.episodes.length > 0
+  guest.data.episodes && Array.isArray(guest.data.episodes) && guest.data.episodes.length > 0
 );
 
-// Count freelancers
+// Count freelancers among all guests (not just those with episodes)
 let freelancerCount = 0;
-guestsWithEpisodes.forEach(guest => {
-  if (checkIsFreelancer(guest.data.linkedin_headline, guest.data.role)) {
+guests.forEach(guest => {
+  if (guest?.data && checkIsFreelancer(guest.data.linkedin_headline, guest.data.role)) {
     freelancerCount++;
   }
 });
