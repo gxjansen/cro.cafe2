@@ -1,0 +1,721 @@
+---
+import type { LinkedInExperience } from '../types/linkedin';
+import { safeJsonParse } from '../types/linkedin';
+
+export interface Props {
+  experiences: string;
+  firstEpisodeDate: string;
+  episodeDates?: string[];
+  guestName: string;
+}
+
+const { experiences, firstEpisodeDate, episodeDates, guestName } = Astro.props;
+
+// Parse experiences from JSON string
+const parsedExperiences = safeJsonParse<LinkedInExperience[]>(experiences, []);
+
+// Return early if no experiences
+if (parsedExperiences.length === 0) {
+  return null;
+}
+
+// Remove duplicate experiences and fix broken data
+const cleanedExperiences = parsedExperiences.filter((exp, index, self) => {
+  const isDuplicate = self.findIndex(e => 
+    e.title === exp.title && 
+    e.company === exp.company
+  ) !== index;
+  
+  const hasValidDates = exp.startDate || exp.endDate || exp.isCurrent;
+  
+  return !isDuplicate && hasValidDates;
+});
+
+// Sort experiences by start date (most recent first)
+const sortedExperiences = [...cleanedExperiences].sort((a, b) => {
+  const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+  const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+  return dateB - dateA;
+});
+
+// Filter relevant experiences
+const relevantExperiences = (() => {
+  const currentJobs = sortedExperiences.filter(exp => !exp.endDate || exp.isCurrent);
+  
+  const episodeTimeJobs = episodeDates ? sortedExperiences.filter(exp => {
+    if (!exp.endDate || exp.isCurrent) return false;
+    
+    const expStartDate = exp.startDate ? new Date(exp.startDate) : null;
+    const expEndDate = exp.endDate ? new Date(exp.endDate) : null;
+    
+    return episodeDates.some(episodeDate => {
+      const epDate = new Date(episodeDate);
+      const startedBeforeEpisode = !expStartDate || (expStartDate <= epDate);
+      const endedAfterEpisode = !expEndDate || (expEndDate >= epDate);
+      
+      return startedBeforeEpisode && endedAfterEpisode;
+    });
+  }) : [];
+  
+  const allRelevantJobs = [...currentJobs, ...episodeTimeJobs];
+  const uniqueJobs = allRelevantJobs.filter((exp, index, self) => 
+    self.findIndex(e => 
+      e.title === exp.title && 
+      e.company === exp.company &&
+      e.startDate === exp.startDate
+    ) === index
+  );
+  
+  return uniqueJobs.sort((a, b) => {
+    const dateA = a.startDate ? new Date(a.startDate).getTime() : Date.now();
+    const dateB = b.startDate ? new Date(b.startDate).getTime() : Date.now();
+    return dateB - dateA;
+  }).slice(0, 6); // Allow up to 6 jobs
+})();
+
+if (relevantExperiences.length === 0) {
+  return null;
+}
+
+// Format date for display
+function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return 'Present';
+  
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      return 'Present';
+    }
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  } catch {
+    return 'Present';
+  }
+}
+
+// Process experiences with episode information
+const processedExperiences = relevantExperiences.map(experience => {
+  const isCurrentRole = experience.isCurrent || !experience.endDate;
+  
+  let wasActiveAtRecording = false;
+  if (episodeDates) {
+    for (const episodeDate of episodeDates) {
+      const epDate = new Date(episodeDate);
+      const expStartDate = experience.startDate ? new Date(experience.startDate) : null;
+      const expEndDate = experience.endDate ? new Date(experience.endDate) : null;
+      
+      const startedBeforeEpisode = !expStartDate || expStartDate.getTime() <= epDate.getTime();
+      const endedAfterEpisode = !expEndDate || expEndDate.getTime() >= epDate.getTime();
+      
+      if (startedBeforeEpisode && endedAfterEpisode) {
+        wasActiveAtRecording = true;
+        break;
+      }
+    }
+  }
+  
+  return {
+    ...experience,
+    isCurrentRole,
+    wasActiveAtRecording,
+    formattedDuration: experience.duration || `${formatDate(experience.startDate)} - ${formatDate(experience.endDate)}`
+  };
+});
+
+// Determine if we need scroll controls
+const needsScroll = relevantExperiences.length > 3;
+const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+{parsedExperiences.length > 0 && relevantExperiences.length > 0 ? (
+<section class="career-timeline-section" data-timeline role="region" aria-label={`Career journey for ${guestName}`}>
+  <div class="career-timeline-container">
+    <div class="timeline-header">
+      <h2>Career Journey</h2>
+      {needsScroll && (
+        <div class="timeline-controls" aria-label="Timeline navigation">
+          <button 
+            class="timeline-nav-btn timeline-nav-prev" 
+            aria-label="Previous experiences"
+            data-direction="prev"
+            data-timeline-id={timelineId}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button 
+            class="timeline-nav-btn timeline-nav-next" 
+            aria-label="Next experiences"
+            data-direction="next"
+            data-timeline-id={timelineId}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+
+    <!-- Timeline labels -->
+    <div class="timeline-labels" aria-hidden="true">
+      <span class="timeline-label timeline-label-start">Previously</span>
+      <span class="timeline-label timeline-label-end">Today</span>
+    </div>
+    
+    <div class={`timeline-wrapper ${needsScroll ? 'has-scroll' : ''}`}>
+      <div class="timeline-scroll-container" id={timelineId} data-timeline-container>
+        <div class="timeline-track"></div>
+
+        <!-- Timeline arrow for desktop -->
+        <div class="timeline-arrow" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 10L19 10M19 10L16 7M19 10L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        
+        <div class="timeline-items">
+          {processedExperiences.map((experience, index) => (
+            <div 
+              class={`timeline-item ${experience.isCurrentRole ? 'current' : ''} ${experience.wasActiveAtRecording ? 'episode-time' : ''}`}
+              data-timeline-item
+            >
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-header-content">
+                  <h3 class="timeline-title">{experience.title}</h3>
+                  <div class="timeline-company">
+                    <span>{experience.company}</span>
+                  </div>
+                </div>
+                
+                <div class="timeline-meta">
+                  <time class="timeline-date">
+                    {experience.formattedDuration}
+                  </time>
+                  {experience.location && (
+                    <span class="timeline-location">{experience.location}</span>
+                  )}
+                </div>
+                
+                {experience.wasActiveAtRecording && !experience.isCurrentRole && (
+                  <div class="timeline-badge">
+                    <span class="episode-badge">During CRO.CAFE episode</span>
+                  </div>
+                )}
+                
+                {experience.description && (
+                  <p class="timeline-description">{experience.description}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Scroll indicators -->
+      <div class="timeline-scroll-indicator timeline-scroll-left" aria-hidden="true"></div>
+      <div class="timeline-scroll-indicator timeline-scroll-right" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+) : null}
+
+<style>
+  .career-timeline-section {
+    --timeline-color: #e5e7eb;
+    --timeline-active-color: #3b82f6;
+    --timeline-dot-size: 12px;
+    --timeline-gap: 1.5rem;
+    --timeline-card-width: 280px;
+    
+    /* Break out of parent container on desktop */
+    margin: 2rem -2rem;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+  }
+  
+  @media (min-width: 768px) {
+    .career-timeline-section {
+      margin: 3rem -4rem;
+      padding: 3rem 4rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .career-timeline-section {
+      /* Full viewport width */
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+      padding: 3rem calc(50vw - 50% + 2rem);
+    }
+  }
+
+  .career-timeline-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .timeline-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  /* Navigation controls */
+  .timeline-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .timeline-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--timeline-color);
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .timeline-nav-btn:hover:not(:disabled) {
+    border-color: var(--timeline-active-color);
+    color: var(--timeline-active-color);
+    background-color: #eff6ff;
+  }
+  
+  .timeline-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Timeline wrapper with scroll indicators */
+  .timeline-wrapper {
+    position: relative;
+  }
+  
+  .timeline-scroll-container {
+    position: relative;
+    overflow: visible;
+  }
+
+  .timeline-track {
+    position: absolute;
+    background-color: var(--timeline-color);
+    z-index: 0;
+  }
+
+  /* Mobile: Vertical layout */
+  @media (max-width: 767px) {
+    .timeline-controls {
+      display: none;
+    }
+    
+    .timeline-track {
+      left: var(--timeline-dot-size);
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+    }
+
+    .timeline-items {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: var(--timeline-gap);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: calc(var(--timeline-dot-size) * 2 + 1rem);
+    }
+  }
+
+  /* Desktop: Horizontal scrollable layout */
+  @media (min-width: 768px) {
+    .timeline-scroll-container {
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--timeline-color) transparent;
+      
+      /* Hide scrollbar but keep functionality */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .timeline-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .timeline-track {
+      left: 0;
+      right: 0;
+      top: var(--timeline-dot-size);
+      height: 2px;
+      transform: translateY(-50%);
+    }
+
+    .timeline-items {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: var(--timeline-gap);
+      padding: calc(var(--timeline-dot-size) * 2) 3rem;
+      width: max-content;
+      min-width: 100%;
+    }
+
+    .timeline-item {
+      position: relative;
+      flex: 0 0 var(--timeline-card-width);
+    }
+
+    .timeline-item:nth-child(even) {
+      margin-top: 4rem;
+    }
+    
+    /* Scroll indicators */
+    .timeline-scroll-indicator {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .timeline-scroll-left {
+      left: 0;
+      background: linear-gradient(to right, #f9fafb 20%, transparent);
+    }
+    
+    .timeline-scroll-right {
+      right: 0;
+      background: linear-gradient(to left, #f9fafb 20%, transparent);
+    }
+    
+    .timeline-wrapper.has-scroll .timeline-scroll-right {
+      opacity: 1;
+    }
+    
+    .timeline-wrapper.show-left-scroll .timeline-scroll-left {
+      opacity: 1;
+    }
+    
+    .timeline-wrapper.hide-right-scroll .timeline-scroll-right {
+      opacity: 0;
+    }
+  }
+
+  /* Timeline arrow */
+  .timeline-arrow {
+    display: none;
+  }
+  
+  @media (min-width: 768px) {
+    .timeline-arrow {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: var(--timeline-dot-size);
+      transform: translateY(-50%);
+      z-index: 2;
+      color: var(--timeline-active-color);
+    }
+  }
+
+  /* Timeline labels */
+  .timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+  }
+  
+  @media (min-width: 768px) {
+    .timeline-labels {
+      padding: 0 3rem;
+    }
+  }
+
+  .timeline-label {
+    background-color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Timeline dot */
+  .timeline-dot {
+    position: absolute;
+    width: var(--timeline-dot-size);
+    height: var(--timeline-dot-size);
+    background-color: white;
+    border: 2px solid var(--timeline-color);
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 767px) {
+    .timeline-dot {
+      left: var(--timeline-dot-size);
+      top: 0.5rem;
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .timeline-dot {
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .timeline-item.current .timeline-dot {
+    background-color: var(--timeline-active-color);
+    border-color: var(--timeline-active-color);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Timeline content */
+  .timeline-content {
+    background-color: white;
+    border: 1px solid var(--timeline-color);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-item.current .timeline-content {
+    border-color: var(--timeline-active-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .timeline-item:hover .timeline-content {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .timeline-header-content {
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-title {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+  }
+
+  .timeline-company {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-date {
+    font-weight: 500;
+    color: #6b7280;
+  }
+
+  .timeline-location::before {
+    content: "📍 ";
+  }
+
+  .timeline-description {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+  
+  /* Episode badge */
+  .timeline-badge {
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
+  
+  .episode-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: 9999px;
+    gap: 0.25rem;
+  }
+  
+  .episode-badge::before {
+    content: "🎙️";
+    font-size: 0.875rem;
+  }
+  
+  /* Episode-time job styling */
+  .timeline-item.episode-time .timeline-dot {
+    border-color: #3b82f6;
+    background-color: #dbeafe;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .career-timeline-section {
+      background-color: #1f2937;
+      --timeline-color: #374151;
+      --timeline-active-color: #60a5fa;
+    }
+    
+    .timeline-header h2 {
+      color: #f9fafb;
+    }
+    
+    .timeline-nav-btn {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: #d1d5db;
+    }
+    
+    .timeline-nav-btn:hover:not(:disabled) {
+      background-color: #1e3a8a;
+      border-color: #60a5fa;
+      color: #dbeafe;
+    }
+
+    .timeline-content {
+      background-color: #374151;
+      border-color: #4b5563;
+    }
+
+    .timeline-title {
+      color: #f9fafb;
+    }
+
+    .timeline-company,
+    .timeline-description {
+      color: #9ca3af;
+    }
+    
+    .timeline-label {
+      background-color: #374151;
+      color: #d1d5db;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .episode-badge {
+      background-color: #1e3a8a;
+      color: #dbeafe;
+    }
+    
+    .timeline-item.episode-time .timeline-dot {
+      background-color: #1e3a8a;
+    }
+    
+    .timeline-scroll-left {
+      background: linear-gradient(to right, #1f2937 20%, transparent);
+    }
+    
+    .timeline-scroll-right {
+      background: linear-gradient(to left, #1f2937 20%, transparent);
+    }
+  }
+</style>
+
+<script>
+  // Timeline scroll controls
+  document.addEventListener('DOMContentLoaded', () => {
+    const timelines = document.querySelectorAll('[data-timeline-container]');
+    
+    timelines.forEach(timeline => {
+      const wrapper = timeline.closest('.timeline-wrapper');
+      const prevBtn = document.querySelector(`[data-timeline-id="${timeline.id}"][data-direction="prev"]`);
+      const nextBtn = document.querySelector(`[data-timeline-id="${timeline.id}"][data-direction="next"]`);
+      
+      if (!wrapper || !prevBtn || !nextBtn) return;
+      
+      // Update scroll indicators and button states
+      const updateScrollState = () => {
+        const scrollLeft = timeline.scrollLeft;
+        const scrollWidth = timeline.scrollWidth;
+        const clientWidth = timeline.clientWidth;
+        const maxScroll = scrollWidth - clientWidth;
+        
+        // Update button states
+        prevBtn.disabled = scrollLeft <= 0;
+        nextBtn.disabled = scrollLeft >= maxScroll - 1;
+        
+        // Update scroll indicators
+        if (scrollLeft > 10) {
+          wrapper.classList.add('show-left-scroll');
+        } else {
+          wrapper.classList.remove('show-left-scroll');
+        }
+        
+        if (scrollLeft >= maxScroll - 10) {
+          wrapper.classList.add('hide-right-scroll');
+        } else {
+          wrapper.classList.remove('hide-right-scroll');
+        }
+      };
+      
+      // Scroll handlers
+      const scrollAmount = 300; // Width of one card plus gap
+      
+      prevBtn.addEventListener('click', () => {
+        timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+      
+      // Update on scroll
+      timeline.addEventListener('scroll', updateScrollState);
+      
+      // Update on resize
+      const resizeObserver = new ResizeObserver(updateScrollState);
+      resizeObserver.observe(timeline);
+      
+      // Initial state
+      updateScrollState();
+    });
+  });
+</script>

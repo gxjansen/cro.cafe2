@@ -5,6 +5,7 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestProfilePicture from '../../components/GuestProfilePicture.astro';
 import CareerTimeline from '../../components/CareerTimeline.astro';
+import CareerTimelineV2 from '../../components/CareerTimelineV2.astro';
 import SchemaPerson from '../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
 import CountryFlag from '../../components/CountryFlag.astro';
@@ -366,7 +367,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
               const episodeDates = guestEpisodes.map(ep => ep.data.pubDate.toISOString());
               
               return (
-                <CareerTimeline
+                <CareerTimelineV2
                   experiences={JSON.stringify(guestWithLinkedIn.linkedInData.experiences)}
                   firstEpisodeDate={firstEpisodeDate}
                   episodeDates={episodeDates}

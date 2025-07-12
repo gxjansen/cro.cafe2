@@ -1,4 +1,5 @@
-export default {
+/** @type {import('jest').Config} */
+const config = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
   testTimeout: 30000, // 30 seconds for Puppeteer tests
@@ -6,5 +7,9 @@ export default {
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
-  }
+  },
+  testPathIgnorePatterns: ['/node_modules/'],
+  transformIgnorePatterns: ['node_modules/(?!(puppeteer)/)'],
 };
+
+export default config;

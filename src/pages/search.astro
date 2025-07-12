@@ -187,8 +187,8 @@ const languages = [
   </main>
   
   <!-- Inject data for client-side script -->
-  <script id="search-data" type="application/json">{JSON.stringify(searchData)}</script>
-  <script id="languages-data" type="application/json">{JSON.stringify(languages)}</script>
+  <script id="search-data" type="application/json" set:html={JSON.stringify(searchData)}></script>
+  <script id="languages-data" type="application/json" set:html={JSON.stringify(languages)}></script>
 </BaseLayout>
 
 <script>

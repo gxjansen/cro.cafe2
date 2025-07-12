@@ -50,7 +50,7 @@ describe('Search Page Functionality', () => {
     await page.type('#search-input', 'analytics');
     
     // Wait for search to execute (debounced)
-    await page.waitForTimeout(500);
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Results should be visible now
     const searchResultsVisible = await page.$eval('#search-results', el => !el.classList.contains('hidden'));
@@ -167,7 +167,7 @@ describe('Search Page Functionality', () => {
   test('no results state should show when no matches found', async () => {
     // Search for something that won't match
     await page.type('#search-input', 'xyzabc123notfound');
-    await page.waitForTimeout(500);
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // No results state should be visible
     const noResultsVisible = await page.$eval('#no-results', el => !el.classList.contains('hidden'));
@@ -180,7 +180,7 @@ describe('Search Page Functionality', () => {
   test('search should work after filter changes', async () => {
     // First perform a search
     await page.type('#search-input', 'optimization');
-    await page.waitForTimeout(500);
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Then change filter
     await page.click('#filter-episodes');
