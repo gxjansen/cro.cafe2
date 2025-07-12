@@ -1,7 +1,7 @@
 ---
 /**
  * Adaptive Header Component
- * Renders different header variations based on PWA vs Browser context
+ * Standard header for the website
  */
 import type { Language } from '../types';
 import LanguageSwitcher from './LanguageSwitcher.astro';
@@ -13,7 +13,6 @@ export interface Props {
   showNavigation?: boolean;
   showLanguageSwitcher?: boolean;
   showThemeToggle?: boolean;
-  isPWAMode?: boolean;
 }
 
 const {
@@ -21,27 +20,19 @@ const {
   currentPath,
   showNavigation = true,
   showLanguageSwitcher = true,
-  showThemeToggle = true,
-  isPWAMode = false
+  showThemeToggle = true
 } = Astro.props;
 
-// Navigation items for browser mode
+// Navigation items
 const navigationItems = [
   { href: `/${language}/episodes/`, label: 'Episodes', isActive: currentPath.includes('/episodes/') },
   { href: `/${language}/guests/`, label: 'Guests', isActive: currentPath.includes('/guests/') },
   { href: `/about/`, label: 'About', isActive: currentPath.includes('/about') },
   { href: `/${language}/subscribe/`, label: 'Subscribe', isActive: currentPath.includes('/subscribe/') },
 ];
-
-// PWA-specific navigation (minimal)
-const pwaNavigationItems = [
-  { href: `/${language}/episodes/`, label: 'Episodes', icon: 'play' },
-  { href: `/search/`, label: 'Search', icon: 'search' },
-];
 ---
 
-<!-- Browser Mode Header (Full Featured) -->
-{!isPWAMode && (
+<!-- Header -->
   <header class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50" transition:persist>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
@@ -124,65 +115,6 @@ const pwaNavigationItems = [
       </div>
     </div>
   </header>
-)}
-
-<!-- PWA Mode Header (Minimal) -->
-{isPWAMode && (
-  <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0" transition:persist>
-    <div class="px-4 py-3">
-      <div class="flex items-center justify-between">
-        <!-- Minimal Logo -->
-        <div class="flex items-center">
-          <img 
-            src="/images/crocafe-logo.svg" 
-            alt="CRO.CAFE" 
-            class="h-6 w-auto"
-            width="24"
-            height="24"
-          />
-          <span class="ml-2 text-lg font-semibold text-cro-orange dark:text-cro-orange-light">
-            CRO.CAFE
-          </span>
-        </div>
-
-        <!-- PWA Controls -->
-        <div class="flex items-center space-x-3">
-          {showThemeToggle && <ThemeToggle size="sm" />}
-          
-          <!-- PWA Menu Button -->
-          <button
-            type="button"
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-cro-orange dark:hover:text-cro-orange-light focus:outline-none focus:ring-2 focus:ring-cro-orange"
-            aria-expanded="false"
-            aria-controls="pwa-menu"
-            data-pwa-menu-button
-          >
-            <span class="sr-only">Open menu</span>
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- PWA Navigation (when menu is open) -->
-      <div class="hidden mt-3" id="pwa-menu" data-pwa-menu>
-        <div class="grid grid-cols-2 gap-2">
-          {pwaNavigationItems.map((item) => (
-            <a
-              href={item.href}
-              class="flex items-center justify-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-            >
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {item.label}
-              </span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  </header>
-)}
 
 <!-- Header JavaScript -->
 <script>
@@ -199,17 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // PWA menu toggle
-  const pwaMenuButton = document.querySelector('[data-pwa-menu-button]')
-  const pwaMenu = document.querySelector('[data-pwa-menu]')
-
-  if (pwaMenuButton && pwaMenu) {
-    pwaMenuButton.addEventListener('click', () => {
-      const isHidden = pwaMenu.classList.contains('hidden')
-      pwaMenu.classList.toggle('hidden', !isHidden)
-      pwaMenuButton.setAttribute('aria-expanded', isHidden.toString())
-    })
-  }
 
   // Close menus when clicking outside
   document.addEventListener('click', (event) => {
@@ -221,25 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenuButton?.setAttribute('aria-expanded', 'false')
     }
 
-    // Close PWA menu if clicking outside
-    if (pwaMenu && !pwaMenu.contains(target) && !pwaMenuButton?.contains(target)) {
-      pwaMenu.classList.add('hidden')
-      pwaMenuButton?.setAttribute('aria-expanded', 'false')
-    }
   })
 })
 </script>
 
 <style>
   /* Header specific styles */
-  header {
-    /* Support for PWA safe areas */
-    padding-top: env(safe-area-inset-top, 0);
-  }
   
   /* Smooth transitions for menu states */
-  [data-mobile-menu],
-  [data-pwa-menu] {
+  [data-mobile-menu] {
     transition: all 0.2s ease-in-out;
   }
 </style>

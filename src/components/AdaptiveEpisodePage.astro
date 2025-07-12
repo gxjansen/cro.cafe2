@@ -1,7 +1,7 @@
 ---
 /**
  * Adaptive Episode Page Component
- * Renders different layouts based on PWA vs Browser context
+ * Standard episode page layout
  */
 import type { CollectionEntry } from 'astro:content';
 import type { Language } from '../types';
@@ -16,7 +16,6 @@ export interface Props {
   currentPath: string;
   relatedEpisodes?: CollectionEntry<'episodes'>[];
   guests?: any[];
-  isPWAMode?: boolean;
 }
 
 const {
@@ -24,8 +23,7 @@ const {
   language,
   currentPath,
   relatedEpisodes = [],
-  guests = [],
-  isPWAMode = false
+  guests = []
 } = Astro.props;
 
 const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
@@ -35,124 +33,10 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
 <AdaptiveHeader 
   language={language} 
   currentPath={currentPath}
-  showNavigation={!isPWAMode}
-  showLanguageSwitcher={!isPWAMode}
-  isPWAMode={isPWAMode}
 />
 
 <!-- Main Content -->
-<main class={`flex-1 ${isPWAMode ? 'pwa-episode-content' : 'browser-episode-content'}`}>
-  <!-- PWA Mode: Focused on Audio -->
-  {isPWAMode && (
-    <div class="max-w-4xl mx-auto px-4 py-6">
-      <!-- Minimal Episode Header -->
-      <div class="text-center mb-6">
-        {imageUrl && (
-          <img 
-            src={imageUrl} 
-            alt={title}
-            class="w-48 h-48 mx-auto rounded-lg shadow-lg mb-4"
-            width="192"
-            height="192"
-            loading="eager"
-          />
-        )}
-        <h1 
-          class={`${(() => {
-            const titleLength = title.length;
-            if (titleLength <= 50) {
-              // Short titles: Use larger sizes for PWA mode
-              return 'text-2xl';
-            } else if (titleLength <= 80) {
-              // Medium titles: Use moderate sizes
-              return 'text-xl';
-            } else {
-              // Long titles: Use smaller, more readable sizes
-              return 'text-lg';
-            }
-          })()} font-bold text-gray-900 dark:text-gray-100 mb-2`}
-        >
-          {title}
-        </h1>
-        {publishDate && (
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {new Date(publishDate).toLocaleDateString(language === 'en' ? 'en-US' : `${language}-${language.toUpperCase()}`)}
-          </p>
-        )}
-      </div>
-
-      <!-- Quick Play Button -->
-      {audioUrl && (
-        <div class="text-center mb-6">
-          <button
-            class="inline-flex items-center px-6 py-3 bg-cro-orange hover:bg-cro-orange-dark text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
-            data-play-episode
-            data-episode-id={episode.slug}
-            data-episode-title={title}
-            data-episode-audio={audioUrl}
-            data-episode-image={imageUrl}
-          >
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-            </svg>
-            Play Episode
-          </button>
-        </div>
-      )}
-
-      <!-- Minimal Description -->
-      {description && (
-        <div class="prose prose-sm dark:prose-dark max-w-none mb-6">
-          <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
-            {description}
-          </p>
-          <button class="text-cro-orange hover:text-cro-orange-dark text-sm font-medium mt-2" data-expand-description>
-            Show more
-          </button>
-        </div>
-      )}
-
-      <!-- Related Episodes (Compact) -->
-      {relatedEpisodes.length > 0 && (
-        <div class="mt-8">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-            More Episodes
-          </h2>
-          <div class="space-y-3">
-            {relatedEpisodes.slice(0, 3).map((relatedEpisode) => (
-              <div class="flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                {relatedEpisode.data.imageUrl && (
-                  <img 
-                    src={relatedEpisode.data.imageUrl} 
-                    alt={relatedEpisode.data.title}
-                    class="w-12 h-12 rounded flex-shrink-0"
-                    width="48"
-                    height="48"
-                    loading="lazy"
-                  />
-                )}
-                <div class="flex-1 min-w-0">
-                  <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                    <a href={`/${language}/episodes/${relatedEpisode.slug}/`}>
-                      {relatedEpisode.data.title}
-                    </a>
-                  </h3>
-                  {relatedEpisode.data.publishDate && (
-                    <p class="text-xs text-gray-600 dark:text-gray-400">
-                      {new Date(relatedEpisode.data.publishDate).toLocaleDateString()}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )}
-
-  <!-- Browser Mode: Full Featured -->
-  {!isPWAMode && (
+<main class="flex-1 browser-episode-content">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Full Episode Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -259,7 +143,6 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
         </div>
       </div>
     </div>
-  )}
 </main>
 
 <!-- Episode Page JavaScript -->
@@ -285,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Handle description expansion in PWA mode
+  // Handle description expansion
   const expandButton = document.querySelector('[data-expand-description]')
   if (expandButton) {
     expandButton.addEventListener('click', () => {
@@ -302,10 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <style>
-  /* PWA-specific episode styles */
-  .pwa-episode-content {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0));
-  }
   
   .browser-episode-content {
     padding-bottom: 100px;
@@ -319,9 +198,4 @@ document.addEventListener('DOMContentLoaded', () => {
     overflow: hidden;
   }
   
-  /* Touch optimization for PWA */
-  [data-pwa-mode="true"] button {
-    min-height: 44px;
-    min-width: 44px;
-  }
 </style>
