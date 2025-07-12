@@ -185,9 +185,17 @@ const languages = [
       </div>
     </div>
   </main>
+  
+  <!-- Inject data for client-side script -->
+  <script id="search-data" type="application/json">{JSON.stringify(searchData)}</script>
+  <script id="languages-data" type="application/json">{JSON.stringify(languages)}</script>
 </BaseLayout>
 
-<script define:vars={{ searchData, languages }}>
+<script>
+// Import search data and languages from the server
+const searchData = JSON.parse(document.getElementById('search-data')?.textContent || '{}');
+const languages = JSON.parse(document.getElementById('languages-data')?.textContent || '[]');
+
 // Search state
 let currentFilters = {
   contentType: 'all', // 'all', 'episodes', 'guests'
@@ -393,8 +401,8 @@ function showEmptyState() {
   document.getElementById('empty-state').classList.remove('hidden')
 }
 
-// Set up event listeners
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize search functionality when DOM is ready
+function initializeSearch() {
   const searchInput = document.getElementById('search-input')
   const searchTags = document.querySelectorAll('.search-tag')
 
@@ -485,7 +493,15 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.value = queryParam
     performSearch(queryParam)
   }
-})
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeSearch);
+} else {
+  // DOM is already ready
+  initializeSearch();
+}
 </script>
 
 <style>

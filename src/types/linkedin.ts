@@ -259,6 +259,31 @@ export function parseSkills(skills: string | null | undefined): string[] {
 }
 
 /**
+ * Convert LinkedIn date format (e.g., "Jan 2021") to ISO format (e.g., "2021-01-01")
+ */
+function convertLinkedInDate(dateStr: string): string {
+  const months: Record<string, string> = {
+    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+  }
+  
+  // Handle "Jan 2021" format
+  const monthYearMatch = dateStr.match(/^(\w+)\s+(\d{4})$/)
+  if (monthYearMatch && months[monthYearMatch[1]]) {
+    return `${monthYearMatch[2]}-${months[monthYearMatch[1]]}-01`
+  }
+  
+  // Handle "2021" format (year only)
+  const yearOnlyMatch = dateStr.match(/^(\d{4})$/)
+  if (yearOnlyMatch) {
+    return `${yearOnlyMatch[1]}-01-01`
+  }
+  
+  return dateStr
+}
+
+/**
  * Transform raw LinkedIn data from NocoDB to clean LinkedInData
  */
 export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
@@ -273,15 +298,75 @@ export function transformLinkedInData(raw: LinkedInDataRaw): LinkedInData {
 
       // Handle the specific structure from MDX files
       if (Array.isArray(parsed)) {
-        experiences = parsed.map(exp => ({
-          title: exp.title || '',
-          company: exp.subtitle?.split(' · ')[0] || exp.company || '',
-          companyUrl: exp.companyLink1 || exp.companyUrl,
-          location: exp.metadata || exp.location,
-          description: exp.subComponents?.[0]?.description?.[0]?.text || exp.description,
-          duration: exp.caption || exp.duration,
-          isCurrent: exp.caption?.includes('Present') || exp.isCurrent
-        })).filter(exp => exp.title && exp.company)
+        experiences = parsed.map(exp => {
+          // Parse dates from caption like "Jan 2021 - Present   4 yrs 6 mos"
+          let startDate: string | undefined
+          let endDate: string | null = null
+          let isCurrent = false
+          
+          if (exp.caption) {
+            // Match patterns like "Jan 2021 - Present" or "2011 - Nov 2022"
+            const dateMatch = exp.caption.match(/^(\w+\s+\d{4}|\d{4})\s*-\s*(\w+\s+\d{4}|\d{4}|Present)/)
+            if (dateMatch) {
+              startDate = convertLinkedInDate(dateMatch[1])
+              if (dateMatch[2] === 'Present') {
+                isCurrent = true
+                endDate = null
+              } else {
+                endDate = convertLinkedInDate(dateMatch[2])
+              }
+            }
+          }
+          
+          // Handle nested experiences (breakdown: true with subComponents)
+          if (exp.breakdown && exp.subComponents && Array.isArray(exp.subComponents)) {
+            // This is a company with multiple roles - extract each role
+            return exp.subComponents.map((subExp: any) => {
+              let subStartDate: string | undefined
+              let subEndDate: string | null = null
+              let subIsCurrent = false
+              
+              if (subExp.caption) {
+                // Match patterns like "Jan 2021 - Present" or "2011 - Nov 2022"
+                const subDateMatch = subExp.caption.match(/^(\w+\s+\d{4}|\d{4})\s*-\s*(\w+\s+\d{4}|\d{4}|Present)/)
+                if (subDateMatch) {
+                  subStartDate = convertLinkedInDate(subDateMatch[1])
+                  if (subDateMatch[2] === 'Present') {
+                    subIsCurrent = true
+                    subEndDate = null
+                  } else {
+                    subEndDate = convertLinkedInDate(subDateMatch[2])
+                  }
+                }
+              }
+              
+              return {
+                title: subExp.title || '',
+                company: exp.title || '', // Parent title is the company name
+                companyUrl: exp.companyLink1 || exp.companyUrl,
+                location: subExp.metadata || exp.metadata || subExp.location,
+                description: subExp.description?.[0]?.text || subExp.description,
+                duration: subExp.caption || subExp.duration,
+                startDate: subStartDate,
+                endDate: subEndDate,
+                isCurrent: subIsCurrent || subExp.caption?.includes('Present')
+              }
+            })
+          }
+          
+          // Single role experience
+          return {
+            title: exp.title || '',
+            company: exp.subtitle?.split(' · ')[0] || exp.company || '',
+            companyUrl: exp.companyLink1 || exp.companyUrl,
+            location: exp.metadata || exp.location,
+            description: exp.subComponents?.[0]?.description?.[0]?.text || exp.description,
+            duration: exp.caption || exp.duration,
+            startDate,
+            endDate,
+            isCurrent: isCurrent || exp.caption?.includes('Present')
+          }
+        }).flat().filter(exp => exp.title && exp.company)
       }
     } catch (error) {
       console.error('Error parsing experiences:', error)
