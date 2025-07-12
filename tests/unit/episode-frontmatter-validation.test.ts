@@ -10,7 +10,7 @@ describe('Episode MDX Frontmatter Validation', () => {
     'status',
     'createdAt',
     'updatedAt',
-    'downloads_total',
+    // 'downloads_total', // Optional - may not be present for draft episodes
     'episode_type',
     'title',
     'description',

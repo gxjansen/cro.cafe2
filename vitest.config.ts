@@ -6,6 +6,15 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/e2e/**', // Exclude E2E tests from unit test runs
+      '**/*.e2e.test.ts',
+      '**/mobile-enhancements.test.js', // Jest test file
+      '**/brand-logos-visibility.test.js' // Jest test file
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [
