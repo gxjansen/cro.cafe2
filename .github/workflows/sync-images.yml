@@ -25,6 +25,12 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Validate required files
+        uses: ./.github/actions/validate-files
+        with:
+          files: scripts/sync-images.ts
+          fail-on-missing: true
+      
       - name: Pull latest changes
         run: git pull origin main
       

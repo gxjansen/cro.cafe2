@@ -1,0 +1,79 @@
+name: 'Validate Required Files'
+description: 'Validates that required files exist and are tracked in git'
+inputs:
+  files:
+    description: 'Comma-separated list of files that must exist'
+    required: true
+  fail-on-missing:
+    description: 'Whether to fail if files are missing'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate files
+      shell: bash
+      run: |
+        echo "🔍 Validating required files..."
+        
+        # Convert comma-separated list to array
+        IFS=',' read -ra FILES <<< "${{ inputs.files }}"
+        
+        MISSING=false
+        MISSING_FILES=""
+        
+        # Check each file
+        for file in "${FILES[@]}"; do
+          # Trim whitespace
+          file=$(echo "$file" | xargs)
+          
+          if [ -f "$file" ]; then
+            echo "✅ Found: $file"
+            
+            # Check if file is tracked in git
+            if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+              echo "   └─ Tracked in git ✓"
+            else
+              # Check if it's ignored
+              if git check-ignore "$file" >/dev/null 2>&1; then
+                echo "   └─ ⚠️ WARNING: File exists but is IGNORED by .gitignore!"
+                echo "      This file should be tracked. Check your .gitignore patterns."
+              else
+                echo "   └─ ⚠️ WARNING: File exists but is NOT tracked in git"
+              fi
+            fi
+          else
+            echo "❌ Missing: $file"
+            echo "   └─ This file is required but does not exist in the repository"
+            MISSING=true
+            MISSING_FILES="${MISSING_FILES}${file}, "
+          fi
+        done
+        
+        echo ""
+        
+        # Summary
+        if [ "$MISSING" = "true" ]; then
+          echo "## ❌ Validation Failed"
+          echo ""
+          echo "The following critical files are missing:"
+          echo "${MISSING_FILES%, }"
+          echo ""
+          echo "### Possible causes:"
+          echo "1. Files were deleted accidentally"
+          echo "2. Files are being ignored by .gitignore patterns"
+          echo "3. Files were not properly committed to the repository"
+          echo ""
+          echo "### To fix:"
+          echo "1. Check if the files exist locally but are ignored: git status --ignored"
+          echo "2. Review .gitignore for overly broad patterns like 'scripts/*.ts'"
+          echo "3. Restore missing files from git history if needed"
+          echo "4. Run 'npm run verify-critical-files' locally to diagnose"
+          
+          if [ "${{ inputs.fail-on-missing }}" = "true" ]; then
+            exit 1
+          fi
+        else
+          echo "## ✅ All required files validated successfully!"
+        fi

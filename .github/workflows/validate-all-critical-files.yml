@@ -1,0 +1,93 @@
+name: Validate All Critical Files
+
+on:
+  # Run on every push to main
+  push:
+    branches:
+      - main
+  
+  # Run on pull requests
+  pull_request:
+    branches:
+      - main
+  
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Run daily at 2 AM UTC to catch any issues
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  validate-critical-files:
+    name: Validate All Critical Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Validate workflow scripts
+        uses: ./.github/actions/validate-files
+        with:
+          files: |
+            scripts/generate-episodes.ts,
+            scripts/generate-guests.ts,
+            scripts/generate-hosts.ts,
+            scripts/generate-platforms.ts,
+            scripts/sync-linkedin-profile-pictures.ts,
+            scripts/sync-images.ts
+          fail-on-missing: true
+      
+      - name: Validate npm scripts
+        uses: ./.github/actions/validate-files
+        with:
+          files: |
+            scripts/validate-content.ts,
+            scripts/check-links.js,
+            scripts/check-accessibility.ts,
+            scripts/check-accessibility-detailed.ts,
+            scripts/optimize-episode-seo.ts,
+            scripts/validate-schema.ts
+          fail-on-missing: true
+      
+      - name: Validate content generation scripts
+        uses: ./.github/actions/validate-files
+        with:
+          files: |
+            scripts/generate-content.ts,
+            scripts/generate-content-simple.ts,
+            scripts/generate-content-robust.ts,
+            scripts/generate-content-final.ts,
+            scripts/generate-language-sitemaps.ts
+          fail-on-missing: true
+      
+      - name: Run local verification script
+        run: |
+          npm ci
+          npm run verify-critical-files
+      
+      - name: Create validation report
+        if: always()
+        run: |
+          echo "## 📋 Critical Files Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "### ✅ All critical files are present and validated" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Critical files validation failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Action Required:** Check the workflow logs above to see which files are missing." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Common causes:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Files ignored by overly broad .gitignore patterns" >> $GITHUB_STEP_SUMMARY
+            echo "- Files accidentally deleted from the repository" >> $GITHUB_STEP_SUMMARY
+            echo "- Files not properly committed to git" >> $GITHUB_STEP_SUMMARY
+          fi

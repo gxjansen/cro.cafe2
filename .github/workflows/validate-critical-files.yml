@@ -1,0 +1,121 @@
+name: Validate Critical Files
+
+on:
+  workflow_call:
+    inputs:
+      required_files:
+        description: 'JSON array of files that must exist'
+        required: true
+        type: string
+      fail_on_missing:
+        description: 'Whether to fail the workflow if files are missing'
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      validation_passed:
+        description: 'Whether all required files exist'
+        value: ${{ jobs.validate.outputs.validation_passed }}
+      missing_files:
+        description: 'List of missing files'
+        value: ${{ jobs.validate.outputs.missing_files }}
+
+jobs:
+  validate:
+    name: Validate Required Files
+    runs-on: ubuntu-latest
+    outputs:
+      validation_passed: ${{ steps.check.outputs.validation_passed }}
+      missing_files: ${{ steps.check.outputs.missing_files }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Check required files exist
+        id: check
+        run: |
+          echo "🔍 Checking for required files..."
+          
+          # Parse the JSON array of required files
+          REQUIRED_FILES='${{ inputs.required_files }}'
+          
+          # Initialize variables
+          MISSING_FILES=""
+          ALL_EXIST=true
+          
+          # Check each file
+          echo "$REQUIRED_FILES" | jq -r '.[]' | while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              echo "✅ Found: $file"
+            else
+              echo "❌ Missing: $file"
+              ALL_EXIST=false
+              if [ -z "$MISSING_FILES" ]; then
+                MISSING_FILES="$file"
+              else
+                MISSING_FILES="$MISSING_FILES,$file"
+              fi
+            fi
+          done > check_results.txt 2>&1
+          
+          # Read results
+          cat check_results.txt
+          
+          # Check if any files were missing
+          if grep -q "❌ Missing:" check_results.txt; then
+            ALL_EXIST=false
+            MISSING_FILES=$(grep "❌ Missing:" check_results.txt | sed 's/❌ Missing: //' | tr '\n' ',' | sed 's/,$//')
+          fi
+          
+          # Set outputs
+          echo "validation_passed=$ALL_EXIST" >> $GITHUB_OUTPUT
+          echo "missing_files=$MISSING_FILES" >> $GITHUB_OUTPUT
+          
+          # Summary
+          echo "## File Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat check_results.txt >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$ALL_EXIST" = "false" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ⚠️ Missing Files Detected" >> $GITHUB_STEP_SUMMARY
+            echo "The following required files are missing:" >> $GITHUB_STEP_SUMMARY
+            echo "$MISSING_FILES" | tr ',' '\n' | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+            
+            if [ "${{ inputs.fail_on_missing }}" = "true" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Action Required:** These files must be restored before the workflow can continue." >> $GITHUB_STEP_SUMMARY
+              echo "This usually happens when critical scripts are accidentally ignored by .gitignore" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ All required files are present" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Check git tracking status
+        if: success() || failure()
+        run: |
+          echo "## Git Tracking Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          REQUIRED_FILES='${{ inputs.required_files }}'
+          
+          echo "$REQUIRED_FILES" | jq -r '.[]' | while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              # Check if file is tracked in git
+              if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+                echo "✅ $file - tracked in git" >> $GITHUB_STEP_SUMMARY
+              else
+                # Check if it's ignored
+                if git check-ignore "$file" >/dev/null 2>&1; then
+                  echo "⚠️ $file - EXISTS but IGNORED by .gitignore" >> $GITHUB_STEP_SUMMARY
+                else
+                  echo "⚠️ $file - EXISTS but NOT tracked in git" >> $GITHUB_STEP_SUMMARY
+                fi
+              fi
+            fi
+          done

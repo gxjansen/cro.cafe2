@@ -50,8 +50,36 @@ permissions:
   id-token: write
 
 jobs:
+  # Validate all critical files exist before starting any sync
+  validate-files:
+    name: Validate Critical Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Validate all sync scripts
+        uses: ./.github/actions/validate-files
+        with:
+          files: |
+            scripts/generate-episodes.ts,
+            scripts/generate-guests.ts,
+            scripts/generate-hosts.ts,
+            scripts/generate-platforms.ts,
+            scripts/sync-images.ts,
+            scripts/sync-linkedin-profile-pictures.ts
+          fail-on-missing: true
+      
+      - name: Summary
+        run: |
+          echo "✅ All critical sync scripts validated successfully!" | tee -a $GITHUB_STEP_SUMMARY
+          echo "The sync workflows can proceed safely." | tee -a $GITHUB_STEP_SUMMARY
+
   # Sync platforms first (simplest, no dependencies)
   sync-platforms:
+    needs: validate-files
     if: github.event_name == 'schedule' || github.event.inputs.sync_platforms == 'true'
     uses: ./.github/workflows/sync-platforms.yml
     secrets:
@@ -61,6 +89,7 @@ jobs:
   
   # Sync hosts (no dependencies on other content)
   sync-hosts:
+    needs: validate-files
     if: github.event_name == 'schedule' || github.event.inputs.sync_hosts == 'true'
     uses: ./.github/workflows/sync-hosts.yml
     secrets:
@@ -70,6 +99,7 @@ jobs:
   
   # Sync guests (no dependencies on other content)
   sync-guests:
+    needs: validate-files
     if: github.event_name == 'schedule' || github.event.inputs.sync_guests == 'true'
     uses: ./.github/workflows/sync-guests.yml
     secrets:
@@ -79,7 +109,7 @@ jobs:
   
   # Sync episodes (depends on hosts and guests being available)
   sync-episodes:
-    needs: [sync-hosts, sync-guests]
+    needs: [validate-files, sync-hosts, sync-guests]
     if: |
       always() && 
       (github.event_name == 'schedule' || github.event.inputs.sync_episodes == 'true') &&
@@ -95,7 +125,7 @@ jobs:
   
   # Sync LinkedIn profile pictures after guests (optional)
   sync-linkedin-pictures:
-    needs: sync-guests
+    needs: [validate-files, sync-guests]
     if: |
       always() && 
       github.event.inputs.sync_linkedin_pictures == 'true' &&
@@ -105,7 +135,7 @@ jobs:
   
   # Sync images after episodes
   sync-images:
-    needs: sync-episodes
+    needs: [validate-files, sync-episodes]
     if: |
       always() && 
       (github.event_name == 'schedule' || github.event.inputs.sync_images == 'true') &&
