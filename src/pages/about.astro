@@ -39,13 +39,15 @@ const sortedHosts = hostOrder
     </section>
       
     <!-- Host Cards Section -->
-    <section class="py-lg">
+    <section id="hosts" class="py-lg">
       <div class="container-xl">
         <h2 class="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-8 text-center">Meet Our Hosts</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {sortedHosts.map((host, index) => (
-            <div>
-              <HostCard host={host} size="large" />
+            <div class="flex flex-col h-full">
+              <div class="flex-1">
+                <HostCard host={host} size="large" />
+              </div>
               <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
                 {index === 0 ? 'Dutch & English Host' : 
                  index === 1 ? 'Spanish Host' : 

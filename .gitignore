@@ -10,7 +10,6 @@ coordination.md
 .roomodes
 phase_*.md
 architecture/
-CLAUDE.md
 
 # Development Documentation - Keep Only Implementation Docs
 devdocs/
