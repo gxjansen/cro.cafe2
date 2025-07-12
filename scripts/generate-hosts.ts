@@ -154,7 +154,7 @@ class HostGenerator {
   }
 
   private generateHostFrontmatter(host: any, slug: string): string {
-    const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.slug || e.Id) : []
+    const episodes = Array.isArray(host.Episodes) ? host.Episodes.map((e: any) => e.transistorId || e.Id) : []
 
     // Handle LinkedIn field
     let linkedinValue = ''
