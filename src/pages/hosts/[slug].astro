@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import HostImage from '../../components/HostImage.astro';
 import { getHostBySlug, getHostLanguages, getHostImageUrl, getHostStatistics } from '../../utils/content';
+import { parseMarkdownLinks } from '../../utils/markdown';
 import type { Language } from '../../types';
 
 export async function getStaticPaths() {
@@ -189,9 +190,7 @@ const pageDescription = `${text[pageLanguage].meet} ${host.data.name}, ${host.da
     <section class="py-16 bg-white dark:bg-gray-800">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="prose prose-lg dark:prose-invert mx-auto text-center">
-          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-            {host.data.bio}
-          </p>
+          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed" set:html={parseMarkdownLinks(host.data.bio)} />
         </div>
       </div>
     </section>

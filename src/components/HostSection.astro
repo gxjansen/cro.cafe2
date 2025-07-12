@@ -1,5 +1,6 @@
 ---
 import HostImage from './HostImage.astro';
+import { parseMarkdownLinks } from '../utils/markdown';
 import type { Language } from '../types';
 
 export interface Props {
@@ -99,9 +100,7 @@ function getHostImageUrl(host: any): string {
                   
                   <!-- Bio -->
                   {host.data.bio && (
-                    <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                      {host.data.bio}
-                    </p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed" set:html={parseMarkdownLinks(host.data.bio)} />
                   )}
                   
                   <!-- Links -->
