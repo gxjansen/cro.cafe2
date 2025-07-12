@@ -4,7 +4,7 @@ import { safeJsonParse } from '../types/linkedin';
 
 export interface Props {
   experiences: string;
-  firstEpisodeDate: string;
+  firstEpisodeDate: string; // Note: Currently using 2019 cutoff instead of first episode date
   guestName: string;
 }
 
@@ -39,16 +39,31 @@ const sortedExperiences = [...cleanedExperiences].sort((a, b) => {
   return dateB - dateA;
 });
 
-// Filter experiences to show only from first episode onwards
+// Filter experiences to show jobs since 2019 (when CRO.CAFE started)
 const relevantExperiences = sortedExperiences.filter(exp => {
-  const expStartDate = exp.startDate ? new Date(exp.startDate) : new Date();
-  const firstEpisode = new Date(firstEpisodeDate);
+  const cutoffDate = new Date('2019-01-01'); // CRO.CAFE started in January 2019
+  
+  // Parse dates
+  const expStartDate = exp.startDate ? new Date(exp.startDate) : null;
+  const expEndDate = exp.endDate ? new Date(exp.endDate) : null;
   
   // Include if:
-  // 1. Job started after first episode, OR
-  // 2. Job was active during first episode (no end date or ended after episode)
-  return expStartDate >= firstEpisode || 
-         (!exp.endDate || new Date(exp.endDate) >= firstEpisode);
+  // 1. Job is current (no end date), OR
+  // 2. Job ended after 2019, OR  
+  // 3. Job started after 2019
+  if (!expEndDate || exp.isCurrent) {
+    // Current job - always include
+    return true;
+  } else if (expEndDate >= cutoffDate) {
+    // Job ended after 2019 - include
+    return true;
+  } else if (expStartDate && expStartDate >= cutoffDate) {
+    // Job started after 2019 - include
+    return true;
+  }
+  
+  // Exclude jobs that ended before 2019
+  return false;
 });
 
 // If no relevant experiences, return null
