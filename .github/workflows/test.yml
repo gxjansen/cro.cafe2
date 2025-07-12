@@ -1,0 +1,42 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  # Run after content sync workflows
+  workflow_run:
+    workflows: ["Sync Episodes from NocoDB"]
+    types:
+      - completed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm run test:run
+      
+    - name: Run episode validation tests specifically
+      run: npm run test:run -- tests/unit/episode-frontmatter-validation.test.ts
+      
+    # If tests fail, provide detailed error message
+    - name: Report test failures
+      if: failure()
+      run: |
+        echo "❌ Tests failed! Episode files may be missing required fields."
+        echo "Check the test output above for details on which fields are missing."
