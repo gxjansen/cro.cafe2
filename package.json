@@ -20,6 +20,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "test:integration": "vitest run tests/integration",
     "test:a11y": "vitest run --config vitest.config.a11y.ts",
     "test:a11y:watch": "vitest --config vitest.config.a11y.ts",
     "test:a11y:ui": "vitest --ui --config vitest.config.a11y.ts",
