@@ -54,7 +54,7 @@ class HostGenerator {
       console.log(`📁 Found ${existingFiles.size} existing host files`)
 
       // Fetch hosts from NocoDB
-      console.log('📥 Fetching hosts from NocoDB...')
+      console.log('📥 Fetching hosts from NocoDB (with picture field support)...')
       const hosts = await this.client.getHosts({ limit: 100 })
       console.log(`📊 Found ${hosts.length} hosts in NocoDB`)
 
