@@ -329,33 +329,30 @@ function displayResults(episodes, guests, query) {
   if (episodes.length > 0) {
     episodesSection.classList.remove('hidden')
     episodesResults.innerHTML = episodes.map(episode => `
-        <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
-          <div class="flex items-start justify-between mb-3">
-            <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
-              ${episode.language.toUpperCase()}
-            </span>
-            <span class="text-sm text-gray-500 dark:text-gray-400">
-              S${episode.season}E${episode.episode}
-            </span>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            <a href="/${episode.language}/episodes/${episode.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+        <a href="/${episode.language}/episodes/${episode.slug}/" class="block">
+          <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 h-full cursor-pointer">
+            <div class="flex items-start justify-between mb-3">
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
+                ${episode.language.toUpperCase()}
+              </span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">
+                S${episode.season}E${episode.episode}
+              </span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${episode.title}
-            </a>
-          </h3>
-          <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
-            ${episode.description}
-          </p>
-          <a 
-            href="/${episode.language}/episodes/${episode.slug}/" 
-            class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
-          >
-            Listen now
-            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        </article>
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
+              ${episode.description}
+            </p>
+            <div class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+              Listen now
+              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </article>
+        </a>
       `).join('')
   } else {
     episodesSection.classList.add('hidden')
@@ -368,26 +365,26 @@ function displayResults(episodes, guests, query) {
   if (guests.length > 0) {
     guestsSection.classList.remove('hidden')
     guestsResults.innerHTML = guests.map(guest => `
-        <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center">
-          <div class="mb-4">
-            <img 
-              src="/images/guests/${guest.slug}.jpeg" 
-              alt="${guest.name}"
-              class="w-20 h-20 mx-auto rounded-full object-cover grayscale"
-              onerror="this.src='/images/placeholder-guest.jpg'"
-            />
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            <a href="/all/guests/${guest.slug}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+        <a href="/guests/${guest.slug}/" class="block">
+          <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center h-full cursor-pointer">
+            <div class="mb-4">
+              <img 
+                src="/images/guests/${guest.slug}.jpeg" 
+                alt="${guest.name}"
+                class="w-20 h-20 mx-auto rounded-full object-cover grayscale"
+                onerror="this.src='/images/placeholder-guest.jpg'"
+              />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${guest.name}
-            </a>
-          </h3>
-          ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${guest.company}</p>` : ''}
-          ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${guest.role}</p>` : ''}
-          <div class="text-xs text-gray-500 dark:text-gray-400">
-            ${guest.episodeCount} episode${guest.episodeCount !== 1 ? 's' : ''}
-          </div>
-        </article>
+            </h3>
+            ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${guest.company}</p>` : ''}
+            ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${guest.role}</p>` : ''}
+            <div class="text-xs text-gray-500 dark:text-gray-400">
+              ${guest.episodeCount} episode${guest.episodeCount !== 1 ? 's' : ''}
+            </div>
+          </article>
+        </a>
       `).join('')
   } else {
     guestsSection.classList.add('hidden')
