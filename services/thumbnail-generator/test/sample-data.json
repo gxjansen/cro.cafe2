@@ -1,0 +1,32 @@
+{
+  "episode": {
+    "id": "episode-142",
+    "episode_number": 142,
+    "title": "Strategic Growth Through Data Analytics",
+    "show_name": "CRO CAFÉ"
+  },
+  "hosts": [
+    {
+      "name": "John Doe",
+      "title": "Host",
+      "company": "",
+      "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+      "linkedin_profile_pic": ""
+    }
+  ],
+  "guests": [
+    {
+      "name": "Sarah Chen",
+      "title": "VP of Growth",
+      "company": "DataCorp",
+      "image_url": "https://images.unsplash.com/photo-1494790108755-2616b332c1e2?w=400&h=400&fit=crop&crop=face",
+      "linkedin_profile_pic": ""
+    }
+  ],
+  "canvas": {
+    "width": 3000,
+    "height": 3000,
+    "format": "jpeg",
+    "quality": 85
+  }
+}

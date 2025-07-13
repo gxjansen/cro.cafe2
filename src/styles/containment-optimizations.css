@@ -46,7 +46,7 @@
 }
 
 /* Episode image containers with fixed aspect ratio */
-.episode-card [class*="pb-[56.25%]"],
+.episode-card [class*="pb-[100%]"],
 .episode-card__image-container {
   contain: strict;
   /* Fixed aspect ratio containers */

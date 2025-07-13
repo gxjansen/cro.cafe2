@@ -4,7 +4,6 @@ import Header from '../../components/Header.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import EpisodeCard from '../../components/EpisodeCard.astro';
 import GuestProfilePicture from '../../components/GuestProfilePicture.astro';
-import CareerTimeline from '../../components/CareerTimeline.astro';
 import CareerTimelineV2 from '../../components/CareerTimelineV2.astro';
 import SchemaPerson from '../../components/schema/SchemaPerson.astro';
 import GuestOtherCompany from '../../components/GuestOtherCompany.astro';
@@ -361,20 +360,22 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
           {guestWithLinkedIn?.linkedInData?.experiences && 
            guestWithLinkedIn.linkedInData.experiences.length > 0 && 
            guestEpisodes.length > 0 && (
-            (() => {
-              const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
-              const firstEpisodeDate = oldestEpisode.data.pubDate.toISOString();
-              const episodeDates = guestEpisodes.map(ep => ep.data.pubDate.toISOString());
-              
-              return (
-                <CareerTimelineV2
-                  experiences={JSON.stringify(guestWithLinkedIn.linkedInData.experiences)}
-                  firstEpisodeDate={firstEpisodeDate}
-                  episodeDates={episodeDates}
-                  guestName={guestName}
-                />
-              );
-            })()
+            <div class="mt-lg mb-lg">
+              {(() => {
+                const oldestEpisode = guestEpisodes.sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime())[0];
+                const firstEpisodeDate = oldestEpisode.data.pubDate.toISOString();
+                const episodeDates = guestEpisodes.map(ep => ep.data.pubDate.toISOString());
+                
+                return (
+                  <CareerTimelineV2
+                    experiences={JSON.stringify(guestWithLinkedIn.linkedInData.experiences)}
+                    firstEpisodeDate={firstEpisodeDate}
+                    episodeDates={episodeDates}
+                    guestName={guestName}
+                  />
+                );
+              })()}
+            </div>
           )}
 
           <!-- Other Guests from Same Company -->

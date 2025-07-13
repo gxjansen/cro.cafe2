@@ -11,6 +11,7 @@ export interface Props {
   episodeNumber?: number;
   season?: number;
   guestName?: string;
+  aspectRatio?: 'square' | '16:9' | '21:9' | '2:1';
 }
 
 const { 
@@ -22,8 +23,27 @@ const {
   episodeTitle,
   episodeNumber,
   season,
-  guestName
+  guestName,
+  aspectRatio = 'square'
 } = Astro.props;
+
+// Calculate height based on aspect ratio
+const calculateHeight = () => {
+  switch (aspectRatio) {
+    case 'square':
+      return width;
+    case '16:9':
+      return Math.round(width * 9 / 16);
+    case '21:9':
+      return Math.round(width * 9 / 21);
+    case '2:1':
+      return Math.round(width / 2);
+    default:
+      return width;
+  }
+};
+
+const computedHeight = calculateHeight();
 
 // Fallback gradient background for episodes without images
 const fallbackGradient = `bg-gradient-to-br from-primary-400 to-accent-500`;
@@ -65,7 +85,7 @@ const standardizedAlt = buildAltText();
     src={imageUrl} 
     alt={standardizedAlt}
     width={width}
-    height={height}
+    height={computedHeight}
     class={className}
     loading="lazy"
     format="webp"

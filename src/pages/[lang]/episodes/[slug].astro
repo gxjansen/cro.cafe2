@@ -265,12 +265,13 @@ const getDateLocale = (lang: Language) => {
             </div>
           </header>
 
-          <!-- Episode Image -->
-          <div class="mb-lg rounded-xl overflow-hidden aspect-video lg:aspect-[21/9]">
+          <!-- Episode Image (Mobile Only) -->
+          <div class="lg:hidden mb-lg rounded-xl overflow-hidden aspect-square">
             <EpisodeImage 
               imageUrl={episode.data.imageUrl} 
               alt={episode.data.title}
               class="w-full h-full object-cover"
+              aspectRatio="square"
             />
           </div>
 
@@ -453,6 +454,19 @@ const getDateLocale = (lang: Language) => {
               >
                 {t.morePlatforms}
               </a>
+            </div>
+          </section>
+
+          <!-- Episode Image -->
+          <section class="bg-gray-50 dark:bg-gray-800 rounded-xl p-lg">
+            <div class="aspect-square rounded-lg overflow-hidden">
+              <EpisodeImage 
+                imageUrl={episode.data.imageUrl} 
+                alt={episode.data.title}
+                class="w-full h-full object-cover"
+                aspectRatio="square"
+                width={400}
+              />
             </div>
           </section>
 

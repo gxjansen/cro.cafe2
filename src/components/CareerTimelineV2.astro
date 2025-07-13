@@ -121,9 +121,20 @@ const processedExperiences = relevantExperiences.map(experience => {
   };
 });
 
-// Determine if we need scroll controls
-const needsScroll = relevantExperiences.length > 3;
+// Always show scroll controls on desktop since timeline can overflow horizontally
+const needsScroll = true; // Show controls if timeline might overflow
 const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
+
+// Debug logging
+console.log('CareerTimelineV2 Debug:', {
+  parsedExperiencesCount: parsedExperiences.length,
+  relevantExperiencesCount: relevantExperiences.length,
+  cleanedExperiencesCount: cleanedExperiences.length,
+  needsScroll,
+  timelineId,
+  guestName,
+  willRender: parsedExperiences.length > 0 && relevantExperiences.length > 0
+});
 ---
 
 {parsedExperiences.length > 0 && relevantExperiences.length > 0 ? (
@@ -131,30 +142,28 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
   <div class="career-timeline-container">
     <div class="timeline-header">
       <h2>Career Journey</h2>
-      {needsScroll && (
-        <div class="timeline-controls" aria-label="Timeline navigation">
-          <button 
-            class="timeline-nav-btn timeline-nav-prev" 
-            aria-label="Previous experiences"
-            data-direction="prev"
-            data-timeline-id={timelineId}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <button 
-            class="timeline-nav-btn timeline-nav-next" 
-            aria-label="Next experiences"
-            data-direction="next"
-            data-timeline-id={timelineId}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      )}
+      <div class="timeline-controls" aria-label="Timeline navigation">
+        <button 
+          class="timeline-nav-btn timeline-nav-prev" 
+          aria-label="Previous experiences"
+          data-direction="prev"
+          data-timeline-id={timelineId}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button 
+          class="timeline-nav-btn timeline-nav-next" 
+          aria-label="Next experiences"
+          data-direction="next"
+          data-timeline-id={timelineId}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Timeline labels -->
@@ -212,10 +221,6 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
           ))}
         </div>
       </div>
-      
-      <!-- Scroll indicators -->
-      <div class="timeline-scroll-indicator timeline-scroll-left" aria-hidden="true"></div>
-      <div class="timeline-scroll-indicator timeline-scroll-right" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -229,32 +234,13 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     --timeline-gap: 1.5rem;
     --timeline-card-width: 280px;
     
-    /* Break out of parent container on desktop */
-    margin: 2rem -2rem;
-    padding: 2rem;
-    background-color: #f9fafb;
-    border-radius: 0.75rem;
-  }
-  
-  @media (min-width: 768px) {
-    .career-timeline-section {
-      margin: 3rem -4rem;
-      padding: 3rem 4rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .career-timeline-section {
-      /* Full viewport width */
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
-      padding: 3rem calc(50vw - 50% + 2rem);
-    }
+    padding: 0 1rem;
+    /* Remove any background - let parent control it */
+    background: transparent;
   }
 
   .career-timeline-container {
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
   }
 
   .timeline-header {
@@ -262,6 +248,7 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
   }
 
   .timeline-header h2 {
@@ -269,12 +256,20 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     font-size: 1.5rem;
     font-weight: 600;
     color: #111827;
+    text-align: left; /* Ensure left alignment */
   }
   
   /* Navigation controls */
   .timeline-controls {
-    display: flex;
+    display: none; /* Hidden by default */
     gap: 0.5rem;
+  }
+  
+  /* Show controls on desktop */
+  @media (min-width: 768px) {
+    .timeline-controls {
+      display: flex;
+    }
   }
   
   .timeline-nav-btn {
@@ -283,12 +278,16 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    border: 1px solid var(--timeline-color);
-    border-radius: 0.5rem;
+    border: 2px solid var(--timeline-color);
+    border-radius: 0.5rem; /* rounded-lg to match site buttons */
     background-color: white;
     color: #6b7280;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    /* Subtle shadow matching site's button system */
+    box-shadow: 
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1);
   }
   
   .timeline-nav-btn:hover:not(:disabled) {
@@ -374,7 +373,7 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
       display: flex;
       flex-direction: row-reverse;
       gap: var(--timeline-gap);
-      padding: calc(var(--timeline-dot-size) * 2) 3rem;
+      padding: calc(var(--timeline-dot-size) * 2) 1rem;
       width: max-content;
       min-width: 100%;
     }
@@ -382,44 +381,16 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     .timeline-item {
       position: relative;
       flex: 0 0 var(--timeline-card-width);
+      max-width: var(--timeline-card-width);
     }
 
     .timeline-item:nth-child(even) {
       margin-top: 4rem;
     }
     
-    /* Scroll indicators */
+    /* Scroll indicators - removed gradients, keeping structure for potential future use */
     .timeline-scroll-indicator {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 80px;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .timeline-scroll-left {
-      left: 0;
-      background: linear-gradient(to right, #f9fafb 20%, transparent);
-    }
-    
-    .timeline-scroll-right {
-      right: 0;
-      background: linear-gradient(to left, #f9fafb 20%, transparent);
-    }
-    
-    .timeline-wrapper.has-scroll .timeline-scroll-right {
-      opacity: 1;
-    }
-    
-    .timeline-wrapper.show-left-scroll .timeline-scroll-left {
-      opacity: 1;
-    }
-    
-    .timeline-wrapper.hide-right-scroll .timeline-scroll-right {
-      opacity: 0;
+      display: none; /* Hide scroll indicators */
     }
   }
 
@@ -453,15 +424,18 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
   
   @media (min-width: 768px) {
     .timeline-labels {
-      padding: 0 3rem;
+      padding: 0 1rem;
     }
   }
 
   .timeline-label {
     background-color: white;
     padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 9999px; /* rounded-full for pill shape */
+    /* Subtle shadow matching site's design */
+    box-shadow: 
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1);
   }
 
   /* Timeline dot */
@@ -501,23 +475,34 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
   /* Timeline content */
   .timeline-content {
     background-color: white;
-    border: 1px solid var(--timeline-color);
-    border-radius: 0.75rem;
+    border: 2px solid var(--timeline-color);
+    border-radius: 0.5rem; /* rounded-lg to match site design */
     padding: 1.25rem;
     transition: all 0.3s ease;
     height: 100%;
     display: flex;
     flex-direction: column;
+    /* Multi-layer shadow for enhanced depth - matching site's card system */
+    box-shadow: 
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   .timeline-item.current .timeline-content {
     border-color: var(--timeline-active-color);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* Enhanced shadow for current role - matching card-elevated */
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -4px rgba(0, 0, 0, 0.1);
   }
 
   .timeline-item:hover .timeline-content {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    /* Enhanced hover effect matching site's card-interactive system */
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px) scale(1.02);
   }
 
   .timeline-header-content {
@@ -599,7 +584,8 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
     .career-timeline-section {
-      background-color: #1f2937;
+      /* Remove background - let parent control it */
+      background: transparent;
       --timeline-color: #374151;
       --timeline-active-color: #60a5fa;
     }
@@ -621,8 +607,13 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     }
 
     .timeline-content {
-      background-color: #374151;
+      background-color: #1f2937; /* gray-800 to match site's dark cards */
       border-color: #4b5563;
+      /* Dark mode shadow matching site's card system */
+      box-shadow: 
+        0 1px 3px 0 rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
     }
 
     .timeline-title {
@@ -648,14 +639,6 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     .timeline-item.episode-time .timeline-dot {
       background-color: #1e3a8a;
     }
-    
-    .timeline-scroll-left {
-      background: linear-gradient(to right, #1f2937 20%, transparent);
-    }
-    
-    .timeline-scroll-right {
-      background: linear-gradient(to left, #1f2937 20%, transparent);
-    }
   }
 </style>
 
@@ -665,11 +648,17 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
     const timelines = document.querySelectorAll('[data-timeline-container]');
     
     timelines.forEach(timeline => {
-      const wrapper = timeline.closest('.timeline-wrapper');
-      const prevBtn = document.querySelector(`[data-timeline-id="${timeline.id}"][data-direction="prev"]`);
-      const nextBtn = document.querySelector(`[data-timeline-id="${timeline.id}"][data-direction="next"]`);
+      const section = timeline.closest('.career-timeline-section');
+      if (!section) return;
       
-      if (!wrapper || !prevBtn || !nextBtn) return;
+      const wrapper = timeline.closest('.timeline-wrapper');
+      const prevBtn = section.querySelector('.timeline-nav-prev');
+      const nextBtn = section.querySelector('.timeline-nav-next');
+      
+      if (!wrapper || !prevBtn || !nextBtn) {
+        console.error('Timeline controls not found', { wrapper, prevBtn, nextBtn });
+        return;
+      }
       
       // Update scroll indicators and button states
       const updateScrollState = () => {
@@ -677,10 +666,22 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
         const scrollWidth = timeline.scrollWidth;
         const clientWidth = timeline.clientWidth;
         const maxScroll = scrollWidth - clientWidth;
+        const hasOverflow = scrollWidth > clientWidth;
         
-        // Update button states
-        prevBtn.disabled = scrollLeft <= 0;
-        nextBtn.disabled = scrollLeft >= maxScroll - 1;
+        // Hide controls if no overflow is needed on desktop
+        const controls = section.querySelector('.timeline-controls');
+        if (controls && window.innerWidth >= 768) {
+          controls.style.display = hasOverflow ? 'flex' : 'none';
+        }
+        
+        // Update button states only if there's overflow
+        if (hasOverflow) {
+          prevBtn.disabled = scrollLeft <= 5; // Small tolerance
+          nextBtn.disabled = scrollLeft >= maxScroll - 5; // Small tolerance
+        } else {
+          prevBtn.disabled = true;
+          nextBtn.disabled = true;
+        }
         
         // Update scroll indicators
         if (scrollLeft > 10) {
@@ -697,15 +698,38 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
       };
       
       // Scroll handlers
-      const scrollAmount = 300; // Width of one card plus gap
+      const getScrollAmount = () => {
+        // Calculate based on actual card width for more precise scrolling
+        const card = timeline.querySelector('.timeline-item');
+        return card ? card.offsetWidth + 24 : 304; // Card width + gap (280 + 24)
+      };
       
-      prevBtn.addEventListener('click', () => {
+      prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const scrollAmount = getScrollAmount();
         timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       });
       
-      nextBtn.addEventListener('click', () => {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const scrollAmount = getScrollAmount();
         timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
       });
+      
+      // Add mouse wheel support for horizontal scrolling
+      timeline.addEventListener('wheel', (e) => {
+        // Only handle horizontal scrolling if timeline has overflow
+        if (timeline.scrollWidth > timeline.clientWidth) {
+          e.preventDefault();
+          // Shift+wheel or horizontal wheel for horizontal scroll
+          if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            timeline.scrollLeft += e.deltaX || e.deltaY;
+          } else {
+            // Regular vertical scroll becomes horizontal
+            timeline.scrollLeft += e.deltaY;
+          }
+        }
+      }, { passive: false });
       
       // Update on scroll
       timeline.addEventListener('scroll', updateScrollState);
@@ -715,7 +739,7 @@ const timelineId = `timeline-${Math.random().toString(36).substr(2, 9)}`;
       resizeObserver.observe(timeline);
       
       // Initial state
-      updateScrollState();
+      setTimeout(updateScrollState, 100); // Small delay to ensure layout is complete
     });
   });
 </script>

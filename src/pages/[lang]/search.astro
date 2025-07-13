@@ -262,9 +262,18 @@ const quickSearchTerms = {
       </div>
     </div>
   </main>
+  
+  <!-- Inject data for client-side script -->
+  <script id="search-data" type="application/json" set:html={JSON.stringify(searchData)}></script>
+  <script id="language-data" type="application/json" set:html={JSON.stringify(language)}></script>
+  <script id="translations-data" type="application/json" set:html={JSON.stringify(translations)}></script>
 </BaseLayout>
 
-<script define:vars={{ searchData, language, translations }}>
+<script>
+// Import search data and configuration from the server
+const searchData = JSON.parse(document.getElementById('search-data')?.textContent || '{}');
+const language = JSON.parse(document.getElementById('language-data')?.textContent || '"en"');
+const translations = JSON.parse(document.getElementById('translations-data')?.textContent || '{}');
 const t = translations[language]
 
 // Search state
@@ -468,8 +477,8 @@ function showEmptyState() {
   document.getElementById('empty-state').classList.remove('hidden')
 }
 
-// Set up event listeners
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize search functionality when DOM is ready
+function initializeSearch() {
   const searchInput = document.getElementById('search-input')
   const searchTags = document.querySelectorAll('.search-tag')
 
@@ -539,7 +548,15 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.value = queryParam
     performSearch(queryParam)
   }
-})
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeSearch);
+} else {
+  // DOM is already ready
+  initializeSearch();
+}
 </script>
 
 <style>
