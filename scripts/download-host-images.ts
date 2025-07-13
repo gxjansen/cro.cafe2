@@ -124,17 +124,13 @@ class HostImageDownloader {
 
   private constructImageUrl(path: string): string {
     // NocoDB attachment paths are relative to the base URL
-    // Format: nc/uploads/[baseId]/[tableName]/[fieldName]/[filename]
+    // Format: dltemp/[id]/[timestamp]/noco/[baseId]/[tableName]/[fieldName]/[filename]
     // Access the private config property
     const config = (this.client as any).config
     const baseUrl = config.baseUrl.replace(/\/$/, '') // Remove trailing slash
     
-    // The path should already contain the full relative path
-    if (path.startsWith('/')) {
-      return `${baseUrl}${path}`
-    } else {
-      return `${baseUrl}/${path}`
-    }
+    // The path is a relative path that needs to be prepended with /api/v1/
+    return `${baseUrl}/api/v1/${path}`
   }
 
   private async ensureDirectoryExists(dir: string): Promise<void> {
