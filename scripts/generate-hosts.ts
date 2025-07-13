@@ -137,9 +137,9 @@ class HostGenerator {
     if (slug === 'gxjansen') {
       console.log('🔍 DEBUG: gxjansen host fields:', Object.keys(host))
       console.log('🔍 DEBUG: gxjansen image_url value:', host.image_url)
+      console.log('🔍 DEBUG: gxjansen picture field:', JSON.stringify(host.picture, null, 2))
       console.log('🔍 DEBUG: gxjansen UpdatedAt:', host.UpdatedAt)
       console.log('🔍 DEBUG: gxjansen nocodb_last_modified:', host.nocodb_last_modified)
-      console.log('🔍 DEBUG: gxjansen full data:', JSON.stringify(host, null, 2))
     }
 
     const frontmatter = this.generateHostFrontmatter(host, slug)
@@ -177,9 +177,23 @@ class HostGenerator {
       socialLinks.push({ platform: 'linkedin', url: linkedinValue })
     }
 
-    // Handle image URL
+    // Handle image URL from picture attachment field (preferred) or fallback to image_url
     let imageUrlField = ''
-    if (host.image_url) {
+    
+    // First try to use the picture attachment field
+    if (host.picture && Array.isArray(host.picture) && host.picture.length > 0) {
+      const attachment = host.picture[0]
+      if (attachment.signedPath) {
+        // Extract filename from the attachment path
+        const filename = attachment.title || attachment.path?.split('/').pop()
+        if (filename) {
+          imageUrlField = `imageUrl: "/images/hosts/${filename}"`
+        }
+      }
+    }
+    
+    // Fallback to image_url field if picture is not available
+    if (!imageUrlField && host.image_url) {
       if (this.isValidUrl(host.image_url)) {
         imageUrlField = `imageUrl: "${host.image_url}"`
       } else if (host.image_url && typeof host.image_url === 'string') {
