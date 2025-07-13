@@ -18,7 +18,6 @@ const isGlobalMode = currentPath === '/' ||
                      currentPath === '/subscribe/' ||
                      currentPath === '/about/' ||
                      currentPath === '/privacy-policy/' ||
-                     currentPath === '/offline/' ||
                      (!currentPath.startsWith('/en/') && 
                       !currentPath.startsWith('/nl/') && 
                       !currentPath.startsWith('/de/') && 
@@ -98,9 +97,14 @@ const searchLabel = searchTranslations[language] || 'Search';
           aria-label="CRO.CAFE Home"
         >
           <img 
-            src="/images/crocafe-logo.svg" 
+            src="/images/crocafe/crocafe-black.png" 
             alt="CRO.CAFE Logo"
-            class="h-8 sm:h-10 w-auto transition-all duration-200 group-hover:scale-105 dark:invert dark:brightness-0 dark:contrast-200"
+            class="h-8 sm:h-10 w-auto transition-all duration-200 group-hover:scale-105 logo-light"
+          />
+          <img 
+            src="/images/crocafe/crocafe-white.png" 
+            alt="CRO.CAFE Logo"
+            class="h-8 sm:h-10 w-auto transition-all duration-200 group-hover:scale-105 logo-dark"
           />
         </a>
       </div>
