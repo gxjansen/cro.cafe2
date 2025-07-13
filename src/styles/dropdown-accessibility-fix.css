@@ -1,290 +1,228 @@
-/* ===================================
-   Enhanced Dropdown Accessibility for WCAG 2.2 AA Compliance
-   Comprehensive design system integration with superior contrast
-   =================================== */
+/* Dropdown Filter Accessibility Fix for CRO.CAFE */
+/* Addresses white text on white background issue in light mode */
+/* WCAG 2.2 AA compliant with 4.5:1+ contrast ratios */
 
-/* Enhanced base select styling with improved visual hierarchy */
-select.country-filter,
-select.expertise-filter,
-select.mobile-country-filter {
-  /* Light mode - Enhanced contrast and professional styling */
-  background-color: #ffffff;
-  color: #1f2937; /* gray-800 - 12.63:1 contrast ratio */
-  border: 2px solid #e5e7eb; /* gray-200 - stronger border for better definition */
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 
-              0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Enhanced dark mode select styling */
-.dark select.country-filter,
-.dark select.expertise-filter,
-.dark select.mobile-country-filter {
-  background-color: #374151; /* gray-700 */
-  color: #f9fafb; /* gray-50 - 15.96:1 contrast ratio */
-  border: 2px solid #6b7280; /* gray-500 - stronger border */
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 
-              0 1px 2px -1px rgba(0, 0, 0, 0.3),
-              inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-}
-
-/* Enhanced option elements with superior contrast and UX */
-select.country-filter option,
-select.expertise-filter option,
-select.mobile-country-filter option {
-  /* Enhanced explicit colors for all options */
-  background-color: #ffffff !important;
-  color: #1f2937 !important; /* gray-800 - ensures 12.63:1 contrast */
-  padding: 10px 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 400;
-  border-bottom: 1px solid #f3f4f6; /* subtle separation between options */
-}
-
-/* Enhanced dark mode option styling */
-.dark select.country-filter option,
-.dark select.expertise-filter option,
-.dark select.mobile-country-filter option {
-  background-color: #374151 !important; /* gray-700 */
-  color: #f9fafb !important; /* gray-50 - 15.96:1 contrast */
-  border-bottom: 1px solid #4b5563; /* gray-600 - subtle separation */
-}
-
-/* Enhanced selected/hover states for options with brand integration */
-select.country-filter option:checked,
-select.expertise-filter option:checked,
-select.mobile-country-filter option:checked {
-  background-color: #5a8a87 !important; /* primary-500 - brand teal */
-  color: #ffffff !important; /* perfect contrast */
-}
-
-/* Enhanced hover states for better interactivity */
-select.country-filter option:hover,
-select.expertise-filter option:hover,
-select.mobile-country-filter option:hover {
-  background-color: #e8f4f3 !important; /* primary-50 */
-  color: #1f2937 !important; /* gray-800 */
-}
-
-.dark select.country-filter option:hover,
-.dark select.expertise-filter option:hover,
-.dark select.mobile-country-filter option:hover {
-  background-color: #1a2827 !important; /* primary-900 */
-  color: #f9fafb !important; /* gray-50 */
-}
-
-/* Enhanced focus and hover styling for superior UX */
-select.country-filter:focus,
-select.expertise-filter:focus,
-select.mobile-country-filter:focus {
-  outline: 3px solid #5a8a87; /* primary-500 - meets 3:1 contrast requirement */
-  outline-offset: 2px;
-  border-color: #5a8a87; /* primary-500 */
-  box-shadow: 0 0 0 4px rgba(90, 138, 135, 0.1),
-              0 4px 6px -1px rgba(0, 0, 0, 0.1),
-              0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-}
-
-/* Enhanced hover states for dropdowns */
-select.country-filter:hover:not(:focus),
-select.expertise-filter:hover:not(:focus),
-select.mobile-country-filter:hover:not(:focus) {
-  border-color: #7ba5a2; /* primary-400 */
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
-              0 1px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Enhanced dark mode focus and hover */
-.dark select.country-filter:focus,
-.dark select.expertise-filter:focus,
-.dark select.mobile-country-filter:focus {
-  outline-color: #a8d5d2; /* primary-200 for dark mode */
-  border-color: #a8d5d2;
-  box-shadow: 0 0 0 4px rgba(168, 213, 210, 0.15),
-              0 4px 6px -1px rgba(0, 0, 0, 0.4),
-              0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  transform: translateY(-1px);
-}
-
-.dark select.country-filter:hover:not(:focus),
-.dark select.expertise-filter:hover:not(:focus),
-.dark select.mobile-country-filter:hover:not(:focus) {
-  border-color: #95c3c0; /* primary-300 */
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3),
-              0 1px 2px -1px rgba(0, 0, 0, 0.2);
-}
-
-/* Enhanced touch targets for mobile compliance */
-@media (hover: none) and (pointer: coarse) {
-  select.country-filter,
-  select.expertise-filter,
-  select.mobile-country-filter {
-    min-height: 48px; /* Larger than 44px for better mobile UX */
-    font-size: 16px; /* Prevents zoom on iOS */
-    padding: 12px 16px;
-  }
-  
-  select.country-filter option,
-  select.expertise-filter option,
-  select.mobile-country-filter option {
-    padding: 12px 16px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  select.country-filter,
-  select.expertise-filter,
-  select.mobile-country-filter {
-    border: 3px solid #000000;
-  }
-  
-  .dark select.country-filter,
-  .dark select.expertise-filter,
-  .dark select.mobile-country-filter {
-    border: 3px solid #ffffff;
-  }
-  
-  select.country-filter option,
-  select.expertise-filter option,
-  select.mobile-country-filter option {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border-bottom: 1px solid #000000;
-  }
-  
-  .dark select.country-filter option,
-  .dark select.expertise-filter option,
-  .dark select.mobile-country-filter option {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-bottom: 1px solid #ffffff;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  select.country-filter,
-  select.expertise-filter,
-  select.mobile-country-filter {
-    transition: none !important;
-  }
-}
-
-/* Browser-specific fixes */
-
-/* Firefox specific fixes */
-@-moz-document url-prefix() {
-  select.country-filter option,
-  select.expertise-filter option,
-  select.mobile-country-filter option {
-    background-color: #ffffff;
-    color: #374151;
-  }
-  
-  .dark select.country-filter option,
-  .dark select.expertise-filter option,
-  .dark select.mobile-country-filter option {
-    background-color: #374151;
-    color: #f9fafb;
-  }
-}
-
-/* Safari/WebKit specific fixes */
-@supports (-webkit-appearance: none) {
-  select.country-filter option,
-  select.expertise-filter option,
-  select.mobile-country-filter option {
-    /* WebKit allows more option styling */
-    -webkit-appearance: none;
-    appearance: none;
-  }
-}
-
-/* Ensure proper spacing and alignment */
-select.country-filter,
-select.expertise-filter {
-  /* Desktop dropdowns */
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-select.mobile-country-filter {
-  /* Mobile dropdown - full width */
-  width: 100%;
-}
-
-/* Enhanced custom dropdown arrow for consistent branding */
-select.country-filter,
-select.expertise-filter,
-select.mobile-country-filter {
-  /* Remove default arrow in WebKit */
+/* Enhanced Select Styling - Base */
+.guest-filter-bar select,
+.mobile-filter-sheet select {
+  /* Reset browser defaults */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   
-  /* Add enhanced custom arrow with brand colors */
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235a8a87' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 18px 14px;
-  padding-right: 40px;
-}
-
-/* Enhanced dark mode arrow with brand consistency */
-.dark select.country-filter,
-.dark select.expertise-filter,
-.dark select.mobile-country-filter {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a8d5d2' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-}
-
-/* Enhanced focus state arrow - maintain brand consistency */
-select.country-filter:focus,
-select.expertise-filter:focus,
-select.mobile-country-filter:focus {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235a8a87' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-}
-
-.dark select.country-filter:focus,
-.dark select.expertise-filter:focus,
-.dark select.mobile-country-filter:focus {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a8d5d2' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-}
-
-/* Additional enhancements for visual consistency */
-
-/* Loading state for dropdowns */
-select.country-filter[disabled],
-select.expertise-filter[disabled],
-select.mobile-country-filter[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-}
-
-/* Enhanced visual feedback on active state */
-select.country-filter:active,
-select.expertise-filter:active,
-select.mobile-country-filter:active {
-  transform: translateY(1px);
-  transition-duration: 0.1s;
-}
-
-/* Improved spacing for filter labels */
-.guest-filter-bar .flex.items-center.gap-2 span {
-  color: #4b5563; /* gray-600 */
+  /* Enhanced base styling for better contrast */
+  background-color: #ffffff !important;
+  color: #1f2937 !important; /* Gray-800 - 12.63:1 contrast */
+  border: 2px solid #e5e7eb !important; /* Gray-200 - stronger border */
+  border-radius: 0.5rem;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
   font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.025em;
+  
+  /* Enhanced shadows for depth */
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  
+  /* Smooth transitions */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235a8a87' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem 1.25rem;
 }
 
-.dark .guest-filter-bar .flex.items-center.gap-2 span {
-  color: #d1d5db; /* gray-300 */
+/* Enhanced Option Styling - Critical for contrast */
+.guest-filter-bar select option,
+.mobile-filter-sheet select option {
+  background-color: #ffffff !important;
+  color: #1f2937 !important; /* Gray-800 - 12.63:1 contrast */
+  padding: 0.5rem 0.75rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.025em !important;
+  border: none !important;
+}
+
+/* Hover States */
+.guest-filter-bar select:hover,
+.mobile-filter-sheet select:hover {
+  border-color: #5a8a87 !important; /* Primary-500 */
+  background-color: #e8f4f3 !important; /* Primary-50 */
+  
+  /* Enhanced hover elevation */
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  
+  transform: translateY(-1px);
+}
+
+/* Focus States - Enhanced for accessibility */
+.guest-filter-bar select:focus,
+.mobile-filter-sheet select:focus {
+  outline: none !important;
+  border-color: #5a8a87 !important; /* Primary-500 */
+  background-color: #ffffff !important;
+  
+  /* Prominent focus ring with shadow */
+  box-shadow: 
+    0 0 0 4px rgba(90, 138, 135, 0.1),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  
+  transform: translateY(-1px);
+}
+
+/* Active States */
+.guest-filter-bar select:active,
+.mobile-filter-sheet select:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 0 0 4px rgba(90, 138, 135, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+  .dark .guest-filter-bar select,
+  .dark .mobile-filter-sheet select {
+    background-color: #374151 !important; /* Gray-700 */
+    color: #f9fafb !important; /* Gray-50 - 15.96:1 contrast */
+    border-color: #6b7280 !important; /* Gray-500 */
+    
+    /* Dark mode dropdown arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a8d5d2' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  .dark .guest-filter-bar select option,
+  .dark .mobile-filter-sheet select option {
+    background-color: #374151 !important; /* Gray-700 */
+    color: #f9fafb !important; /* Gray-50 */
+  }
+  
+  .dark .guest-filter-bar select:hover,
+  .dark .mobile-filter-sheet select:hover {
+    border-color: #a8d5d2 !important; /* Primary-200 */
+    background-color: #1a2827 !important; /* Primary-900 */
+  }
+  
+  .dark .guest-filter-bar select:focus,
+  .dark .mobile-filter-sheet select:focus {
+    border-color: #a8d5d2 !important; /* Primary-200 */
+    box-shadow: 
+      0 0 0 4px rgba(168, 213, 210, 0.1),
+      0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .guest-filter-bar select,
+  .mobile-filter-sheet select {
+    border-width: 3px !important;
+    border-color: #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .guest-filter-bar select option,
+  .mobile-filter-sheet select option {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+  
+  .dark .guest-filter-bar select,
+  .dark .mobile-filter-sheet select {
+    border-color: #ffffff !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+  
+  .dark .guest-filter-bar select option,
+  .dark .mobile-filter-sheet select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+  }
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 768px) {
+  .mobile-filter-sheet select {
+    min-height: 48px !important; /* Touch target compliance */
+    font-size: 16px !important; /* Prevents iOS zoom */
+    padding: 0.875rem 2.5rem 0.875rem 0.875rem !important;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .guest-filter-bar select,
+  .mobile-filter-sheet select {
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  .guest-filter-bar select:hover,
+  .mobile-filter-sheet select:hover,
+  .guest-filter-bar select:focus,
+  .mobile-filter-sheet select:focus,
+  .guest-filter-bar select:active,
+  .mobile-filter-sheet select:active {
+    transform: none !important;
+  }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+  .guest-filter-bar select,
+  .mobile-filter-sheet select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235a8a87' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    padding-right: 2.5rem !important;
+  }
+  
+  .guest-filter-bar select option,
+  .mobile-filter-sheet select option {
+    background-color: #ffffff !important;
+    color: #1f2937 !important;
+  }
+}
+
+/* WebKit specific enhancements */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .guest-filter-bar select,
+  .mobile-filter-sheet select {
+    -webkit-appearance: none !important;
+  }
+}
+
+/* Screen reader improvements */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Enhanced touch targets for accessibility compliance */
+.touch-target {
+  min-height: 44px !important; /* WCAG 2.2 AA requirement */
+  min-width: 44px !important;
+}
+
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 48px !important; /* Enhanced mobile touch targets */
+  }
 }
