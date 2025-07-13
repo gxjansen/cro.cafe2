@@ -128,16 +128,21 @@ class HostImageDownloader {
     const baseUrl = config.baseUrl.replace(/\/$/, '') // Remove trailing slash
     
     // NocoDB attachments can have different URL formats
-    // 1. signedUrl - full URL with authentication
-    // 2. url - relative URL path
-    // 3. path - file path that needs construction
+    // For now, we'll use the signedPath which we know works
+    // Even though it might expire, it's better than failing
     
-    // First, try signedUrl if available and not expired
+    // Use signedPath if available - it's a temporary URL but it works
+    if (attachment.signedPath) {
+      // signedPath is relative, needs base URL
+      return `${baseUrl}/${attachment.signedPath}`
+    }
+    
+    // Fallback to signedUrl if available
     if (attachment.signedUrl) {
       return attachment.signedUrl
     }
     
-    // Next, try url field
+    // Try url field
     if (attachment.url) {
       // If it's already a full URL, use it
       if (attachment.url.startsWith('http')) {
@@ -147,14 +152,11 @@ class HostImageDownloader {
       return `${baseUrl}${attachment.url.startsWith('/') ? '' : '/'}${attachment.url}`
     }
     
-    // Finally, try to construct from path
+    // Last resort - try to use path directly (though this seems to give 404s)
     if (attachment.path) {
-      // NocoDB attachment paths can start with "download/"
-      // Format: download/noco/baseId/tableId/fieldId/filename.jpg
-      
-      // Use the path directly with /api/v1/ prefix
+      // Try without /api/v1 prefix - just base URL + path
       const apiPath = attachment.path.startsWith('/') ? attachment.path : `/${attachment.path}`
-      return `${baseUrl}/api/v1${apiPath}`
+      return `${baseUrl}${apiPath}`
     }
     
     throw new Error('No valid URL found in attachment')
