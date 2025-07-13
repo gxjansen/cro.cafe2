@@ -1,5 +1,6 @@
 ---
 import HostImage from './HostImage.astro';
+import { getHostImageUrl } from '../utils/content';
 import type { Language } from '../types';
 
 export interface Props {
@@ -53,20 +54,20 @@ function getTwitterUrl(host: any): string | null {
   return null;
 }
 
-// Get host image URL
-function getHostImageUrl(host: any): string {
+// Get host image URL using the utility function for consistency
+function getHostImageUrlForComponent(host: any): string {
   if (host.data.imageUrl) return host.data.imageUrl;
   if (host.data.image) return host.data.image;
   
-  // Use the utility function as fallback
+  // Use the centralized utility function as fallback
   const slug = host.data.slug || host.slug;
-  return `/images/hosts/${slug}.webp`;
+  return getHostImageUrl(slug);
 }
 
 const websiteUrl = getWebsiteUrl(host);
 const linkedInUrl = getLinkedInUrl(host);
 const twitterUrl = getTwitterUrl(host);
-const imageUrl = getHostImageUrl(host);
+const imageUrl = getHostImageUrlForComponent(host);
 
 // Size-specific classes
 const sizeClasses = {
