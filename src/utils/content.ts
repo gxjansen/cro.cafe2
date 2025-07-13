@@ -418,17 +418,20 @@ export async function getHostsByLanguage(language: Language) {
 }
 
 // Get host image URL
+// @deprecated - Use host.data.imageUrl directly or getHostImageUrlAsync for dynamic image URLs
 export function getHostImageUrl(hostSlug: string): string {
-  // Map host slugs to actual image filenames
-  const imageMap: Record<string, string> = {
-    'gxjansen': 'Spryker_2636_square.jpg',
-    'michaelwitzenleiter': 'michael.jpeg',
-    'ricardotayar': 'ricardo.webp',
-    'yvonneteufel': 'yvonne.jpeg'
-  }
+  // This function is deprecated and should not be used
+  // It returns a default image to prevent breaking existing code
+  return '/images/default-host.jpg'
+}
 
-  const filename = imageMap[hostSlug]
-  return filename ? `/images/hosts/${filename}` : '/images/default-host.jpg'
+// Get host image URL from actual host data
+export async function getHostImageUrlAsync(hostSlug: string): Promise<string> {
+  const host = await getHostBySlug(hostSlug)
+  if (host?.data?.imageUrl) {
+    return host.data.imageUrl
+  }
+  return '/images/default-host.jpg'
 }
 
 // Get guest image URL using build-time validated inventory

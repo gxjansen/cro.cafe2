@@ -336,13 +336,7 @@ const getDateLocale = (lang: Language) => {
                 <div class="space-y-6">
                   {hostDetails.map((host) => host && (
                     <HostCardVertical 
-                      host={{
-                        ...host,
-                        data: {
-                          ...host.data,
-                          imageUrl: getHostImageUrl(host.data.slug || host.slug)
-                        }
-                      }} 
+                      host={host} 
                       language={language} 
                       size="small" 
                       showEpisodeCount={false} 
@@ -491,13 +485,7 @@ const getDateLocale = (lang: Language) => {
               <div class="space-y-6">
                 {hostDetails.map((host) => host && (
                   <HostCardVertical 
-                    host={{
-                      ...host,
-                      data: {
-                        ...host.data,
-                        imageUrl: getHostImageUrl(host.data.slug || host.slug)
-                      }
-                    }} 
+                    host={host} 
                     language={language} 
                     size="small" 
                     showEpisodeCount={false} 

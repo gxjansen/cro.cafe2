@@ -149,7 +149,7 @@ const linkedInUrl = host.data.linkedin || host.data.socialLinks?.find((link: any
           <!-- Host Image -->
           <div class="mb-8">
             <HostImage 
-              imageUrl={getHostImageUrl(hostSlug)} 
+              imageUrl={host.data.imageUrl} 
               alt={host.data.name}
               class="w-32 h-32 rounded-full mx-auto object-cover shadow-lg"
             />

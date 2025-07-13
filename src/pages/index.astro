@@ -63,6 +63,12 @@ const hostsByLanguage = {
   es: allHosts.filter(h => (h.data.slug || h.slug) === 'ricardotayar') // Ricardo hosts Spanish
 };
 
+// Get individual hosts for easier access
+const guidoHost = allHosts.find(h => (h.data.slug || h.slug) === 'gxjansen');
+const michaelHost = allHosts.find(h => (h.data.slug || h.slug) === 'michaelwitzenleiter');
+const yvonneHost = allHosts.find(h => (h.data.slug || h.slug) === 'yvonneteufel');
+const ricardoHost = allHosts.find(h => (h.data.slug || h.slug) === 'ricardotayar');
+
 
 const pageTitle = "CRO.CAFE - Conversion Rate Optimization Podcast";
 const pageDescription = "The leading podcast for conversion rate optimization professionals. Episodes in English, Dutch, German, and Spanish covering CRO strategies, case studies, and expert insights.";
@@ -190,7 +196,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hosted by</div>
                     <div class="flex items-center justify-center gap-2">
                       <img 
-                        src={getHostImageUrl('gxjansen')}
+                        src={guidoHost?.data?.imageUrl || '/images/default-host.jpg'}
                         alt="Guido X Jansen"
                         class="w-8 h-8 rounded-full object-cover"
                       />
@@ -251,7 +257,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gehost door</div>
                     <div class="flex items-center justify-center gap-2">
                       <img 
-                        src={getHostImageUrl('gxjansen')}
+                        src={guidoHost?.data?.imageUrl || '/images/default-host.jpg'}
                         alt="Guido X Jansen"
                         class="w-8 h-8 rounded-full object-cover"
                       />
@@ -312,12 +318,12 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Moderiert von</div>
                     <div class="flex items-center justify-center gap-1">
                       <img 
-                        src={getHostImageUrl('michaelwitzenleiter')}
+                        src={michaelHost?.data?.imageUrl || '/images/default-host.jpg'}
                         alt="Michael Witzenleiter"
                         class="w-8 h-8 rounded-full object-cover"
                       />
                       <img 
-                        src={getHostImageUrl('yvonneteufel')}
+                        src={yvonneHost?.data?.imageUrl || '/images/default-host.jpg'}
                         alt="Yvonne Teufel"
                         class="w-8 h-8 rounded-full object-cover"
                       />
@@ -387,7 +393,7 @@ const pageDescription = "The leading podcast for conversion rate optimization pr
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Presentado por</div>
                     <div class="flex items-center justify-center gap-2">
                       <img 
-                        src={getHostImageUrl('ricardotayar')}
+                        src={ricardoHost?.data?.imageUrl || '/images/default-host.jpg'}
                         alt="Ricardo Tayar"
                         class="w-8 h-8 rounded-full object-cover"
                       />
