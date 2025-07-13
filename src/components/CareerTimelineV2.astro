@@ -622,19 +622,30 @@ console.log('CareerTimelineV2 Debug:', {
 </style>
 
 <script>
-  // Timeline scroll controls with clickable labels
-  document.addEventListener('DOMContentLoaded', () => {
+  function initializeCareerTimelines() {
     const timelines = document.querySelectorAll('[data-timeline-container]');
     
     timelines.forEach(timeline => {
       const section = timeline.closest('.career-timeline-section');
       if (!section) return;
       
+      // Clean up existing listeners
+      const existingHandlers = (timeline as any).__timelineHandlers;
+      if (existingHandlers) {
+        existingHandlers.labelButtons.forEach((button: Element, index: number) => {
+          button.removeEventListener('click', existingHandlers.clickHandlers[index]);
+        });
+        if (existingHandlers.wheelHandler) {
+          timeline.removeEventListener('wheel', existingHandlers.wheelHandler);
+        }
+      }
+      
       // Find clickable labels for this timeline
       const labelButtons = section.querySelectorAll('.timeline-label-clickable');
+      const clickHandlers: ((e: Event) => void)[] = [];
       
-      labelButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+      labelButtons.forEach((button, index) => {
+        const clickHandler = (e: Event) => {
           e.preventDefault();
           const scrollDirection = button.getAttribute('data-scroll');
           
@@ -645,11 +656,14 @@ console.log('CareerTimelineV2 Debug:', {
             // Scroll to the rightmost position (earliest jobs)
             timeline.scrollTo({ left: timeline.scrollWidth, behavior: 'smooth' });
           }
-        });
+        };
+        
+        button.addEventListener('click', clickHandler);
+        clickHandlers[index] = clickHandler;
       });
       
       // Add mouse wheel support for horizontal scrolling
-      timeline.addEventListener('wheel', (e) => {
+      const wheelHandler = (e: WheelEvent) => {
         // Only handle horizontal scrolling if timeline has overflow
         if (timeline.scrollWidth > timeline.clientWidth) {
           e.preventDefault();
@@ -661,7 +675,22 @@ console.log('CareerTimelineV2 Debug:', {
             timeline.scrollLeft += e.deltaY;
           }
         }
-      }, { passive: false });
+      };
+      
+      timeline.addEventListener('wheel', wheelHandler, { passive: false });
+      
+      // Store handlers for cleanup
+      (timeline as any).__timelineHandlers = {
+        labelButtons: Array.from(labelButtons),
+        clickHandlers,
+        wheelHandler
+      };
     });
-  });
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initializeCareerTimelines);
+  
+  // Re-initialize after ViewTransitions navigation
+  document.addEventListener('astro:page-load', initializeCareerTimelines);
 </script>

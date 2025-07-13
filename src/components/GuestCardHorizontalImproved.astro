@@ -214,15 +214,22 @@ const truncatedHeadline = truncateHeadline(linkedinHeadline, config.headlineLeng
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+function initializeGuestCards() {
   // Handle guest card clicks
   const guestCards = document.querySelectorAll('[data-guest-url]')
 
   guestCards.forEach(card => {
+    // Remove existing listeners to prevent duplicates
+    const existingHandler = (card as any).__guestCardHandler
+    if (existingHandler) {
+      card.removeEventListener('click', existingHandler)
+      card.removeEventListener('keydown', existingHandler)
+    }
+
     const guestUrl = card.getAttribute('data-guest-url')
 
     // Handle click on the card
-    card.addEventListener('click', (e: Event) => {
+    const clickHandler = (e: Event) => {
       // Don't navigate if clicking on a link inside the card
       if (e.target && (e.target as Element).closest('a')) {
         // Handle LinkedIn link clicks
@@ -235,10 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (guestUrl) {
         window.location.href = guestUrl
       }
-    })
+    }
 
     // Handle keyboard navigation
-    card.addEventListener('keydown', (e: Event) => {
+    const keyHandler = (e: Event) => {
       const keyEvent = e as KeyboardEvent
       if (keyEvent.key === 'Enter' && keyEvent.target && !(keyEvent.target as Element).closest('a')) {
         keyEvent.preventDefault()
@@ -246,7 +253,20 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = guestUrl
         }
       }
-    })
+    }
+
+    card.addEventListener('click', clickHandler)
+    card.addEventListener('keydown', keyHandler)
+    
+    // Store handlers for cleanup
+    ;(card as any).__guestCardHandler = clickHandler
+    ;(card as any).__guestCardKeyHandler = keyHandler
   })
-})
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', initializeGuestCards)
+
+// Re-initialize after ViewTransitions navigation
+document.addEventListener('astro:page-load', initializeGuestCards)
 </script>

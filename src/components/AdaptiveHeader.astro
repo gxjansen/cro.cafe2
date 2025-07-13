@@ -119,31 +119,46 @@ const navigationItems = [
 <!-- Header JavaScript -->
 <script>
 // Mobile menu toggle for browser mode
-document.addEventListener('DOMContentLoaded', () => {
+function initializeMobileMenu() {
   const mobileMenuButton = document.querySelector('[data-mobile-menu-button]')
   const mobileMenu = document.querySelector('[data-mobile-menu]')
 
+  // Clean up existing listeners
+  if ((mobileMenuButton as any)?.__menuClickHandler) {
+    mobileMenuButton?.removeEventListener('click', (mobileMenuButton as any).__menuClickHandler)
+  }
+  if ((document as any).__documentClickHandler) {
+    document.removeEventListener('click', (document as any).__documentClickHandler)
+  }
+
   if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () => {
+    const menuClickHandler = () => {
       const isHidden = mobileMenu.classList.contains('hidden')
       mobileMenu.classList.toggle('hidden', !isHidden)
       mobileMenuButton.setAttribute('aria-expanded', isHidden.toString())
-    })
+    }
+
+    mobileMenuButton.addEventListener('click', menuClickHandler)
+    ;(mobileMenuButton as any).__menuClickHandler = menuClickHandler
   }
 
-
   // Close menus when clicking outside
-  document.addEventListener('click', (event) => {
+  const documentClickHandler = (event: Event) => {
     const target = event.target as Element
 
     // Close mobile menu if clicking outside
-    if (mobileMenu && !mobileMenu.contains(target) && !mobileMenuButton?.contains(target)) {
+    if (mobileMenu && mobileMenuButton && !mobileMenu.contains(target) && !mobileMenuButton.contains(target)) {
       mobileMenu.classList.add('hidden')
-      mobileMenuButton?.setAttribute('aria-expanded', 'false')
+      mobileMenuButton.setAttribute('aria-expanded', 'false')
     }
+  }
 
-  })
-})
+  document.addEventListener('click', documentClickHandler)
+  ;(document as any).__documentClickHandler = documentClickHandler
+}
+
+document.addEventListener('DOMContentLoaded', initializeMobileMenu)
+document.addEventListener('astro:page-load', initializeMobileMenu)
 </script>
 
 <style>
