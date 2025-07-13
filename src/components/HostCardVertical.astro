@@ -2,7 +2,6 @@
 import HostImage from './HostImage.astro';
 import CountryFlag from './CountryFlag.astro';
 import { getOptimalProfessionalDisplay, checkIsFreelancer } from '../utils/guest-display-utils';
-import { getHostImageUrl } from '../utils/content';
 import type { Language } from '../types';
 
 export interface Props {
@@ -115,8 +114,8 @@ const sizeClasses = {
 
 const classes = sizeClasses[size];
 
-// Get host image URL using the utility function for consistency
-const imageUrl = host.data.imageUrl || getHostImageUrl(host.data.slug || host.slug);
+// Get host image URL from host data
+const imageUrl = host.data.imageUrl || host.data.image || '/images/default-host.jpg';
 ---
 
 <a 

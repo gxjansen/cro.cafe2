@@ -38,9 +38,8 @@ function getHostImageUrl(host: any): string {
   if (host.data.imageUrl) return host.data.imageUrl;
   if (host.data.image) return host.data.image;
   
-  // Use the utility function as fallback
-  const slug = host.data.slug || host.slug;
-  return `/images/hosts/${slug}.webp`;
+  // Return default image if no image URL is found
+  return '/images/default-host.jpg';
 }
 ---
 
