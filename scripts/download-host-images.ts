@@ -56,11 +56,13 @@ class HostImageDownloader {
           const attachment = host.picture[0]
           const filename = attachment.title || attachment.path?.split('/').pop()
           
-          if (filename && attachment.signedPath) {
+          if (filename && attachment.path) {
             console.log(`\n📥 Processing ${host.name} - ${filename}`)
             
             try {
-              await this.downloadImage(attachment.signedPath, filename, host.name)
+              // Use the permanent path instead of signed URL
+              const imageUrl = this.constructImageUrl(attachment.path)
+              await this.downloadImage(imageUrl, filename, host.name)
               this.stats.imagesDownloaded++
             } catch (error) {
               const errorMsg = `Failed to download image for ${host.name}: ${error}`
@@ -102,7 +104,14 @@ class HostImageDownloader {
 
     console.log(`⬇️  Downloading from: ${url}`)
     
-    const response = await fetch(url)
+    // Get API key from client config for authentication
+    const config = (this.client as any).config
+    const response = await fetch(url, {
+      headers: {
+        'xc-token': config.apiKey
+      }
+    })
+    
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
@@ -111,6 +120,21 @@ class HostImageDownloader {
     await fs.writeFile(outputPath, Buffer.from(buffer))
     
     console.log(`✅ Saved to: ${outputPath}`)
+  }
+
+  private constructImageUrl(path: string): string {
+    // NocoDB attachment paths are relative to the base URL
+    // Format: nc/uploads/[baseId]/[tableName]/[fieldName]/[filename]
+    // Access the private config property
+    const config = (this.client as any).config
+    const baseUrl = config.baseUrl.replace(/\/$/, '') // Remove trailing slash
+    
+    // The path should already contain the full relative path
+    if (path.startsWith('/')) {
+      return `${baseUrl}${path}`
+    } else {
+      return `${baseUrl}/${path}`
+    }
   }
 
   private async ensureDirectoryExists(dir: string): Promise<void> {
