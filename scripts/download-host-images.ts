@@ -60,8 +60,8 @@ class HostImageDownloader {
             console.log(`\n📥 Processing ${host.name} - ${filename}`)
             
             try {
-              // Use the permanent path instead of signed URL
-              const imageUrl = this.constructImageUrl(attachment.path)
+              // Pass the full attachment object to construct URL
+              const imageUrl = this.constructImageUrl(attachment)
               await this.downloadImage(imageUrl, filename, host.name)
               this.stats.imagesDownloaded++
             } catch (error) {
@@ -122,15 +122,42 @@ class HostImageDownloader {
     console.log(`✅ Saved to: ${outputPath}`)
   }
 
-  private constructImageUrl(path: string): string {
-    // NocoDB attachment paths are relative to the base URL
-    // Format: dltemp/[id]/[timestamp]/noco/[baseId]/[tableName]/[fieldName]/[filename]
+  private constructImageUrl(attachment: any): string {
     // Access the private config property
     const config = (this.client as any).config
     const baseUrl = config.baseUrl.replace(/\/$/, '') // Remove trailing slash
     
-    // The path is a relative path that needs to be prepended with /api/v1/
-    return `${baseUrl}/api/v1/${path}`
+    // NocoDB attachments can have different URL formats
+    // 1. signedUrl - full URL with authentication
+    // 2. url - relative URL path
+    // 3. path - file path that needs construction
+    
+    // First, try signedUrl if available and not expired
+    if (attachment.signedUrl) {
+      return attachment.signedUrl
+    }
+    
+    // Next, try url field
+    if (attachment.url) {
+      // If it's already a full URL, use it
+      if (attachment.url.startsWith('http')) {
+        return attachment.url
+      }
+      // Otherwise prepend base URL
+      return `${baseUrl}${attachment.url.startsWith('/') ? '' : '/'}${attachment.url}`
+    }
+    
+    // Finally, try to construct from path
+    if (attachment.path) {
+      // NocoDB attachment paths can start with "download/"
+      // Format: download/noco/baseId/tableId/fieldId/filename.jpg
+      
+      // Use the path directly with /api/v1/ prefix
+      const apiPath = attachment.path.startsWith('/') ? attachment.path : `/${attachment.path}`
+      return `${baseUrl}/api/v1${apiPath}`
+    }
+    
+    throw new Error('No valid URL found in attachment')
   }
 
   private async ensureDirectoryExists(dir: string): Promise<void> {
