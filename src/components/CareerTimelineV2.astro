@@ -142,34 +142,28 @@ console.log('CareerTimelineV2 Debug:', {
   <div class="career-timeline-container">
     <div class="timeline-header">
       <h2>Career Journey</h2>
-      <div class="timeline-controls" aria-label="Timeline navigation">
-        <button 
-          class="timeline-nav-btn timeline-nav-prev" 
-          aria-label="Previous experiences"
-          data-direction="prev"
-          data-timeline-id={timelineId}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <button 
-          class="timeline-nav-btn timeline-nav-next" 
-          aria-label="Next experiences"
-          data-direction="next"
-          data-timeline-id={timelineId}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
     </div>
 
     <!-- Timeline labels -->
-    <div class="timeline-labels" aria-hidden="true">
-      <span class="timeline-label timeline-label-start">Previously</span>
-      <span class="timeline-label timeline-label-end">Today</span>
+    <div class="timeline-labels">
+      <button 
+        class="timeline-label timeline-label-start timeline-label-clickable" 
+        type="button"
+        aria-label="Scroll to earliest experience"
+        data-timeline-id={timelineId}
+        data-scroll="start"
+      >
+        Previously
+      </button>
+      <button 
+        class="timeline-label timeline-label-end timeline-label-clickable" 
+        type="button"
+        aria-label="Scroll to most recent experience"
+        data-timeline-id={timelineId}
+        data-scroll="end"
+      >
+        Today
+      </button>
     </div>
     
     <div class={`timeline-wrapper ${needsScroll ? 'has-scroll' : ''}`}>
@@ -245,7 +239,7 @@ console.log('CareerTimelineV2 Debug:', {
 
   .timeline-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 1.5rem;
     padding: 0 0.5rem;
@@ -257,48 +251,6 @@ console.log('CareerTimelineV2 Debug:', {
     font-weight: 600;
     color: #111827;
     text-align: left; /* Ensure left alignment */
-  }
-  
-  /* Navigation controls */
-  .timeline-controls {
-    display: none; /* Hidden by default */
-    gap: 0.5rem;
-  }
-  
-  /* Show controls on desktop */
-  @media (min-width: 768px) {
-    .timeline-controls {
-      display: flex;
-    }
-  }
-  
-  .timeline-nav-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 2px solid var(--timeline-color);
-    border-radius: 0.5rem; /* rounded-lg to match site buttons */
-    background-color: white;
-    color: #6b7280;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    /* Subtle shadow matching site's button system */
-    box-shadow: 
-      0 1px 3px 0 rgba(0, 0, 0, 0.1),
-      0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  }
-  
-  .timeline-nav-btn:hover:not(:disabled) {
-    border-color: var(--timeline-active-color);
-    color: var(--timeline-active-color);
-    background-color: #eff6ff;
-  }
-  
-  .timeline-nav-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 
   /* Timeline wrapper with scroll indicators */
@@ -436,6 +388,28 @@ console.log('CareerTimelineV2 Debug:', {
     box-shadow: 
       0 1px 3px 0 rgba(0, 0, 0, 0.1),
       0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .timeline-label-clickable {
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .timeline-label-clickable:hover {
+    background-color: var(--timeline-active-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
+
+  .timeline-label-clickable:active {
+    transform: translateY(0);
   }
 
   /* Timeline dot */
@@ -630,6 +604,11 @@ console.log('CareerTimelineV2 Debug:', {
       color: #d1d5db;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
+
+    .timeline-label-clickable:hover {
+      background-color: var(--timeline-active-color);
+      color: white;
+    }
     
     .episode-badge {
       background-color: #1e3a8a;
@@ -643,7 +622,7 @@ console.log('CareerTimelineV2 Debug:', {
 </style>
 
 <script>
-  // Timeline scroll controls
+  // Timeline scroll controls with clickable labels
   document.addEventListener('DOMContentLoaded', () => {
     const timelines = document.querySelectorAll('[data-timeline-container]');
     
@@ -651,69 +630,22 @@ console.log('CareerTimelineV2 Debug:', {
       const section = timeline.closest('.career-timeline-section');
       if (!section) return;
       
-      const wrapper = timeline.closest('.timeline-wrapper');
-      const prevBtn = section.querySelector('.timeline-nav-prev');
-      const nextBtn = section.querySelector('.timeline-nav-next');
+      // Find clickable labels for this timeline
+      const labelButtons = section.querySelectorAll('.timeline-label-clickable');
       
-      if (!wrapper || !prevBtn || !nextBtn) {
-        console.error('Timeline controls not found', { wrapper, prevBtn, nextBtn });
-        return;
-      }
-      
-      // Update scroll indicators and button states
-      const updateScrollState = () => {
-        const scrollLeft = timeline.scrollLeft;
-        const scrollWidth = timeline.scrollWidth;
-        const clientWidth = timeline.clientWidth;
-        const maxScroll = scrollWidth - clientWidth;
-        const hasOverflow = scrollWidth > clientWidth;
-        
-        // Hide controls if no overflow is needed on desktop
-        const controls = section.querySelector('.timeline-controls');
-        if (controls && window.innerWidth >= 768) {
-          controls.style.display = hasOverflow ? 'flex' : 'none';
-        }
-        
-        // Update button states only if there's overflow
-        if (hasOverflow) {
-          prevBtn.disabled = scrollLeft <= 5; // Small tolerance
-          nextBtn.disabled = scrollLeft >= maxScroll - 5; // Small tolerance
-        } else {
-          prevBtn.disabled = true;
-          nextBtn.disabled = true;
-        }
-        
-        // Update scroll indicators
-        if (scrollLeft > 10) {
-          wrapper.classList.add('show-left-scroll');
-        } else {
-          wrapper.classList.remove('show-left-scroll');
-        }
-        
-        if (scrollLeft >= maxScroll - 10) {
-          wrapper.classList.add('hide-right-scroll');
-        } else {
-          wrapper.classList.remove('hide-right-scroll');
-        }
-      };
-      
-      // Scroll handlers
-      const getScrollAmount = () => {
-        // Calculate based on actual card width for more precise scrolling
-        const card = timeline.querySelector('.timeline-item');
-        return card ? card.offsetWidth + 24 : 304; // Card width + gap (280 + 24)
-      };
-      
-      prevBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const scrollAmount = getScrollAmount();
-        timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      });
-      
-      nextBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const scrollAmount = getScrollAmount();
-        timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      labelButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          const scrollDirection = button.getAttribute('data-scroll');
+          
+          if (scrollDirection === 'start') {
+            // Scroll to the leftmost position (most recent jobs)
+            timeline.scrollTo({ left: 0, behavior: 'smooth' });
+          } else if (scrollDirection === 'end') {
+            // Scroll to the rightmost position (earliest jobs)
+            timeline.scrollTo({ left: timeline.scrollWidth, behavior: 'smooth' });
+          }
+        });
       });
       
       // Add mouse wheel support for horizontal scrolling
@@ -730,16 +662,6 @@ console.log('CareerTimelineV2 Debug:', {
           }
         }
       }, { passive: false });
-      
-      // Update on scroll
-      timeline.addEventListener('scroll', updateScrollState);
-      
-      // Update on resize
-      const resizeObserver = new ResizeObserver(updateScrollState);
-      resizeObserver.observe(timeline);
-      
-      // Initial state
-      setTimeout(updateScrollState, 100); // Small delay to ensure layout is complete
     });
   });
 </script>
