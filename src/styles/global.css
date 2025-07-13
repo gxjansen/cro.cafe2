@@ -5,6 +5,7 @@
 @import './desktop-hotfix.css';
 @import './responsive-utilities.css';
 @import './spacing-typography.css';
+@import './dropdown-accessibility-fix.css';
 
 /* Tailwind CSS v4 */
 @import "tailwindcss";

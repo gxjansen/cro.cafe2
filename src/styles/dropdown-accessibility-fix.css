@@ -1,0 +1,212 @@
+/* ===================================
+   Dropdown Accessibility Fix for WCAG 2.2 AA Compliance
+   Fixes contrast issues with select option elements
+   =================================== */
+
+/* Base select styling - ensure proper contrast for the select element itself */
+select.country-filter,
+select.expertise-filter,
+select.mobile-country-filter {
+  /* Light mode */
+  background-color: #ffffff;
+  color: #374151; /* gray-700 - 4.5:1 contrast ratio */
+  border: 1px solid #d1d5db; /* gray-300 */
+}
+
+/* Dark mode select styling */
+.dark select.country-filter,
+.dark select.expertise-filter,
+.dark select.mobile-country-filter {
+  background-color: #374151; /* gray-700 */
+  color: #f9fafb; /* gray-50 - high contrast on dark background */
+  border: 1px solid #6b7280; /* gray-500 */
+}
+
+/* Option elements - Critical fix for contrast issues */
+select.country-filter option,
+select.expertise-filter option,
+select.mobile-country-filter option {
+  /* Force explicit colors for all options */
+  background-color: #ffffff !important;
+  color: #374151 !important; /* gray-700 - ensures 4.5:1 contrast */
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Dark mode option styling */
+.dark select.country-filter option,
+.dark select.expertise-filter option,
+.dark select.mobile-country-filter option {
+  background-color: #374151 !important; /* gray-700 */
+  color: #f9fafb !important; /* gray-50 */
+}
+
+/* Selected/hover states for options - WebKit support */
+select.country-filter option:checked,
+select.expertise-filter option:checked,
+select.mobile-country-filter option:checked {
+  background-color: #3b82f6 !important; /* primary blue */
+  color: #ffffff !important;
+}
+
+/* Focus and hover styling for better UX */
+select.country-filter:focus,
+select.expertise-filter:focus,
+select.mobile-country-filter:focus {
+  outline: 3px solid #5a8a87; /* primary-500 - meets 3:1 contrast requirement */
+  outline-offset: 2px;
+  border-color: #5a8a87; /* primary-500 */
+  box-shadow: 0 0 0 3px rgba(90, 138, 135, 0.1);
+}
+
+/* Dark mode focus */
+.dark select.country-filter:focus,
+.dark select.expertise-filter:focus,
+.dark select.mobile-country-filter:focus {
+  outline-color: #a8d5d2; /* primary-200 for dark mode */
+  border-color: #a8d5d2;
+  box-shadow: 0 0 0 3px rgba(168, 213, 210, 0.1);
+}
+
+/* Enhanced touch targets for mobile compliance */
+@media (hover: none) and (pointer: coarse) {
+  select.country-filter,
+  select.expertise-filter,
+  select.mobile-country-filter {
+    min-height: 48px; /* Larger than 44px for better mobile UX */
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 16px;
+  }
+  
+  select.country-filter option,
+  select.expertise-filter option,
+  select.mobile-country-filter option {
+    padding: 12px 16px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  select.country-filter,
+  select.expertise-filter,
+  select.mobile-country-filter {
+    border: 3px solid #000000;
+  }
+  
+  .dark select.country-filter,
+  .dark select.expertise-filter,
+  .dark select.mobile-country-filter {
+    border: 3px solid #ffffff;
+  }
+  
+  select.country-filter option,
+  select.expertise-filter option,
+  select.mobile-country-filter option {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-bottom: 1px solid #000000;
+  }
+  
+  .dark select.country-filter option,
+  .dark select.expertise-filter option,
+  .dark select.mobile-country-filter option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  select.country-filter,
+  select.expertise-filter,
+  select.mobile-country-filter {
+    transition: none !important;
+  }
+}
+
+/* Browser-specific fixes */
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+  select.country-filter option,
+  select.expertise-filter option,
+  select.mobile-country-filter option {
+    background-color: #ffffff;
+    color: #374151;
+  }
+  
+  .dark select.country-filter option,
+  .dark select.expertise-filter option,
+  .dark select.mobile-country-filter option {
+    background-color: #374151;
+    color: #f9fafb;
+  }
+}
+
+/* Safari/WebKit specific fixes */
+@supports (-webkit-appearance: none) {
+  select.country-filter option,
+  select.expertise-filter option,
+  select.mobile-country-filter option {
+    /* WebKit allows more option styling */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* Ensure proper spacing and alignment */
+select.country-filter,
+select.expertise-filter {
+  /* Desktop dropdowns */
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+select.mobile-country-filter {
+  /* Mobile dropdown - full width */
+  width: 100%;
+}
+
+/* Alternative: Custom dropdown arrow for consistent styling */
+select.country-filter,
+select.expertise-filter,
+select.mobile-country-filter {
+  /* Remove default arrow in WebKit */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Add custom arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding-right: 32px;
+}
+
+/* Dark mode arrow */
+.dark select.country-filter,
+.dark select.expertise-filter,
+.dark select.mobile-country-filter {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%9ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Focus state arrow */
+select.country-filter:focus,
+select.expertise-filter:focus,
+select.mobile-country-filter:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235a8a87' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.dark select.country-filter:focus,
+.dark select.expertise-filter:focus,
+.dark select.mobile-country-filter:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%a8d5d2' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}

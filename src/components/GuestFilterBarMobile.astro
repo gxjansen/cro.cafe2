@@ -238,6 +238,8 @@ guestsWithEpisodes.forEach(guest => {
         id={`mobile-countryFilter-${instanceId}`}
         class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-base focus:ring-primary-500 focus:border-primary-500 mobile-country-filter"
         data-filter-type="country"
+        aria-label="Filter by guest country"
+        aria-describedby={`mobileCountryDesc-${instanceId}`}
       >
         <option value="">{t.allCountries}</option>
         {countries.map(country => (
@@ -284,6 +286,13 @@ guestsWithEpisodes.forEach(guest => {
         </div>
         <span class="text-sm text-gray-500 dark:text-gray-400">({freelancerCount})</span>
       </label>
+    </div>
+  </div>
+
+  <!-- Hidden descriptive text for screen readers -->
+  <div class="sr-only">
+    <div id={`mobileCountryDesc-${instanceId}`}>
+      Filter guests by their country/location. Select a country to show only guests from that location.
     </div>
   </div>
 </MobileFilterSheet>

@@ -187,6 +187,7 @@ const instanceId = Math.random().toString(36).substring(7);
             class="min-h-[48px] px-3 py-2 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm focus:ring-primary-500 focus:border-primary-500 country-filter touch-target"
             data-filter-type="country"
             aria-label="Filter by guest country"
+            aria-describedby={`countryFilterDesc-${instanceId}`}
           >
             <option value="">All Countries</option>
             {countries.map(country => (
@@ -203,6 +204,7 @@ const instanceId = Math.random().toString(36).substring(7);
             class="min-h-[48px] px-3 py-2 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm focus:ring-primary-500 focus:border-primary-500 expertise-filter touch-target"
             data-filter-type="expertise"
             aria-label="Filter guests by expertise"
+            aria-describedby={`expertiseFilterDesc-${instanceId}`}
           >
             <option value="">All Expertise</option>
             {skillGroups.map(group => (
@@ -232,6 +234,16 @@ const instanceId = Math.random().toString(36).substring(7);
           </label>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Hidden descriptive text for screen readers -->
+  <div class="sr-only">
+    <div id={`countryFilterDesc-${instanceId}`}>
+      Filter guests by their country/location. Select a country to show only guests from that location.
+    </div>
+    <div id={`expertiseFilterDesc-${instanceId}`}>
+      Filter guests by their area of expertise. Select an expertise category to show only guests with those skills.
     </div>
   </div>
 </section>

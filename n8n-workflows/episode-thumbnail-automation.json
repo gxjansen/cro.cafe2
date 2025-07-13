@@ -1,0 +1,306 @@
+{
+  "name": "Episode Thumbnail Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "thumbnail-trigger",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "ef51ea22-4c2b-4417-82dd-b6f527e37910"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "transistor-validation",
+              "leftValue": "={{ $json.transistor_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "validate-input",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "Episodes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "transistor_id",
+              "condition": "equal",
+              "keyValue": "={{ $json.transistor_id }}"
+            }
+          ]
+        },
+        "options": {
+          "fields": [
+            "Id",
+            "episode_number",
+            "title",
+            "language",
+            "host",
+            "guest",
+            "transistor_id"
+          ]
+        }
+      },
+      "id": "get-episode-data",
+      "name": "Get Episode Data",
+      "type": "n8n-nodes-base.nocoDB",
+      "typeVersion": 1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.all()[0].json;\nconst episode = response.list?.[0] || response[0];\nif (!episode) throw new Error('Episode not found');\nconst hosts = episode.host || [];\nconst guests = episode.guest || [];\nlet templateConfig = 'no-hosts-no-guests';\nif (hosts.length === 1 && guests.length === 0) templateConfig = 'host-only';\nelse if (hosts.length === 0 && guests.length === 1) templateConfig = 'guest-only';\nelse if (hosts.length === 1 && guests.length === 1) templateConfig = 'host-guest';\nelse if (hosts.length === 1 && guests.length === 2) templateConfig = 'host-2guests';\nelse if (hosts.length === 1 && guests.length === 3) templateConfig = 'host-3guests';\nreturn { episode: { id: episode.Id, number: episode.episode_number, title: episode.title, language: episode.language || 'de', transistor_id: episode.transistor_id }, hosts: hosts.map(h => ({ name: h.name, image_url: h.picture?.[0]?.signedPath || '/images/hosts/default.jpeg' })), guests: guests.map(g => ({ name: g.name, company: g.company, role: g.role, image_url: g.linkedin_profile_pic || '/images/guests/default.jpeg' })), templateConfig, timestamp: new Date().toISOString() };"
+      },
+      "id": "process-episode-data",
+      "name": "Process Episode Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all()[0].json;\nconst { episode, hosts, guests, templateConfig } = data;\nconst colors = { primary: '#5a8a87', accent: '#c05559', german: '#8B5A3C', english: '#2E5A8B', white: '#ffffff', black: '#000000' };\nconst languageAccent = episode.language === 'de' ? colors.german : colors.english;\nconst html = `<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;background:linear-gradient(135deg,${colors.primary} 0%,${languageAccent} 100%);width:3000px;height:3000px;position:relative;overflow:hidden}.container{width:100%;height:100%;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:150px}.logo{position:absolute;top:200px;right:200px;width:400px;height:400px;background:${colors.white};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:120px;font-weight:bold;color:${colors.primary};box-shadow:0 20px 40px rgba(0,0,0,0.2)}.episode-number{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);background:${colors.accent};color:${colors.white};padding:30px 60px;border-radius:25px;font-size:100px;font-weight:bold;box-shadow:0 15px 30px rgba(0,0,0,0.3)}.title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:${colors.white};font-size:120px;font-weight:bold;text-align:center;max-width:2400px;line-height:1.2;text-shadow:0 5px 15px rgba(0,0,0,0.3)}.host-image{position:absolute;left:200px;top:50%;transform:translateY(-50%);width:800px;height:800px;border-radius:50%;object-fit:cover;border:15px solid ${colors.white};box-shadow:0 20px 40px rgba(0,0,0,0.3)}.guest-image{position:absolute;right:200px;top:50%;transform:translateY(-50%);width:1000px;height:1000px;border-radius:50%;object-fit:cover;border:15px solid ${colors.white};box-shadow:0 20px 40px rgba(0,0,0,0.3)}.guest-name{position:absolute;bottom:350px;left:200px;color:${colors.white};font-size:80px;font-weight:bold;text-shadow:0 3px 10px rgba(0,0,0,0.3)}.guest-company{position:absolute;bottom:250px;left:200px;color:${colors.white};font-size:60px;opacity:0.9;text-shadow:0 3px 10px rgba(0,0,0,0.3)}.language-badge{position:absolute;top:200px;left:200px;background:${languageAccent};color:${colors.white};padding:20px 40px;border-radius:15px;font-size:60px;font-weight:bold;opacity:${episode.language === 'de' ? '1' : '0'}}.template-host-only .title{left:60%;max-width:1800px;font-size:100px}.template-guest-only .title{left:40%;max-width:1800px;font-size:90px}.template-host-guest .title{top:30%;font-size:80px;max-width:2000px}.template-host-guest .logo{top:50px;right:50%;transform:translateX(50%);width:300px;height:300px;font-size:80px}.template-host-guest .host-image{width:600px;height:600px;top:60%}.template-host-guest .guest-image{width:800px;height:800px;top:55%}</style></head><body class=\"template-${templateConfig}\"><div class=\"container\"><div class=\"logo\">CRO</div>${episode.language === 'de' ? '<div class=\"language-badge\">DEUTSCH</div>' : ''}<div class=\"title\">${episode.title.replace(/#\\d+\\s*/, '')}</div>${hosts.length > 0 ? `<img class=\"host-image\" src=\"${hosts[0].image_url}\" alt=\"${hosts[0].name}\" />` : ''}${guests.length > 0 ? `<img class=\"guest-image\" src=\"${guests[0].image_url}\" alt=\"${guests[0].name}\" />` : ''}${guests.length > 0 ? `<div class=\"guest-name\">${guests[0].name}</div>` : ''}${guests.length > 0 && guests[0].company ? `<div class=\"guest-company\">${guests[0].company}</div>` : ''}<div class=\"episode-number\">#${episode.number}</div></div></body></html>`;\nreturn { html: html, filename: `EPISODE-${episode.number}-${episode.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${data.timestamp.split('T')[0]}.jpg`, episode: episode, templateConfig: templateConfig };"
+      },
+      "id": "generate-html-template",
+      "name": "Generate HTML Template",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://htmlcsstoimage.com/demo_run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"html\": {{ JSON.stringify($json.html) }},\n  \"css\": \"\",\n  \"width\": 3000,\n  \"height\": 3000,\n  \"quality\": 85,\n  \"device_scale\": 1,\n  \"format\": \"jpg\"\n}",
+        "options": {}
+      },
+      "id": "capture-screenshot",
+      "name": "Capture Screenshot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const screenshot = $input.all()[0].json;\nconst metadata = $input.all()[1].json;\nif (!screenshot || !screenshot.url) {\n  throw new Error('Screenshot generation failed');\n}\nreturn {\n  image_url: screenshot.url,\n  filename: metadata.filename,\n  episode: metadata.episode,\n  templateConfig: metadata.templateConfig,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "validate-optimize-image",
+      "name": "Validate & Optimize Image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "upload",
+        "name": "={{ $json.filename }}",
+        "binaryData": false,
+        "fileContent": "={{ $json.image_url }}",
+        "parents": {
+          "mode": "list",
+          "values": [
+            {
+              "name": "1BxYZdShVvV_YQHZyJ5XxJ-thumbnail-testing"
+            }
+          ]
+        },
+        "options": {
+          "fields": "id,name,size,mimeType,webViewLink"
+        }
+      },
+      "id": "upload-to-google-drive",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const uploadResult = $input.all()[0].json;\nconst imageData = $input.all()[1].json;\nconst result = {\n  success: true,\n  episode: imageData.episode,\n  templateConfig: imageData.templateConfig,\n  image: {\n    filename: imageData.filename,\n    dimensions: '3000x3000',\n    format: 'JPEG'\n  },\n  googleDrive: {\n    fileId: uploadResult.id,\n    name: uploadResult.name,\n    size: uploadResult.size,\n    viewLink: uploadResult.webViewLink\n  },\n  generatedAt: imageData.timestamp\n};\nconsole.log('Thumbnail generated successfully:', result);\nreturn result;"
+      },
+      "id": "log-success",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "Episodes",
+        "rowId": "={{ $json.episode.id }}",
+        "updateData": {
+          "image_url": "={{ $json.googleDrive.viewLink }}",
+          "thumbnail_generated_at": "={{ $json.generatedAt }}"
+        }
+      },
+      "id": "update-episode-record",
+      "name": "Update Episode Record",
+      "type": "n8n-nodes-base.nocoDB",
+      "typeVersion": 1,
+      "position": [2220, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "return { success: false, error: 'Invalid input: transistor_id is required', timestamp: new Date().toISOString() };"
+      },
+      "id": "handle-validation-error",
+      "name": "Handle Validation Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const error = $input.all()[0].json;\nconst errorResult = {\n  success: false,\n  error: error.message || 'Unknown error occurred',\n  timestamp: new Date().toISOString(),\n  details: error\n};\nconsole.error('Workflow error:', errorResult);\nreturn errorResult;"
+      },
+      "id": "handle-workflow-error",
+      "name": "Handle Workflow Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[
+        {
+          "node": "Validate Input",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Get Episode Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Episode Data": {
+      "main": [[
+        {
+          "node": "Process Episode Data",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Process Episode Data": {
+      "main": [[
+        {
+          "node": "Generate HTML Template",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Generate HTML Template": {
+      "main": [[
+        {
+          "node": "Capture Screenshot",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Capture Screenshot": {
+      "main": [[
+        {
+          "node": "Validate & Optimize Image",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Validate & Optimize Image": {
+      "main": [[
+        {
+          "node": "Upload to Google Drive",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Upload to Google Drive": {
+      "main": [[
+        {
+          "node": "Log Success",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Log Success": {
+      "main": [[
+        {
+          "node": "Update Episode Record",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-13T20:00:00.000Z",
+      "updatedAt": "2025-01-13T20:00:00.000Z",
+      "id": "1",
+      "name": "podcast-automation"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-13T20:00:00.000Z",
+  "versionId": "1"
+}
