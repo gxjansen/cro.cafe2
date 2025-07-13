@@ -281,7 +281,7 @@ class EpisodeGenerator {
       `status: "${episode.status || 'published'}"`,
       `hosts: [${hosts.map(h => `"${h}"`).join(', ')}]`,
       `guests: [${guests.map(g => `"${g}"`).join(', ')}]`,
-      episode.ai_keywords ? `keywords: "${this.escapeYaml(episode.ai_keywords)}"` : '',
+      episode.ai_keywords ? `keywords: [${episode.ai_keywords.split(',').map((k: string) => `"${this.escapeYaml(k.trim())}"`).join(', ')}]` : 'keywords: []',
       episode.ai_summary ? `aiSummary: "${this.escapeYaml(episode.ai_summary)}"` : '',
       `createdAt: ${new Date(episode.CreatedAt || Date.now()).toISOString()}`,
       `updatedAt: ${new Date(episode.UpdatedAt || Date.now()).toISOString()}`
