@@ -60,6 +60,9 @@
   /* Custom spacing */
   --spacing-18: 4.5rem;
   --spacing-88: 22rem;
+  
+  /* Custom colors */
+  --color-cro-beige: #d3b594;
 }
 
 /* Custom utilities for touch targets */
@@ -1343,4 +1346,21 @@ button[class*="inline-flex"][class*="min-h-"] {
   padding: 0.75rem 1rem !important;
   display: inline-flex !important;
   align-items: center !important;
+}
+
+/* Logo visibility rules for dark mode */
+.logo-light {
+  display: block;
+}
+
+.logo-dark {
+  display: none;
+}
+
+.dark .logo-light {
+  display: none;
+}
+
+.dark .logo-dark {
+  display: block;
 }
