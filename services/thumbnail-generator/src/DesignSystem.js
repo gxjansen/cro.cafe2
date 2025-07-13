@@ -73,30 +73,31 @@ export class DesignSystem {
 
   // Layout: 1 Host, 0 Guests
   createLayout_1Host_0Guests() {
-    const imageSize = 900;
-    const hostX = 700; // Left side (red)
-    const centerY = 1200;
+    const imageSize = 700;
+    const hostX = 500; // Top left
+    const hostY = 500;
     
     return {
       imageSize,
       grid: [
-        { x: hostX - imageSize/2, y: centerY } // Host on left/red side
+        { x: hostX - imageSize/2, y: hostY - imageSize/2 } // Host on top left
       ]
     };
   }
 
   // Layout: 1 Host, 1 Guest
   createLayout_1Host_1Guest() {
-    const imageSize = 750;
-    const hostX = 700; // Left side (red)
-    const guestX = 2300; // Right side (green)
-    const centerY = 1200;
+    const imageSize = 600;
+    const hostX = 500; // Top left
+    const hostY = 500;
+    const guestX = 2500; // Bottom right
+    const guestY = 2100;
     
     return {
       imageSize,
       grid: [
-        { x: hostX - imageSize/2, y: centerY }, // Host (left/red side)
-        { x: guestX - imageSize/2, y: centerY } // Guest (right/green side)
+        { x: hostX - imageSize/2, y: hostY - imageSize/2 }, // Host (top left)
+        { x: guestX - imageSize/2, y: guestY - imageSize/2 } // Guest (bottom right)
       ]
     };
   }

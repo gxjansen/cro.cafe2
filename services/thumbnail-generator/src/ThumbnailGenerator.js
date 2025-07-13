@@ -363,23 +363,18 @@ export class ThumbnailGenerator {
   }
 
   drawEpisodeInfo(ctx, canvasWidth, canvasHeight, episode, layout) {
-    // Position episode number and title at the bottom
-    const episodeY = 2400;
+    // Position episode info in bottom left corner to avoid center logo
+    const episodeX = 300;
+    const episodeY = 2600;
     
     // Draw episode number in a badge
     ctx.save();
     
-    // Badge background with better visibility
-    const badgeWidth = 450;
-    const badgeHeight = 90;
-    const badgeX = canvasWidth/2 - badgeWidth/2;
-    const badgeY = episodeY - 45;
-    
-    // White background for better contrast
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.roundRect(badgeX - 5, badgeY - 5, badgeWidth + 10, badgeHeight + 10, 45);
-    ctx.fill();
+    // Badge background
+    const badgeWidth = 350;
+    const badgeHeight = 80;
+    const badgeX = episodeX - badgeWidth/2;
+    const badgeY = episodeY - 40;
     
     ctx.fillStyle = this.designSystem.colors.accent;
     ctx.beginPath();
@@ -388,45 +383,23 @@ export class ThumbnailGenerator {
     
     // Episode number text
     ctx.fillStyle = '#ffffff';
-    ctx.font = `bold ${this.designSystem.typography.episodeNumber.size}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
+    ctx.font = `bold 90px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`EPISODE ${episode.episode_number}`, canvasWidth/2, episodeY);
+    ctx.fillText(`EPISODE ${episode.episode_number}`, episodeX, episodeY);
     
     ctx.restore();
     
-    // Draw episode title with enhanced typography
-    const truncatedTitle = this.truncateTitle(episode.title, 8);
+    // Draw episode title below the badge
+    const truncatedTitle = this.truncateTitle(episode.title, 6);
     
-    // Title with better contrast
     ctx.save();
-    
-    // White background for text
-    const titleY = episodeY + 140;
-    const titleMetrics = ctx.measureText(truncatedTitle);
-    const titleWidth = titleMetrics.width + 100;
-    
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.beginPath();
-    ctx.roundRect(canvasWidth/2 - titleWidth/2, titleY - 50, titleWidth, 100, 20);
-    ctx.fill();
-    
     ctx.fillStyle = this.designSystem.colors.text.primary;
-    ctx.font = `700 ${this.designSystem.typography.episodeTitle.size}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Georgia, serif`;
+    ctx.font = `600 70px -apple-system, BlinkMacSystemFont, 'Segoe UI', Georgia, serif`;
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
     
-    // Split long titles if needed
-    const words = truncatedTitle.split(' ');
-    if (words.length > 5) {
-      const midPoint = Math.ceil(words.length / 2);
-      const line1 = words.slice(0, midPoint).join(' ');
-      const line2 = words.slice(midPoint).join(' ');
-      ctx.fillText(line1, canvasWidth/2, titleY - 25);
-      ctx.fillText(line2, canvasWidth/2, titleY + 25);
-    } else {
-      ctx.fillText(truncatedTitle, canvasWidth/2, titleY);
-    }
+    // Title on next line
+    ctx.fillText(truncatedTitle, episodeX, episodeY + 100);
     
     ctx.restore();
   }

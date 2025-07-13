@@ -387,6 +387,17 @@ const getDateLocale = (lang: Language) => {
 
         <!-- Desktop Sidebar -->
         <aside class="hidden lg:block sidebar-sticky space-y-lg">
+          <!-- Episode Image -->
+          <div class="aspect-square rounded-xl overflow-hidden">
+            <EpisodeImage 
+              imageUrl={episode.data.imageUrl} 
+              alt={episode.data.title}
+              class="w-full h-full object-cover"
+              aspectRatio="square"
+              width={400}
+            />
+          </div>
+
           <!-- Subscribe Section -->
           <section class="bg-gray-50 dark:bg-gray-800 rounded-xl p-lg">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-md">
@@ -454,19 +465,6 @@ const getDateLocale = (lang: Language) => {
               >
                 {t.morePlatforms}
               </a>
-            </div>
-          </section>
-
-          <!-- Episode Image -->
-          <section class="bg-gray-50 dark:bg-gray-800 rounded-xl p-lg">
-            <div class="aspect-square rounded-lg overflow-hidden">
-              <EpisodeImage 
-                imageUrl={episode.data.imageUrl} 
-                alt={episode.data.title}
-                class="w-full h-full object-cover"
-                aspectRatio="square"
-                width={400}
-              />
             </div>
           </section>
 
