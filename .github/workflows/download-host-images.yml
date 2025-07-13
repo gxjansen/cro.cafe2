@@ -1,0 +1,82 @@
+name: Download Host Images from NocoDB
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger after hosts sync
+  workflow_run:
+    workflows: ["Sync Hosts from NocoDB"]
+    types:
+      - completed
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  download-images:
+    name: Download Host Images
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create images directory
+        run: mkdir -p public/images/hosts
+      
+      - name: Download host images
+        run: npx tsx scripts/download-host-images.ts
+        env:
+          NOCODB_API_KEY: ${{ secrets.NOCODB_API_KEY }}
+          NOCODB_BASE_URL: ${{ secrets.NOCODB_BASE_URL }}
+          NOCODB_BASE_ID: ${{ secrets.NOCODB_BASE_ID }}
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain public/images/hosts/)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "New host images detected"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No new host images"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add public/images/hosts/
+          git commit -m "chore: download host images from NocoDB"
+          
+          # Pull latest changes and push with retry logic
+          git pull --rebase origin main
+          
+          for i in {1..3}; do
+            if git push; then
+              echo "Successfully pushed changes"
+              break
+            else
+              echo "Push failed, retrying in 5 seconds..."
+              sleep 5
+              git pull --rebase origin main
+            fi
+          done
