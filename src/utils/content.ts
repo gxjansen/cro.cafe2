@@ -421,9 +421,9 @@ export async function getHostsByLanguage(language: Language) {
 export function getHostImageUrl(hostSlug: string): string {
   // Map host slugs to actual image filenames
   const imageMap: Record<string, string> = {
-    'gxjansen': 'guido.webp',
+    'gxjansen': 'Spryker_2636_square.jpg',
     'michaelwitzenleiter': 'michael.jpeg',
-    'ricardotayar': 'ricardo.jpeg',
+    'ricardotayar': 'ricardo.webp',
     'yvonneteufel': 'yvonne.jpeg'
   }
 
