@@ -283,7 +283,8 @@ class EpisodeGenerator {
       }
     }
 
-    return [
+    // Build frontmatter array, conditionally including imageUrl
+    const frontmatterLines = [
       `title: "${this.escapeYaml(episode.title || '')}"`,
       `slug: "${episode.slug || ''}"`,
       `description: "${cleanDescription}"`,
@@ -292,9 +293,20 @@ class EpisodeGenerator {
       `season: ${episode.season || 1}`,
       `language: "${episode.language || 'en'}"`,
       `duration: "${durationInSeconds}"`,
-      `audioUrl: "${episode.media_url || ''}"`,
-      `imageUrl: "${imageUrl}"`,
-      `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
+      `audioUrl: "${episode.media_url || ''}"`
+    ]
+    
+    // Only include imageUrl if it's a valid URL
+    if (imageUrl && imageUrl.trim()) {
+      frontmatterLines.push(`imageUrl: "${imageUrl}"`)
+    }
+    
+    frontmatterLines.push(
+      `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`
+    )
+    
+    return [
+      ...frontmatterLines,
       `transistorId: "${episode.transistor_id || ''}"`,
       `downloads_total: ${episode.downloads_total || 0}`,
       `episode_type: "${episode.episode_type || 'full'}"`,
