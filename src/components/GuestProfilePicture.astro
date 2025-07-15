@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import ResponsiveImage from './ResponsiveImage.astro';
 import { getGuestProfilePicture } from '../utils/content';
 
 export interface Props {
@@ -92,13 +92,16 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
 
   <!-- Main image -->
   {profilePictureUrl && profilePictureUrl !== '/images/default-guest.jpg' ? (
-    <img 
+    <ResponsiveImage 
       src={profilePictureUrl}
       alt={altText}
       width={imageSizes[size]}
       height={imageSizes[size]}
       class={`absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 hover:brightness-110 ${grayscale ? 'grayscale' : ''}`}
       loading={loading}
+      formats={['avif', 'webp', 'jpeg']}
+      widths={[48, 64, 96, 128, 192, 256]}
+      sizes={`${imageSizes[size]}px`}
       data-image={instanceId}
       onload={`
         const img = event.target;
@@ -113,22 +116,11 @@ const instanceId = `guest-picture-${Math.random().toString(36).substr(2, 9)}`;
         const img = event.target;
         const placeholder = document.querySelector('[data-placeholder="${instanceId}"]');
         
-        // Try alternative extension before giving up
-        if (img.src.endsWith('.jpeg') && !img.dataset.triedJpg) {
-          img.dataset.triedJpg = 'true';
-          img.src = img.src.replace('.jpeg', '.jpg');
-          console.log('Trying .jpg extension:', img.src);
-        } else if (img.src.endsWith('.jpg') && !img.dataset.triedJpeg) {
-          img.dataset.triedJpeg = 'true';
-          img.src = img.src.replace('.jpg', '.jpeg');
-          console.log('Trying .jpeg extension:', img.src);
-        } else {
-          // Both extensions failed - show initials placeholder
-          console.log('All image extensions failed, showing initials for:', img.src);
-          img.remove();
-          if (placeholder) {
-            placeholder.classList.remove('animate-pulse');
-          }
+        // Both extensions failed - show initials placeholder
+        console.log('Image load failed, showing initials for:', img.src);
+        img.remove();
+        if (placeholder) {
+          placeholder.classList.remove('animate-pulse');
         }
       `}
     />

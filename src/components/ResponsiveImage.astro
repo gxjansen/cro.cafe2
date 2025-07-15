@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  sizes?: string;
+  widths?: number[];
+  formats?: string[];
+  quality?: number;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+  densities?: number[];
+  aspectRatio?: number;
+  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+}
+
+const {
+  src,
+  alt,
+  width = 800,
+  height = 600,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  widths = [320, 640, 960, 1280, 1600],
+  formats = ['avif', 'webp', 'jpeg'],
+  quality = 85,
+  loading = 'lazy',
+  class: className,
+  densities = [1, 2],
+  aspectRatio,
+  fit = 'cover',
+  ...props
+} = Astro.props;
+
+// Calculate height based on aspect ratio if provided
+const calculatedHeight = aspectRatio ? Math.round(width / aspectRatio) : height;
+---
+
+<Image
+  src={src}
+  alt={alt}
+  width={width}
+  height={calculatedHeight}
+  sizes={sizes}
+  widths={widths}
+  formats={formats}
+  quality={quality}
+  loading={loading}
+  densities={densities}
+  fit={fit}
+  class={className}
+  {...props}
+/>

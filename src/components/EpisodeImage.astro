@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import ResponsiveImage from './ResponsiveImage.astro';
 
 export interface Props {
   imageUrl?: string;
@@ -81,15 +81,18 @@ const standardizedAlt = buildAltText();
 ---
 
 {imageUrl ? (
-  <Image 
+  <ResponsiveImage 
     src={imageUrl} 
     alt={standardizedAlt}
     width={width}
     height={computedHeight}
     class={className}
     loading="lazy"
-    format="webp"
+    formats={['avif', 'webp', 'jpeg']}
     quality={85}
+    widths={[240, 320, 480, 640, 800, 1024]}
+    sizes="(max-width: 320px) 240px, (max-width: 640px) 320px, (max-width: 1024px) 480px, 640px"
+    aspectRatio={computedHeight / width}
     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
   />
   <div class={`hidden items-center justify-center ${fallbackGradient} ${className}`}>
