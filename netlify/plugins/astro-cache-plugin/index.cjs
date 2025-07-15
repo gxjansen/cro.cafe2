@@ -54,8 +54,8 @@ module.exports = {
     console.log('✅ Build successful!');
     console.log(`📊 Build info:`, buildInfo);
     
-    // Save build metadata for future reference
-    await utils.cache.save(buildInfo, 'build-metadata');
+    // Just log the info - no need to cache metadata
+    console.log('🎉 Astro Cache Plugin completed successfully');
   },
 
   onError: async ({ utils }) => {
