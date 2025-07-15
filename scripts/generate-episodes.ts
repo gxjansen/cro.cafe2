@@ -263,6 +263,25 @@ class EpisodeGenerator {
       }
     }
 
+    // Validate and clean image URL
+    let imageUrlLine = ''
+    if (episode.image_url) {
+      try {
+        // Basic URL validation
+        const imageUrl = episode.image_url.trim()
+        if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+          // Skip problematic Transistor image processing URLs with invalid quality parameters
+          if (imageUrl.includes('/q:6') || imageUrl.includes('/q:60')) {
+            console.warn(`⚠️ Skipping problematic image URL for episode ${episode.Id}: ${imageUrl}`)
+          } else {
+            imageUrlLine = `imageUrl: "${imageUrl}"`
+          }
+        }
+      } catch (error) {
+        console.error(`❌ Error processing image URL for episode ${episode.Id}:`, error)
+      }
+    }
+
     return [
       `title: "${this.escapeYaml(episode.title || '')}"`,
       `slug: "${episode.slug || ''}"`,
@@ -273,7 +292,7 @@ class EpisodeGenerator {
       `language: "${episode.language || 'en'}"`,
       `duration: "${durationInSeconds}"`,
       `audioUrl: "${episode.media_url || ''}"`,
-      episode.image_url ? `imageUrl: "${episode.image_url}"` : '',
+      imageUrlLine,
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
       `transistorId: "${episode.transistor_id || ''}"`,
       `downloads_total: ${episode.downloads_total || 0}`,
