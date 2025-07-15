@@ -1,10 +1,25 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:netlify"
   publish = "dist"
+  # Ignore build command for dependabot PRs and content-only changes
+  ignore = "git log -1 --pretty=%B | grep -q '^dependabot' || git diff HEAD^ HEAD --quiet -- ':!src/content/'"
 
 [build.environment]
   NODE_VERSION = "18"
   NETLIFY_SITE_ID = "5a20ec24-b427-4971-a742-f3f5c443143e"
+  # Production optimizations
+  NODE_ENV = "production"
+  # Enable Astro's production optimizations
+  ASTRO_TELEMETRY_DISABLED = "1"
+  # Reduce npm install time
+  NPM_CONFIG_FUND = "false"
+  NPM_CONFIG_AUDIT = "false"
+  # Cache directory for npm
+  NPM_CONFIG_CACHE = "/opt/build/cache/.npm"
+
+# Local Astro cache plugin
+[[plugins]]
+  package = "./netlify/plugins/astro-cache-plugin"
 
 # Removed @netlify/plugin-sitemap - using Astro's sitemap integration instead
 
@@ -45,6 +60,31 @@
   for = "*.css"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
 
 # ============================================================================
 # SUBDOMAIN REDIRECTS

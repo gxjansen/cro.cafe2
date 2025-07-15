@@ -235,10 +235,33 @@ export default defineConfig({
   // },
   output: 'static',
   trailingSlash: 'always',
+  build: {
+    // Optimize build output
+    assets: '_astro',
+    inlineStylesheets: 'auto',
+    // Split code for better caching
+    splitting: true,
+    // Compress output
+    compress: true
+  },
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
       exclude: ['lightningcss']
+    },
+    build: {
+      // Optimize chunk size
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', '@nanostores/react'],
+            'astro-vendor': ['astro', '@astrojs/react', '@astrojs/mdx'],
+            'utils': ['date-fns', 'clsx', 'zod']
+          }
+        }
+      },
+      // Increase chunk size warning limit
+      chunkSizeWarningLimit: 1000
     },
     server: {
       fs: {
