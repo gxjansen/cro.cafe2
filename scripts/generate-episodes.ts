@@ -270,8 +270,9 @@ class EpisodeGenerator {
         // Basic URL validation
         const url = episode.image_url.trim()
         if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-          // Skip problematic Transistor image processing URLs with invalid quality parameters
-          if (url.includes('/q:6') || url.includes('/q:60')) {
+          // Only skip if it's the exact problematic URL pattern that was causing build failures
+          // The specific pattern that fails: /q:6 at the very end of the URL (not /q:60 or other variations)
+          if (url.endsWith('/q:6')) {
             console.warn(`⚠️ Skipping problematic image URL for episode ${episode.Id}: ${url}`)
             imageUrl = '' // Use empty string instead of skipping
           } else {
