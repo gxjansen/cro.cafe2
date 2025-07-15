@@ -5,7 +5,7 @@
   ignore = "git log -1 --pretty=%B | grep -q '^dependabot' || git diff HEAD^ HEAD --quiet -- ':!src/content/'"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NETLIFY_SITE_ID = "5a20ec24-b427-4971-a742-f3f5c443143e"
   # Production optimizations
   NODE_ENV = "production"
