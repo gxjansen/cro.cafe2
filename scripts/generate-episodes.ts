@@ -263,18 +263,19 @@ class EpisodeGenerator {
       }
     }
 
-    // Validate and clean image URL
-    let imageUrlLine = ''
+    // Process image URL - always include the field even if empty
+    let imageUrl = ''
     if (episode.image_url) {
       try {
         // Basic URL validation
-        const imageUrl = episode.image_url.trim()
-        if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+        const url = episode.image_url.trim()
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
           // Skip problematic Transistor image processing URLs with invalid quality parameters
-          if (imageUrl.includes('/q:6') || imageUrl.includes('/q:60')) {
-            console.warn(`⚠️ Skipping problematic image URL for episode ${episode.Id}: ${imageUrl}`)
+          if (url.includes('/q:6') || url.includes('/q:60')) {
+            console.warn(`⚠️ Skipping problematic image URL for episode ${episode.Id}: ${url}`)
+            imageUrl = '' // Use empty string instead of skipping
           } else {
-            imageUrlLine = `imageUrl: "${imageUrl}"`
+            imageUrl = url
           }
         }
       } catch (error) {
@@ -292,7 +293,7 @@ class EpisodeGenerator {
       `language: "${episode.language || 'en'}"`,
       `duration: "${durationInSeconds}"`,
       `audioUrl: "${episode.media_url || ''}"`,
-      imageUrlLine,
+      `imageUrl: "${imageUrl}"`,
       `pubDate: ${episode.published_at ? new Date(episode.published_at).toISOString() : new Date().toISOString()}`,
       `transistorId: "${episode.transistor_id || ''}"`,
       `downloads_total: ${episode.downloads_total || 0}`,
