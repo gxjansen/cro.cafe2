@@ -1,0 +1,6 @@
+{
+  "name": "astro-cache-plugin",
+  "version": "1.0.0",
+  "main": "index.cjs",
+  "type": "commonjs"
+}

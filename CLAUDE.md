@@ -700,7 +700,7 @@ claude mcp add-json apify --scope user '{
 This configuration ensures optimal use of Claude Code's batch tools for swarm orchestration and parallel task execution with full Claude-Flow capabilities.
 
 ## Solving Issues
-When the user tells you to fix a bug/errer or when you encounter an error yourself, I want you to:
+When the user tells you to fix a bug/error or when you encounter an error yourself, I want you to:
 #1 implement a fix
 #2 test the netlify build locally
 #3 If #2 fails: take the errors and go back to #1. If #2 succeeds: go to next step
@@ -709,7 +709,7 @@ When the user tells you to fix a bug/errer or when you encounter an error yourse
 #6 If #5 fails: take the error log go back to #1. If #5 succeeds: go to next step
 #7 If needed, use the Github MCP to validate if the Github action succesfully updated the episode files.
 #8 If the Github Action updated the files correctly: go to next step. If not: go back to step #1
-#9 Use the Netlify MCP to trigger a new Netlify build. If it completes succesfully: you are done! If not: fetch the error log and rturn to #1
+#9 Use the Netlify MCP to trigger a new Netlify build. If it completes succesfully: you are done! If not: fetch the error log and return to #1
 
 ## Important: Content Files Are Generated
 When an issue is found with any markdown file in src/content, editing the markdown file will NOT resolve the issue. These files are generated regularly by Github actions, so you need to update and run the relevant Github action instead.
