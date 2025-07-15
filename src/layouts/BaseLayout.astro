@@ -7,6 +7,7 @@ import SchemaWebsite from '../components/schema/SchemaWebsite.astro';
 import SchemaOrganization from '../components/schema/SchemaOrganization.astro';
 import SchemaBreadcrumbList from '../components/schema/SchemaBreadcrumbList.astro';
 import BottomNav from '../components/BottomNav.astro';
+import PerformanceHints from '../components/PerformanceHints.astro';
 import '/src/styles/global.css';
 import '/src/styles/dropdown-accessibility-fix.css';
 
@@ -45,6 +46,9 @@ const fullTitle = title.includes('CRO.CAFE') ? title : `${title} | CRO.CAFE`;
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+    
+    <!-- Performance optimization hints -->
+    <PerformanceHints />
     
     <!-- Canonical URL -->
     {canonical && <link rel="canonical" href={canonical} />}

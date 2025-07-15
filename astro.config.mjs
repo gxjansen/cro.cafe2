@@ -223,7 +223,15 @@ export default defineConfig({
         protocol: 'https',
         hostname: '**.transistor.fm'
       }
-    ]
+    ],
+    // Enable responsive images (Astro 5.10 stable feature)
+    experimentalLayout: true,
+    // Default image quality
+    quality: 85,
+    // Default image formats (prioritize modern formats)
+    formats: ['avif', 'webp', 'jpeg'],
+    // Enable eager loading for above-the-fold images
+    loading: 'eager'
   },
   // Disable Astro's automatic i18n routing since we're managing routes manually
   // i18n: {
@@ -235,6 +243,12 @@ export default defineConfig({
   // },
   output: 'static',
   trailingSlash: 'always',
+  prefetch: {
+    // Prefetch links when they become visible
+    prefetchAll: true,
+    // Use intersection observer for better performance
+    defaultStrategy: 'viewport'
+  },
   build: {
     // Optimize build output
     assets: '_astro',
@@ -242,26 +256,77 @@ export default defineConfig({
     // Split code for better caching
     splitting: true,
     // Compress output
-    compress: true
+    compress: true,
+    // Enable critical CSS extraction
+    experimental: {
+      directCSS: true
+    }
   },
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      exclude: ['lightningcss']
+      exclude: ['lightningcss'],
+      // Pre-bundle dependencies for faster dev starts
+      include: ['react', 'react-dom', 'date-fns']
     },
     build: {
       // Optimize chunk size
       rollupOptions: {
         output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom', '@nanostores/react'],
-            'astro-vendor': ['astro', '@astrojs/react', '@astrojs/mdx'],
-            'utils': ['date-fns', 'clsx', 'zod']
+          manualChunks: (id) => {
+            // More aggressive code splitting for better caching
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('@nanostores/react')) {
+                return 'react-vendor';
+              }
+              if (id.includes('date-fns')) {
+                return 'date-vendor';
+              }
+              if (id.includes('astro') || id.includes('@astrojs')) {
+                return 'astro-vendor';
+              }
+              if (id.includes('sentry')) {
+                return 'sentry-vendor';
+              }
+              return 'vendor';
+            }
+            // Split by feature/page
+            if (id.includes('/components/')) {
+              return 'components';
+            }
+            if (id.includes('/lib/') || id.includes('/utils/')) {
+              return 'utils';
+            }
+          },
+          // Optimize asset file names for better caching
+          assetFileNames: (assetInfo) => {
+            const extType = assetInfo.name.split('.').pop();
+            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+              return `assets/img/[name]-[hash][extname]`;
+            }
+            if (/woff2?|eot|ttf|otf/i.test(extType)) {
+              return `assets/fonts/[name]-[hash][extname]`;
+            }
+            return `assets/[name]-[hash][extname]`;
           }
         }
       },
       // Increase chunk size warning limit
-      chunkSizeWarningLimit: 1000
+      chunkSizeWarningLimit: 1000,
+      // Enable modern JavaScript features
+      target: 'es2022',
+      // Optimize CSS
+      cssCodeSplit: true,
+      // Minify more aggressively
+      minify: 'esbuild',
+      // Generate source maps for debugging but keep them external
+      sourcemap: false,
+      // Additional optimizations for better performance
+      reportCompressedSize: false,
+      // Preload module directive for better module loading
+      modulePreload: {
+        polyfill: true
+      }
     },
     server: {
       fs: {
