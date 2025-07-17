@@ -18,4 +18,18 @@ Sentry.init({
     }
     return event;
   },
+  // Capture 404 errors
+  beforeSend(event, hint) {
+    // Ensure 404 messages are captured
+    if (event.message && event.message.includes('404 Page Not Found')) {
+      // Add additional context for 404 errors
+      event.fingerprint = ['404', event.tags?.pathname || 'unknown'];
+      event.tags = {
+        ...event.tags,
+        error_type: '404',
+        render_type: 'ssr',
+      };
+    }
+    return event;
+  },
 });
