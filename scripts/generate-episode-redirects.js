@@ -1,0 +1,129 @@
+#!/usr/bin/env node
+
+import { glob } from 'glob';
+import fs from 'fs/promises';
+import path from 'path';
+import matter from 'gray-matter';
+
+// Function to derive old URL from current slug
+function deriveOldUrl(slug, episodeNumber, language) {
+  // For German episodes 36+, the old URL didn't have the episode number prefix
+  if (language === 'de' && episodeNumber >= 36) {
+    // Remove the episode number prefix (e.g., "42-the-future-of-cro" -> "the-future-of-cro")
+    const match = slug.match(/^\d+-(.+)$/);
+    if (match) {
+      return match[1];
+    }
+  }
+  
+  // For other episodes, assume the slug was the same
+  return slug;
+}
+
+// Function to generate redirects for a language
+async function generateRedirectsForLanguage(lang) {
+  const redirects = [];
+  const episodeFiles = await glob(`src/content/episodes/${lang}/**/*.mdx`);
+  
+  console.log(`\nProcessing ${lang} episodes...`);
+  
+  for (const file of episodeFiles) {
+    try {
+      const content = await fs.readFile(file, 'utf-8');
+      const { data } = matter(content);
+      
+      if (data.slug && data.status === 'published') {
+        const oldSlug = deriveOldUrl(data.slug, data.episode || 0, lang);
+        
+        // Only create redirect if old slug differs from current slug
+        if (oldSlug !== data.slug) {
+          console.log(`  Episode ${data.episode}: ${oldSlug} -> ${data.slug}`);
+          
+          // Generate redirect for subdomain
+          const subdomain = lang === 'en' ? 'www' : lang;
+          redirects.push({
+            from: `https://${subdomain}.cro.cafe/podcast/${oldSlug}`,
+            to: `https://cro.cafe/${lang}/episodes/${data.slug}/`,
+            status: 301,
+            force: true,
+            episode: data.episode,
+            title: data.title
+          });
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing ${file}:`, error.message);
+    }
+  }
+  
+  return redirects;
+}
+
+// Main function
+async function generateAllRedirects() {
+  const languages = ['en', 'nl', 'de', 'es'];
+  const allRedirects = [];
+  
+  for (const lang of languages) {
+    const langRedirects = await generateRedirectsForLanguage(lang);
+    allRedirects.push(...langRedirects);
+  }
+  
+  // Group redirects by language
+  const redirectsByLang = {
+    en: allRedirects.filter(r => r.from.includes('www.cro.cafe')),
+    nl: allRedirects.filter(r => r.from.includes('nl.cro.cafe')),
+    de: allRedirects.filter(r => r.from.includes('de.cro.cafe')),
+    es: allRedirects.filter(r => r.from.includes('es.cro.cafe'))
+  };
+  
+  // Generate TOML format
+  let tomlContent = `# ============================================================================
+# EPISODE-SPECIFIC REDIRECTS (Auto-generated from episode slugs)
+# ============================================================================
+# Generated on: ${new Date().toISOString()}
+# Run 'npm run generate-redirects' to regenerate
+#
+# These redirects handle old episode URLs to new slug-based URLs
+# They must come BEFORE generic wildcard redirects in netlify.toml
+
+`;
+  
+  // Add redirects grouped by language
+  for (const [lang, redirects] of Object.entries(redirectsByLang)) {
+    if (redirects.length > 0) {
+      tomlContent += `# ${lang.toUpperCase()} Episode Redirects\n`;
+      
+      // Sort by episode number
+      redirects.sort((a, b) => (a.episode || 0) - (b.episode || 0));
+      
+      for (const redirect of redirects) {
+        tomlContent += `# Episode ${redirect.episode}: ${redirect.title}\n`;
+        tomlContent += `[[redirects]]\n`;
+        tomlContent += `  from = "${redirect.from}"\n`;
+        tomlContent += `  to = "${redirect.to}"\n`;
+        tomlContent += `  status = ${redirect.status}\n`;
+        tomlContent += `  force = ${redirect.force}\n\n`;
+      }
+    }
+  }
+  
+  // Write to a separate file that can be included or copied
+  await fs.writeFile('generated-redirects.toml', tomlContent);
+  console.log(`\nGenerated ${allRedirects.length} redirects to generated-redirects.toml`);
+  
+  // Also output some stats
+  console.log('\nRedirects by language:');
+  for (const [lang, redirects] of Object.entries(redirectsByLang)) {
+    if (redirects.length > 0) {
+      console.log(`  ${lang}: ${redirects.length} redirects`);
+    }
+  }
+  
+  // Also create a JSON version for easier inspection
+  await fs.writeFile('generated-redirects.json', JSON.stringify(allRedirects, null, 2));
+  console.log('\nAlso created generated-redirects.json for inspection');
+}
+
+// Run the script
+generateAllRedirects().catch(console.error);

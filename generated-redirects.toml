@@ -1,0 +1,108 @@
+# ============================================================================
+# EPISODE-SPECIFIC REDIRECTS (Auto-generated from episode slugs)
+# ============================================================================
+# Generated on: 2025-07-17T20:38:34.128Z
+# Run 'npm run generate-redirects' to regenerate
+#
+# These redirects handle old episode URLs to new slug-based URLs
+# They must come BEFORE generic wildcard redirects in netlify.toml
+
+# DE Episode Redirects
+# Episode 36: #36 CRO-Uplift durch Testing bei Smarketer - mit Jonathan Heinze 
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze"
+  to = "https://cro.cafe/de/episodes/36-cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze/"
+  status = 301
+  force = true
+
+# Episode 37: #37 Einblicke in die Conversion Rate und Funnel Optimierung - mit Sebastian Pilgram
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/einblicke-in-die-conversion-rate-und-funnel-optimierung-mit-sebastian-pilgram"
+  to = "https://cro.cafe/de/episodes/37-einblicke-in-die-conversion-rate-und-funnel-optimierung-mit-sebastian-pilgram/"
+  status = 301
+  force = true
+
+# Episode 38: #38 Aus E-Commerce wird R-Commerce: Digitaler Erfolg durch nachhaltige Kundenbeziehungen - mit Joachim Stalph, Philipp Spreer und Dimitrios Haratsis
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/aus-e-commerce-wird-r-commerce-digitaler-erfolg-durch-nachhaltige-kundenbeziehungen-mit-joachim-stalph-philipp-spreer-und-dimitrios-haratsis"
+  to = "https://cro.cafe/de/episodes/38-aus-e-commerce-wird-r-commerce-digitaler-erfolg-durch-nachhaltige-kundenbeziehungen-mit-joachim-stalph-philipp-spreer-und-dimitrios-haratsis/"
+  status = 301
+  force = true
+
+# Episode 39: #39 Unternehmenskultur als Erfolgsfaktor - mit Niklas Bräutigam Co-Founder von Conversion Stash
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/unternehmenskultur-als-erfolgsfaktor-mit-niklas-brautigam-co-founder-von-conversion-stash"
+  to = "https://cro.cafe/de/episodes/39-unternehmenskultur-als-erfolgsfaktor-mit-niklas-brautigam-co-founder-von-conversion-stash/"
+  status = 301
+  force = true
+
+# Episode 40: #40 Das Erfolgsgeheimnis von Testing und Personalisierung bei congstar - mit Janina Schwill
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/das-erfolgsgeheimnis-von-testing-und-personalisierung-bei-congstar-mit-janina-schwill"
+  to = "https://cro.cafe/de/episodes/40-das-erfolgsgeheimnis-von-testing-und-personalisierung-bei-congstar-mit-janina-schwill/"
+  status = 301
+  force = true
+
+# Episode 41: #41 GMS24-Special: Personalisierung und Testing der Zukunft - mit Ilja Gurevich
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/gms24-special-personalisierung-und-testing-der-zukunft-mit-ilja-gurevich"
+  to = "https://cro.cafe/de/episodes/41-gms24-special-personalisierung-und-testing-der-zukunft-mit-ilja-gurevich/"
+  status = 301
+  force = true
+
+# Episode 42: #42 The Future of CRO - mit René Gilster
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/the-future-of-cro-mit-rene-gilster"
+  to = "https://cro.cafe/de/episodes/42-the-future-of-cro-mit-rene-gilster/"
+  status = 301
+  force = true
+
+# Episode 43: #43 A/B Testing für Leadgenerierung: Best Practices mit Julian Kleinknecht
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/a-b-testing-fur-leadgenerierung-best-practices-mit-julian-kleinknecht"
+  to = "https://cro.cafe/de/episodes/43-a-b-testing-fur-leadgenerierung-best-practices-mit-julian-kleinknecht/"
+  status = 301
+  force = true
+
+# Episode 44: #44 CRO-Strategien im Reisebereich - mit Lea Mattern von Condor
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-strategien-im-reisebereich-mit-lea-mattern-von-condor"
+  to = "https://cro.cafe/de/episodes/44-cro-strategien-im-reisebereich-mit-lea-mattern-von-condor/"
+  status = 301
+  force = true
+
+# Episode 46: #46 Insourcing & Optimierung: Bastian Hausmann über die Conversion-Taktik von freenet
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/insourcing-optimierung-bastian-hausmann-uber-die-conversion-taktik-von-freenet"
+  to = "https://cro.cafe/de/episodes/46-insourcing-optimierung-bastian-hausmann-uber-die-conversion-taktik-von-freenet/"
+  status = 301
+  force = true
+
+# Episode 47: #47 User Research & CRO bei TUI: Michael Richter über moderiertes Testing und Innovation
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/user-research-cro-bei-tui-michael-richter-uber-moderiertes-testing-und-innovation"
+  to = "https://cro.cafe/de/episodes/47-user-research-cro-bei-tui-michael-richter-uber-moderiertes-testing-und-innovation/"
+  status = 301
+  force = true
+
+# Episode 48: #48 Customer Centricity & KI im Fashion E-Commerce mit Christina Skoeries von Camel Active 
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active"
+  to = "https://cro.cafe/de/episodes/48-customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active/"
+  status = 301
+  force = true
+
+# Episode 49: #49 CRO- und Gamification-Strategie von Samsung – mit Julian Buchmann
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-und-gamification-strategie-von-samsung-mit-julian-buchmann"
+  to = "https://cro.cafe/de/episodes/49-cro-und-gamification-strategie-von-samsung-mit-julian-buchmann/"
+  status = 301
+  force = true
+
+# Episode 50: #50 Jubiläum mit Andre Morys: 25 Jahre Optimierung, KI & Growth Culture
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture"
+  to = "https://cro.cafe/de/episodes/50-jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture/"
+  status = 301
+  force = true
+

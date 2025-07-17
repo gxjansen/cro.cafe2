@@ -11,6 +11,7 @@
     "build:with-test": "npm run test:run -- tests/unit/episode-frontmatter-validation.test.ts && astro build",
     "build:no-test": "astro build && npm run generate-sitemaps",
     "generate-sitemaps": "tsx scripts/generate-language-sitemaps.ts",
+    "generate-redirects": "node scripts/generate-episode-redirects.js",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
