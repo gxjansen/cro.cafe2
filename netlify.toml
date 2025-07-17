@@ -87,7 +87,108 @@
     Cache-Control = "public, max-age=604800"
 
 # ============================================================================
-# SUBDOMAIN REDIRECTS
+# GERMAN EPISODE SPECIFIC REDIRECTS (Episode 36+ have number prefixes)
+# ============================================================================
+# These must come BEFORE the generic subdomain redirects to take precedence
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze"
+  to = "https://cro.cafe/de/episodes/36-cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-basics-fur-anfanger-mit-alexander-holl"
+  to = "https://cro.cafe/de/episodes/37-cro-basics-fur-anfanger-mit-alexander-holl/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-als-agentur-vs-cro-als-freelancer-mit-andre-haubold"
+  to = "https://cro.cafe/de/episodes/38-cro-als-agentur-vs-cro-als-freelancer-mit-andre-haubold/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/experimentieren-im-b2b-bereich-mit-manuel-eue"
+  to = "https://cro.cafe/de/episodes/39-experimentieren-im-b2b-bereich-mit-manuel-eue/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/der-kunde-im-mittelpunkt-mit-antonia-schlange"
+  to = "https://cro.cafe/de/episodes/40-der-kunde-im-mittelpunkt-mit-antonia-schlange/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/wie-viel-cro-kostet-und-der-roi-von-cro-mit-andre-bode"
+  to = "https://cro.cafe/de/episodes/41-wie-viel-cro-kostet-und-der-roi-von-cro-mit-andre-bode/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/the-future-of-cro-mit-rene-gilster"
+  to = "https://cro.cafe/de/episodes/42-the-future-of-cro-mit-rene-gilster/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-learnings-from-air-france-klm-mit-manuel-costa"
+  to = "https://cro.cafe/de/episodes/43-cro-learnings-from-air-france-klm-mit-manuel-costa/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/experimentation-und-nachhaltigkeit-bei-ecosia-mit-kim-siebert"
+  to = "https://cro.cafe/de/episodes/44-experimentation-und-nachhaltigkeit-bei-ecosia-mit-kim-siebert/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cxm-kundenfokus-und-wie-man-das-organisiert-mit-torsten-stieler"
+  to = "https://cro.cafe/de/episodes/45-cxm-kundenfokus-und-wie-man-das-organisiert-mit-torsten-stieler/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/cro-agency-oder-consultant-building-mit-jan-stranghoner"
+  to = "https://cro.cafe/de/episodes/46-cro-agency-oder-consultant-building-mit-jan-stranghoner/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/evolution-einer-digitalen-experimentation-tur-auf-bei-telefonica-mit-markus-linder"
+  to = "https://cro.cafe/de/episodes/47-evolution-einer-digitalen-experimentation-tur-auf-bei-telefonica-mit-markus-linder/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/continuous-discovery-habits-mit-teresa-torres"
+  to = "https://cro.cafe/de/episodes/48-continuous-discovery-habits-mit-teresa-torres/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/evidenzbasierte-kundenorientierung-mit-benny-briesemeister"
+  to = "https://cro.cafe/de/episodes/49-evidenzbasierte-kundenorientierung-mit-benny-briesemeister/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/50-jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture"
+  to = "https://cro.cafe/de/episodes/50-jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/quantilope-und-wachstum-bei-ebay-kleinanzeigen-mit-andreas-grun"
+  to = "https://cro.cafe/de/episodes/51-quantilope-und-wachstum-bei-ebay-kleinanzeigen-mit-andreas-grun/"
+  status = 301
+  force = true
+
+# ============================================================================
+# SUBDOMAIN REDIRECTS (Generic - must come AFTER specific redirects)
 # ============================================================================
 # Redirect language subdomains to their respective language paths
 
