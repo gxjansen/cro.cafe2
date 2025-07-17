@@ -47,12 +47,6 @@ if (typeof Sentry !== 'undefined') {
         >
           Go to Homepage
         </a>
-        <button 
-          id="error-button"
-          class="inline-block px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors ml-4"
-        >
-          Test Sentry Error
-        </button>
         <div class="mt-4">
           <a 
             href="/episodes/" 
@@ -73,18 +67,7 @@ if (typeof Sentry !== 'undefined') {
   </main>
   
   <script>
-    // Test error button handler
-    function handleClick() {
-      throw new Error('This is a test error from 404 page');
-    }
-    
     document.addEventListener('DOMContentLoaded', () => {
-      // Add test error button handler
-      const errorButton = document.querySelector("#error-button");
-      if (errorButton) {
-        errorButton.addEventListener("click", handleClick);
-      }
-      
       // Track 404 page view
       console.log('404 page loaded:', window.location.pathname);
       
