@@ -16,24 +16,36 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
 // Set response status to 404
 Astro.response.status = 404;
 
-// Track 404 in Sentry
-if (typeof Sentry !== 'undefined' && Sentry.captureMessage) {
-  Sentry.captureMessage(`404 Page Not Found: ${pathname}`, {
-    level: 'warning',
-    tags: {
+// Track 404 in Sentry with proper context
+if (typeof Sentry !== 'undefined') {
+  // Use withScope to set transaction context
+  Sentry.withScope((scope) => {
+    // Set transaction name
+    scope.setTransactionName('404 Page Not Found');
+    
+    // Set tags
+    scope.setTags({
       type: '404',
       url: url.href,
       pathname: pathname,
       referrer: Astro.request.headers.get('referer') || 'direct',
-    },
-    contexts: {
-      http: {
-        method: Astro.request.method,
-        url: url.href,
-        query_string: url.search,
-        user_agent: Astro.request.headers.get('user-agent'),
-      },
-    },
+      'http.status_code': '404',
+      'http.method': Astro.request.method,
+      'http.url': url.href,
+      'http.path': pathname,
+    });
+    
+    // Set context
+    scope.setContext('http', {
+      method: Astro.request.method,
+      url: url.href,
+      query_string: url.search,
+      user_agent: Astro.request.headers.get('user-agent'),
+      status_code: 404,
+    });
+    
+    // Capture the message
+    Sentry.captureMessage(`404 Page Not Found: ${pathname}`, 'warning');
   });
 }
 ---
@@ -86,21 +98,32 @@ if (typeof Sentry !== 'undefined' && Sentry.captureMessage) {
     // Client-side 404 tracking for Sentry
     import * as Sentry from '@sentry/browser';
     
-    // Track 404 on client-side as well
-    if (typeof window !== 'undefined' && window.Sentry) {
-      window.Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, {
-        level: 'warning',
-        tags: {
+    // Track 404 on client-side with proper context
+    if (typeof window !== 'undefined' && Sentry) {
+      // Use withScope to set transaction context
+      Sentry.withScope((scope) => {
+        // Set transaction name
+        scope.setTransactionName('404 Page Not Found');
+        
+        // Set tags
+        scope.setTags({
           type: '404-client',
           url: window.location.href,
           pathname: window.location.pathname,
           referrer: document.referrer || 'direct',
-        },
-        contexts: {
-          browser: {
-            name: navigator.userAgent,
-          },
-        },
+          'http.status_code': '404',
+          'navigation.type': 'page_load',
+        });
+        
+        // Set context
+        scope.setContext('browser', {
+          name: navigator.userAgent,
+          url: window.location.href,
+          pathname: window.location.pathname,
+        });
+        
+        // Capture the message
+        Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
       });
     }
   </script>

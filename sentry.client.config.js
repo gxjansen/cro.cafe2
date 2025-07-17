@@ -45,7 +45,7 @@ Sentry.init({
   sendClientReports: true,
   // Capture 404 errors
   beforeSend(event, hint) {
-    // Ensure 404 messages are captured
+    // Ensure 404 messages are captured with proper transaction context
     if (event.message && event.message.includes('404 Page Not Found')) {
       // Add additional context for 404 errors
       event.fingerprint = ['404', event.tags?.pathname || 'unknown'];
@@ -53,6 +53,18 @@ Sentry.init({
         ...event.tags,
         error_type: '404',
       };
+      // Ensure transaction name is set
+      if (!event.transaction) {
+        event.transaction = '404 Page Not Found';
+      }
+    }
+    return event;
+  },
+  // Configure transaction sampling
+  beforeSendTransaction(event) {
+    // Ensure 404 transactions are properly named
+    if (event.transaction === '404 Page Not Found' || event.tags?.['http.status_code'] === '404') {
+      event.transaction = `404 ${event.tags?.pathname || event.contexts?.trace?.data?.pathname || 'unknown'}`;
     }
     return event;
   },
