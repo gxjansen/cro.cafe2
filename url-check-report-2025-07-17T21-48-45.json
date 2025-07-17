@@ -1,0 +1,202 @@
+{
+  "timestamp": "2025-07-17T21:48:45.364Z",
+  "summary": {
+    "total": 31,
+    "success": 8,
+    "failed": 23,
+    "errors": 0
+  },
+  "results": {
+    "success": [
+      {
+        "url": "https://www.cro.cafe/podcast/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/en/episodes/",
+        "success": true
+      },
+      {
+        "url": "https://www.cro.cafe/guest/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/guests/",
+        "success": true
+      },
+      {
+        "url": "https://nl.cro.cafe/podcast/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/nl/episodes/",
+        "success": true
+      },
+      {
+        "url": "https://nl.cro.cafe/guest/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/guests/",
+        "success": true
+      },
+      {
+        "url": "https://de.cro.cafe/podcast/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/de/episodes/",
+        "success": true
+      },
+      {
+        "url": "https://de.cro.cafe/guest/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/guests/",
+        "success": true
+      },
+      {
+        "url": "https://es.cro.cafe/podcast/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/es/episodes/",
+        "success": true
+      },
+      {
+        "url": "https://es.cro.cafe/guest/",
+        "status": 200,
+        "redirectedTo": "https://www.cro.cafe/guests/",
+        "success": true
+      }
+    ],
+    "failed": [
+      {
+        "url": "https://www.cro.cafe/gast/",
+        "status": 404,
+        "redirectedTo": null,
+        "success": false
+      },
+      {
+        "url": "https://www.cro.cafe/invitado/",
+        "status": 404,
+        "redirectedTo": null,
+        "success": false
+      },
+      {
+        "url": "https://www.cro.cafe/event/",
+        "status": 404,
+        "redirectedTo": null,
+        "success": false
+      },
+      {
+        "url": "https://www.cro.cafe/book/",
+        "status": 404,
+        "redirectedTo": null,
+        "success": false
+      },
+      {
+        "url": "https://www.cro.cafe/live",
+        "status": 404,
+        "redirectedTo": null,
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/gast/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/gast/",
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/invitado/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/invitado/",
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/event/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/event/",
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/book/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/book/",
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/live",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/live",
+        "success": false
+      },
+      {
+        "url": "https://nl.cro.cafe/gast/bart-van-der-meer",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/nl/gast/bart-van-der-meer",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/gast/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/gast/",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/invitado/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/invitado/",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/event/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/event/",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/book/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/book/",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/live",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/live",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/podcast/the-future-of-cro-mit-rene-gilster",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/episodes/the-future-of-cro-mit-rene-gilster",
+        "success": false
+      },
+      {
+        "url": "https://de.cro.cafe/podcast/wie-ki-die-zukunft-des-marketings-verandert",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/de/episodes/wie-ki-die-zukunft-des-marketings-verandert",
+        "success": false
+      },
+      {
+        "url": "https://es.cro.cafe/gast/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/es/gast/",
+        "success": false
+      },
+      {
+        "url": "https://es.cro.cafe/invitado/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/es/invitado/",
+        "success": false
+      },
+      {
+        "url": "https://es.cro.cafe/event/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/es/event/",
+        "success": false
+      },
+      {
+        "url": "https://es.cro.cafe/book/",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/es/book/",
+        "success": false
+      },
+      {
+        "url": "https://es.cro.cafe/live",
+        "status": 404,
+        "redirectedTo": "https://www.cro.cafe/es/live",
+        "success": false
+      }
+    ],
+    "errors": []
+  }
+}
