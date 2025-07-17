@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/astro";
 
 // Server-side Sentry configuration
 Sentry.init({
+  environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   // Ensure all errors are captured
   sampleRate: 1.0, // 100% of errors will be sent
   // Server-specific configuration

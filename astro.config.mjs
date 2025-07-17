@@ -27,6 +27,7 @@ export default defineConfig({
     // guestImageValidation(),
     sentry({
       dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
+      environment: isProduction ? 'production' : 'development',
       sampleRate: 1.0, // 100% of errors will be sent
       tracesSampleRate: 1.0, // 100% sampling for testing mode
       replaysSessionSampleRate: 0,

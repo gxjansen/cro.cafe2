@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/astro";
 
 // Client-side Sentry configuration
 Sentry.init({
+  environment: typeof window !== 'undefined' ? (window.location.hostname === 'cro.cafe' ? 'production' : 'development') : 'development',
   // Ensure all errors are captured
   sampleRate: 1.0, // 100% of errors will be sent
   // Browser-specific tracing configuration
