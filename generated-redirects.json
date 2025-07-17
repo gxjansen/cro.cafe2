@@ -1,11 +1,1785 @@
 [
   {
+    "from": "https://www.cro.cafe/podcast/growth-minded-superheroes",
+    "to": "https://cro.cafe/en/episodes/growth-minded-superheroes/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Growth Minded Superheroes",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-do-you-maintain-a-no-bs-style",
+    "to": "https://cro.cafe/en/episodes/how-do-you-maintain-a-no-bs-style/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "How do you maintain a no-BS style",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/educating-your-cro-clients-hiring-for-your-cro-agency",
+    "to": "https://cro.cafe/en/episodes/educating-your-cro-clients-hiring-for-your-cro-agency/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Educating your CRO clients & hiring for your CRO agency",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-to-craft-copy-on-the-pdp-to-convert-more-first-time-buyers",
+    "to": "https://cro.cafe/en/episodes/how-to-craft-copy-on-the-pdp-to-convert-more-first-time-buyers/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "How to craft copy on the PDP to convert more first-time buyers",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/understand-your-products-first-before-optimizing",
+    "to": "https://cro.cafe/en/episodes/understand-your-products-first-before-optimizing/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Understand your products first before optimizing",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/what-separates-the-good-from-the-great",
+    "to": "https://cro.cafe/en/episodes/what-separates-the-good-from-the-great/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "What separates the good from the great?",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/friction-and-momentum-in-brazil-vs-eu-vs-usa",
+    "to": "https://cro.cafe/en/episodes/friction-and-momentum-in-brazil-vs-eu-vs-usa/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "Friction and Momentum in Brazil vs EU vs USA",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/understanding-the-why",
+    "to": "https://cro.cafe/en/episodes/understanding-the-why/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Understanding the \"Why\"",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-you-can-practically-optimize-your-forms",
+    "to": "https://cro.cafe/en/episodes/how-you-can-practically-optimize-your-forms/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "How you can practically optimize your forms",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/building-and-scaling-your-cro-agency",
+    "to": "https://cro.cafe/en/episodes/building-and-scaling-your-cro-agency/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Building and scaling your (CRO) agency, with Steven Pavlovich and Daniël Markus",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/contentsquare-virtual-breakfast-panel",
+    "to": "https://cro.cafe/en/episodes/contentsquare-virtual-breakfast-panel/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Contentsquare Virtual Breakfast Panel, with Fabian Kersten, Bas van Dijk & Lucas Vos",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/en-things-that-are-always-broken-in-analytics",
+    "to": "https://cro.cafe/en/episodes/en-things-that-are-always-broken-in-analytics/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Things that are always broken in Analytics, with Arnout Hellemans & Charles Meaden",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/en-datascience-can-do-what",
+    "to": "https://cro.cafe/en/episodes/en-datascience-can-do-what/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Datascience can do what? with Emily Robinson (Warby Parker) & Lukas Vermeer (Booking.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-to-become-a-better-cro-professional",
+    "to": "https://cro.cafe/en/episodes/how-to-become-a-better-cro-professional/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "How to become a better CRO professional, with Abi Hough & Craig Sullivan",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/main-pitfalls-for-cro-agencies-when-working-with-clients",
+    "to": "https://cro.cafe/en/episodes/main-pitfalls-for-cro-agencies-when-working-with-clients/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Main pitfalls for CRO Agencies when working with clients, with Ricardo Tayar López (Flat101)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/cro-salaries-agency-vs-client-side-vs-freelance",
+    "to": "https://cro.cafe/en/episodes/cro-salaries-agency-vs-client-side-vs-freelance/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO Salaries: Agency vs Client-side vs Freelance",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/confession-time-sequential-testing-and-why-machines-wont-replace-us-any-time-soon",
+    "to": "https://cro.cafe/en/episodes/confession-time-sequential-testing-and-why-machines-wont-replace-us-any-time-soon/",
+    "status": 301,
+    "force": true,
+    "episode": 32,
+    "title": "Confession time: Sequential testing and why machines won't replace us any time soon, with Merritt Aho",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/the-2020-state-of-conversion-optimization-report-with-derek-gleason-from-cxl",
+    "to": "https://cro.cafe/en/episodes/the-2020-state-of-conversion-optimization-report-with-derek-gleason-from-cxl/",
+    "status": 301,
+    "force": true,
+    "episode": 31,
+    "title": "The 2020 State of Conversion Optimization Report, with Derek Gleason from CXL",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/experimentation-at-an-ecommerce-saas-company-shopify",
+    "to": "https://cro.cafe/en/episodes/experimentation-at-an-ecommerce-saas-company-shopify/",
+    "status": 301,
+    "force": true,
+    "episode": 30,
+    "title": "Experimentation at ecommerce SaaS company Shopify, with Casandra Campbell",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-and-why-to-run-copy-experiments",
+    "to": "https://cro.cafe/en/episodes/how-and-why-to-run-copy-experiments/",
+    "status": 301,
+    "force": true,
+    "episode": 29,
+    "title": "How to run copy experiments & why you should differentiate, with Peep Laja",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-to-embed-experimentation-into-agile-product-development",
+    "to": "https://cro.cafe/en/episodes/how-to-embed-experimentation-into-agile-product-development/",
+    "status": 301,
+    "force": true,
+    "episode": 28,
+    "title": "How to embed experimentation into Agile product development, with Jonny Longden",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/kaspersky",
+    "to": "https://cro.cafe/en/episodes/kaspersky/",
+    "status": 301,
+    "force": true,
+    "episode": 27,
+    "title": "Are you a movie critic? You might be great at CRO! With Sumantha Shankaranarayana",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/book-launch-online-influence",
+    "to": "https://cro.cafe/en/episodes/book-launch-online-influence/",
+    "status": 301,
+    "force": true,
+    "episode": 26,
+    "title": "Book launch: Online Influence, with Bas Wouters",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/optimizing-consumer-to-consumer-marketplaces-with-emily-oliver-from-musicmagpie-decluttr",
+    "to": "https://cro.cafe/en/episodes/optimizing-consumer-to-consumer-marketplaces-with-emily-oliver-from-musicmagpie-decluttr/",
+    "status": 301,
+    "force": true,
+    "episode": 25,
+    "title": "Optimizing Consumer-to-consumer marketplaces, with Emily Oliver from musicMagpie/Decluttr",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/switching-gears-when-the-pandemic-upends-your-traffic",
+    "to": "https://cro.cafe/en/episodes/switching-gears-when-the-pandemic-upends-your-traffic/",
+    "status": 301,
+    "force": true,
+    "episode": 24,
+    "title": "Switching gears when the pandemic upends your traffic, with Dave Powell (TomTom)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/cro-in-a-post-cookie-world",
+    "to": "https://cro.cafe/en/episodes/cro-in-a-post-cookie-world/",
+    "status": 301,
+    "force": true,
+    "episode": 23,
+    "title": "CRO in a post-cookie world, with Lisanne Maatman & Dumky de Wilde (DEPT)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/the-6-soft-skills-that-cros-need-to-master",
+    "to": "https://cro.cafe/en/episodes/the-6-soft-skills-that-cros-need-to-master/",
+    "status": 301,
+    "force": true,
+    "episode": 22,
+    "title": "The 6 soft skills that CROs need to master, with Elise Maile",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/en-why-your-experimentation-programme-needs-a-risk-profile",
+    "to": "https://cro.cafe/en/episodes/en-why-your-experimentation-programme-needs-a-risk-profile/",
+    "status": 301,
+    "force": true,
+    "episode": 21,
+    "title": "Why your experimentation programme needs a risk profile, with Stephen Pavlovich (Conversion.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/server-side-experimentation",
+    "to": "https://cro.cafe/en/episodes/server-side-experimentation/",
+    "status": 301,
+    "force": true,
+    "episode": 20,
+    "title": "Server-side experimentation, with Tom van den Berg & Ruben de Boer (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/en-copywriting-for-conversions",
+    "to": "https://cro.cafe/en/episodes/en-copywriting-for-conversions/",
+    "status": 301,
+    "force": true,
+    "episode": 19,
+    "title": "Copywriting for Conversions, with Joel Klettke",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/make-creativity-a-priority-in-your-cro-process",
+    "to": "https://cro.cafe/en/episodes/make-creativity-a-priority-in-your-cro-process/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "Make creativity a priority in your CRO process, with AJ Davis",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/en-why-empathy-is-probably-the-most-important-skill-for-any-cro-pro",
+    "to": "https://cro.cafe/en/episodes/en-why-empathy-is-probably-the-most-important-skill-for-any-cro-pro/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Why empathy is probably the most important skill for any CRO pro, with Amrdeep Athwal",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/why-statistical-knowledge-is-still-crucial-when-running-experiments",
+    "to": "https://cro.cafe/en/episodes/why-statistical-knowledge-is-still-crucial-when-running-experiments/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "Why statistical knowledge is still crucial when running experiments, with Georgi Georgiev",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-you-can-motivate-your-organization-to-adopt-cro",
+    "to": "https://cro.cafe/en/episodes/how-you-can-motivate-your-organization-to-adopt-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "How you can motivate your organization to adopt CRO, with Ruben de Boer (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/the-art-and-science-of-converting-visitors-into-customers",
+    "to": "https://cro.cafe/en/episodes/the-art-and-science-of-converting-visitors-into-customers/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "The Art and Science of Converting Visitors into Customers, with Khalid Saleh (Invesp)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/find-cro-gold-using-an-seo-crawler",
+    "to": "https://cro.cafe/en/episodes/find-cro-gold-using-an-seo-crawler/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Find CRO gold using an SEO crawler, with Luke Carthy",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/holacracy-decentralized-management-and-organizational-governance",
+    "to": "https://cro.cafe/en/episodes/holacracy-decentralized-management-and-organizational-governance/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "Holacracy: decentralized management and organizational governance, with Morgan Legge (Convert.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/centralized-versus-decentralized-cro",
+    "to": "https://cro.cafe/en/episodes/centralized-versus-decentralized-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Centralized versus Decentralized CRO, with Andrea Corvi (iTech Media)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/6-steps-to-get-your-experimentational-culture-running",
+    "to": "https://cro.cafe/en/episodes/6-steps-to-get-your-experimentational-culture-running/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "6 steps to get your experimentational culture running, Marianne Stjernvall (TUI)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/lets-help-the-world-the-covid19-conversion-rate-aid-package",
+    "to": "https://cro.cafe/en/episodes/lets-help-the-world-the-covid19-conversion-rate-aid-package/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "Let's help the world: The Covid19 Conversion Rate Aid Package, with Raoul Warren Doraiswamy",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/automation-of-tedious-cro-work",
+    "to": "https://cro.cafe/en/episodes/automation-of-tedious-cro-work/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Automation of tedious CRO work, with Matt Beischel",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/why-cros-should-think-as-a-vc",
+    "to": "https://cro.cafe/en/episodes/why-cros-should-think-as-a-vc/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Why CROs should think as a Venture Capitalist, with Sean Sheppard (GrowthX)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/a-better-alternative-to-classic-personality-tests-and-how-to-apply-them-to-commerce",
+    "to": "https://cro.cafe/en/episodes/a-better-alternative-to-classic-personality-tests-and-how-to-apply-them-to-commerce/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "A better alternative to classic personality tests and how to apply them to commerce",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/marta-florentyna-saratowicz",
+    "to": "https://cro.cafe/en/episodes/marta-florentyna-saratowicz/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Optimizing for reach and performance, with Marta Florentyna Saratowicz (Pandora)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/state-of-analytics-experimentation-and-personalization-with-browsers-privacy-initiatives",
+    "to": "https://cro.cafe/en/episodes/state-of-analytics-experimentation-and-personalization-with-browsers-privacy-initiatives/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "State of analytics, experimentation, and personalization with browsers’ privacy initiatives, with Simo Ahava, Ton Wesseling & Steen Rasmussen",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/the-vitality-of-the-data-revolution",
+    "to": "https://cro.cafe/en/episodes/the-vitality-of-the-data-revolution/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "The vitality of the data revolution, with Joaqim Bretcha (ESOMAR)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/how-gvc-gaming-reshaped-marketing-budgets-for-all-brands-after-implementing-optimization-techniques",
+    "to": "https://cro.cafe/en/episodes/how-gvc-gaming-reshaped-marketing-budgets-for-all-brands-after-implementing-optimization-techniques/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "How GVC Gaming reshaped marketing budgets for all brands after implementing optimization techniques, with Chris Lee and John Dawson",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/implementing-behavioral-sciences-in-agile-teams",
+    "to": "https://cro.cafe/en/episodes/implementing-behavioral-sciences-in-agile-teams/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Implementing behavioral sciences in agile teams, with André Morys (konversionsKRAFT)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/cro-cafe-intro",
+    "to": "https://cro.cafe/en/episodes/cro-cafe-intro/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Welcome new CRO.CAFE listener!",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/ch2019-on-personalization",
+    "to": "https://cro.cafe/en/episodes/ch2019-on-personalization/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "AI & Personalization, with Guy Yalif & Niels Reimer",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/optimizing-for-friction-with-roger-dooley-bart-schutz-online-dialogue",
+    "to": "https://cro.cafe/en/episodes/optimizing-for-friction-with-roger-dooley-bart-schutz-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Optimizing for Friction, with Roger Dooley & Bart Schutz (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/privacy-analytics-and-cro",
+    "to": "https://cro.cafe/en/episodes/privacy-analytics-and-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "CH2019: Privacy, Analytics and CRO, with Aurélie Pols & Rick Dronkers",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/live-dac19-weiwei-liu-schroder-google",
+    "to": "https://cro.cafe/en/episodes/live-dac19-weiwei-liu-schroder-google/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "Acting on your analytics data in an increasingly cookieless world, with WeiWi lie-Schröder (Google)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/live-dac19-matthew-niederberger-tagticians-prolet-miteva-autodesk",
+    "to": "https://cro.cafe/en/episodes/live-dac19-matthew-niederberger-tagticians-prolet-miteva-autodesk/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "Analytics is a product – treat it as such, with Prolet Miteva & Matthew Niederberger",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/live-dac19-krista-seiden-of-ks-digital",
+    "to": "https://cro.cafe/en/episodes/live-dac19-krista-seiden-of-ks-digital/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Digital analytics trends: a changing industry and what's next, with Krista Seiden",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/live-dutch-cro-awards-manuel-dacosta",
+    "to": "https://cro.cafe/en/episodes/live-dutch-cro-awards-manuel-dacosta/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Why focussing on a culture of experimentation is a waste of time, with Manuel DaCosta (Effective Experiments)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/where-to-start-when-the-company-needs-cro-but-doesnt-know-they-do",
+    "to": "https://cro.cafe/en/episodes/where-to-start-when-the-company-needs-cro-but-doesnt-know-they-do/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Where to start when the company needs CRO, but doesn't know they do.",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/selling-your-cro-agency",
+    "to": "https://cro.cafe/en/episodes/selling-your-cro-agency/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Selling your CRO agency",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/cro-and-seo-are-dead",
+    "to": "https://cro.cafe/en/episodes/cro-and-seo-are-dead/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO and SEO are dead",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/chatbots-retention-campaigns",
+    "to": "https://cro.cafe/en/episodes/chatbots-retention-campaigns/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Chatbots & retention campaigns",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/user-research-qual-versus-quant",
+    "to": "https://cro.cafe/en/episodes/user-research-qual-versus-quant/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "User research: Qual versus Quant",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/cro-automation-building-your-de-centralized-cro-team",
+    "to": "https://cro.cafe/en/episodes/cro-automation-building-your-de-centralized-cro-team/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO Automation & building your (de)centralized CRO team",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/optimizing-for-customer-lifetime-value",
+    "to": "https://cro.cafe/en/episodes/optimizing-for-customer-lifetime-value/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Optimizing for Customer Lifetime Value",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/localizing-translations-for-international-audiences",
+    "to": "https://cro.cafe/en/episodes/localizing-translations-for-international-audiences/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "Localizing translations for international audiences",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/visitor-and-customer-survey-insights-for-high-impact-cro",
+    "to": "https://cro.cafe/en/episodes/visitor-and-customer-survey-insights-for-high-impact-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Visitor and customer survey insights for high-impact CRO",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/alex-ivaniuk",
+    "to": "https://cro.cafe/en/episodes/alex-ivaniuk/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "Experimentation values & culture at scale: Linkedin",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/steen",
+    "to": "https://cro.cafe/en/episodes/steen/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "Supercharging the customer journey with analytics data",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/eden-bidani",
+    "to": "https://cro.cafe/en/episodes/eden-bidani/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "Turn ice-cold traffic into thrilled-to-be-paying customers with high-converting copy",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/rishi-rawat",
+    "to": "https://cro.cafe/en/episodes/rishi-rawat/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Optimizing Conversion Rates by Working on Just One Page. Genius or Madness?",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/jeremy-horowitz",
+    "to": "https://cro.cafe/en/episodes/jeremy-horowitz/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "Using text messages to improve conversions and retention",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/iqbal-ali",
+    "to": "https://cro.cafe/en/episodes/iqbal-ali/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Bayesian expected loss: Telling a complete story with data",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/interview-with-alex-munoz",
+    "to": "https://cro.cafe/en/episodes/interview-with-alex-munoz/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "Experience as UX designer in a very data driven company (Booking.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/preview-podcast-with-aleksander-fabijan",
+    "to": "https://cro.cafe/en/episodes/preview-podcast-with-aleksander-fabijan/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "CRO Flywheel: How Microsoft Kickstarted the A/B testing Momentum and keeps it going",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/abi",
+    "to": "https://cro.cafe/en/episodes/abi/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Top 10 reasons your A/B tests fail the Quality Assurance phase",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/tawab",
+    "to": "https://cro.cafe/en/episodes/tawab/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Remote growth hacking from Nigeria",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/browsers-cookies-server-side-testing-with-sitespect",
+    "to": "https://cro.cafe/en/episodes/browsers-cookies-server-side-testing-with-sitespect/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Browsers, cookies & server-side testing with SiteSpect",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/optimizing-the-user-experience-for-an-art-shop-marketplace",
+    "to": "https://cro.cafe/en/episodes/optimizing-the-user-experience-for-an-art-shop-marketplace/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Optimizing the user experience for an art shop/marketplace",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/600-psychological-principles-for-driving-behavior-not-even-close",
+    "to": "https://cro.cafe/en/episodes/600-psychological-principles-for-driving-behavior-not-even-close/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "600+ psychological principles for driving behavior? Not even close...",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/why-humanizing-data-is-so-important-with-eltine-van-der-veer",
+    "to": "https://cro.cafe/en/episodes/why-humanizing-data-is-so-important-with-eltine-van-der-veer/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": " Why humanizing data is so important, with Eltine van der Veer",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/b2b-experiments-on-low-traffic-building-your-own-platform-with-chad-sanderson-from-convoy",
+    "to": "https://cro.cafe/en/episodes/b2b-experiments-on-low-traffic-building-your-own-platform-with-chad-sanderson-from-convoy/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "B2B experiments on low traffic & building your own platform, with Chad Sanderson from Convoy",
+    "type": "generic"
+  },
+  {
+    "from": "https://www.cro.cafe/podcast/unleash-your-primal-brain-with-tim-ash",
+    "to": "https://cro.cafe/en/episodes/unleash-your-primal-brain-with-tim-ash/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Unleash Your Primal Brain, with Tim Ash",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/sjoerd-walinga",
+    "to": "https://cro.cafe/nl/episodes/sjoerd-walinga/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Het meetbaar maken van CRO / UX",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/case-vodafoneziggo-copy-vs-no-copy",
+    "to": "https://cro.cafe/nl/episodes/case-vodafoneziggo-copy-vs-no-copy/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Case VodafoneZiggo: Copy vs. No copy",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/starten-als-cro-freelancer",
+    "to": "https://cro.cafe/nl/episodes/starten-als-cro-freelancer/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Starten als CRO Freelancer",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/personalisatie-werk-van-grof-naar-fijn",
+    "to": "https://cro.cafe/nl/episodes/personalisatie-werk-van-grof-naar-fijn/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Personalisatie: werk van grof naar fijn",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/3-woorden-3-conversie-3m-omzet",
+    "to": "https://cro.cafe/nl/episodes/3-woorden-3-conversie-3m-omzet/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "3 woorden, +3% conversie, + €3M omzet",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/rob-harkink",
+    "to": "https://cro.cafe/nl/episodes/rob-harkink/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "Van losse CRO initiatieven naar gebundelde krachten bij Tele2",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/voorbeluisteren-alen-sirovica",
+    "to": "https://cro.cafe/nl/episodes/voorbeluisteren-alen-sirovica/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Samenwerking tussen agencies en opdrachtgevers",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/product-finder-bouwen-op-basis-van-user-research-met-rick-hoving-asics",
+    "to": "https://cro.cafe/nl/episodes/product-finder-bouwen-op-basis-van-user-research-met-rick-hoving-asics/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Product finder bouwen op basis van user research, met Rick Hoving (ASICS)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/welcome-new-cro-cafe-listener",
+    "to": "https://cro.cafe/nl/episodes/welcome-new-cro-cafe-listener/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Welcome new CRO.CAFE listener!",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-met-lonneke-spinhof-humix",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-met-lonneke-spinhof-humix/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream, met Lonneke Spinhof (Humix)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-bart-van-der-meer",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-bart-van-der-meer/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Bart van der Meer",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-karl-gilis-agconsult-ton-wesseling-online-dialogue-hazjier-pourkhalkhali-optimizely",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-karl-gilis-agconsult-ton-wesseling-online-dialogue-hazjier-pourkhalkhali-optimizely/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Karl Gilis (AGConsult), Ton Wesseling (Online Dialogue), Hazjier Pourkhalkhali (Optimizely)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-michiel-jansen-leaseplan",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-michiel-jansen-leaseplan/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Michiel Jansen (Leaseplan)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-david-brinks-gerben-van-ouwendorp-david-beentjes-clickvalue",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-david-brinks-gerben-van-ouwendorp-david-beentjes-clickvalue/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: David Brinks, Gerben van Ouwendorp, David Beentjes (ClickValue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-kevin-anderson-ing-wouter-wensing-ism-ecompany",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-kevin-anderson-ing-wouter-wensing-ism-ecompany/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Kevin Anderson (ING) & Wouter Wensing (ISM eCompany)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-shirley-van-haalem-joren-van-gilst-trafficbuilders",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-shirley-van-haalem-joren-van-gilst-trafficbuilders/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Shirley van Haalem, Joren van Gilst (TrafficBuilders)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-jurrien-schouten-fonq-stefan-van-ballegooie-allianz-melle-moorman-bol-com",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-jurrien-schouten-fonq-stefan-van-ballegooie-allianz-melle-moorman-bol-com/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Jurrien Schouten (fonQ), Stefan van Ballegooie (Allianz), Melle Moorman (Bol.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-daphne-tideman-bernadette-bijkerk-ruben-de-boer-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-daphne-tideman-bernadette-bijkerk-ruben-de-boer-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Daphne Tideman - Bernadette Bijkerk - Ruben de Boer (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/emerce-conversion-livestream-rogier-peters-nyenrode",
+    "to": "https://cro.cafe/nl/episodes/emerce-conversion-livestream-rogier-peters-nyenrode/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Emerce Conversion Livestream: Rogier Peters (Nyenrode)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/live-dutch-cro-awards-henk-jan-journee-fibeo",
+    "to": "https://cro.cafe/nl/episodes/live-dutch-cro-awards-henk-jan-journee-fibeo/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live @ Dutch CRO Awards: Henk-Jan Journée (Fibéo)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/mobile-cro-case-van-landal-greenparks-met-lieven-swinnen",
+    "to": "https://cro.cafe/nl/episodes/mobile-cro-case-van-landal-greenparks-met-lieven-swinnen/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Mobile CRO case van Landal Greenparks, met Lieven Swinnen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/bruynzeel-keukens-fingerspitz-winnen-de-cro-award-voor-acquisitie-testing-met-cindy-martens-en-desire-van-der-horst",
+    "to": "https://cro.cafe/nl/episodes/bruynzeel-keukens-fingerspitz-winnen-de-cro-award-voor-acquisitie-testing-met-cindy-martens-en-desire-van-der-horst/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Bruynzeel Keukens & Fingerspitz winnen de CRO Award voor Acquisitie testing, met Cindy Martens en Desire van der Horst",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/transavia-iprospect-winnen-de-cro-award-voor-personalisatie",
+    "to": "https://cro.cafe/nl/episodes/transavia-iprospect-winnen-de-cro-award-voor-personalisatie/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Transavia & iProspect winnen de CRO Award voor Personalisatie",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/live-dutch-cro-awards-organisatie-ddma-met-frank-overbeek-en-judith-peters",
+    "to": "https://cro.cafe/nl/episodes/live-dutch-cro-awards-organisatie-ddma-met-frank-overbeek-en-judith-peters/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live @ Dutch CRO Awards: Organisatie DDMA, met Frank Overbeek en Judith Peters",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/psychologie-gebruikersonderzoek-en-je-cro-award-nominatie-voorbereiden-met-wouter-wensing-ism-ecompany-rudger-de-groot-mintminds-en-marijke-van-der-looy-lampenlicht",
+    "to": "https://cro.cafe/nl/episodes/psychologie-gebruikersonderzoek-en-je-cro-award-nominatie-voorbereiden-met-wouter-wensing-ism-ecompany-rudger-de-groot-mintminds-en-marijke-van-der-looy-lampenlicht/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Psychologie, gebruikersonderzoek en je CRO Award nominatie voorbereiden, met Wouter Wensing (ISM eCompany), Rudger de Groot (MintMinds) en Marijke van der Looy (Lampenlicht)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/cro-awards-jureren-neuromarketing-en-cro-trends-met-gerard-lindeboom-adobe-en-roderick-reichenbach-braingineers",
+    "to": "https://cro.cafe/nl/episodes/cro-awards-jureren-neuromarketing-en-cro-trends-met-gerard-lindeboom-adobe-en-roderick-reichenbach-braingineers/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO Awards jureren, neuromarketing en CRO trends, met Gerard Lindeboom (Adobe) en Roderick Reichenbach (Braingineers)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/lampenlicht-mintminds-winnen-cro-award-in-de-categorie-mobile-rudger-de-groot-mintminds-en-marijke-van-der-looy-lampenlicht",
+    "to": "https://cro.cafe/nl/episodes/lampenlicht-mintminds-winnen-cro-award-in-de-categorie-mobile-rudger-de-groot-mintminds-en-marijke-van-der-looy-lampenlicht/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Lampenlicht & Mintminds winnen CRO Award in de categorie \"Mobile\" Rudger de Groot (Mintminds) en Marijke van der Looy (LampenLicht)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/live-dac19-introductie-van-de-dag",
+    "to": "https://cro.cafe/nl/episodes/live-dac19-introductie-van-de-dag/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live @ DAC19: Introductie van de dag",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/luister-naar-je-klanten-weet-je-eigenlijk-wel-wat-ze-nodig-hebben-met-marieke-schulte-digital-power",
+    "to": "https://cro.cafe/nl/episodes/luister-naar-je-klanten-weet-je-eigenlijk-wel-wat-ze-nodig-hebben-met-marieke-schulte-digital-power/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Luister naar je klanten: weet je eigenlijk wel wat ze nodig hebben?",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/optimaliseer-je-optimalisatieprogramma-met-annemarie-klaassen-vodafoneziggo-en-helene-van-hallebeek-transavia",
+    "to": "https://cro.cafe/nl/episodes/optimaliseer-je-optimalisatieprogramma-met-annemarie-klaassen-vodafoneziggo-en-helene-van-hallebeek-transavia/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Optimaliseer je optimalisatieprogramma!",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/guidos-rant-over-persoonlijkheidstesten",
+    "to": "https://cro.cafe/nl/episodes/guidos-rant-over-persoonlijkheidstesten/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Guido's rant over persoonlijkheidstesten",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/wat-doet-moa-voor-jou-als-webanalist-cro-specialist-met-wim-van-slooten-en-tjitske-buurman",
+    "to": "https://cro.cafe/nl/episodes/wat-doet-moa-voor-jou-als-webanalist-cro-specialist-met-wim-van-slooten-en-tjitske-buurman/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Wat doet MOA voor jou als webanalist/ CRO specialist? met Wim van Slooten en Tjitske Buurman",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/analytics-is-a-product-treat-it-as-such-with-prolet-miteva-matthew-niederberger",
+    "to": "https://cro.cafe/nl/episodes/analytics-is-a-product-treat-it-as-such-with-prolet-miteva-matthew-niederberger/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Analytics is a product – treat it as such, with Prolet Miteva & Matthew Niederberger",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/blijven-we-haken-op-data-verzamelen-of-gaan-we-door-naar-the-next-step-met-frans-appels-netprofiler-en-simon-vreeman-vanmoof",
+    "to": "https://cro.cafe/nl/episodes/blijven-we-haken-op-data-verzamelen-of-gaan-we-door-naar-the-next-step-met-frans-appels-netprofiler-en-simon-vreeman-vanmoof/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Blijven we haken op data verzamelen of gaan we door naar \"the next step\"? met Frans Appels (Netprofiler) en Simon Vreeman (VanMoof)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/live-dac19-edgar-de-beule-markteffect",
+    "to": "https://cro.cafe/nl/episodes/live-dac19-edgar-de-beule-markteffect/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live @ DAC19: Edgar de Beule (Markteffect)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/gebruik-ux-research-ter-verbreding-van-je-productportfolio-of-afzetmarkt-met-kristof-nizet",
+    "to": "https://cro.cafe/nl/episodes/gebruik-ux-research-ter-verbreding-van-je-productportfolio-of-afzetmarkt-met-kristof-nizet/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Gebruik UX research ter verbreding van je productportfolio of afzetmarkt, met Kristof Nizet",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/personalisatie-met-peter-van-der-schaar-basedriver",
+    "to": "https://cro.cafe/nl/episodes/personalisatie-met-peter-van-der-schaar-basedriver/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Personalisatie, met Peter van der Schaar (Basedriver)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/basics-hoe-ziet-het-cro-proces-er-uit",
+    "to": "https://cro.cafe/nl/episodes/basics-hoe-ziet-het-cro-proces-er-uit/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Basics: hoe ziet het CRO proces er uit?",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/bedrijven-gaan-schofterig-om-mensen-wat-kunnen-we-daar-aan-doen-met-polle-de-maagt-en-lude-raedts",
+    "to": "https://cro.cafe/nl/episodes/bedrijven-gaan-schofterig-om-mensen-wat-kunnen-we-daar-aan-doen-met-polle-de-maagt-en-lude-raedts/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Bedrijven gaan schofterig om mensen, wat kunnen we daar aan doen? met Polle de Maagt en Lude Raedts",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/rust-en-bezinning-met-mathijs-kok",
+    "to": "https://cro.cafe/nl/episodes/rust-en-bezinning-met-mathijs-kok/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Rust en bezinning met Mathijs Kok",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/design-3-0-en-het-toepassen-van-de-google-ventures-design-sprint-met-markus-leineweber",
+    "to": "https://cro.cafe/nl/episodes/design-3-0-en-het-toepassen-van-de-google-ventures-design-sprint-met-markus-leineweber/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Design 3.0 en het toepassen van de Google Ventures design sprint, met Markus Leineweber",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/data-science-ai-en-informatica-met-lotte-cornelissen-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/data-science-ai-en-informatica-met-lotte-cornelissen-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Data Science, AI en Informatica, met Lotte Cornelissen (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/website-personalisatie-met-sander-nagtegaal-unless-com",
+    "to": "https://cro.cafe/nl/episodes/website-personalisatie-met-sander-nagtegaal-unless-com/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Website personalisatie, met Sander Nagtegaal (Unless.com)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/consumentenpsychologie-en-piekmomenten-met-patrick-wessels",
+    "to": "https://cro.cafe/nl/episodes/consumentenpsychologie-en-piekmomenten-met-patrick-wessels/",
+    "status": 301,
+    "force": true,
+    "episode": 36,
+    "title": "Consumentenpsychologie en piekmomenten, met Patrick Wessels",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/slaaprobots-hoe-verkoop-je-een-innovatief-product-dat-nog-niemand-kent-met-julian-jagtenberg-en-jeroen-feron",
+    "to": "https://cro.cafe/nl/episodes/slaaprobots-hoe-verkoop-je-een-innovatief-product-dat-nog-niemand-kent-met-julian-jagtenberg-en-jeroen-feron/",
+    "status": 301,
+    "force": true,
+    "episode": 35,
+    "title": "Slaaprobots: Hoe verkoop je een innovatief product dat (nog) niemand kent? met Julian Jagtenberg en Jeroen Feron",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/een-nieuw-boek-over-webpsychologie-wat-komt-er-in-met-tonny-loorbach-imu",
+    "to": "https://cro.cafe/nl/episodes/een-nieuw-boek-over-webpsychologie-wat-komt-er-in-met-tonny-loorbach-imu/",
+    "status": 301,
+    "force": true,
+    "episode": 34,
+    "title": "Een nieuw boek over webpsychologie: wat komt er in? met Tonny Loorbach (IMU)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/cro-voor-mkbers-met-beperkte-traffic-kennis-en-resources-met-maurice-beerthuyzen",
+    "to": "https://cro.cafe/nl/episodes/cro-voor-mkbers-met-beperkte-traffic-kennis-en-resources-met-maurice-beerthuyzen/",
+    "status": 301,
+    "force": true,
+    "episode": 33,
+    "title": "CRO voor MKBers met beperkte traffic, kennis en resources, met Maurice Beerthuyzen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/het-leven-van-een-freelance-growth-hacker-met-felice-van-steenbergen",
+    "to": "https://cro.cafe/nl/episodes/het-leven-van-een-freelance-growth-hacker-met-felice-van-steenbergen/",
+    "status": 301,
+    "force": true,
+    "episode": 32,
+    "title": "Het leven van een freelance growth hacker, met Felice van Steenbergen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/personaliseren-ethiek-met-viresh-narain-adidas-en-evert-semeijn-neurofied",
+    "to": "https://cro.cafe/nl/episodes/personaliseren-ethiek-met-viresh-narain-adidas-en-evert-semeijn-neurofied/",
+    "status": 301,
+    "force": true,
+    "episode": 31,
+    "title": "Personaliseren & Ethiek, met Viresh Narain (Adidas) en Evert Semeijn (Neurofied)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/cro-verschillen-tussen-usa-en-europa-met-martijn-scheijbeler-rvshare",
+    "to": "https://cro.cafe/nl/episodes/cro-verschillen-tussen-usa-en-europa-met-martijn-scheijbeler-rvshare/",
+    "status": 301,
+    "force": true,
+    "episode": 30,
+    "title": "CRO verschillen tussen USA en Europa met Martijn Scheijbeler (RVShare)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/redesign-bij-fonq-met-jurrien-schouten",
+    "to": "https://cro.cafe/nl/episodes/redesign-bij-fonq-met-jurrien-schouten/",
+    "status": 301,
+    "force": true,
+    "episode": 29,
+    "title": "Redesign bij fonQ, met Jurrien Schouten",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/valideren-van-je-e-mail-marketing-met-monique-zwanenburg-ism-ecompany",
+    "to": "https://cro.cafe/nl/episodes/valideren-van-je-e-mail-marketing-met-monique-zwanenburg-ism-ecompany/",
+    "status": 301,
+    "force": true,
+    "episode": 28,
+    "title": "Valideren van je e-mail marketing, met Monique Zwanenburg (ISM eCompany)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/een-usability-lab-voor-0-euro-met-stefan-van-ballegooie-van-allianz",
+    "to": "https://cro.cafe/nl/episodes/een-usability-lab-voor-0-euro-met-stefan-van-ballegooie-van-allianz/",
+    "status": 301,
+    "force": true,
+    "episode": 27,
+    "title": "Een usability lab voor 0 euro, met Stefan van Ballegooie van Allianz",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hoe-bol-com-een-eigen-experimentatie-tool-ontwikkelt-met-denise-visser",
+    "to": "https://cro.cafe/nl/episodes/hoe-bol-com-een-eigen-experimentatie-tool-ontwikkelt-met-denise-visser/",
+    "status": 301,
+    "force": true,
+    "episode": 26,
+    "title": "Hoe bol.com een eigen experimentatie tool ontwikkelt, met Denise Visser",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/je-startup-sturen-op-kwalitatieve-data-met-rick-molenaar",
+    "to": "https://cro.cafe/nl/episodes/je-startup-sturen-op-kwalitatieve-data-met-rick-molenaar/",
+    "status": 301,
+    "force": true,
+    "episode": 25,
+    "title": "Je startup sturen op kwalitatieve data, met Rick Molenaar",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/growthmarketing-bij-vanmoof-met-simon-vreeman",
+    "to": "https://cro.cafe/nl/episodes/growthmarketing-bij-vanmoof-met-simon-vreeman/",
+    "status": 301,
+    "force": true,
+    "episode": 24,
+    "title": "Growthmarketing bij VanMoof, met Simon Vreeman",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/gebruikersonderzoek-met-fibeo-met-henk-jan-journee",
+    "to": "https://cro.cafe/nl/episodes/gebruikersonderzoek-met-fibeo-met-henk-jan-journee/",
+    "status": 301,
+    "force": true,
+    "episode": 23,
+    "title": "Gebruikersonderzoek met Fibéo, met Henk-Jan Journée",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/experimenteren-tijdens-pieken-minirant",
+    "to": "https://cro.cafe/nl/episodes/experimenteren-tijdens-pieken-minirant/",
+    "status": 301,
+    "force": true,
+    "episode": 22,
+    "title": "Experimenteren tijdens pieken (minirant)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/het-cro-team-van-bol-com-met-melle-moorman",
+    "to": "https://cro.cafe/nl/episodes/het-cro-team-van-bol-com-met-melle-moorman/",
+    "status": 301,
+    "force": true,
+    "episode": 21,
+    "title": "Het CRO team van Bol.com, met Melle Moorman",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/validation-in-every-organization-met-ton-wesseling-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/validation-in-every-organization-met-ton-wesseling-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 20,
+    "title": "Validation in every organization, met Ton Wesseling (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/effective-experiments-in-de-praktijk-bij-sanoma-met-ruben-de-boer",
+    "to": "https://cro.cafe/nl/episodes/effective-experiments-in-de-praktijk-bij-sanoma-met-ruben-de-boer/",
+    "status": 301,
+    "force": true,
+    "episode": 19,
+    "title": "Effective Experiments in de praktijk bij Sanoma, met Ruben de Boer",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/het-leven-is-een-groot-experiment-met-tim-zuidgeest-unravel",
+    "to": "https://cro.cafe/nl/episodes/het-leven-is-een-groot-experiment-met-tim-zuidgeest-unravel/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "Het leven is één groot experiment!, met Tim Zuidgeest (Unravel)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/experience-economy-time-well-saved-time-well-spent-met-kirsten-van-der-kraan-insocial",
+    "to": "https://cro.cafe/nl/episodes/experience-economy-time-well-saved-time-well-spent-met-kirsten-van-der-kraan-insocial/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Experience Economy, time well saved & time well spent, met Kirsten van der Kraan (InSocial)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/cro-als-nieuwe-rol-waar-start-je-die-reis-met-amber-taal-riksja-travel",
+    "to": "https://cro.cafe/nl/episodes/cro-als-nieuwe-rol-waar-start-je-die-reis-met-amber-taal-riksja-travel/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "CRO als nieuwe rol, waar start je die reis?, met Amber Taal (Riksja Travel)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/quantity-ipv-quality-gas-op-die-lolly-met-tom-van-den-berg-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/quantity-ipv-quality-gas-op-die-lolly-met-tom-van-den-berg-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "Quantity ipv quality? Gas op die lolly!, met Tom van den Berg (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/online-overtuigen-met-arjen-hanssen",
+    "to": "https://cro.cafe/nl/episodes/online-overtuigen-met-arjen-hanssen/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "Online Overtuigen met Arjen Hanssen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hip-neuro-onderzoek-levert-geen-unieke-inzichten-op-in-het-onbewuste-met-joris-groen-buyerminds",
+    "to": "https://cro.cafe/nl/episodes/hip-neuro-onderzoek-levert-geen-unieke-inzichten-op-in-het-onbewuste-met-joris-groen-buyerminds/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Hip neuro-onderzoek levert géén unieke inzichten op in het onbewuste, met Joris Groen (Buyerminds)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/beginnen-met-personaliseren-is-makkelijker-dan-je-denkt-met-ruben-teunissen-centraal-beheer",
+    "to": "https://cro.cafe/nl/episodes/beginnen-met-personaliseren-is-makkelijker-dan-je-denkt-met-ruben-teunissen-centraal-beheer/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "Beginnen met personaliseren is makkelijker dan je denkt, met Ruben Teunissen (Centraal Beheer)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/waarom-cro-specialisten-goeie-koks-zijn-met-arnout-hellemans",
+    "to": "https://cro.cafe/nl/episodes/waarom-cro-specialisten-goeie-koks-zijn-met-arnout-hellemans/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Waarom CRO specialisten goeie koks zijn, met Arnout Hellemans",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/een-conversie-team-opbouwen-bij-kpn-zakelijk-met-erik-oosterbaan-martinius",
+    "to": "https://cro.cafe/nl/episodes/een-conversie-team-opbouwen-bij-kpn-zakelijk-met-erik-oosterbaan-martinius/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "Een conversie team opbouwen bij KPN Zakelijk, met Erik Oosterbaan Martinius",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/play-the-game-digital-marketing-pinball-met-daniel-markus-clickvalue",
+    "to": "https://cro.cafe/nl/episodes/play-the-game-digital-marketing-pinball-met-daniel-markus-clickvalue/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "Play the game: Digital Marketing Pinball, met Daniël Markus (ClickValue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/wat-je-mist-als-je-de-emotionele-reacties-van-je-gebruikers-niet-bekijkt-met-roderick-reichenbach-braingineers",
+    "to": "https://cro.cafe/nl/episodes/wat-je-mist-als-je-de-emotionele-reacties-van-je-gebruikers-niet-bekijkt-met-roderick-reichenbach-braingineers/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Wat je mist als je de emotionele reacties van je gebruikers niet bekijkt, met Roderick Reichenbach (Braingineers)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/tele2-resultaten-van-3-experimenten-met-rick-weij",
+    "to": "https://cro.cafe/nl/episodes/tele2-resultaten-van-3-experimenten-met-rick-weij/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Tele2: Resultaten van 3 experimenten, met Rick Weij",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/cro-is-geen-quick-fix-maar-een-continu-proces-met-rick-weij-tele2",
+    "to": "https://cro.cafe/nl/episodes/cro-is-geen-quick-fix-maar-een-continu-proces-met-rick-weij-tele2/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "CRO is geen quick fix maar een continu proces, met Rick Weij (Tele2)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hoe-staat-onze-eigen-cro-industrie-er-voor-met-rudger-de-groot-en-roy-huiskes",
+    "to": "https://cro.cafe/nl/episodes/hoe-staat-onze-eigen-cro-industrie-er-voor-met-rudger-de-groot-en-roy-huiskes/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "Hoe staat onze eigen CRO industrie er voor?, met Rudger de Groot en Roy Huiskes",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/digitale-slecht-nieuws-gesprekken-het-escalatie-preventie-model-deel-2-met-mischa-coster",
+    "to": "https://cro.cafe/nl/episodes/digitale-slecht-nieuws-gesprekken-het-escalatie-preventie-model-deel-2-met-mischa-coster/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "Digitale slecht-nieuws gesprekken: het Escalatie Preventie Model (deel 2), met Mischa Coster",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/digitale-slecht-nieuws-gesprekken-het-escalatie-preventie-model-deel-1-met-mischa-coster",
+    "to": "https://cro.cafe/nl/episodes/digitale-slecht-nieuws-gesprekken-het-escalatie-preventie-model-deel-1-met-mischa-coster/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Digitale slecht-nieuws gesprekken: het Escalatie Preventie Model (deel 1), met Mischa Coster",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/conversie-optimalisatie-bij-transavia-met-helene-hallebeek",
+    "to": "https://cro.cafe/nl/episodes/conversie-optimalisatie-bij-transavia-met-helene-hallebeek/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Conversie optimalisatie bij Transavia, met Helene Hallebeek",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cro-cafe-nabeschouwing-2019-voorbeschouwing-2020",
+    "to": "https://cro.cafe/nl/episodes/nl-cro-cafe-nabeschouwing-2019-voorbeschouwing-2020/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO.CAFE: Nabeschouwing 2019 & voorbeschouwing 2020",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-hoe-leer-je-iemand-om-te-programmeren-met-felienne-hermans",
+    "to": "https://cro.cafe/nl/episodes/nl-hoe-leer-je-iemand-om-te-programmeren-met-felienne-hermans/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Hoe leer je iemand om te programmeren, met Felienne Hermans",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/vitaliteit-en-energiek-management-op-de-mie-conferentie-met-sep-visser",
+    "to": "https://cro.cafe/nl/episodes/vitaliteit-en-energiek-management-op-de-mie-conferentie-met-sep-visser/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Vitaliteit en energiek management op de MIE conferentie, met Sep Visser",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/de-slimme-voice-assistant-hype-of-trend-met-carla-verwijmeren",
+    "to": "https://cro.cafe/nl/episodes/de-slimme-voice-assistant-hype-of-trend-met-carla-verwijmeren/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "De slimme voice assistant – Hype of trend? met Carla Verwijmeren",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/optimalisatie-bij-frisdranken-startup-sir-joe-met-jasper-spaargaren",
+    "to": "https://cro.cafe/nl/episodes/optimalisatie-bij-frisdranken-startup-sir-joe-met-jasper-spaargaren/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Optimalisatie bij frisdranken startup Sir Joe, met Jasper Spaargaren",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/de-revolutie-van-sonic-branding-met-dirk-soetens",
+    "to": "https://cro.cafe/nl/episodes/de-revolutie-van-sonic-branding-met-dirk-soetens/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "De revolutie van sonic branding, met Dirk Soetens",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hoe-maak-je-kinderen-ambassadeurs-van-de-planeet-aarde-met-janine-geijsen",
+    "to": "https://cro.cafe/nl/episodes/hoe-maak-je-kinderen-ambassadeurs-van-de-planeet-aarde-met-janine-geijsen/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Hoe maak je kinderen ambassadeurs van de planeet Aarde? met Janine Geijsen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hoe-vervul-je-je-dromen-op-een-zeilboot-met-florian-dirkse",
+    "to": "https://cro.cafe/nl/episodes/hoe-vervul-je-je-dromen-op-een-zeilboot-met-florian-dirkse/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Hoe vervul je je dromen... op een zeilboot, met Florian Dirkse",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/hoe-woningcorporaties-hun-dienstverlening-inzichtelijk-maken-en-optimaliseren-met-antoinette-van-der-linden-kwh",
+    "to": "https://cro.cafe/nl/episodes/hoe-woningcorporaties-hun-dienstverlening-inzichtelijk-maken-en-optimaliseren-met-antoinette-van-der-linden-kwh/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Hoe woningcorporaties hun dienstverlening inzichtelijk maken en optimaliseren, met Antoinette van der Linden (KWH)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-marktonderzoek-mie20-met-edgar-de-beule-joost-schellekens-markteffect",
+    "to": "https://cro.cafe/nl/episodes/nl-marktonderzoek-mie20-met-edgar-de-beule-joost-schellekens-markteffect/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Marktonderzoek @ #MIE20, met Edgar de Beule & Joost Schellekens (Markteffect)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-optimaliseren-en-automatiseren-van-je-analyses-met-annemarie-klaassen-vodafoneziggo-reinier-koolmees-hans-nauta-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/nl-optimaliseren-en-automatiseren-van-je-analyses-met-annemarie-klaassen-vodafoneziggo-reinier-koolmees-hans-nauta-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Optimaliseren en automatiseren van je analyses, met Annemarie Klaassen (VodafoneZiggo), Reinier Koolmees & Hans Nauta (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-meer-itp-en-serverside-testing-met-ewrin-kerk-sitespect-twan-lammers-orangevalley-en-martijn-drijver-fosby-digital-agency",
+    "to": "https://cro.cafe/nl/episodes/nl-meer-itp-en-serverside-testing-met-ewrin-kerk-sitespect-twan-lammers-orangevalley-en-martijn-drijver-fosby-digital-agency/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Meer ITP en serverside testing, met Ewrin Kerk (Sitespect), Twan Lammers (OrangeValley) en Martijn Drijver (Fosby Digital Agency)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-datahive-360-nieuwe-etl-tool-geimplementeerd-bij-landal-greenparks-met-michel-van-luijtelaar-up-analytics-tije-vlam-trafficbuilders-en-mark-tijssen-landal-greenparks",
+    "to": "https://cro.cafe/nl/episodes/nl-datahive-360-nieuwe-etl-tool-geimplementeerd-bij-landal-greenparks-met-michel-van-luijtelaar-up-analytics-tije-vlam-trafficbuilders-en-mark-tijssen-landal-greenparks/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Datahive 360: Nieuwe ETL tool geïmplementeerd bij Landal Greenparks, met Michel van Luijtelaar (Up Analytics), Tije Vlam (Trafficbuilders) en Mark Tijssen (Landal Greenparks)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cdps-personalisatie-en-loyalty-met-janus-de-visser-cloud-nine-digital-en-christian-van-nispen-dept",
+    "to": "https://cro.cafe/nl/episodes/nl-cdps-personalisatie-en-loyalty-met-janus-de-visser-cloud-nine-digital-en-christian-van-nispen-dept/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CDPs, personalisatie en loyalty, met Janus de Visser (Cloud Nine Digital) en Christian van Nispen (Dept)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cro-cafe-live-covid-19-impact-met-simon-vreeman-shirley-van-haalem-jack-solcer-tom-van-den-berg",
+    "to": "https://cro.cafe/nl/episodes/nl-cro-cafe-live-covid-19-impact-met-simon-vreeman-shirley-van-haalem-jack-solcer-tom-van-den-berg/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live: COVID-19 impact, met Simon Vreeman, Shirley van Haalem, Jack Solcer, Tom van den Berg",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-live-waarom-user-research-juist-nu-heel-waardevol-is-met-els-aerts-en-karl-gillis-agconsult",
+    "to": "https://cro.cafe/nl/episodes/nl-live-waarom-user-research-juist-nu-heel-waardevol-is-met-els-aerts-en-karl-gillis-agconsult/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Live: Waarom user research juist nu heel waardevol is, met Els Aerts en Karl Gillis (AGConsult)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-online-inspelen-op-veranderende-klantbehoefte-met-nico-de-jong",
+    "to": "https://cro.cafe/nl/episodes/nl-online-inspelen-op-veranderende-klantbehoefte-met-nico-de-jong/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Online inspelen op (veranderende) klantbehoefte, met Nico de Jong",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cro-cafe-podcast-live-met-tim-zuidgeest-unravel",
+    "to": "https://cro.cafe/nl/episodes/nl-cro-cafe-podcast-live-met-tim-zuidgeest-unravel/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO.CAFE podcast live met Tim Zuidgeest (Unravel)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-soft-persuasion-katalyseren-ipv-overtuigen-met-mischa-coster",
+    "to": "https://cro.cafe/nl/episodes/nl-soft-persuasion-katalyseren-ipv-overtuigen-met-mischa-coster/",
+    "status": 301,
+    "force": true,
+    "episode": 20,
+    "title": "Soft Persuasion: katalyseren ipv overtuigen, met Mischa Coster",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/data-architectuur-splunk-en-itp-met-jos-ijntema",
+    "to": "https://cro.cafe/nl/episodes/data-architectuur-splunk-en-itp-met-jos-ijntema/",
+    "status": 301,
+    "force": true,
+    "episode": 19,
+    "title": "Data architectuur, Splunk en ITP, met Jos IJntema",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-data-bedreven-marketing-met-danny-oosterveer-burgers-zoo",
+    "to": "https://cro.cafe/nl/episodes/nl-data-bedreven-marketing-met-danny-oosterveer-burgers-zoo/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "Data Bedreven Marketing, met Danny Oosterveer (Burgers' Zoo)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-master-data-driven-business-hogeschool-utrecht-met-ronald-voorn",
+    "to": "https://cro.cafe/nl/episodes/nl-master-data-driven-business-hogeschool-utrecht-met-ronald-voorn/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Master Data Driven Business @ Hogeschool Utrecht, met Ronald Voorn",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-zoekmachine-om-je-cro-hypotheses-op-psychologische-theorieen-te-baseren-met-sander-volbeda",
+    "to": "https://cro.cafe/nl/episodes/nl-zoekmachine-om-je-cro-hypotheses-op-psychologische-theorieen-te-baseren-met-sander-volbeda/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "Zoekmachine om je CRO hypotheses op psychologische theorieën te baseren, met Sander Volbeda",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-online-invloed-met-joris-groen-en-bas-wouters",
+    "to": "https://cro.cafe/nl/episodes/nl-online-invloed-met-joris-groen-en-bas-wouters/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "Online Invloed, met Joris Groen en Bas Wouters",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-persuasion-software-tool-gebaseerd-op-ai-met-tjerk-van-der-veen",
+    "to": "https://cro.cafe/nl/episodes/nl-persuasion-software-tool-gebaseerd-op-ai-met-tjerk-van-der-veen/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "Persuasion software tool gebaseerd op AI, met Tjerk van der Veen",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-optimalisatie-voor-livegang-met-marlies-wilms-floet-en-mike-wilms-de-nieuwe-zaak",
+    "to": "https://cro.cafe/nl/episodes/nl-optimalisatie-voor-livegang-met-marlies-wilms-floet-en-mike-wilms-de-nieuwe-zaak/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Optimalisatie vóór livegang, met Marlies Wilms Floet en Mike Wilms (De Nieuwe Zaak)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-verschillende-vormen-van-gebruikersonderzoek-met-marco-van-loon-metrixlab",
+    "to": "https://cro.cafe/nl/episodes/nl-verschillende-vormen-van-gebruikersonderzoek-met-marco-van-loon-metrixlab/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "Verschillende vormen van gebruikersonderzoek, met Marco van Loon (Metrixlab)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-data-science-voor-maatschappelijke-vraagstukken-met-marieke-schulte-digital-power",
+    "to": "https://cro.cafe/nl/episodes/nl-data-science-voor-maatschappelijke-vraagstukken-met-marieke-schulte-digital-power/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Data Science voor maatschappelijke vraagstukken, met Marieke Schulte (Digital Power)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-optimaliseren-van-een-talent-acquisition-platform-saas-met-milan-meurs-recruitee",
+    "to": "https://cro.cafe/nl/episodes/nl-optimaliseren-van-een-talent-acquisition-platform-saas-met-milan-meurs-recruitee/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "Optimaliseren van een Talent Acquisition Platform (SaaS), met Milan Meurs (Recruitee)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-recruitment-voor-cro-met-mimi-verloren-van-themaat-finest-people",
+    "to": "https://cro.cafe/nl/episodes/nl-recruitment-voor-cro-met-mimi-verloren-van-themaat-finest-people/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "Recruitment voor CRO, met Mimi VerLoren van Themaat (Finest People)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cro-verkopen-met-joris-bryon-dexter-agency",
+    "to": "https://cro.cafe/nl/episodes/nl-cro-verkopen-met-joris-bryon-dexter-agency/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "CRO verkopen, met Joris Bryon (Dexter Agency)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-samenwerking-tussen-analytics-en-cro-met-jan-brooijmans",
+    "to": "https://cro.cafe/nl/episodes/nl-samenwerking-tussen-analytics-en-cro-met-jan-brooijmans/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Samenwerking tussen analytics en CRO, met Jan Brooijmans",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-optimalisatie-van-een-filesharing-service-met-helene-van-den-dries-wetransfer",
+    "to": "https://cro.cafe/nl/episodes/nl-optimalisatie-van-een-filesharing-service-met-helene-van-den-dries-wetransfer/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Optimalisatie van een filesharing service, met Hélène van den Dries (WeTransfer)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-optimalisatie-van-video-on-demand-met-lucas-vos-videoland",
+    "to": "https://cro.cafe/nl/episodes/nl-optimalisatie-van-video-on-demand-met-lucas-vos-videoland/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Optimalisatie van video-on-demand, met Lucas Vos (Videoland)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-van-data-naar-psychologsche-inzichten-met-anoek-erens-roos-van-dam-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/nl-van-data-naar-psychologsche-inzichten-met-anoek-erens-roos-van-dam-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "Van data naar psychologsche inzichten, met Anoek Erens & Roos van Dam (Online Dialogue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-cro-methodologie-en-het-onboarden-van-nieuwe-cro-klanten-met-timo-stegeman-clickvalue",
+    "to": "https://cro.cafe/nl/episodes/nl-cro-methodologie-en-het-onboarden-van-nieuwe-cro-klanten-met-timo-stegeman-clickvalue/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "CRO Methodologie en het onboarden van nieuwe CRO klanten, met Timo Stegeman (ClickValue)",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-verse-optimalisatie-cases-met-de-1-docent-van-beeckestijn-pieter-jan-troost",
+    "to": "https://cro.cafe/nl/episodes/nl-verse-optimalisatie-cases-met-de-1-docent-van-beeckestijn-pieter-jan-troost/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Verse optimalisatie cases met de #1 docent van Beeckestijn: Pieter Jan Troost",
+    "type": "generic"
+  },
+  {
+    "from": "https://nl.cro.cafe/podcast/nl-acm-komt-met-leidraad-bescherming-online-consument-met-bart-schutz-online-dialogue",
+    "to": "https://cro.cafe/nl/episodes/nl-acm-komt-met-leidraad-bescherming-online-consument-met-bart-schutz-online-dialogue/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "ACM komt met leidraad bescherming online consument, met Bart Schutz (Online Dialogue)",
+    "type": "generic"
+  },
+  {
     "from": "https://de.cro.cafe/podcast/jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture",
     "to": "https://cro.cafe/de/episodes/50-jubilaum-mit-andre-morys-25-jahre-optimierung-ki-growth-culture/",
     "status": 301,
     "force": true,
     "episode": 50,
-    "title": "#50 Jubiläum mit Andre Morys: 25 Jahre Optimierung, KI & Growth Culture"
+    "title": "#50 Jubiläum mit Andre Morys: 25 Jahre Optimierung, KI & Growth Culture",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/cro-und-gamification-strategie-von-samsung-mit-julian-buchmann",
@@ -13,7 +1787,8 @@
     "status": 301,
     "force": true,
     "episode": 49,
-    "title": "#49 CRO- und Gamification-Strategie von Samsung – mit Julian Buchmann"
+    "title": "#49 CRO- und Gamification-Strategie von Samsung – mit Julian Buchmann",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/customer-centricity-ki-im-fashion-e-commerce-mit-christina-skoeries-von-camel-active",
@@ -21,7 +1796,8 @@
     "status": 301,
     "force": true,
     "episode": 48,
-    "title": "#48 Customer Centricity & KI im Fashion E-Commerce mit Christina Skoeries von Camel Active "
+    "title": "#48 Customer Centricity & KI im Fashion E-Commerce mit Christina Skoeries von Camel Active ",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/user-research-cro-bei-tui-michael-richter-uber-moderiertes-testing-und-innovation",
@@ -29,7 +1805,8 @@
     "status": 301,
     "force": true,
     "episode": 47,
-    "title": "#47 User Research & CRO bei TUI: Michael Richter über moderiertes Testing und Innovation"
+    "title": "#47 User Research & CRO bei TUI: Michael Richter über moderiertes Testing und Innovation",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/insourcing-optimierung-bastian-hausmann-uber-die-conversion-taktik-von-freenet",
@@ -37,7 +1814,17 @@
     "status": 301,
     "force": true,
     "episode": 46,
-    "title": "#46 Insourcing & Optimierung: Bastian Hausmann über die Conversion-Taktik von freenet"
+    "title": "#46 Insourcing & Optimierung: Bastian Hausmann über die Conversion-Taktik von freenet",
+    "type": "specific"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/innovation-durch-product-experimentation-insights-mit-nils-stotz-von-zalando",
+    "to": "https://cro.cafe/de/episodes/innovation-durch-product-experimentation-insights-mit-nils-stotz-von-zalando/",
+    "status": 301,
+    "force": true,
+    "episode": 45,
+    "title": "#45 Innovation durch Product Experimentation: Insights mit Nils Stotz von Zalando",
+    "type": "generic"
   },
   {
     "from": "https://de.cro.cafe/podcast/cro-strategien-im-reisebereich-mit-lea-mattern-von-condor",
@@ -45,7 +1832,8 @@
     "status": 301,
     "force": true,
     "episode": 44,
-    "title": "#44 CRO-Strategien im Reisebereich - mit Lea Mattern von Condor"
+    "title": "#44 CRO-Strategien im Reisebereich - mit Lea Mattern von Condor",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/a-b-testing-fur-leadgenerierung-best-practices-mit-julian-kleinknecht",
@@ -53,7 +1841,8 @@
     "status": 301,
     "force": true,
     "episode": 43,
-    "title": "#43 A/B Testing für Leadgenerierung: Best Practices mit Julian Kleinknecht"
+    "title": "#43 A/B Testing für Leadgenerierung: Best Practices mit Julian Kleinknecht",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/the-future-of-cro-mit-rene-gilster",
@@ -61,7 +1850,8 @@
     "status": 301,
     "force": true,
     "episode": 42,
-    "title": "#42 The Future of CRO - mit René Gilster"
+    "title": "#42 The Future of CRO - mit René Gilster",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/gms24-special-personalisierung-und-testing-der-zukunft-mit-ilja-gurevich",
@@ -69,7 +1859,8 @@
     "status": 301,
     "force": true,
     "episode": 41,
-    "title": "#41 GMS24-Special: Personalisierung und Testing der Zukunft - mit Ilja Gurevich"
+    "title": "#41 GMS24-Special: Personalisierung und Testing der Zukunft - mit Ilja Gurevich",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/das-erfolgsgeheimnis-von-testing-und-personalisierung-bei-congstar-mit-janina-schwill",
@@ -77,7 +1868,8 @@
     "status": 301,
     "force": true,
     "episode": 40,
-    "title": "#40 Das Erfolgsgeheimnis von Testing und Personalisierung bei congstar - mit Janina Schwill"
+    "title": "#40 Das Erfolgsgeheimnis von Testing und Personalisierung bei congstar - mit Janina Schwill",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/unternehmenskultur-als-erfolgsfaktor-mit-niklas-brautigam-co-founder-von-conversion-stash",
@@ -85,7 +1877,8 @@
     "status": 301,
     "force": true,
     "episode": 39,
-    "title": "#39 Unternehmenskultur als Erfolgsfaktor - mit Niklas Bräutigam Co-Founder von Conversion Stash"
+    "title": "#39 Unternehmenskultur als Erfolgsfaktor - mit Niklas Bräutigam Co-Founder von Conversion Stash",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/aus-e-commerce-wird-r-commerce-digitaler-erfolg-durch-nachhaltige-kundenbeziehungen-mit-joachim-stalph-philipp-spreer-und-dimitrios-haratsis",
@@ -93,7 +1886,8 @@
     "status": 301,
     "force": true,
     "episode": 38,
-    "title": "#38 Aus E-Commerce wird R-Commerce: Digitaler Erfolg durch nachhaltige Kundenbeziehungen - mit Joachim Stalph, Philipp Spreer und Dimitrios Haratsis"
+    "title": "#38 Aus E-Commerce wird R-Commerce: Digitaler Erfolg durch nachhaltige Kundenbeziehungen - mit Joachim Stalph, Philipp Spreer und Dimitrios Haratsis",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/einblicke-in-die-conversion-rate-und-funnel-optimierung-mit-sebastian-pilgram",
@@ -101,7 +1895,8 @@
     "status": 301,
     "force": true,
     "episode": 37,
-    "title": "#37 Einblicke in die Conversion Rate und Funnel Optimierung - mit Sebastian Pilgram"
+    "title": "#37 Einblicke in die Conversion Rate und Funnel Optimierung - mit Sebastian Pilgram",
+    "type": "specific"
   },
   {
     "from": "https://de.cro.cafe/podcast/cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze",
@@ -109,6 +1904,871 @@
     "status": 301,
     "force": true,
     "episode": 36,
-    "title": "#36 CRO-Uplift durch Testing bei Smarketer - mit Jonathan Heinze "
+    "title": "#36 CRO-Uplift durch Testing bei Smarketer - mit Jonathan Heinze ",
+    "type": "specific"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/linkedin-anzeigen-leicht-gemacht-mit-kathleen-holler",
+    "to": "https://cro.cafe/de/episodes/linkedin-anzeigen-leicht-gemacht-mit-kathleen-holler/",
+    "status": 301,
+    "force": true,
+    "episode": 35,
+    "title": "LinkedIn-Anzeigen leicht gemacht - mit Kathleen Höller",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/getting-to-know-your-customers-with-conrad-omansky",
+    "to": "https://cro.cafe/de/episodes/getting-to-know-your-customers-with-conrad-omansky/",
+    "status": 301,
+    "force": true,
+    "episode": 34,
+    "title": "Getting to know your customers - with Conrad Omansky",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/testing-strategie-und-cro-insights-von-hubspot-mit-philipp-becker",
+    "to": "https://cro.cafe/de/episodes/testing-strategie-und-cro-insights-von-hubspot-mit-philipp-becker/",
+    "status": 301,
+    "force": true,
+    "episode": 33,
+    "title": "Testing-Strategie und CRO-Insights von HubSpot - mit Philipp Becker",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/durch-eine-massgeschneiderte-ux-mehr-erfolg-im-e-commerce-mit-anas-elimani",
+    "to": "https://cro.cafe/de/episodes/durch-eine-massgeschneiderte-ux-mehr-erfolg-im-e-commerce-mit-anas-elimani/",
+    "status": 301,
+    "force": true,
+    "episode": 32,
+    "title": "Durch eine maßgeschneiderte UX mehr Erfolg im E-Commerce - mit Anas Elimani ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/conversion-rate-optimierung-bei-babyone-mit-rebecca-hahn-und-amelie-albers",
+    "to": "https://cro.cafe/de/episodes/conversion-rate-optimierung-bei-babyone-mit-rebecca-hahn-und-amelie-albers/",
+    "status": 301,
+    "force": true,
+    "episode": 31,
+    "title": "Einblicke in das CRO-Programm von BabyOne - mit Rebecca Hahn und Amelie Albers",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/psychologische-massnahmen-zur-kundengewinnung-mit-dr-astrid-junghans",
+    "to": "https://cro.cafe/de/episodes/psychologische-massnahmen-zur-kundengewinnung-mit-dr-astrid-junghans/",
+    "status": 301,
+    "force": true,
+    "episode": 30,
+    "title": "Psychologische Maßnahmen zur Kundengewinnung - mit Dr. Astrid Junghans",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/testing-bei-kleineren-unternehmen",
+    "to": "https://cro.cafe/de/episodes/testing-bei-kleineren-unternehmen/",
+    "status": 301,
+    "force": true,
+    "episode": 29,
+    "title": "Testing bei kleineren Unternehmen mit Gunnar Asmussen",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/welche-rolle-konsumpsychologie-bei-cro-einnimmt-mit-philipp-spreer",
+    "to": "https://cro.cafe/de/episodes/welche-rolle-konsumpsychologie-bei-cro-einnimmt-mit-philipp-spreer/",
+    "status": 301,
+    "force": true,
+    "episode": 28,
+    "title": "Welche Rolle Konsumpsychologie bei CRO einnimmt mit Philipp Spreer",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/testing-kultur-und-personalisierung-bei-douglas-mit-stane-zabot",
+    "to": "https://cro.cafe/de/episodes/testing-kultur-und-personalisierung-bei-douglas-mit-stane-zabot/",
+    "status": 301,
+    "force": true,
+    "episode": 27,
+    "title": "Testing-Kultur und Personalisierung bei Douglas mit Stane Zabot",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/wie-ki-die-zukunft-des-marketings-verandert-mit-niklas-lewanczik",
+    "to": "https://cro.cafe/de/episodes/wie-ki-die-zukunft-des-marketings-verandert-mit-niklas-lewanczik/",
+    "status": 301,
+    "force": true,
+    "episode": 26,
+    "title": "Wie KI die Zukunft des Marketings verändert mit Niklas Lewanczik",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/e-mail-marketing-der-profis-mit-jakob-gerzen",
+    "to": "https://cro.cafe/de/episodes/e-mail-marketing-der-profis-mit-jakob-gerzen/",
+    "status": 301,
+    "force": true,
+    "episode": 25,
+    "title": "E-Mail Marketing der Profis mit Jakob Gerzen",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/hinter-den-kulissen-von-dem-tech-giganten-meta-mit-michael-pietsch",
+    "to": "https://cro.cafe/de/episodes/hinter-den-kulissen-von-dem-tech-giganten-meta-mit-michael-pietsch/",
+    "status": 301,
+    "force": true,
+    "episode": 24,
+    "title": "Hinter den Kulissen von dem Tech-Giganten Meta mit Michael Pietsch",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/user-research-wie-nutzerforschung-hilft-die-conversions-zu-steigern",
+    "to": "https://cro.cafe/de/episodes/user-research-wie-nutzerforschung-hilft-die-conversions-zu-steigern/",
+    "status": 301,
+    "force": true,
+    "episode": 23,
+    "title": "User Research: Wie Nutzerforschung hilft die Conversions zu steigern",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/e-mail-marketing-grundlegende-tipps-und-tricks-mit-torsten-schwarz",
+    "to": "https://cro.cafe/de/episodes/e-mail-marketing-grundlegende-tipps-und-tricks-mit-torsten-schwarz/",
+    "status": 301,
+    "force": true,
+    "episode": 22,
+    "title": "E-Mail Marketing: Grundlegende Tipps und Tricks mit Torsten Schwarz",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/how-qualitative-data-improves-your-cro-strategy",
+    "to": "https://cro.cafe/de/episodes/how-qualitative-data-improves-your-cro-strategy/",
+    "status": 301,
+    "force": true,
+    "episode": 21,
+    "title": "How qualitative data improves your CRO strategy",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/conversion-rate-optimierung-bei-premium-und-high-brands",
+    "to": "https://cro.cafe/de/episodes/conversion-rate-optimierung-bei-premium-und-high-brands/",
+    "status": 301,
+    "force": true,
+    "episode": 20,
+    "title": "Conversion Rate Optimierung bei Premium- und High Brands",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/multi-funnel-testing-einer-der-geheimwaffen-in-der-conversion-rate-optimierung",
+    "to": "https://cro.cafe/de/episodes/multi-funnel-testing-einer-der-geheimwaffen-in-der-conversion-rate-optimierung/",
+    "status": 301,
+    "force": true,
+    "episode": 19,
+    "title": "Multi Funnel Testing: Einer der Geheimwaffen in der Conversion Rate Optimierung ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/seo-basics-trends-mit-malte-landwehr-von-idealo",
+    "to": "https://cro.cafe/de/episodes/seo-basics-trends-mit-malte-landwehr-von-idealo/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "SEO Basics & Trends mit Malte Landwehr von idealo ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/hinter-den-kulissen-bei-dr-oetker-die-perfekte-martech-landschaft-fur-deinen-internationalen-erfolg",
+    "to": "https://cro.cafe/de/episodes/hinter-den-kulissen-bei-dr-oetker-die-perfekte-martech-landschaft-fur-deinen-internationalen-erfolg/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Hinter den Kulissen bei Dr. Oetker - Die perfekte MarTech Landschaft für internationalen Erfolg",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/gelungener-markenaufbau-von-gescheiterten-start-ups-zum-grossten-online-sexshop-der-schweiz",
+    "to": "https://cro.cafe/de/episodes/gelungener-markenaufbau-von-gescheiterten-start-ups-zum-grossten-online-sexshop-der-schweiz/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "Gelungener Markenaufbau - von gescheiterten Start-ups zum größten online Sexshop der Schweiz",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/seo-vs-cro-feind-oder-freund",
+    "to": "https://cro.cafe/de/episodes/seo-vs-cro-feind-oder-freund/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "SEO vs. CRO: Feind oder Freund?",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/wann-erregen-anzeigen-aufmerksamkeit-mit-psychologischen-tricks-zu-verbessertem-marketing",
+    "to": "https://cro.cafe/de/episodes/wann-erregen-anzeigen-aufmerksamkeit-mit-psychologischen-tricks-zu-verbessertem-marketing/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "Wann erregen Anzeigen Aufmerksamkeit? Mit psychologischen Tricks zu verbessertem Marketing.",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/marc-o-polo-eine-internationale-fashionbrand-meets-cro",
+    "to": "https://cro.cafe/de/episodes/marc-o-polo-eine-internationale-fashionbrand-meets-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Marc O’Polo: eine internationale Fashionbrand meets CRO",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/kunstliche-intelligenz-das-marketing-must-have-der-zukunft",
+    "to": "https://cro.cafe/de/episodes/kunstliche-intelligenz-das-marketing-must-have-der-zukunft/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "Künstliche Intelligenz - das Marketing Must-Have der Zukunft",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/daten-und-kreativitat-eine-geniale-kombination",
+    "to": "https://cro.cafe/de/episodes/daten-und-kreativitat-eine-geniale-kombination/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Daten und Kreativität - eine geniale Kombination beim Testing ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/trigger-die-zu-klicks-fuhren",
+    "to": "https://cro.cafe/de/episodes/trigger-die-zu-klicks-fuhren/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "Psychologische Trigger, die zu mehr Klicks führen",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/content-experience-das-neue-it-piece-in-der-conversion-rate-optimierung",
+    "to": "https://cro.cafe/de/episodes/content-experience-das-neue-it-piece-in-der-conversion-rate-optimierung/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "Content Experience - das neue It-Piece in der Conversion Rate Optimierung? ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/best-from-southwest-social-media-advertising-mit-florian-litterst",
+    "to": "https://cro.cafe/de/episodes/best-from-southwest-social-media-advertising-mit-florian-litterst/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Best from southwest - Social Media Advertising mit Florian Litterst ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/data-power-for-the-people-daten-dorthin-bringen-wo-sie-gebraucht-werden",
+    "to": "https://cro.cafe/de/episodes/data-power-for-the-people-daten-dorthin-bringen-wo-sie-gebraucht-werden/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "Data Power for the people - Daten dorthin bringen, wo sie gebraucht werden",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/inhouse-vs-agentur-was-macht-mehr-sinn",
+    "to": "https://cro.cafe/de/episodes/inhouse-vs-agentur-was-macht-mehr-sinn/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Inhouse vs. Agentur - Was macht mehr Sinn?",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/personalisierung-kurzfristiger-hype-oder-echtes-potenzial",
+    "to": "https://cro.cafe/de/episodes/personalisierung-kurzfristiger-hype-oder-echtes-potenzial/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Personalisierung: Kurzfristiger Hype oder echtes Potenzial? ",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/daten-sind-der-schlussel-zum-erfolg",
+    "to": "https://cro.cafe/de/episodes/daten-sind-der-schlussel-zum-erfolg/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "Daten sind der Schlüssel zum Erfolg",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/7-tipps-aus-dem-neuromarketing-die-deine-conversions-auf-ein-neues-level-heben",
+    "to": "https://cro.cafe/de/episodes/7-tipps-aus-dem-neuromarketing-die-deine-conversions-auf-ein-neues-level-heben/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "7 Tipps aus dem Neuromarketing, die deine Conversions auf ein neues Level heben",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/growth-mindset-scheitern-ist-einer-der-wichtigsten-schritte-zum-erfolg",
+    "to": "https://cro.cafe/de/episodes/growth-mindset-scheitern-ist-einer-der-wichtigsten-schritte-zum-erfolg/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Growth Mindset: Scheitern ist einer der wichtigsten Schritte zum Erfolg",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/how-to-start-with-cro",
+    "to": "https://cro.cafe/de/episodes/how-to-start-with-cro/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Aller Anfang ist schwer - So wirst Du zum CRO-Experten",
+    "type": "generic"
+  },
+  {
+    "from": "https://de.cro.cafe/podcast/cro-cafe-jetzt-auch-auf-deutsch",
+    "to": "https://cro.cafe/de/episodes/cro-cafe-jetzt-auch-auf-deutsch/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Willkommen bei CRO.CAFE auf Deutsch!",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/parte-iii-principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/parte-iii-principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Parte III: Principios y leyes de diseño que mejoran experiencia y empujan conversión",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/google-analytics-prohibido-en-europa-sintesis-y-analisis-de-la-situacion-actual",
+    "to": "https://cro.cafe/es/episodes/google-analytics-prohibido-en-europa-sintesis-y-analisis-de-la-situacion-actual/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "¿Google Analytics prohibido en Europa? Síntesis y análisis de la situación actual",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/dark-patterns-como-nos-enganan-para-hacer-lo-que-no-queremos-hacer",
+    "to": "https://cro.cafe/es/episodes/dark-patterns-como-nos-enganan-para-hacer-lo-que-no-queremos-hacer/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Dark patterns, como nos engañan para hacer lo que no queremos hacer",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/estudio-de-conversion-2022-datos-y-principales-aprendizajes",
+    "to": "https://cro.cafe/es/episodes/estudio-de-conversion-2022-datos-y-principales-aprendizajes/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Estudio de conversión 2022: datos y principales aprendizajes",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/testing-o-personalizacion-diferencias-y-cuando-elegir-una-u-otra-tecnica",
+    "to": "https://cro.cafe/es/episodes/testing-o-personalizacion-diferencias-y-cuando-elegir-una-u-otra-tecnica/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "¿Testing o personalización? Diferencias y cuando elegir una u otra técnica",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/como-medir-la-ux-kpis-que-nos-ayudan-a-cuantificar-el-diseno",
+    "to": "https://cro.cafe/es/episodes/como-medir-la-ux-kpis-que-nos-ayudan-a-cuantificar-el-diseno/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "¿Cómo medir la UX? KPIs que nos ayudan a cuantificar el diseño",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/neurotecnologia-entender-nuestro-cerebro-para-disenar-mejores-soluciones-con-maria-lopez",
+    "to": "https://cro.cafe/es/episodes/neurotecnologia-entender-nuestro-cerebro-para-disenar-mejores-soluciones-con-maria-lopez/",
+    "status": 301,
+    "force": true,
+    "episode": 35,
+    "title": "Neurotecnología, entender nuestro cerebro para diseñar mejores soluciones, con María López",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/vender-servicios-digitales-a-personas-mayores-con-jorge-terreu",
+    "to": "https://cro.cafe/es/episodes/vender-servicios-digitales-a-personas-mayores-con-jorge-terreu/",
+    "status": 301,
+    "force": true,
+    "episode": 34,
+    "title": "Vender servicios digitales para personas mayores, con Jorge Terreu",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/innovacion-que-es-y-como-aplicarla-de-verdad-con-david-alayon",
+    "to": "https://cro.cafe/es/episodes/innovacion-que-es-y-como-aplicarla-de-verdad-con-david-alayon/",
+    "status": 301,
+    "force": true,
+    "episode": 33,
+    "title": "Innovación, qué es y cómo aplicarla de verdad, con David Alayón",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/metaverso-nfts-y-realidad-aumentada-tecnologias-aplicadas-a-negocios-digitales-con-peter-lozano",
+    "to": "https://cro.cafe/es/episodes/metaverso-nfts-y-realidad-aumentada-tecnologias-aplicadas-a-negocios-digitales-con-peter-lozano/",
+    "status": 301,
+    "force": true,
+    "episode": 32,
+    "title": "Metaverso, NFTs y realidad aumentada: tecnologías aplicadas a negocios digitales, con Peter Lozano",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/como-resolver-problemas-complejos-con-javier-g-recuenco",
+    "to": "https://cro.cafe/es/episodes/como-resolver-problemas-complejos-con-javier-g-recuenco/",
+    "status": 301,
+    "force": true,
+    "episode": 31,
+    "title": "Cómo resolver problemas complejos, con Javier G. Recuenco",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/accesibilidad-la-necesidad-de-atender-a-todos-tus-clientes-con-arantxa-hernandez",
+    "to": "https://cro.cafe/es/episodes/accesibilidad-la-necesidad-de-atender-a-todos-tus-clientes-con-arantxa-hernandez/",
+    "status": 301,
+    "force": true,
+    "episode": 30,
+    "title": "La diferencia cultural entre Mexico y España y su peso en conversión, con Vanesa Robles",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/accesibilidad-la-necesidad-de-atender-a-todos-tus-clientes-con-arantxa-hernandez-57327e6a-6155-404d-ba05-039294843b90",
+    "to": "https://cro.cafe/es/episodes/accesibilidad-la-necesidad-de-atender-a-todos-tus-clientes-con-arantxa-hernandez-57327e6a-6155-404d-ba05-039294843b90/",
+    "status": 301,
+    "force": true,
+    "episode": 29,
+    "title": "Accesibilidad, la necesidad de atender a todos tus clientes, con Arantxa Hernández",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/storytelling-y-copywriting-el-arte-en-las-palabras-para-llegar-y-convencer-con-anita-cufari",
+    "to": "https://cro.cafe/es/episodes/storytelling-y-copywriting-el-arte-en-las-palabras-para-llegar-y-convencer-con-anita-cufari/",
+    "status": 301,
+    "force": true,
+    "episode": 28,
+    "title": "Storytelling y copywriting, el arte en las palabras para llegar y convencer, con Anita Cufari",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/administracion-publica-y-ecosistema-digital-con-sergio-jimenez",
+    "to": "https://cro.cafe/es/episodes/administracion-publica-y-ecosistema-digital-con-sergio-jimenez/",
+    "status": 301,
+    "force": true,
+    "episode": 27,
+    "title": "Administración pública y ecosistema digital, con Sergio Jiménez",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/analitica-digital-midiendo-y-activando-datos-con-ana-soplon",
+    "to": "https://cro.cafe/es/episodes/analitica-digital-midiendo-y-activando-datos-con-ana-soplon/",
+    "status": 301,
+    "force": true,
+    "episode": 26,
+    "title": "Analítica digital: midiendo y activando datos, con Ana Soplón",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/behavioural-design-aplicando-la-ciencia-del-comportamiento-al-diseno-con-dani-solana",
+    "to": "https://cro.cafe/es/episodes/behavioural-design-aplicando-la-ciencia-del-comportamiento-al-diseno-con-dani-solana/",
+    "status": 301,
+    "force": true,
+    "episode": 25,
+    "title": "Behavioral design, aplicando la ciencia del comportamiento al diseño, con Dani Solana",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/encuestas-online-para-conocer-a-tus-clientes-con-maria-pedrosa",
+    "to": "https://cro.cafe/es/episodes/encuestas-online-para-conocer-a-tus-clientes-con-maria-pedrosa/",
+    "status": 301,
+    "force": true,
+    "episode": 24,
+    "title": "Encuestas online para conocer a tus clientes, con María Pedrosa",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/bienvenidos-a-cro-cafe-en-espanol",
+    "to": "https://cro.cafe/es/episodes/bienvenidos-a-cro-cafe-en-espanol/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Bienvenidos a CRO.CAFE en español",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/las-areas-de-conocimiento-que-debes-dominar-para-ser-un-buen-profesional-del-cro-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/las-areas-de-conocimiento-que-debes-dominar-para-ser-un-buen-profesional-del-cro-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Las áreas de conocimiento que debes dominar para ser un buen profesional del CRO, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/que-kpis-definir-en-un-test-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/que-kpis-definir-en-un-test-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Que KPIs definir en un test, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/cro-para-dummies-una-guia-para-todo-el-mundo-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/cro-para-dummies-una-guia-para-todo-el-mundo-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO para dummies, una guia para todo el mundo, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/como-funcionan-las-herramientas-de-testing-y-personalizacion-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/como-funcionan-las-herramientas-de-testing-y-personalizacion-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Cómo funcionan las herramientas de testing y personalización, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/heatmaps-una-introduccion-a-los-mapas-de-calor-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/heatmaps-una-introduccion-a-los-mapas-de-calor-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Heatmaps: una introducción a los mapas de calor, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/summer-cro-1-respondiendo-a-vuestras-preguntas-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/summer-cro-1-respondiendo-a-vuestras-preguntas-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Summer CRO #1, respondiendo a vuestras preguntas, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/summer-cro-1-respondiendo-a-vuestras-preguntas-con-ricardo-tayar-acaee597-9f95-4571-91a6-8aefcd0e4c7a",
+    "to": "https://cro.cafe/es/episodes/summer-cro-1-respondiendo-a-vuestras-preguntas-con-ricardo-tayar-acaee597-9f95-4571-91a6-8aefcd0e4c7a/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Summer CRO #2, respondiendo a vuestras preguntas, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/summer-cro-3-respondiendo-a-vuestras-preguntas-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/summer-cro-3-respondiendo-a-vuestras-preguntas-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Summer CRO #3, respondiendo a vuestras preguntas, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/gestion-de-expectativas-en-proyectos-de-negocios-digitales-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/gestion-de-expectativas-en-proyectos-de-negocios-digitales-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Gestión de expectativas en proyectos de negocios digitales, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/conversion-en-dispositivos-mobile-por-donde-empezar-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/conversion-en-dispositivos-mobile-por-donde-empezar-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Conversión en dispositivos mobile, ¿por dónde empezar?, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/cuando-debes-optimizar-un-proyecto-y-no-sabes-por-donde-empezar-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/cuando-debes-optimizar-un-proyecto-y-no-sabes-por-donde-empezar-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Cuando debes optimizar un proyecto y no sabes por donde empezar, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/testing-en-sitios-web-y-apps-con-poco-trafico-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/testing-en-sitios-web-y-apps-con-poco-trafico-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Testing en sitios web y apps con poco tráfico, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/errores-y-cagadas-que-he-cometido-en-proyectos-cro-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/errores-y-cagadas-que-he-cometido-en-proyectos-cro-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Errores y cagadas que he cometido en proyectos CRO, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/una-breve-introduccion-a-google-analytics-4-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/una-breve-introduccion-a-google-analytics-4-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Una breve introducción a Google Analytics 4, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/estudio-de-conversion-2021-principales-metricas-y-aprendizajes-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/estudio-de-conversion-2021-principales-metricas-y-aprendizajes-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Estudio de conversión 2021, principales métricas y aprendizajes, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-parte-i-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-parte-i-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Parte I: Principios y leyes de diseño que mejoran experiencia y empujan conversión, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-parte-ii-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/principios-y-leyes-de-diseno-que-mejoran-experiencia-y-empujan-conversion-parte-ii-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "Parte II: Principios y leyes de diseño que mejoran experiencia y empujan conversión, con Ricardo Tayar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/cro-hits-2021-fin-de-fiesta-de-la-primera-temporada-con-ricardo-tayar",
+    "to": "https://cro.cafe/es/episodes/cro-hits-2021-fin-de-fiesta-de-la-primera-temporada-con-ricardo-tayar/",
+    "status": 301,
+    "force": true,
+    "episode": 0,
+    "title": "CRO Hits 2021. Fin de fiesta de la primera temporada",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/usando-whatsapp-business-y-canales-digitales-para-convertir-en-negocios-de-catering-y-hotel-rural-con-miguel-fernandez",
+    "to": "https://cro.cafe/es/episodes/usando-whatsapp-business-y-canales-digitales-para-convertir-en-negocios-de-catering-y-hotel-rural-con-miguel-fernandez/",
+    "status": 301,
+    "force": true,
+    "episode": 23,
+    "title": "Usando Whatsapp Business y canales digitales para convertir en negocios de catering y alojamiento rural, con Miguel Fernández",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/growth-y-cro-dos-metodologias-de-mejora-con-jose-carlos-cortizo",
+    "to": "https://cro.cafe/es/episodes/growth-y-cro-dos-metodologias-de-mejora-con-jose-carlos-cortizo/",
+    "status": 301,
+    "force": true,
+    "episode": 22,
+    "title": "Growth y CRO, dos metodologías de mejora, con  Jose Carlos Cortizo",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/el-arte-de-la-gestion-de-proyectos-cro-y-del-testing-estrategico-con-sandra-navarro",
+    "to": "https://cro.cafe/es/episodes/el-arte-de-la-gestion-de-proyectos-cro-y-del-testing-estrategico-con-sandra-navarro/",
+    "status": 301,
+    "force": true,
+    "episode": 21,
+    "title": "El arte de la gestión de proyectos CRO y del testing estratégico, con Sandra Navarro",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/el-estado-del-e-commerce-pyme-en-espana-con-ruben-baston-y-antonio-fagundo",
+    "to": "https://cro.cafe/es/episodes/el-estado-del-e-commerce-pyme-en-espana-con-ruben-baston-y-antonio-fagundo/",
+    "status": 301,
+    "force": true,
+    "episode": 20,
+    "title": "Cómo la PYME española se enfrenta al e-commerce, con Rubén Bastón y Antonio Fagundo",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/la-moda-como-negocio-digital-con-ainara-simon",
+    "to": "https://cro.cafe/es/episodes/la-moda-como-negocio-digital-con-ainara-simon/",
+    "status": 301,
+    "force": true,
+    "episode": 19,
+    "title": "La moda como negocio digital, con Ainara Simón",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/evangelizando-sobre-cro-en-tus-clientes-con-cristian-de-la-maza",
+    "to": "https://cro.cafe/es/episodes/evangelizando-sobre-cro-en-tus-clientes-con-cristian-de-la-maza/",
+    "status": 301,
+    "force": true,
+    "episode": 18,
+    "title": "Evangelizando sobre CRO en tus clientes, con Cristian de la Maza",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/interaccion-diseno-pantallas-y-conseguir-que-hagamos-cosas-con-jimena-catalina",
+    "to": "https://cro.cafe/es/episodes/interaccion-diseno-pantallas-y-conseguir-que-hagamos-cosas-con-jimena-catalina/",
+    "status": 301,
+    "force": true,
+    "episode": 17,
+    "title": "Interacción, diseño, pantallas y conseguir que hagamos cosas, con Jimena Catalina",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/el-marketing-de-contenidos-como-motor-de-un-negocio-digital-con-mariam-veiga",
+    "to": "https://cro.cafe/es/episodes/el-marketing-de-contenidos-como-motor-de-un-negocio-digital-con-mariam-veiga/",
+    "status": 301,
+    "force": true,
+    "episode": 16,
+    "title": "El marketing de contenidos como motor de un negocio digital, con Mariam Veiga",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/machine-learning-analisis-predictivo-y-conversion-con-ricard-bonastre",
+    "to": "https://cro.cafe/es/episodes/machine-learning-analisis-predictivo-y-conversion-con-ricard-bonastre/",
+    "status": 301,
+    "force": true,
+    "episode": 15,
+    "title": "Machine learning, análisis predictivo y conversión, con Ricard Bonastre",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/influencers-y-publicidad-en-social-media-fantasia-o-realidad",
+    "to": "https://cro.cafe/es/episodes/influencers-y-publicidad-en-social-media-fantasia-o-realidad/",
+    "status": 301,
+    "force": true,
+    "episode": 14,
+    "title": "Influencers y publicidad en social media, ¿fantasía o realidad?, con @hazmeunafotoasi",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/analitica-digital-y-cro-en-grandes-comercios-asi-trabajan-en-el-corte-ingles-con-laura-rodriguez",
+    "to": "https://cro.cafe/es/episodes/analitica-digital-y-cro-en-grandes-comercios-asi-trabajan-en-el-corte-ingles-con-laura-rodriguez/",
+    "status": 301,
+    "force": true,
+    "episode": 13,
+    "title": "Analítica digital y CRO en grandes comercios, así trabajan en El Corte Inglés, con Laura Rodriguez",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/el-diseno-motor-de-cambio-con-javier-canada",
+    "to": "https://cro.cafe/es/episodes/el-diseno-motor-de-cambio-con-javier-canada/",
+    "status": 301,
+    "force": true,
+    "episode": 12,
+    "title": "El diseño, motor de cambio, con Javier Cañada",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/dirigir-un-e-commerce-bajo-objetivos-de-crecimiento-y-transformacion-con-sora-sans",
+    "to": "https://cro.cafe/es/episodes/dirigir-un-e-commerce-bajo-objetivos-de-crecimiento-y-transformacion-con-sora-sans/",
+    "status": 301,
+    "force": true,
+    "episode": 11,
+    "title": "Dirigir un e-commerce bajo objetivos de crecimiento y transformación, con Sora Sans",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/busquedas-internas-eficacia-y-conversion-con-ivan-navas",
+    "to": "https://cro.cafe/es/episodes/busquedas-internas-eficacia-y-conversion-con-ivan-navas/",
+    "status": 301,
+    "force": true,
+    "episode": 10,
+    "title": "Búsquedas internas, eficacia y conversión, con Iván Navas",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/trafico-si-pero-trafico-util-con-aleyda-solis",
+    "to": "https://cro.cafe/es/episodes/trafico-si-pero-trafico-util-con-aleyda-solis/",
+    "status": 301,
+    "force": true,
+    "episode": 9,
+    "title": "Tráfico sí, pero tráfico útil, con Aleyda Solis",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/inteligencia-artificial-etica-y-buscadores-con-ricardo-baeza-yates",
+    "to": "https://cro.cafe/es/episodes/inteligencia-artificial-etica-y-buscadores-con-ricardo-baeza-yates/",
+    "status": 301,
+    "force": true,
+    "episode": 8,
+    "title": "Inteligencia artificial, ética y buscadores, con Ricardo Baeza-Yates",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/la-investigacion-de-usuarios-conocer-para-mejorar-con-maria-isabel-murillo",
+    "to": "https://cro.cafe/es/episodes/la-investigacion-de-usuarios-conocer-para-mejorar-con-maria-isabel-murillo/",
+    "status": 301,
+    "force": true,
+    "episode": 7,
+    "title": "La investigación de usuarios, conocer para mejorar, con María Isabel Murillo",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/analisis-y-optimizacion-multicanal-e-commerce-y-tiendas-fisicas-con-un-objetivo-comun-con-hector-mainar",
+    "to": "https://cro.cafe/es/episodes/analisis-y-optimizacion-multicanal-e-commerce-y-tiendas-fisicas-con-un-objetivo-comun-con-hector-mainar/",
+    "status": 301,
+    "force": true,
+    "episode": 6,
+    "title": "Análisis y optimización multicanal: e-commerce y tiendas físicas con un objetivo común, con Hector Mainar",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/como-integrar-experiencias-de-compra-fisicas-con-activos-digitales-supermercados-con-rocio-sanz",
+    "to": "https://cro.cafe/es/episodes/como-integrar-experiencias-de-compra-fisicas-con-activos-digitales-supermercados-con-rocio-sanz/",
+    "status": 301,
+    "force": true,
+    "episode": 5,
+    "title": "Como integrar experiencias de compra físicas con activos digitales. Así lo hacen los supermercados, con Rocío Sanz",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/persuasion-psicologia-y-economia-conductual-asi-manejan-nuestros-hilos-con-ramon-nogueras",
+    "to": "https://cro.cafe/es/episodes/persuasion-psicologia-y-economia-conductual-asi-manejan-nuestros-hilos-con-ramon-nogueras/",
+    "status": 301,
+    "force": true,
+    "episode": 4,
+    "title": "transi",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/el-arte-y-la-marca-como-activos-de-los-negocios-digitales",
+    "to": "https://cro.cafe/es/episodes/el-arte-y-la-marca-como-activos-de-los-negocios-digitales/",
+    "status": 301,
+    "force": true,
+    "episode": 3,
+    "title": "El arte y la marca como activos de los negocios digitales, con Cecilia Rodríguez",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/testing-y-experimentacion-de-donde-venimos-donde-estamos-y-a-donde-vamos",
+    "to": "https://cro.cafe/es/episodes/testing-y-experimentacion-de-donde-venimos-donde-estamos-y-a-donde-vamos/",
+    "status": 301,
+    "force": true,
+    "episode": 2,
+    "title": "Testing y experimentación, de donde venimos, donde estamos y a donde vamos, con Victor de la Iglesia",
+    "type": "generic"
+  },
+  {
+    "from": "https://es.cro.cafe/podcast/diseno-de-experiencias-digitales-positivas",
+    "to": "https://cro.cafe/es/episodes/diseno-de-experiencias-digitales-positivas/",
+    "status": 301,
+    "force": true,
+    "episode": 1,
+    "title": "Diseño de experiencias digitales positivas, con Mauren Kaufmann ",
+    "type": "generic"
   }
 ]

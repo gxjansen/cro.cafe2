@@ -16,6 +16,15 @@ function deriveOldUrl(slug, episodeNumber, language) {
     }
   }
   
+  // Check if any episode has a number prefix that needs to be removed
+  // This could apply to other languages too
+  const numberPrefixMatch = slug.match(/^\d+-(.+)$/);
+  if (numberPrefixMatch) {
+    console.log(`  [${language}] Episode ${episodeNumber} has number prefix: ${slug}`);
+    // For now, only German episodes need this transformation
+    // Other languages might have different patterns
+  }
+  
   // For other episodes, assume the slug was the same
   return slug;
 }
@@ -35,21 +44,27 @@ async function generateRedirectsForLanguage(lang) {
       if (data.slug && data.status === 'published') {
         const oldSlug = deriveOldUrl(data.slug, data.episode || 0, lang);
         
-        // Only create redirect if old slug differs from current slug
-        if (oldSlug !== data.slug) {
-          console.log(`  Episode ${data.episode}: ${oldSlug} -> ${data.slug}`);
-          
-          // Generate redirect for subdomain
-          const subdomain = lang === 'en' ? 'www' : lang;
-          redirects.push({
-            from: `https://${subdomain}.cro.cafe/podcast/${oldSlug}`,
-            to: `https://cro.cafe/${lang}/episodes/${data.slug}/`,
-            status: 301,
-            force: true,
-            episode: data.episode,
-            title: data.title
-          });
+        // For all languages, we need redirects from the old subdomain structure
+        // even if the slug hasn't changed, because the path changed from /podcast/ to /[lang]/episodes/
+        const subdomain = lang === 'en' ? 'www' : lang;
+        
+        // Check if this is a specific redirect (slug changed) or generic (path changed)
+        const isSpecificRedirect = oldSlug !== data.slug;
+        
+        if (isSpecificRedirect) {
+          console.log(`  Episode ${data.episode}: ${oldSlug} -> ${data.slug} (slug changed)`);
         }
+        
+        // Always create redirect for the old subdomain URL
+        redirects.push({
+          from: `https://${subdomain}.cro.cafe/podcast/${oldSlug}`,
+          to: `https://cro.cafe/${lang}/episodes/${data.slug}/`,
+          status: 301,
+          force: true,
+          episode: data.episode,
+          title: data.title,
+          type: isSpecificRedirect ? 'specific' : 'generic'
+        });
       }
     } catch (error) {
       console.error(`Error processing ${file}:`, error.message);
@@ -64,9 +79,23 @@ async function generateAllRedirects() {
   const languages = ['en', 'nl', 'de', 'es'];
   const allRedirects = [];
   
+  // Check command line argument
+  const includeGenericRedirects = process.argv.includes('--all');
+  
+  if (includeGenericRedirects) {
+    console.log('Generating ALL redirects (including generic path changes)...');
+  } else {
+    console.log('Generating only SPECIFIC redirects (where slugs changed)...');
+    console.log('Use --all flag to include all episode redirects');
+  }
+  
   for (const lang of languages) {
     const langRedirects = await generateRedirectsForLanguage(lang);
-    allRedirects.push(...langRedirects);
+    // Filter based on command line argument
+    const filteredRedirects = includeGenericRedirects 
+      ? langRedirects 
+      : langRedirects.filter(r => r.type === 'specific');
+    allRedirects.push(...filteredRedirects);
   }
   
   // Group redirects by language
