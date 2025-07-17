@@ -2,6 +2,8 @@ import * as Sentry from "@sentry/astro";
 
 // Client-side Sentry configuration
 Sentry.init({
+  // Ensure all errors are captured
+  sampleRate: 1.0, // 100% of errors will be sent
   // Browser-specific tracing configuration
   integrations: [
     Sentry.browserTracingIntegration({

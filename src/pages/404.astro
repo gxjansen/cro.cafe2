@@ -98,33 +98,61 @@ if (typeof Sentry !== 'undefined') {
     // Client-side 404 tracking for Sentry
     import * as Sentry from '@sentry/browser';
     
-    // Track 404 on client-side with proper context
-    if (typeof window !== 'undefined' && Sentry) {
-      // Use withScope to set transaction context
-      Sentry.withScope((scope) => {
-        // Set transaction name
-        scope.setTransactionName('404 Page Not Found');
+    // Ensure Sentry is initialized and track 404
+    document.addEventListener('DOMContentLoaded', () => {
+      // Debug logging
+      console.log('404 page loaded:', window.location.pathname);
+      console.log('Sentry available:', typeof Sentry !== 'undefined');
+      
+      // Track 404 on client-side with proper context
+      if (typeof window !== 'undefined' && Sentry && Sentry.captureMessage) {
+        console.log('Sending 404 to Sentry...');
         
-        // Set tags
-        scope.setTags({
-          type: '404-client',
-          url: window.location.href,
-          pathname: window.location.pathname,
-          referrer: document.referrer || 'direct',
-          'http.status_code': '404',
-          'navigation.type': 'page_load',
+        // Use withScope to set transaction context
+        Sentry.withScope((scope) => {
+          // Set transaction name
+          scope.setTransactionName('404 Page Not Found');
+          
+          // Set tags
+          scope.setTags({
+            type: '404-client',
+            url: window.location.href,
+            pathname: window.location.pathname,
+            referrer: document.referrer || 'direct',
+            'http.status_code': '404',
+            'navigation.type': 'page_load',
+          });
+          
+          // Set context
+          scope.setContext('browser', {
+            name: navigator.userAgent,
+            url: window.location.href,
+            pathname: window.location.pathname,
+          });
+          
+          // Set user context if available
+          scope.setContext('request', {
+            url: window.location.href,
+            method: 'GET',
+            referrer: document.referrer,
+          });
+          
+          // Capture the message
+          Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
+          console.log('404 sent to Sentry');
         });
         
-        // Set context
-        scope.setContext('browser', {
-          name: navigator.userAgent,
-          url: window.location.href,
-          pathname: window.location.pathname,
+        // Also capture as an exception for better visibility
+        Sentry.captureException(new Error(`404 Page Not Found: ${window.location.pathname}`), {
+          tags: {
+            type: '404-exception',
+            pathname: window.location.pathname,
+          },
+          level: 'warning',
         });
-        
-        // Capture the message
-        Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
-      });
-    }
+      } else {
+        console.error('Sentry not available for 404 tracking');
+      }
+    });
   </script>
 </BaseLayout>
