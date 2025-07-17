@@ -162,13 +162,9 @@ const t = translations[language];
 const title = episode.data.seoTitle || `${episode.data.title} - CRO.CAFE Podcast`;
 const description = episode.data.metaDescription || episode.data.summary || episode.data.description.substring(0, 160);
 
-// Generate hreflang URLs for other languages (only include if episode exists in those languages)
-const hreflang: Record<Language, string> = {
-  en: `https://cro.cafe/en/episodes/${episode.data.slug}/`,
-  nl: `https://cro.cafe/nl/episodes/${episode.data.slug}/`,
-  de: `https://cro.cafe/de/episodes/${episode.data.slug}/`,
-  es: `https://cro.cafe/es/episodes/${episode.data.slug}/`
-};
+// Since episodes are unique per language (not translations), we don't set hreflang tags
+// This prevents Google from seeing them as duplicate content
+const hreflang = undefined;
 
 // Get locale-specific date formatting
 const getDateLocale = (lang: Language) => {

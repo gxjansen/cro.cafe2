@@ -8,6 +8,8 @@ Sitemap: https://cro.cafe/sitemap-index.xml
 Disallow: /color-test/
 Disallow: /color-demo/
 Disallow: /test-*/
+Disallow: /*-test/
+Disallow: /dark-mode-test/
 Disallow: /_*/
 
 # Block API endpoints

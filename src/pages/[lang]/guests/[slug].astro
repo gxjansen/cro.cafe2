@@ -132,13 +132,9 @@ const profilePicUrl = guest.data.imageUrl || `/images/guests/${guestSlug}.jpeg`;
 const title = `${guestName} - CRO.CAFE Podcast`;
 const description = guestBio.substring(0, 160);
 
-// Generate hreflang URLs for languages where guest appears
-const hreflang: Record<Language, string> = {
-  en: `https://cro.cafe/en/guests/${guestSlug}/`,
-  nl: `https://cro.cafe/nl/guests/${guestSlug}/`,
-  de: `https://cro.cafe/de/guests/${guestSlug}/`,
-  es: `https://cro.cafe/es/guests/${guestSlug}/`
-};
+// Since we have a global guest page, set canonical to that and don't use hreflang
+// This prevents duplicate content issues
+const hreflang = undefined;
 
 // Get LinkedIn URL from various sources
 const linkedInUrl = guestWithLinkedIn?.linkedInData?.url || 
@@ -152,7 +148,7 @@ const linkedInUrl = guestWithLinkedIn?.linkedInData?.url ||
   title={title}
   description={description}
   language={language}
-  canonical={`https://cro.cafe/${language}/guests/${guestSlug}/`}
+  canonical={`https://cro.cafe/guests/${guestSlug}/`}
   hreflang={hreflang}
   ogImage={profilePicUrl}
 >

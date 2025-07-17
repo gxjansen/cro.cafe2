@@ -65,8 +65,10 @@ export default defineConfig({
         // Exclude redirect pages and test pages from sitemap
         return !page.includes('/color-test') && 
                !page.includes('/test-') &&
+               !page.includes('-test') &&
                !page.includes('/_') &&
-               !page.includes('/api/');
+               !page.includes('/api/') &&
+               !page.includes('/404');
       },
       customPages: [
         // Add any custom pages that might not be auto-discovered
