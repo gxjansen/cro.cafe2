@@ -92,6 +92,13 @@
 # These must come BEFORE the generic subdomain redirects to take precedence
 # Generated dynamically based on actual episode slugs - run 'npm run generate-redirects'
 
+# Episode 26: Wie KI die Zukunft des Marketings verändert mit Niklas Lewanczik
+[[redirects]]
+  from = "https://de.cro.cafe/podcast/wie-ki-die-zukunft-des-marketings-verandert"
+  to = "https://cro.cafe/de/episodes/wie-ki-die-zukunft-des-marketings-verandert-mit-niklas-lewanczik/"
+  status = 301
+  force = true
+
 # Episode 36: #36 CRO-Uplift durch Testing bei Smarketer - mit Jonathan Heinze 
 [[redirects]]
   from = "https://de.cro.cafe/podcast/cro-uplift-durch-testing-bei-smarketer-mit-jonathan-heinze"
@@ -204,6 +211,13 @@
   status = 301
   force = true
 
+# Dutch guest redirects must come before generic wildcard
+[[redirects]]
+  from = "https://nl.cro.cafe/gast/*"
+  to = "https://cro.cafe/guests/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://nl.cro.cafe/*"
   to = "https://cro.cafe/nl/:splat"
@@ -217,6 +231,13 @@
   status = 301
   force = true
 
+# German guest redirects must come before generic wildcard
+[[redirects]]
+  from = "https://de.cro.cafe/gast/*"
+  to = "https://cro.cafe/guests/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://de.cro.cafe/*"
   to = "https://cro.cafe/de/:splat"
@@ -227,6 +248,13 @@
 [[redirects]]
   from = "https://es.cro.cafe/"
   to = "https://cro.cafe/es/"
+  status = 301
+  force = true
+
+# Spanish guest redirects must come before generic wildcard
+[[redirects]]
+  from = "https://es.cro.cafe/invitado/*"
+  to = "https://cro.cafe/guests/:splat"
   status = 301
   force = true
 
@@ -432,6 +460,11 @@
 # ============================================================================
 # COMMON VARIATIONS AND SEO REDIRECTS
 # ============================================================================
+
+[[redirects]]
+  from = "/live"
+  to = "/about/"
+  status = 301
 
 [[redirects]]
   from = "/shows"
