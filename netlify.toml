@@ -552,7 +552,7 @@
 
 [[redirects]]
   from = "/twitter"
-  to = "https://twitter.com/crocafe"
+  to = "/about/"
   status = 301
 
 [[redirects]]
