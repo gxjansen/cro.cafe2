@@ -16,37 +16,9 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
 // Set response status to 404
 Astro.response.status = 404;
 
-// Track 404 in Sentry with proper context
+// Track 404 in Sentry (simplified)
 if (typeof Sentry !== 'undefined') {
-  // Use withScope to set transaction context
-  Sentry.withScope((scope) => {
-    // Set transaction name
-    scope.setTransactionName('404 Page Not Found');
-    
-    // Set tags
-    scope.setTags({
-      type: '404',
-      url: url.href,
-      pathname: pathname,
-      referrer: Astro.request.headers.get('referer') || 'direct',
-      'http.status_code': '404',
-      'http.method': Astro.request.method,
-      'http.url': url.href,
-      'http.path': pathname,
-    });
-    
-    // Set context
-    scope.setContext('http', {
-      method: Astro.request.method,
-      url: url.href,
-      query_string: url.search,
-      user_agent: Astro.request.headers.get('user-agent'),
-      status_code: 404,
-    });
-    
-    // Capture the message
-    Sentry.captureMessage(`404 Page Not Found: ${pathname}`, 'warning');
-  });
+  Sentry.captureMessage(`404 Page Not Found: ${pathname}`, 'warning');
 }
 ---
 
@@ -75,6 +47,12 @@ if (typeof Sentry !== 'undefined') {
         >
           Go to Homepage
         </a>
+        <button 
+          id="error-button"
+          class="inline-block px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors ml-4"
+        >
+          Test Sentry Error
+        </button>
         <div class="mt-4">
           <a 
             href="/episodes/" 
@@ -95,63 +73,25 @@ if (typeof Sentry !== 'undefined') {
   </main>
   
   <script>
-    // Client-side 404 tracking for Sentry
-    import * as Sentry from '@sentry/browser';
+    // Test error button handler
+    function handleClick() {
+      throw new Error('This is a test error from 404 page');
+    }
     
-    // Ensure Sentry is initialized and track 404
     document.addEventListener('DOMContentLoaded', () => {
-      // Debug logging
-      console.log('404 page loaded:', window.location.pathname);
-      console.log('Sentry available:', typeof Sentry !== 'undefined');
+      // Add test error button handler
+      const errorButton = document.querySelector("#error-button");
+      if (errorButton) {
+        errorButton.addEventListener("click", handleClick);
+      }
       
-      // Track 404 on client-side with proper context
-      if (typeof window !== 'undefined' && Sentry && Sentry.captureMessage) {
-        console.log('Sending 404 to Sentry...');
-        
-        // Use withScope to set transaction context
-        Sentry.withScope((scope) => {
-          // Set transaction name
-          scope.setTransactionName('404 Page Not Found');
-          
-          // Set tags
-          scope.setTags({
-            type: '404-client',
-            url: window.location.href,
-            pathname: window.location.pathname,
-            referrer: document.referrer || 'direct',
-            'http.status_code': '404',
-            'navigation.type': 'page_load',
-          });
-          
-          // Set context
-          scope.setContext('browser', {
-            name: navigator.userAgent,
-            url: window.location.href,
-            pathname: window.location.pathname,
-          });
-          
-          // Set user context if available
-          scope.setContext('request', {
-            url: window.location.href,
-            method: 'GET',
-            referrer: document.referrer,
-          });
-          
-          // Capture the message
-          Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
-          console.log('404 sent to Sentry');
-        });
-        
-        // Also capture as an exception for better visibility
-        Sentry.captureException(new Error(`404 Page Not Found: ${window.location.pathname}`), {
-          tags: {
-            type: '404-exception',
-            pathname: window.location.pathname,
-          },
-          level: 'warning',
-        });
-      } else {
-        console.error('Sentry not available for 404 tracking');
+      // Track 404 page view
+      console.log('404 page loaded:', window.location.pathname);
+      
+      // Simple error capture for 404
+      if (typeof Sentry !== 'undefined') {
+        Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
+        console.log('404 sent to Sentry');
       }
     });
   </script>
