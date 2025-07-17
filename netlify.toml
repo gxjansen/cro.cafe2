@@ -131,94 +131,456 @@
   force = true
 
 # ============================================================================
-# PATH REWRITES FOR LEGACY URLS
-# ============================================================================
-# Handle old podcast URLs and redirect to new episode structure
-
-# German podcast URLs
-[[redirects]]
-  from = "https://de.cro.cafe/podcast/*"
-  to = "https://cro.cafe/de/episodes/:splat"
-  status = 301
-  force = true
-
-# Dutch podcast URLs  
-[[redirects]]
-  from = "https://nl.cro.cafe/podcast/*"
-  to = "https://cro.cafe/nl/episodes/:splat"
-  status = 301
-  force = true
-
-# Spanish podcast URLs
-[[redirects]]
-  from = "https://es.cro.cafe/podcast/*"
-  to = "https://cro.cafe/es/episodes/:splat"
-  status = 301
-  force = true
-
-# ============================================================================
-# GUEST PROFILE REDIRECTS
+# WEBFLOW TO ASTRO MIGRATION REDIRECTS
 # ============================================================================
 
-# German guest URLs
+# Main section redirects
 [[redirects]]
-  from = "https://de.cro.cafe/guest/*"
-  to = "https://cro.cafe/guests/:splat"
+  from = "/podcast"
+  to = "/en/episodes/"
   status = 301
-  force = true
 
-# Dutch guest URLs
 [[redirects]]
-  from = "https://nl.cro.cafe/guest/*"
-  to = "https://cro.cafe/guests/:splat"
+  from = "/podcast/*"
+  to = "/en/episodes/"
   status = 301
-  force = true
 
-# Spanish guest URLs  
 [[redirects]]
-  from = "https://es.cro.cafe/guest/*"
-  to = "https://cro.cafe/guests/:splat"
+  from = "/guest"
+  to = "/en/guests/"
   status = 301
-  force = true
+
+[[redirects]]
+  from = "/guest/*"
+  to = "/all/guests/"
+  status = 301
+
+# Events and Books pages removed - redirect to about
+[[redirects]]
+  from = "/event"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/event/*"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/events"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/events/*"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/book"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/book/*"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/books"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/books/*"
+  to = "/about/"
+  status = 301
 
 # ============================================================================
-# COMMON PAGE REDIRECTS
+# LANGUAGE-SPECIFIC PATH REDIRECTS
 # ============================================================================
 
-# About pages (global, no language prefix needed)
+# Dutch paths
 [[redirects]]
-  from = "https://de.cro.cafe/about"
-  to = "https://cro.cafe/about/"
+  from = "/nl/podcast"
+  to = "/nl/episodes/"
   status = 301
-  force = true
 
 [[redirects]]
-  from = "https://nl.cro.cafe/about"
-  to = "https://cro.cafe/about/"
+  from = "/nl/podcast/*"
+  to = "/nl/episodes/"
   status = 301
-  force = true
 
 [[redirects]]
-  from = "https://es.cro.cafe/about"
-  to = "https://cro.cafe/about/"
+  from = "/nl/guest"
+  to = "/nl/guests/"
   status = 301
-  force = true
-
-# Subscribe pages redirect to language-specific versions
-[[redirects]]
-  from = "https://de.cro.cafe/subscribe"
-  to = "https://cro.cafe/de/subscribe/"
-  status = 301
-  force = true
 
 [[redirects]]
-  from = "https://nl.cro.cafe/subscribe"
-  to = "https://cro.cafe/nl/subscribe/"
+  from = "/nl/guest/*"
+  to = "/guests/:splat"
   status = 301
-  force = true
 
 [[redirects]]
-  from = "https://es.cro.cafe/subscribe"
-  to = "https://cro.cafe/es/subscribe/"
+  from = "/nl/event"
+  to = "/about/"
   status = 301
-  force = true
+
+[[redirects]]
+  from = "/nl/events"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/nl/book"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/nl/books"
+  to = "/about/"
+  status = 301
+
+# German paths
+[[redirects]]
+  from = "/de/podcast"
+  to = "/de/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/de/podcast/*"
+  to = "/de/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/de/guest"
+  to = "/de/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/de/guest/*"
+  to = "/guests/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/de/event"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/de/events"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/de/book"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/de/books"
+  to = "/about/"
+  status = 301
+
+# Spanish paths
+[[redirects]]
+  from = "/es/podcast"
+  to = "/es/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/es/podcast/*"
+  to = "/es/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/es/guest"
+  to = "/es/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/es/guest/*"
+  to = "/guests/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/es/event"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/es/events"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/es/book"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/es/books"
+  to = "/about/"
+  status = 301
+
+# ============================================================================
+# COMMON VARIATIONS AND SEO REDIRECTS
+# ============================================================================
+
+[[redirects]]
+  from = "/shows"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/podcasts"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/episodes"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/guests"
+  to = "/all/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/host"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/hosts"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/contact"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/about-us"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/team"
+  to = "/about/"
+  status = 301
+
+# Newsletter/subscription variations
+[[redirects]]
+  from = "/newsletter"
+  to = "/en/subscribe/"
+  status = 301
+
+[[redirects]]
+  from = "/signup"
+  to = "/en/subscribe/"
+  status = 301
+
+# Privacy and legal
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy-policy/"
+  status = 301
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms-of-service/"
+  status = 301
+
+[[redirects]]
+  from = "/legal"
+  to = "/privacy-policy/"
+  status = 301
+
+# Search variations
+[[redirects]]
+  from = "/find"
+  to = "/search/"
+  status = 301
+
+[[redirects]]
+  from = "/search-episodes"
+  to = "/search/"
+  status = 301
+
+[[redirects]]
+  from = "/search-guests"
+  to = "/search/"
+  status = 301
+
+# Common typos and variations
+[[redirects]]
+  from = "/podcast-episodes"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/all-episodes"
+  to = "/all/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/all-guests"
+  to = "/all/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/guest-profiles"
+  to = "/all/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/speaker"
+  to = "/all/guests/"
+  status = 301
+
+[[redirects]]
+  from = "/speakers"
+  to = "/all/guests/"
+  status = 301
+
+# ============================================================================
+# WEBFLOW-SPECIFIC LEGACY PATHS
+# ============================================================================
+
+[[redirects]]
+  from = "/blog"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/news"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/news/*"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/resources"
+  to = "/en/episodes/"
+  status = 301
+
+[[redirects]]
+  from = "/resources/*"
+  to = "/en/episodes/"
+  status = 301
+
+# Webflow forms and dynamic content
+[[redirects]]
+  from = "/forms/*"
+  to = "/en/subscribe/"
+  status = 301
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/en/subscribe/"
+  status = 301
+
+[[redirects]]
+  from = "/thanks"
+  to = "/en/subscribe/"
+  status = 301
+
+[[redirects]]
+  from = "/success"
+  to = "/en/subscribe/"
+  status = 301
+
+# Catch-all for old Webflow paths
+[[redirects]]
+  from = "/w/*"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/cms/*"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/collection/*"
+  to = "/all/episodes/"
+  status = 301
+
+# ============================================================================
+# RSS FEED REDIRECTS
+# ============================================================================
+
+[[redirects]]
+  from = "/feed.xml"
+  to = "https://feeds.transistor.fm/cro-cafe"
+  status = 301
+
+[[redirects]]
+  from = "/rss"
+  to = "https://feeds.transistor.fm/cro-cafe"
+  status = 301
+
+[[redirects]]
+  from = "/feeds"
+  to = "https://feeds.transistor.fm/cro-cafe"
+  status = 301
+
+[[redirects]]
+  from = "/rss.xml"
+  to = "https://feeds.transistor.fm/cro-cafe"
+  status = 301
+
+# ============================================================================
+# SOCIAL MEDIA REDIRECTS
+# ============================================================================
+
+[[redirects]]
+  from = "/linkedin"
+  to = "https://linkedin.com/company/cro-cafe"
+  status = 301
+
+[[redirects]]
+  from = "/twitter"
+  to = "https://twitter.com/crocafe"
+  status = 301
+
+[[redirects]]
+  from = "/youtube"
+  to = "https://youtube.com/@crocafe"
+  status = 301
+
+# ============================================================================
+# SPECIFIC GUEST PROFILE REDIRECTS
+# ============================================================================
+# These guests exist and need proper redirects
+
+[[redirects]]
+  from = "/guest/sander-volbeda"
+  to = "/guests/sander-volbeda/"
+  status = 301
+
+[[redirects]]
+  from = "/guest/craig-sullivan"
+  to = "/guests/craig-sullivan/"
+  status = 301
+
+[[redirects]]
+  from = "/guest/peep-laja"
+  to = "/guests/peep-laja/"
+  status = 301
+
+[[redirects]]
+  from = "/guest/tim-ash"
+  to = "/guests/tim-ash/"
+  status = 301
