@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 // import AstroPWA from '@vite-pwa/astro';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
-import sentry from '@sentry/astro';
+// import sentry from '@sentry/astro';
 // import astroBrokenLinksChecker from 'astro-broken-link-checker';
 // import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 import { config } from 'dotenv';
@@ -25,26 +25,27 @@ export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
     // guestImageValidation(),
-    sentry({
-      dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
-      replaysSessionSampleRate: 0,
-      replaysOnErrorSampleRate: 0,
-      // Setting this option to true will send default PII data to Sentry.
-      // For example, automatic IP address collection on events
-      sendDefaultPii: true,
-      sourceMapsUploadOptions: {
-        project: "crocafe-dev",
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        disable: !process.env.SENTRY_AUTH_TOKEN || !isProduction, // Only enable when token exists and in production
-      },
-      // Also disable release creation when no auth token is available
-      release: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
-        name: process.env.NETLIFY_BUILD_BASE ? `${process.env.NETLIFY_SITE_ID}-${Date.now()}` : 'local-build'
-      } : {
-        create: false,
-        deploy: false
-      },
-    }),
+    // Temporarily disable Sentry to isolate build issue
+    // sentry({
+    //   dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
+    //   replaysSessionSampleRate: 0,
+    //   replaysOnErrorSampleRate: 0,
+    //   // Setting this option to true will send default PII data to Sentry.
+    //   // For example, automatic IP address collection on events
+    //   sendDefaultPii: true,
+    //   sourceMapsUploadOptions: {
+    //     project: "crocafe-dev",
+    //     authToken: process.env.SENTRY_AUTH_TOKEN,
+    //     disable: !process.env.SENTRY_AUTH_TOKEN || !isProduction, // Only enable when token exists and in production
+    //   },
+    //   // Also disable release creation when no auth token is available
+    //   release: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
+    //     name: process.env.NETLIFY_BUILD_BASE ? `${process.env.NETLIFY_SITE_ID}-${Date.now()}` : 'local-build'
+    //   } : {
+    //     create: false,
+    //     deploy: false
+    //   },
+    // }),
     react(),
     mdx(),
     // PWA temporarily disabled to debug homepage reload issue
