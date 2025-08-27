@@ -103,7 +103,16 @@
 
 /* Section Layout and Dividers */
 .section-container {
-  @apply py-20 lg:py-24 relative;
+  @apply py-16 lg:py-20 relative;
+  /* Reduced padding and use internal spacing instead of gaps */
+}
+
+/* Seamless section layout - no gaps between sections */
+.section-seamless {
+  @apply py-16 lg:py-20 relative;
+  /* No margin, sections connect directly */
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* Automatic alternating backgrounds for all direct children sections */
@@ -115,6 +124,18 @@
   @apply bg-gray-50/50 dark:bg-gray-800/30;
 }
 
+/* Ensure sections are connected without gaps */
+.auto-alternate-sections {
+  /* Remove any default spacing */
+  gap: 0;
+}
+
+.auto-alternate-sections > * {
+  /* Ensure no margins between sections */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* Override for sections that should maintain specific backgrounds */
 .auto-alternate-sections > .hero-section,
 .auto-alternate-sections > .cta-section {
@@ -124,9 +145,11 @@
 
 /* Single, consistent section divider */
 .section-divider {
-  @apply relative w-full my-0;
-  height: 80px;
+  @apply relative w-full;
+  height: 0;
+  margin: 0;
   overflow: hidden;
+  /* Make dividers invisible to eliminate gaps */
 }
 
 .section-divider::before {
