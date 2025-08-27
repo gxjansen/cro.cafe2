@@ -37,6 +37,13 @@ export default defineConfig({
         authToken: process.env.SENTRY_AUTH_TOKEN,
         disable: !process.env.SENTRY_AUTH_TOKEN || !isProduction, // Only enable when token exists and in production
       },
+      // Also disable release creation when no auth token is available
+      release: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
+        name: process.env.NETLIFY_BUILD_BASE ? `${process.env.NETLIFY_SITE_ID}-${Date.now()}` : 'local-build'
+      } : {
+        create: false,
+        deploy: false
+      },
     }),
     react(),
     mdx(),
