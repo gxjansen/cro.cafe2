@@ -32,11 +32,10 @@ export default defineConfig({
       // Setting this option to true will send default PII data to Sentry.
       // For example, automatic IP address collection on events
       sendDefaultPii: true,
-      sourceMapsUploadOptions: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
+      sourceMapsUploadOptions: {
         project: "crocafe-dev",
         authToken: process.env.SENTRY_AUTH_TOKEN,
-      } : {
-        disable: true, // Disable source map upload in local dev
+        disable: !process.env.SENTRY_AUTH_TOKEN || !isProduction, // Only enable when token exists and in production
       },
     }),
     react(),
