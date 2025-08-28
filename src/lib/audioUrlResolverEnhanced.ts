@@ -74,7 +74,8 @@ export class AudioUrlResolverEnhanced {
   private async resolveViaFetchHead(url: string): Promise<string> {
     // Try to get the redirect URL using a HEAD request
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 5000)
+    // Increase timeout to 10 seconds for better reliability
+    const timeout = setTimeout(() => controller.abort(), 10000)
 
     try {
       const response = await fetch(url, {
@@ -113,7 +114,7 @@ export class AudioUrlResolverEnhanced {
       const timeout = setTimeout(() => {
         img.src = ''
         reject(new Error('Image preload timeout'))
-      }, 5000)
+      }, 10000)
 
       img.onload = () => {
         clearTimeout(timeout)

@@ -16,8 +16,10 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
 // Set response status to 404
 Astro.response.status = 404;
 
-// Track 404 in Sentry (simplified)
-if (typeof Sentry !== 'undefined') {
+// Only log unexpected 404s to Sentry - not the 404 page itself
+// The 404 page being accessed directly is normal behavior
+if (typeof Sentry !== 'undefined' && pathname !== '/404' && pathname !== '/404/') {
+  // Only capture if it looks like a broken link, not a direct access to 404 page
   Sentry.captureMessage(`404 Page Not Found: ${pathname}`, 'warning');
 }
 ---

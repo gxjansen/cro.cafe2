@@ -203,10 +203,22 @@ export default defineConfig({
       target: 'es2022',
       // Optimize CSS
       cssCodeSplit: true,
-      // Minify more aggressively
-      minify: 'esbuild',
-      // Generate source maps for debugging but keep them external
-      sourcemap: false,
+      // Use terser for better minification compatibility
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          // Keep function names to avoid minification issues
+          keep_fnames: true,
+          // Don't drop console logs in development
+          drop_console: false
+        },
+        mangle: {
+          // Don't mangle function names
+          keep_fnames: true
+        }
+      },
+      // Enable source maps for production debugging
+      sourcemap: 'hidden',
       // Additional optimizations for better performance
       reportCompressedSize: false,
       // Preload module directive for better module loading

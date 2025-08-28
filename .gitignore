@@ -11,6 +11,7 @@ coordination.md
 phase_*.md
 architecture/
 n8n-workflows/
+.serena/
 
 # Development Documentation - Keep Only Implementation Docs
 devdocs/

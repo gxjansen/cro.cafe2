@@ -87,6 +87,57 @@
     Cache-Control = "public, max-age=604800"
 
 # ============================================================================
+# HIGH-PRIORITY REDIRECTS (Based on Sentry 404 analysis - Aug 2025)
+# ============================================================================
+# These redirect common 404 patterns to correct paths
+
+# Fix missing trailing slash on subscribe page
+[[redirects]]
+  from = "/subscribe"
+  to = "/subscribe/"
+  status = 301
+  force = true
+
+# Redirect old /all/guests/ to English guests page (37 occurrences)
+[[redirects]]
+  from = "/all/guests/"
+  to = "/en/guests/"
+  status = 301
+  force = true
+
+# Redirect language-specific guest pages without trailing slash
+[[redirects]]
+  from = "/en/guests"
+  to = "/en/guests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/de/guests"
+  to = "/de/guests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/nl/guests"
+  to = "/nl/guests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/es/guests"
+  to = "/es/guests/"
+  status = 301
+  force = true
+
+# Redirect root guest page to English (common pattern)
+[[redirects]]
+  from = "/guests"
+  to = "/en/guests/"
+  status = 301
+  force = true
+
+# ============================================================================
 # GERMAN EPISODE SPECIFIC REDIRECTS (Episode 36+ have number prefixes)
 # ============================================================================
 # These must come BEFORE the generic subdomain redirects to take precedence

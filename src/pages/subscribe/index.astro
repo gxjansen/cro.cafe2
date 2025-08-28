@@ -212,16 +212,16 @@ if (typeof window !== 'undefined') {
     isNavigatingAway = true;
   });
   
-  // Intercept any potential JavaScript redirects
-  const originalLocation = window.location;
-  Object.defineProperty(window, 'location', {
-    get() { return originalLocation; },
-    set(value) {
-      console.warn('JavaScript redirect attempted:', value);
-      // Allow the redirect but log it
-      originalLocation.href = value;
-    }
-  });
+  // Log any JavaScript redirects without intercepting
+  // Note: Removed Object.defineProperty to avoid conflicts
+  // Track navigation using the History API instead
+  if (window.history && window.history.pushState) {
+    const originalPushState = window.history.pushState;
+    window.history.pushState = function() {
+      console.log('Navigation via pushState:', arguments[2]);
+      return originalPushState.apply(window.history, arguments);
+    };
+  }
 }
 </script>
 
