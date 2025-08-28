@@ -15,13 +15,6 @@ if (!pathname.endsWith('/') && !pathname.match(/\.[a-zA-Z0-9]+$/) && !pathname.s
 
 // Set response status to 404
 Astro.response.status = 404;
-
-// Only log unexpected 404s to Sentry - not the 404 page itself
-// The 404 page being accessed directly is normal behavior
-if (typeof Sentry !== 'undefined' && pathname !== '/404' && pathname !== '/404/') {
-  // Only capture if it looks like a broken link, not a direct access to 404 page
-  Sentry.captureMessage(`404 Page Not Found: ${pathname}`, 'warning');
-}
 ---
 
 <BaseLayout 
@@ -70,13 +63,37 @@ if (typeof Sentry !== 'undefined' && pathname !== '/404' && pathname !== '/404/'
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Track 404 page view
-      console.log('404 page loaded:', window.location.pathname);
+      // Enhanced 404 tracking with detailed context
+      const pathname = window.location.pathname;
+      const search = window.location.search || '';
+      const referrer = document.referrer || 'direct';
       
-      // Simple error capture for 404
+      console.log('404 page loaded:', {
+        url: pathname + search,
+        referrer: referrer,
+        userAgent: navigator.userAgent
+      });
+      
+      // Enhanced 404 capture with context
       if (typeof Sentry !== 'undefined') {
-        Sentry.captureMessage(`404 Page Not Found: ${window.location.pathname}`, 'warning');
-        console.log('404 sent to Sentry');
+        Sentry.captureMessage(`404 Page Not Found: ${pathname}`, {
+          level: 'warning',
+          tags: {
+            error_type: '404_not_found_client',
+            has_referrer: referrer !== 'direct' && referrer !== '',
+            is_bot: /bot|crawler|spider/i.test(navigator.userAgent)
+          },
+          extra: {
+            requested_url: pathname + search,
+            referrer: referrer,
+            user_agent: navigator.userAgent,
+            host: window.location.host,
+            timestamp: new Date().toISOString(),
+            screen_size: `${screen.width}x${screen.height}`,
+            language: navigator.language
+          }
+        });
+        console.log('Enhanced 404 sent to Sentry with referrer:', referrer);
       }
     });
   </script>
