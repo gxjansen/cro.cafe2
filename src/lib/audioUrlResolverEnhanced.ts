@@ -188,12 +188,13 @@ export class AudioUrlResolverEnhanced {
       timestamp: Date.now()
     })
 
-    // Persist to localStorage
+    // Persist to localStorage (browser-only)
+    if (typeof window === 'undefined') return
     try {
       const cacheData = Array.from(this.cache.entries())
       localStorage.setItem('audioUrlResolverCache', JSON.stringify(cacheData))
-    } catch (error) {
-      console.warn('Failed to persist cache:', error)
+    } catch {
+      // Silently fail if localStorage is not available
     }
   }
 
@@ -201,6 +202,7 @@ export class AudioUrlResolverEnhanced {
    * Load cache from localStorage
    */
   loadCache(): void {
+    if (typeof window === 'undefined') return
     try {
       const stored = localStorage.getItem('audioUrlResolverCache')
       if (stored) {
@@ -213,14 +215,20 @@ export class AudioUrlResolverEnhanced {
           }
         })
       }
-    } catch (error) {
-      console.warn('Failed to load cache:', error)
+    } catch {
+      // Silently fail if localStorage is not available
     }
   }
 
   clearCache(): void {
     this.cache.clear()
-    localStorage.removeItem('audioUrlResolverCache')
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('audioUrlResolverCache')
+      } catch {
+        // Silently fail if localStorage is not available
+      }
+    }
   }
 }
 

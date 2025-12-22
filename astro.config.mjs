@@ -1,54 +1,18 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-// import AstroPWA from '@vite-pwa/astro';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
-// import sentry from '@sentry/astro';
-// import astroBrokenLinksChecker from 'astro-broken-link-checker';
-// import { guestImageValidation } from './src/integrations/guest-image-validation.ts';
 import { config } from 'dotenv';
 
 // Load environment variables from .env file
 config();
 
-// Check if we're in a real Netlify deployment (not local Netlify CLI)
-// DEPLOY_URL is set in both local Netlify CLI and real deployments
-// NETLIFY_BUILD_BASE is only set in real deployments
-// For local builds, disable Sentry uploads to avoid auth issues
-const isRealNetlifyDeployment = process.env.NETLIFY_BUILD_BASE && process.env.DEPLOY_URL;
-const isProduction = isRealNetlifyDeployment || process.env.CI === 'true';
-
-// Sentry is only enabled for real Netlify deployments (when NETLIFY_BUILD_BASE is set)
-
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://cro.cafe',
   integrations: [
-    // guestImageValidation(),
-    // Temporarily disable Sentry to isolate build issue
-    // sentry({
-    //   dsn: "https://25fc8e72182ba318ffdde5b0e9913c22@o4509612269830144.ingest.de.sentry.io/4509612285558864",
-    //   replaysSessionSampleRate: 0,
-    //   replaysOnErrorSampleRate: 0,
-    //   // Setting this option to true will send default PII data to Sentry.
-    //   // For example, automatic IP address collection on events
-    //   sendDefaultPii: true,
-    //   sourceMapsUploadOptions: {
-    //     project: "crocafe-dev",
-    //     authToken: process.env.SENTRY_AUTH_TOKEN,
-    //     disable: !process.env.SENTRY_AUTH_TOKEN || !isProduction, // Only enable when token exists and in production
-    //   },
-    //   // Also disable release creation when no auth token is available
-    //   release: process.env.SENTRY_AUTH_TOKEN && isProduction ? {
-    //     name: process.env.NETLIFY_BUILD_BASE ? `${process.env.NETLIFY_SITE_ID}-${Date.now()}` : 'local-build'
-    //   } : {
-    //     create: false,
-    //     deploy: false
-    //   },
-    // }),
     react(),
     mdx(),
-    // PWA temporarily disabled to debug homepage reload issue
     sitemap({
       i18n: {
         defaultLocale: 'en',
@@ -79,24 +43,6 @@ export default defineConfig({
         'https://cro.cafe/all/guests/'
       ]
     })
-    // Broken links checker - commented out for production build
-    // astroBrokenLinksChecker({
-    //   logFilePath: './broken-links.log',
-    //   checkExternalLinks: false, // Start with internal only, enable external later
-    //   cache: true,
-    //   parallel: true,
-    //   excludeUrls: [
-    //     // Exclude known external URLs that might be flaky
-    //     /^https?:\/\/linkedin\.com/,
-    //     /^https?:\/\/twitter\.com/,
-    //     /^https?:\/\/youtube\.com/,
-    //     // Exclude anchor links
-    //     /^#/,
-    //     // Exclude mailto and tel links
-    //     /^mailto:/,
-    //     /^tel:/
-    //   ]
-    // })
   ],
   // Redirects are handled in netlify.toml for better performance and subdomain support
   redirects: {},
@@ -110,8 +56,9 @@ export default defineConfig({
         hostname: '**.transistor.fm'
       }
     ],
-    // Enable responsive images (Astro 5.10 stable feature)
-    experimentalLayout: true,
+    // Enable responsive images (Astro 5.10+ stable feature)
+    // Options: 'constrained' | 'fixed' | 'full-width' | 'none'
+    layout: 'constrained',
     // Default image quality
     quality: 85,
     // Default image formats (prioritize modern formats)
@@ -119,14 +66,7 @@ export default defineConfig({
     // Enable eager loading for above-the-fold images
     loading: 'eager'
   },
-  // Disable Astro's automatic i18n routing since we're managing routes manually
-  // i18n: {
-  //   defaultLocale: 'en',
-  //   locales: ['en', 'nl', 'de', 'es'],
-  //   routing: {
-  //     prefixDefaultLocale: false
-  //   }
-  // },
+  // Note: i18n routing is managed manually via [lang] routes
   output: 'static',
   trailingSlash: 'always',
   prefetch: {
@@ -197,8 +137,8 @@ export default defineConfig({
           }
         }
       },
-      // Increase chunk size warning limit
-      chunkSizeWarningLimit: 1000,
+      // Chunk size warning limit (Vite default is 500)
+      chunkSizeWarningLimit: 500,
       // Enable modern JavaScript features
       target: 'es2022',
       // Optimize CSS
@@ -209,8 +149,9 @@ export default defineConfig({
         compress: {
           // Keep function names to avoid minification issues
           keep_fnames: true,
-          // Don't drop console logs in development
-          drop_console: false
+          // Drop console logs in production for smaller bundles
+          drop_console: true,
+          drop_debugger: true
         },
         mangle: {
           // Don't mangle function names

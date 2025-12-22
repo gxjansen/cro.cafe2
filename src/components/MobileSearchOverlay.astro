@@ -104,8 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const recentContainer = document.getElementById(`${searchId}-recent`)
   const closeBtn = overlay.querySelector('.close-search')
 
+  // HTML escape function to prevent XSS
+  function escapeHtml(str) {
+    if (!str) return ''
+    const div = document.createElement('div')
+    div.textContent = str
+    return div.innerHTML
+  }
+
   // Recent searches from localStorage
-  let recentSearches = JSON.parse(localStorage.getItem('croRecent') || '[]')
+  let recentSearches = []
+  try {
+    recentSearches = JSON.parse(localStorage.getItem('croRecent') || '[]')
+    // Validate that it's an array of strings
+    if (!Array.isArray(recentSearches)) recentSearches = []
+    recentSearches = recentSearches.filter(s => typeof s === 'string').slice(0, 10)
+  } catch (e) {
+    recentSearches = []
+  }
 
   // Update recent searches display
   function updateRecentSearches() {
@@ -117,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recentContainer.parentElement.classList.remove('hidden')
     recentContainer.innerHTML = recentSearches.slice(0, 5).map(term => `
         <button class="recent-term px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-          ${term}
+          ${escapeHtml(term)}
         </button>
       `).join('')
 
@@ -235,9 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         episodeResults.forEach(episode => {
           html += `
-              <a href="${basePath}/episodes/${episode.slug}/" class="block min-h-[44px] p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <h4 class="font-medium text-gray-900 dark:text-white mb-1">${episode.title}</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${episode.description}</p>
+              <a href="${basePath}/episodes/${escapeHtml(episode.slug)}/" class="block min-h-[44px] p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <h4 class="font-medium text-gray-900 dark:text-white mb-1">${escapeHtml(episode.title)}</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${escapeHtml(episode.description)}</p>
             </a>
           `
         })
@@ -260,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `
           <div class="pt-4">
             <a href="${searchPath}?q=${encodeURIComponent(query)}" class="inline-flex items-center touch-target-inline px-2 text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">
-              View all results for "${query}" →
+              View all results for "${escapeHtml(query)}" →
           </a>
         </div>
       </div>

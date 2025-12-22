@@ -196,6 +196,14 @@ const languages = [
 const searchData = JSON.parse(document.getElementById('search-data')?.textContent || '{}');
 const languages = JSON.parse(document.getElementById('languages-data')?.textContent || '[]');
 
+// HTML escape function to prevent XSS
+function escapeHtml(str) {
+  if (!str) return ''
+  const div = document.createElement('div')
+  div.textContent = str
+  return div.innerHTML
+}
+
 // Search state
 let currentFilters = {
   contentType: 'all', // 'all', 'episodes', 'guests'
@@ -316,7 +324,7 @@ function displayResults(episodes, guests, query) {
   noResults.classList.add('hidden')
   resultsContainer.classList.remove('hidden')
 
-  resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${query}"`
+  resultsCount.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''} for "${escapeHtml(query)}"`
 
   // Update live region for screen readers
   const searchStatus = document.getElementById('search-status')
@@ -329,21 +337,21 @@ function displayResults(episodes, guests, query) {
   if (episodes.length > 0) {
     episodesSection.classList.remove('hidden')
     episodesResults.innerHTML = episodes.map(episode => `
-        <a href="/${episode.language}/episodes/${episode.slug}/" class="block">
+        <a href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.slug)}/" class="block">
           <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 h-full cursor-pointer">
             <div class="flex items-start justify-between mb-3">
               <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
-                ${episode.language.toUpperCase()}
+                ${escapeHtml(episode.language.toUpperCase())}
               </span>
               <span class="text-sm text-gray-500 dark:text-gray-400">
-                S${episode.season}E${episode.episode}
+                S${escapeHtml(String(episode.season))}E${escapeHtml(String(episode.episode))}
               </span>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              ${episode.title}
+              ${escapeHtml(episode.title)}
             </h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
-              ${episode.description}
+              ${escapeHtml(episode.description)}
             </p>
             <div class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
               Listen now
@@ -365,23 +373,23 @@ function displayResults(episodes, guests, query) {
   if (guests.length > 0) {
     guestsSection.classList.remove('hidden')
     guestsResults.innerHTML = guests.map(guest => `
-        <a href="/guests/${guest.slug}/" class="block">
+        <a href="/guests/${escapeHtml(guest.slug)}/" class="block">
           <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center h-full cursor-pointer">
             <div class="mb-4">
-              <img 
-                src="/images/guests/${guest.slug}.jpeg" 
-                alt="${guest.name}"
+              <img
+                src="/images/guests/${escapeHtml(guest.slug)}.jpeg"
+                alt="${escapeHtml(guest.name)}"
                 class="w-20 h-20 mx-auto rounded-full object-cover grayscale"
                 onerror="this.src='/images/placeholder-guest.jpg'"
               />
             </div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              ${guest.name}
+              ${escapeHtml(guest.name)}
             </h3>
-            ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${guest.company}</p>` : ''}
-            ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${guest.role}</p>` : ''}
+            ${guest.company ? `<p class="text-gray-600 dark:text-gray-400 text-sm mb-2">${escapeHtml(guest.company)}</p>` : ''}
+            ${guest.role ? `<p class="text-gray-500 dark:text-gray-500 text-xs mb-3">${escapeHtml(guest.role)}</p>` : ''}
             <div class="text-xs text-gray-500 dark:text-gray-400">
-              ${guest.episodeCount} episode${guest.episodeCount !== 1 ? 's' : ''}
+              ${escapeHtml(String(guest.episodeCount))} episode${guest.episodeCount !== 1 ? 's' : ''}
             </div>
           </article>
         </a>
