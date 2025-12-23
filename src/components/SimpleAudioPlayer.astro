@@ -182,7 +182,15 @@ class SimpleAudioPlayer {
 
   private togglePlayPause() {
     if (this.audio.paused) {
-      this.audio.play()
+      const playPromise = this.audio.play()
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          // Handle autoplay restrictions or other play errors
+          console.warn('Audio playback failed:', error.message)
+          // Reset button state if play failed
+          this.updatePlayPauseButton(false)
+        })
+      }
     } else {
       this.audio.pause()
     }
@@ -340,13 +348,18 @@ class SimpleAudioPlayer {
 }
 
 // Initialize all audio players on the page
+// Note: With Astro View Transitions, both DOMContentLoaded and astro:page-load fire on initial load
+// We use a single initialization check to prevent double-initialization
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.simple-audio-player').forEach(player => {
-    new SimpleAudioPlayer(player as HTMLElement)
+    if (!player.hasAttribute('data-initialized')) {
+      new SimpleAudioPlayer(player as HTMLElement)
+      player.setAttribute('data-initialized', 'true')
+    }
   })
 })
 
-// Re-initialize after view transitions
+// Re-initialize after view transitions (for SPA navigation)
 document.addEventListener('astro:page-load', () => {
   document.querySelectorAll('.simple-audio-player').forEach(player => {
     if (!player.hasAttribute('data-initialized')) {
