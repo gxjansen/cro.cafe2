@@ -139,8 +139,12 @@
 /* Override for sections that should maintain specific backgrounds */
 .auto-alternate-sections > .hero-section,
 .auto-alternate-sections > .cta-section {
-  /* These sections keep their custom backgrounds */
-  background: inherit !important;
+  /* These sections keep their custom backgrounds - but not in dark mode */
+}
+
+/* Hero section dark mode: solid dark blue background */
+.dark .auto-alternate-sections > .hero-section {
+  background: #0f172a !important; /* slate-900 - dark blue */
 }
 
 /* Single, consistent section divider */
