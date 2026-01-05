@@ -68,19 +68,19 @@ const tagline = translations[language];
       <p class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-8">
         {tagline}
       </p>
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-6 lg:gap-8 items-center">
+      <div class="flex flex-wrap justify-center items-center gap-8 lg:gap-12">
         {sortedBrands.map((brand) => {
           const brandKey = brand.id.toLowerCase().replace('.json', '');
           const brandImage = brandImages[brandKey];
 
           return brandImage ? (
-            <div class="flex items-center justify-center p-2 overflow-visible">
+            <div class="flex items-center justify-center">
               <Image
                 src={brandImage}
                 alt={`${brand.data.name} - CRO.CAFE partner`}
-                width={150}
-                height={60}
-                class="max-h-10 max-w-full w-auto h-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 dark:invert dark:grayscale dark:opacity-80 dark:hover:invert dark:hover:grayscale dark:hover:opacity-100 transition-all duration-300"
+                width={120}
+                height={48}
+                class="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 dark:invert dark:grayscale dark:opacity-80 dark:hover:invert dark:hover:grayscale dark:hover:opacity-100 transition-all duration-300"
                 loading="lazy"
                 format="webp"
                 quality={85}
