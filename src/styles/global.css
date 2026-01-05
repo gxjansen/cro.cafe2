@@ -142,9 +142,9 @@
   /* These sections keep their custom backgrounds - but not in dark mode */
 }
 
-/* Hero section dark mode: use gray-800 to match other sections */
-.dark .auto-alternate-sections > .hero-section {
-  background: #111827 !important; /* gray-800 - dark with blue undertone */
+/* Dark mode: all sections use consistent gray-900 background - no alternating */
+.dark .auto-alternate-sections > * {
+  background: #030712 !important; /* gray-900 */
 }
 
 /* Single, consistent section divider */
