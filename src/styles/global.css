@@ -198,10 +198,7 @@
 }
 
 .dark .hero-section::after {
-  background: linear-gradient(to bottom, 
-    transparent 0%, 
-    theme(colors.gray.900) 100%
-  );
+  display: none;
 }
 
 /* Footer divider - appears on all pages */
