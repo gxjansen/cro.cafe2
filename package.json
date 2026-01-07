@@ -73,7 +73,7 @@
     "@astrojs/react": "^4.3.0",
     "@astrojs/rss": "^4.0.9",
     "@astrojs/sitemap": "^3.2.1",
-    "@modelcontextprotocol/sdk": "^1.12.3",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "@nanostores/react": "^1.0.0",
     "@sentry/astro": "^9.35.0",
     "@tailwindcss/vite": "^4.1.11",
