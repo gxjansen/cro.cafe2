@@ -184,7 +184,12 @@ class SimpleAudioPlayer {
     if (this.audio.paused) {
       const playPromise = this.audio.play()
       if (playPromise !== undefined) {
-        playPromise.catch((error) => {
+        playPromise.then(() => {
+          // Track play with Umami
+          if (typeof umami !== 'undefined') {
+            umami.track('audio-play', { target: this.episodeId })
+          }
+        }).catch((error) => {
           // Handle autoplay restrictions or other play errors
           console.warn('Audio playback failed:', error.message)
           // Reset button state if play failed
@@ -192,6 +197,10 @@ class SimpleAudioPlayer {
         })
       }
     } else {
+      // Track pause with Umami
+      if (typeof umami !== 'undefined') {
+        umami.track('audio-pause', { target: this.episodeId, value: Math.floor(this.audio.currentTime).toString() })
+      }
       this.audio.pause()
     }
   }
@@ -208,10 +217,18 @@ class SimpleAudioPlayer {
 
   private skip(seconds: number) {
     this.audio.currentTime = Math.max(0, Math.min(this.audio.duration, this.audio.currentTime + seconds))
+    // Track skip with Umami
+    if (typeof umami !== 'undefined') {
+      umami.track('audio-skip', { target: this.episodeId, value: seconds > 0 ? 'forward' : 'backward' })
+    }
   }
 
   private setPlaybackRate() {
     this.audio.playbackRate = parseFloat(this.speedControl.value)
+    // Track speed change with Umami
+    if (typeof umami !== 'undefined') {
+      umami.track('audio-speed', { target: this.episodeId, value: this.speedControl.value })
+    }
     this.saveState()
   }
 
@@ -268,6 +285,10 @@ class SimpleAudioPlayer {
 
   private handleEnded() {
     this.updatePlayPauseButton(false)
+    // Track completion with Umami
+    if (typeof umami !== 'undefined') {
+      umami.track('audio-complete', { target: this.episodeId })
+    }
     // Clear saved position when episode ends
     localStorage.removeItem(`audio-position-${this.episodeId}`)
   }

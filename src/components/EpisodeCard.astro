@@ -60,10 +60,12 @@ const instanceId = `episode-${episode.id || episode.slug}-${Math.random().toStri
   data-lang={episode.data.language}
   aria-labelledby={`${instanceId}-title`}
 >
-  <a 
-    href={episodeUrl} 
+  <a
+    href={episodeUrl}
     class="block"
     aria-describedby={`${instanceId}-meta`}
+    data-umami-event="episode-click"
+    data-umami-event-target={episode.slug || episode.id}
   >
     <div class="relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
       <div class={classes.imageContainer}>

@@ -175,6 +175,8 @@ const getLanguageUrl = (langCode: Language | 'global') => {
             role="menuitem"
             aria-current={isCurrent ? 'page' : undefined}
             data-language-link={lang.code}
+            data-umami-event="lang-change"
+            data-umami-event-value={lang.code}
           >
             <span class="mr-3 text-lg" aria-hidden="true">{lang.flag}</span>
             <div class="flex-1">

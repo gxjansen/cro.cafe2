@@ -73,7 +73,15 @@ Astro.response.status = 404;
         referrer: referrer,
         userAgent: navigator.userAgent
       });
-      
+
+      // Track with Umami
+      if (typeof umami !== 'undefined') {
+        umami.track('404-page', {
+          url: pathname,
+          referrer: referrer || 'direct',
+        });
+      }
+
       // Enhanced 404 capture with context
       if (typeof Sentry !== 'undefined') {
         Sentry.captureMessage(`404 Page Not Found: ${pathname}`, {

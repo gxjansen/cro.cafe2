@@ -636,6 +636,65 @@ Workflow automation platform:
    - Deploy with Netlify MCP
    - Update data with NocoDB MCP
 
+## Umami Analytics Event Tracking
+
+This site uses a self-hosted Umami Analytics instance at `https://u.a11y.nl` for privacy-friendly analytics.
+
+### Event Naming Convention
+Events follow the pattern: `{category}-{action}` with optional `data-umami-event-target` for specifics.
+
+**Categories:**
+- `nav` - Navigation elements (header, footer)
+- `cta` - Call-to-action buttons
+- `external` - External links (social, podcast platforms)
+- `episode` - Episode card interactions
+- `audio` - Audio player interactions
+- `theme` - Theme toggle
+- `language` - Language switcher
+
+### Implemented Events
+
+**Navigation (Header.astro, Footer.astro):**
+| Event Name | Target | Location |
+|------------|--------|----------|
+| `nav-click` | `home-logo`, `episodes`, `guests`, `about` | Header nav |
+| `external-click` | `spotify`, `apple-podcasts`, `youtube`, `linkedin`, `twitter` | Footer/social links |
+
+**Episode Cards (EpisodeCard.astro):**
+| Event Name | Target | Location |
+|------------|--------|----------|
+| `episode-click` | Episode slug | Episode card link |
+| `episode-platform` | Platform name | Platform listen buttons |
+
+**Audio Player (SimpleAudioPlayer.astro):**
+| Event Name | Target/Value | Tracks |
+|------------|--------------|--------|
+| `audio-play` | Episode slug | Play button clicks |
+| `audio-pause` | Episode slug | Pause button clicks |
+| `audio-seek` | Seek position % | Seeking behavior |
+| `audio-complete` | Episode slug | Completed episodes |
+
+**Other Components:**
+| Event Name | Target | Component |
+|------------|--------|-----------|
+| `theme-toggle` | `dark`/`light` | ThemeToggle.astro |
+| `language-switch` | `en`/`de`/`es`/`nl` | LanguageSwitcher.astro |
+| `cta-click` | Button context | CTA buttons |
+
+### Adding New Events
+
+**Static elements (links, buttons):**
+```html
+<a href="/page" data-umami-event="nav-click" data-umami-event-target="page-name">
+```
+
+**Dynamic tracking (JavaScript):**
+```javascript
+if (typeof umami !== 'undefined') {
+  umami.track('event-name', { target: 'value' });
+}
+```
+
 ## Performance & Accessibility
 - Implement proper loading states for async operations
 - Use proper semantic HTML elements
