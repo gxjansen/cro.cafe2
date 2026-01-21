@@ -12,6 +12,7 @@ phase_*.md
 architecture/
 n8n-workflows/
 .serena/
+CLAUDE.md
 
 # Development Documentation - Keep Only Implementation Docs
 devdocs/
