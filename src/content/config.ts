@@ -26,6 +26,7 @@ const episodeSchema = z.object({
   shareUrl: z.string().url().optional(),
   embedHtml: z.string().optional(),
   downloads_total: z.number().optional(),
+  youtubeUrl: z.string().url().optional(),
 
   // Content flags
   featured: z.boolean().default(false),
