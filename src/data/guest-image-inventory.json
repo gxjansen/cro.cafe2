@@ -2063,5 +2063,12 @@
     "fallbackUrl": "/images/guests/generated/abbey-schoenberg-initials.svg",
     "initials": "AS",
     "name": "Abbey Schoenberg"
+  },
+  "jim-sterne": {
+    "hasImage": true,
+    "imageUrl": "/images/guests/jim-sterne.png",
+    "fallbackUrl": "/images/guests/generated/jim-sterne-initials.svg",
+    "initials": "JS",
+    "name": "Jim Sterne"
   }
 }
