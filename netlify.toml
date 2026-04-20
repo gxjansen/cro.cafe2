@@ -1,8 +1,8 @@
 [build]
   command = "npm run build:netlify"
   publish = "dist"
-  # Ignore build command for dependabot PRs and content-only changes
-  ignore = "git log -1 --pretty=%B | grep -q '^dependabot' || git diff HEAD^ HEAD --quiet -- ':!src/content/'"
+  # Ignore build command for dependabot PRs only
+  ignore = "git log -1 --pretty=%B | grep -q '^dependabot'"
 
 [build.environment]
   NODE_VERSION = "20"
