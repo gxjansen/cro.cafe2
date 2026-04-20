@@ -14,7 +14,7 @@ const episodeSchema = z.object({
   // Enhanced metadata
   slug: z.string().optional(),
   language: z.enum(['en', 'nl', 'de', 'es']),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().optional(),
 
   // Episode details
   hosts: z.array(z.string()).default([]),
