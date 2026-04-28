@@ -2070,5 +2070,12 @@
     "fallbackUrl": "/images/guests/generated/jim-sterne-initials.svg",
     "initials": "JS",
     "name": "Jim Sterne"
+  },
+  "slobodan-manic": {
+    "hasImage": true,
+    "imageUrl": "/images/guests/slobodan-manic.png",
+    "fallbackUrl": "/images/guests/generated/slobodan-manic-initials.svg",
+    "initials": "SM",
+    "name": "Slobodan Manic"
   }
 }
