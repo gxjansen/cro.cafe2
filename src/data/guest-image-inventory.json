@@ -2073,9 +2073,9 @@
   },
   "slobodan-manic": {
     "hasImage": true,
-    "imageUrl": "/images/guests/slobodan-manic.png",
+    "imageUrl": "/images/guests/slobodan-manic.jpg",
     "fallbackUrl": "/images/guests/generated/slobodan-manic-initials.svg",
     "initials": "SM",
-    "name": "Slobodan Manic"
+    "name": "Slobodan Manić"
   }
 }
