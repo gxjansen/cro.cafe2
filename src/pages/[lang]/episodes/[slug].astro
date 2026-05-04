@@ -10,6 +10,7 @@ import RelatedEpisodes from '../../../components/RelatedEpisodes.astro';
 import EpisodeNavigation from '../../../components/EpisodeNavigation.astro';
 import SimpleAudioPlayer from '../../../components/SimpleAudioPlayer.astro';
 import { getEpisodeBySlug, getGuestBySlug, getGuestUrl, getHostBySlug } from '../../../utils/content';
+import { renderEpisodeDescription } from '../../../utils/markdown';
 import type { Language } from '../../../types';
 
 export async function getStaticPaths() {
@@ -313,7 +314,7 @@ const getDateLocale = (lang: Language) => {
           <!-- Episode Description -->
           <div class="prose prose-lg dark:prose-invert max-w-none mb-lg content-spacing">
             <h2 class="text-2xl lg:text-3xl">{t.description}</h2>
-            <p style="white-space: pre-line;">{episode.data.description}</p>
+            <div style="white-space: pre-line;" set:html={renderEpisodeDescription(episode.data.description)} />
           </div>
 
           <!-- Guest(s) and Host(s) Section for Mobile -->
