@@ -30,7 +30,7 @@ const actors = [
   ...guests.map(guest => ({
     "@type": "Person", 
     "name": guest.data.name,
-    "url": `https://cro.cafe/all/guests/${guest.data.slug || guest.slug}/`
+    "url": `https://cro.cafe/all/guests/${guest.data.slug || guest.id}/`
   }))
 ];
 
@@ -77,7 +77,7 @@ const schema = {
   "@type": "PodcastEpisode",
   "name": episode.data.title,
   "description": episode.data.description,
-  "url": `https://cro.cafe/${language}/episodes/${episode.slug}/`,
+  "url": `https://cro.cafe/${language}/episodes/${episode.id}/`,
   "datePublished": episode.data.pubDate.toISOString(),
   "inLanguage": languageMap[language],
   "episodeNumber": episode.data.episode,

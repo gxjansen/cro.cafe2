@@ -33,7 +33,7 @@ const currentIndex = allEpisodes.findIndex(ep => {
   }
   // Try matching by slug
   const currentSlug = currentEpisode.data.slug || currentEpisode.slug;
-  const epSlug = ep.data.slug || ep.slug;
+  const epSlug = ep.data.slug || ep.id;
   if (currentSlug && epSlug && currentSlug === epSlug) {
     return true;
   }

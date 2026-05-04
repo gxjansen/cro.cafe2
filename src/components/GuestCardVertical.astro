@@ -23,7 +23,7 @@ const translations = {
 
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
-  const slug = guest.data.slug || guest.slug;
+  const slug = guest.data.slug || guest.id;
   if (!lang) {
     // Use the first available language for the guest
     const firstLang = guest.data.languages[0];

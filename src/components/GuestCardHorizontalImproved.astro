@@ -14,7 +14,7 @@ const { guest, language, size = 'medium', showEpisodeCount = false } = Astro.pro
 
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, lang?: Language): string {
-  const slug = guest.data.slug || guest.slug;
+  const slug = guest.data.slug || guest.id;
   if (!lang) {
     const firstLang = guest.data.languages[0];
     return firstLang === 'en' ? `/guests/${slug}/` : `/${firstLang}/guests/${slug}/`;

@@ -156,7 +156,7 @@ export async function getValidPlatformsForLanguage(language: Language) {
 export async function getEpisodeBySlug(slug: string, language: Language) {
   const episodes = await getCollection('episodes')
   return episodes.find(episode =>
-    (episode.data.slug === slug || episode.slug === slug) &&
+    (episode.data.slug === slug || episode.id === slug) &&
     episode.data.language === language &&
     episode.data.status === 'published'
   )
@@ -165,7 +165,7 @@ export async function getEpisodeBySlug(slug: string, language: Language) {
 // Get guest by slug
 export async function getGuestBySlug(slug: string) {
   const guests = await getCollection('guests')
-  return guests.find(guest => (guest.data.slug || guest.slug) === slug)
+  return guests.find(guest => (guest.data.slug || guest.id) === slug)
 }
 
 // Get related episodes for a guest (now returns episodes from ALL languages)
@@ -239,13 +239,13 @@ export function formatDuration(duration: string): string {
 // Generate episode URL
 export function getEpisodeUrl(episode: { data: { language: Language; slug?: string }; slug?: string }): string {
   const { language } = episode.data
-  const slug = episode.data.slug || episode.slug
+  const slug = episode.data.slug || episode.id
   return `/${language}/episodes/${slug}/`
 }
 
 // Generate guest URL with optional language parameter
 export function getGuestUrl(guest: { data: { slug?: string }; slug?: string }, language?: Language): string {
-  const slug = guest.data.slug || guest.slug
+  const slug = guest.data.slug || guest.id
   return language ? `/guests/${slug}/?lang=${language}` : `/guests/${slug}/`
 }
 
@@ -362,7 +362,7 @@ export async function getLanguageCounts() {
   }
 
   for (const guest of guests) {
-    const guestSlug = guest.data.slug || guest.slug
+    const guestSlug = guest.data.slug || guest.id
 
     // Only count guests that have episodes
     if (guest.data.episodes && guest.data.episodes.length > 0) {
@@ -412,7 +412,7 @@ export async function getHostsByLanguage(language: Language) {
 
   // Filter hosts who appear in episodes for this language
   return hosts.filter(host => {
-    const hostSlug = host.data?.slug || host.slug
+    const hostSlug = host.data?.slug || host.id
     return hostsInLanguage.has(hostSlug)
   })
 }
@@ -449,7 +449,7 @@ export function getGuestImageUrl(guestSlug: string): string {
 // Get host by slug
 export async function getHostBySlug(slug: string) {
   const hosts = await getCollection('hosts')
-  return hosts.find(host => (host.data.slug || host.slug) === slug)
+  return hosts.find(host => (host.data.slug || host.id) === slug)
 }
 
 // Get languages that a host appears in
@@ -583,7 +583,7 @@ export async function getRelatedEpisodes(
 
   // Score episodes based on relevance
   const scoredEpisodes = episodes
-    .filter(ep => ep.data.slug !== currentEpisode.data.slug && ep.slug !== currentEpisode.slug)
+    .filter(ep => ep.data.slug !== currentEpisode.data.slug && ep.id !== currentEpisode.slug)
     .map(ep => {
       let score = 0
 
@@ -625,7 +625,7 @@ export async function getGuestOtherEpisodes(
 ) {
   const episodes = await getGuestEpisodes(guestSlug, language)
   return episodes
-    .filter(ep => ep.data.slug !== currentEpisodeSlug && ep.slug !== currentEpisodeSlug)
+    .filter(ep => ep.data.slug !== currentEpisodeSlug && ep.id !== currentEpisodeSlug)
     .slice(0, limit)
 }
 
@@ -641,7 +641,7 @@ export async function getGuestsFromSameCompany(
   return guests
     .filter(guest =>
       guest.data.company === company &&
-      (guest.data.slug || guest.slug) !== currentGuestSlug
+      (guest.data.slug || guest.id) !== currentGuestSlug
     )
     .slice(0, limit)
 }
@@ -814,7 +814,7 @@ export async function getGuestWithLinkedIn(slug: string): Promise<GuestWithLinke
       website: guest.data.website,
       linkedin: guest.data.linkedin,
       imageUrl: guest.data.imageUrl, // Include the imageUrl field!
-      slug: guest.data.slug || guest.slug, // Include slug for easier access
+      slug: guest.data.slug || guest.id, // Include slug for easier access
       linkedInData,
       linkedInRaw: hasLinkedInFields ? linkedInRaw : undefined
     }
@@ -837,7 +837,7 @@ export async function getGuestsWithLinkedIn(language: Language): Promise<GuestWi
     // Transform each guest to include LinkedIn data
     const guestsWithLinkedIn = await Promise.all(
       contentGuests.map(async (guest) => {
-        const slug = guest.data.slug || guest.slug
+        const slug = guest.data.slug || guest.id
         return getGuestWithLinkedIn(slug)
       })
     )
@@ -875,7 +875,7 @@ export async function getGuestsByCurrentCompany(
     // Transform guests and filter by company
     const guestsWithLinkedIn = await Promise.all(
       guests.map(async (guest) => {
-        const slug = guest.data.slug || guest.slug
+        const slug = guest.data.slug || guest.id
         return getGuestWithLinkedIn(slug)
       })
     )
@@ -908,7 +908,7 @@ export async function getRecentlyUpdatedGuests(limit = 10): Promise<GuestWithLin
     // Transform guests and filter those with sync dates
     const guestsWithLinkedIn = await Promise.all(
       allGuests.map(async (guest) => {
-        const slug = guest.data.slug || guest.slug
+        const slug = guest.data.slug || guest.id
         return getGuestWithLinkedIn(slug)
       })
     )

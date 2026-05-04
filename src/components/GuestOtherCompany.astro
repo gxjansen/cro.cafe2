@@ -16,7 +16,7 @@ const { guest, language, limit = 4 } = Astro.props;
 const companyGuests = guest.data.company 
   ? await getGuestsFromSameCompany(
       guest.data.company, 
-      guest.data.slug || guest.slug,
+      guest.data.slug || guest.id,
       limit
     )
   : [];

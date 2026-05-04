@@ -24,7 +24,7 @@ export async function getStaticPaths() {
     const langEpisodes = episodes.filter(ep => ep.data.language === lang && ep.data.status === 'published');
     for (const episode of langEpisodes) {
       paths.push({
-        params: { lang, slug: episode.data.slug || episode.slug },
+        params: { lang, slug: episode.data.slug || episode.id },
         props: { episode, language: lang }
       });
     }
@@ -198,7 +198,7 @@ const getDateLocale = (lang: Language) => {
   <Header language={language} currentPath={`/${language}/episodes/`} />
   <Breadcrumb 
     language={language} 
-    currentPath={`/${language}/episodes/${episode.data.slug || episode.slug}/`}
+    currentPath={`/${language}/episodes/${episode.data.slug || episode.id}/`}
     episodeTitle={episode.data.title}
   />
   

@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         episodeResults.forEach(episode => {
           html += `
-              <a href="${basePath}/episodes/${escapeHtml(episode.slug)}/" class="block min-h-[44px] p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <a href="${basePath}/episodes/${escapeHtml(episode.id)}/" class="block min-h-[44px] p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <h4 class="font-medium text-gray-900 dark:text-white mb-1">${escapeHtml(episode.title)}</h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${escapeHtml(episode.description)}</p>
             </a>

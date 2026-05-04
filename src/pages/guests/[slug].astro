@@ -19,13 +19,13 @@ export async function getStaticPaths() {
   
   // Generate a single path for each guest
   return guests.map(guest => ({
-    params: { slug: guest.data.slug || guest.slug },
+    params: { slug: guest.data.slug || guest.id },
     props: { guest }
   }));
 }
 
 const { guest } = Astro.props;
-const guestSlug = guest.data.slug || guest.slug;
+const guestSlug = guest.data.slug || guest.id;
 
 // Detect language from URL parameter or default to English
 const urlLang = Astro.url.searchParams.get('lang') as Language;

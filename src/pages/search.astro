@@ -10,7 +10,7 @@ const guests = await getCollection('guests');
 // Create search index data for all languages
 const searchData = {
   episodes: episodes.map(episode => ({
-    slug: episode.slug,
+    slug: episode.id,
     title: episode.data.title,
     description: episode.data.description,
     language: episode.data.language,
@@ -21,7 +21,7 @@ const searchData = {
     pubDate: episode.data.pubDate
   })),
   guests: guests.map(guest => ({
-    slug: guest.data.slug || guest.slug,
+    slug: guest.data.slug || guest.id,
     name: guest.data.name,
     bio: guest.data.bio,
     company: guest.data.company,
@@ -337,7 +337,7 @@ function displayResults(episodes, guests, query) {
   if (episodes.length > 0) {
     episodesSection.classList.remove('hidden')
     episodesResults.innerHTML = episodes.map(episode => `
-        <a href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.slug)}/" class="block">
+        <a href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.id)}/" class="block">
           <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 h-full cursor-pointer">
             <div class="flex items-start justify-between mb-3">
               <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
@@ -373,11 +373,11 @@ function displayResults(episodes, guests, query) {
   if (guests.length > 0) {
     guestsSection.classList.remove('hidden')
     guestsResults.innerHTML = guests.map(guest => `
-        <a href="/guests/${escapeHtml(guest.slug)}/" class="block">
+        <a href="/guests/${escapeHtml(guest.id)}/" class="block">
           <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center h-full cursor-pointer">
             <div class="mb-4">
               <img
-                src="/images/guests/${escapeHtml(guest.slug)}.jpeg"
+                src="/images/guests/${escapeHtml(guest.id)}.jpeg"
                 alt="${escapeHtml(guest.name)}"
                 class="w-20 h-20 mx-auto rounded-full object-cover grayscale"
                 onerror="this.src='/images/placeholder-guest.jpg'"

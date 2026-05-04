@@ -24,7 +24,7 @@ export async function getStaticPaths() {
     for (const lang of languages) {
       if (guest.data.languages.includes(lang)) {
         paths.push({
-          params: { lang, slug: guest.data.slug || guest.slug },
+          params: { lang, slug: guest.data.slug || guest.id },
           props: { guest, language: lang }
         });
       }
@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 }
 
 const { guest, language } = Astro.props;
-const guestSlug = guest.data.slug || guest.slug;
+const guestSlug = guest.data.slug || guest.id;
 
 // Get guest data with LinkedIn enrichment
 const guestWithLinkedIn = await getGuestWithLinkedIn(guestSlug);

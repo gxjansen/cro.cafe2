@@ -30,7 +30,7 @@ const guests = allGuests.filter(guest =>
 // Create search index data
 const searchData = {
   episodes: episodes.map(episode => ({
-    slug: episode.slug,
+    slug: episode.id,
     title: episode.data.title,
     description: episode.data.description,
     language: episode.data.language,
@@ -41,7 +41,7 @@ const searchData = {
     pubDate: episode.data.pubDate
   })),
   guests: guests.map(guest => ({
-    slug: guest.data.slug || guest.slug,
+    slug: guest.data.slug || guest.id,
     name: guest.data.name,
     bio: guest.data.bio,
     company: guest.data.company,
@@ -423,7 +423,7 @@ function displayResults(episodes, guests, query) {
             </span>
           </div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            <a href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.slug)}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            <a href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.id)}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${escapeHtml(episode.title)}
             </a>
           </h3>
@@ -431,7 +431,7 @@ function displayResults(episodes, guests, query) {
             ${escapeHtml(episode.description)}
           </p>
           <a
-            href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.slug)}/"
+            href="/${escapeHtml(episode.language)}/episodes/${escapeHtml(episode.id)}/"
             class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
           >
             ${escapeHtml(t.listenNow)}
@@ -455,14 +455,14 @@ function displayResults(episodes, guests, query) {
         <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center">
           <div class="mb-4">
             <img
-              src="/images/guests/${escapeHtml(guest.slug)}.jpeg"
+              src="/images/guests/${escapeHtml(guest.id)}.jpeg"
               alt="${escapeHtml(guest.name)}"
               class="w-20 h-20 mx-auto rounded-full object-cover grayscale"
               onerror="this.src='/images/placeholder-guest.jpg'"
             />
           </div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            <a href="/${escapeHtml(language)}/guests/${escapeHtml(guest.slug)}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            <a href="/${escapeHtml(language)}/guests/${escapeHtml(guest.id)}/" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               ${escapeHtml(guest.name)}
             </a>
           </h3>

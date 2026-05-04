@@ -8,7 +8,7 @@ export async function getStaticPaths() {
   return episodes
     .filter(episode => episode.data.language === 'en' && episode.data.status === 'published')
     .map(episode => ({
-      params: { slug: episode.data.slug || episode.slug }
+      params: { slug: episode.data.slug || episode.id }
     }));
 }
 
