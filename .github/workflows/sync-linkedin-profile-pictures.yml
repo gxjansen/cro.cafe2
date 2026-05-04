@@ -23,7 +23,7 @@ on:
     - cron: '0 2 * * 0'
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   NODE_OPTIONS: '--max-old-space-size=4096'
 
 jobs:
