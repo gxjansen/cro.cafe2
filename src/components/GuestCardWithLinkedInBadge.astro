@@ -22,7 +22,7 @@ const {
 
 // Helper function to get guest URL with optional language parameter
 function getGuestUrl(guest: any, currentLanguage?: Language): string {
-  const slug = guest.data.slug || guest.slug;
+  const slug = guest.data.slug || guest.id;
   return currentLanguage ? `/guests/${slug}/?lang=${currentLanguage}` : `/guests/${slug}/`;
 }
 
@@ -44,7 +44,7 @@ function getGuestImageUrl(guest: any): string | undefined {
   if (guest.data.image) return guest.data.image;
   
   // Construct image path from slug
-  const slug = guest.data.slug || guest.slug;
+  const slug = guest.data.slug || guest.id;
   return `/images/guests/${slug}.webp`;
 }
 

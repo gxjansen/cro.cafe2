@@ -72,7 +72,7 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
                   <button
                     class="inline-flex items-center px-6 py-3 bg-cro-orange hover:bg-cro-orange-dark text-white font-semibold rounded-lg shadow-md transition-colors duration-200 mb-4"
                     data-play-episode
-                    data-episode-id={episode.slug}
+                    data-episode-id={episode.id}
                     data-episode-title={title}
                     data-episode-audio={audioUrl}
                     data-episode-image={imageUrl}
@@ -121,7 +121,7 @@ const { title, description, audioUrl, publishDate, imageUrl } = episode.data;
             <RelatedEpisodes 
               episodes={relatedEpisodes} 
               language={language}
-              currentEpisodeSlug={episode.slug}
+              currentEpisodeSlug={episode.id}
             />
           )}
 

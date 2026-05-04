@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import type { Language } from '../types';
 
@@ -20,7 +20,7 @@ const filteredQuotes = allQuotes
 // Render content for each quote
 const quotes = await Promise.all(
   filteredQuotes.map(async (quote) => {
-    const { Content } = await quote.render();
+    const { Content } = await render(quote);
     return { ...quote, Content };
   })
 );

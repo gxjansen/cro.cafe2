@@ -13,7 +13,7 @@ const { host, language, size = 'medium', showEpisodeCount = false } = Astro.prop
 
 // Helper function to get host URL
 function getHostUrl(host: any): string {
-  const slug = host.data.slug || host.slug;
+  const slug = host.data.slug || host.id;
   return `/hosts/${slug}/`;
 }
 

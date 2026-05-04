@@ -52,7 +52,7 @@ const classes = sizeClasses[size];
 const episodeUrl = getEpisodeUrl(episode);
 
 // Generate unique ID for this component instance
-const instanceId = `episode-${episode.id || episode.slug}-${Math.random().toString(36).substr(2, 9)}`;
+const instanceId = `episode-${episode.id}-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <article 
@@ -65,7 +65,7 @@ const instanceId = `episode-${episode.id || episode.slug}-${Math.random().toStri
     class="block"
     aria-describedby={`${instanceId}-meta`}
     data-umami-event="episode-click"
-    data-umami-event-target={episode.slug || episode.id}
+    data-umami-event-target={episode.id}
   >
     <div class="relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
       <div class={classes.imageContainer}>

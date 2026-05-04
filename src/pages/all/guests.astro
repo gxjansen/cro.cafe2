@@ -22,7 +22,7 @@ const sortedGuests = guestsWithEpisodes.sort((a, b) =>
 
 // Helper function to get guest URL for a specific language
 function getGuestUrl(guest: any, language: Language): string {
-  const slug = guest.data.slug || guest.slug;
+  const slug = guest.data.slug || guest.id;
   return language === 'en' ? `/guests/${slug}/` : `/${language}/guests/${slug}/`;
 }
 ---

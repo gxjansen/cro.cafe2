@@ -1,4 +1,6 @@
-import { defineCollection, z } from 'astro:content'
+import { defineCollection } from 'astro:content'
+import { glob } from 'astro/loaders'
+import { z } from 'astro/zod'
 
 // Episode schema based on NocoDB database structure
 const episodeSchema = z.object({
@@ -183,30 +185,36 @@ const platformSchema = z.object({
   updatedAt: z.string().optional()
 })
 
-// Define collections
+// Use file path (without extension) as the entry ID. This matches Astro v5
+// legacy behavior and keeps IDs unique across language/season directories,
+// even when schema defines a `slug` field with potential collisions.
+const pathBasedId = ({ entry }: { entry: string }) =>
+  entry.replace(/\.(md|mdx|json)$/, '')
+
+// Define collections using the new Astro 6 content layer with explicit loaders
 export const collections = {
   episodes: defineCollection({
-    type: 'content',
+    loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/episodes', generateId: pathBasedId }),
     schema: episodeSchema
   }),
   guests: defineCollection({
-    type: 'content',
+    loader: glob({ pattern: '*.{md,mdx}', base: './src/content/guests', generateId: pathBasedId }),
     schema: guestSchema
   }),
   hosts: defineCollection({
-    type: 'content',
+    loader: glob({ pattern: '*.{md,mdx}', base: './src/content/hosts', generateId: pathBasedId }),
     schema: hostSchema
   }),
   quotes: defineCollection({
-    type: 'content',
+    loader: glob({ pattern: '*.{md,mdx}', base: './src/content/quotes', generateId: pathBasedId }),
     schema: quoteSchema
   }),
   brands: defineCollection({
-    type: 'data',
+    loader: glob({ pattern: '*.json', base: './src/content/brands', generateId: pathBasedId }),
     schema: brandSchema
   }),
   platforms: defineCollection({
-    type: 'data',
+    loader: glob({ pattern: '*.json', base: './src/content/platforms', generateId: pathBasedId }),
     schema: platformSchema
   })
 }

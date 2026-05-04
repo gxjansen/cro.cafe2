@@ -14,7 +14,7 @@ const allHosts = await getAllHosts();
 // Sort hosts in the desired order
 const hostOrder = ['gxjansen', 'ricardotayar', 'michaelwitzenleiter', 'yvonneteufel'];
 const sortedHosts = hostOrder
-  .map(slug => allHosts.find(host => host.slug === slug))
+  .map(slug => allHosts.find(host => host.id === slug))
   .filter(Boolean);
 ---
 

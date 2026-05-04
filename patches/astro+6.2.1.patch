@@ -1,0 +1,14 @@
+diff --git a/node_modules/astro/templates/content/module.mjs b/node_modules/astro/templates/content/module.mjs
+index d3b3171..2210b1b 100644
+--- a/node_modules/astro/templates/content/module.mjs
++++ b/node_modules/astro/templates/content/module.mjs
+@@ -15,7 +15,8 @@ export {
+ 	renderEntry as render,
+ } from 'astro/content/runtime';
+ // TODO: remove in Astro 7
+-export { z } from 'astro/zod';
++import { z as _z } from 'astro/zod';
++export const z = _z;
+ 
+ /* @@LIVE_CONTENT_CONFIG@@ */
+ 
