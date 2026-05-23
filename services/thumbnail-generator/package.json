@@ -10,7 +10,7 @@
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
-    "express": "^4.22.1",
+    "express": "^4.22.2",
     "canvas": "^2.11.2",
     "sharp": "^0.33.0",
     "helmet": "^7.1.0",
