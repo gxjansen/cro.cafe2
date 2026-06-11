@@ -15,7 +15,7 @@
     "sharp": "^0.33.0",
     "helmet": "^7.1.0",
     "cors": "^2.8.5",
-    "joi": "^17.11.0"
+    "joi": "^18.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
