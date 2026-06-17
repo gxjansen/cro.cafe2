@@ -76,7 +76,7 @@
     "@astrojs/sitemap": "^3.7.2",
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@nanostores/react": "^1.0.0",
-    "@sentry/astro": "^9.35.0",
+    "@sentry/astro": "^10.58.0",
     "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
