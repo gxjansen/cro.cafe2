@@ -1,0 +1,351 @@
+Guido (00:00)
+Welcome back to CRO Cafe. It's been a while. I'm your host, Guido Jansen, and this episode is part of a mini-series I'm doing, recording ahead of Space Academy, the event.
+
+which is organized by Experimentation Elite. It's a two day event on practical AI in experimentation. And it's gonna be in May 6 and 7 in London. And my guest today, returning guest is Iqbal Ali. Yeah, we last spoke about five years ago about Bayesian expected loss. Yes. About telling a complete story with data. And in the meantime, you've gone fractional.
+
+Iqbal (00:24)
+Hello.
+
+it five years ago? Wow.
+
+Guido (00:40)
+And you're now building your own tool with Rosada, an AI text mining tool that you coded yourself. And you're also running the hands-on workshop on May 6th for the Space Academy event on building AI workflows with n8n and small models together with Sani. So yeah, welcome back to CRO CAFE Iqbal.
+
+Iqbal (00:40)
+Yes.
+
+Thank you, it's good to be back.
+
+Guido (01:07)
+What have you been up to in the last five years?
+
+Iqbal (01:10)
+man, what have I been up to? I've been working on a whole bunch of comic books, so that's the fun stuff. And then also, I got into, as you mentioned in the beginning, I built Ressada and then off the back of building Ressada I built it like three or four times. As I was learning more and more about AI, the limitations of AI, what AI is good for, the ways of working with AI.
+
+Guido (01:17)
+Yes?
+
+yeah.
+
+Iqbal (01:38)
+and the new development frameworks that go, yeah, yeah, this actually solves a really specific problem that I'm having. And so, yeah, and now just going into using small models and local models and stuff like that. So just kind of, and then at the same time, trying to teach everyone what I've been learning and the insights I've been gathering from these
+
+development frameworks that are at the cutting edge of what AI can do and actually utilize AI to its full extent while mitigating some of the issues like large models, sustainability, token use, wastefulness and stuff like that. So yeah, that's what I've been up to.
+
+Guido (02:27)
+Yeah,
+
+you've been sharing a lot and that's much appreciated by everyone. So thank you for that. Can we expect any of those comic books to show up at the event as well? Are you signing them or?
+
+Iqbal (02:39)
+Yes,
+
+yes, I've got Tech Bro Tales, which I'm going to be bringing to the event. I've got the stack here. And I might be bringing some of my other comic books as well. I'm still debating about that because I've just recently finished Mr. Jones' Smoking Bones, which is like a historical occult mystery. So I might bring that along. It's a bit of a mammoth.
+
+Guido (02:47)
+Awesome.
+
+Iqbal (03:08)
+story so it's going to be like a lot of books to carry about.
+
+Guido (03:10)
+Nice. That is awesome.
+
+Yeah. Well, luckily you also live in London, right? So that's not too far to carry. So there's that. Hey, I was wondering, so you're doing consultancy, you're sharing a lot of what you do with the world, you're building your own AI tool. That's quite a unique combination and also sounds like a very busy combination.
+
+Iqbal (03:17)
+Yes, yes. Not too far to carry, so that's gonna be good. Yeah,
+
+Guido (03:38)
+So how does it actually work for you day to day? Do these three things feed each other or do they compete for your attention?
+
+Iqbal (03:47)
+I want to say that I've got this fluid system where everything just works. I'm really organized. I go in and have my day and everything falls into place and it's all structured. But it's very messy. It's very messy. What I try and do is I try and have some overlap to say like, you know, if I'm doing something, which is why like Tepperotales came along, which is basically I want to do more comic booky stuff, but
+
+let me do something that leads in, actually sort of adds to the AI stuff and with the AI development work, just make sure that I'm doing things in a way that then supports my workshop and teaching sort of stuff. And, you know, when I'm doing something and it works out well, thinking how could this turn into an exercise so I can share this information. So
+
+Little bit of that, but it's still a little bit messy. I'll be honest
+
+Guido (04:51)
+Does the drawing still feel like a hobby side project? It sounds like it's starting to become very serious. Are you still having fun with it?
+
+Iqbal (05:01)
+It's...
+
+Yeah, I try to have fun with it. Like, if it gets too serious, then I kind of, you know, have to try and make myself remember that this is supposed to be fun.
+
+Guido (05:16)
+If the drawing becomes too serious, you can go back to consulting to relax a bit more. It works the other way around as well. Yeah, talk about billing and why they didn't pay their invoices just to relax a bit from, yes. Nice. and so was looking into Rosada for those that don't know, it's an AI text analysis tool, right?
+
+Iqbal (05:21)
+Yes, exactly. I can speak to some clients too, just kind of chill out and relax. Yeah.
+
+Yeah.
+
+Guido (05:41)
+for one of your clients and I quote, it could have five day analysis job down to 30 minutes. So that's very compelling, of course. So what was the problem that got you to build it? it a consulting job? Was it your own challenge that you needed to solve with a tool or what drove building it?
+
+Iqbal (06:01)
+It
+
+was, yes, was consulting where I was just kind of using existing tools to take user feedback and analyze those user feedback for insights and stuff. And I found like, you know, they weren't quite getting the job done. And when I was using the Chat GPT, I found that there were a lot of sort of issues with that. And so I was kind of like, I got into NLP from there.
+
+Guido (06:26)
+Mm-hmm.
+
+Iqbal (06:31)
+and trying to do things for non-AI, just sort of like a, you know, natural language processing. And then, and then just kind of like led into where AI can be used. And the first build was, was using way too many sort of instance or large models and it was very expensive to run. But as I kind of learned some of the process and stuff, just kind of got to using smaller and smaller models, more and more automated.
+
+Guido (06:51)
+Mm-hmm.
+
+Iqbal (07:01)
+processes, building agents, removing agents, replacing them with workflows. yeah, so that was the genesis of it. And it didn't, it wasn't meant to be a product. I was kind of doing it for myself. And then, you know, other people were kind of like saying, that would be useful for me. And so I was trying to figure out how to turn it into a product as well, which is still a little bit of work in progress, but it's getting there.
+
+Guido (07:16)
+Mm-hmm.
+
+It will always remain that way, I'm afraid. Yeah. So did you get into text analysis already before AI or was AI or LMS really the unlock that you needed to get into this?
+
+Iqbal (07:32)
+Yeah, yeah, and they told me about it.
+
+I, I, back in the day, actually, when I was going into uni, I was, I did try to get into uni to do AI. And, back then, they, they just said, no, you're, you're shit. You don't have the right grades. That was rude. You said, no, no.
+
+Guido (08:06)
+That's rude! The uni just told you no. you want to do this? No.
+
+Iqbal (08:11)
+And it's good that they did because I would have been way over my head because when I tried to do this sort of thing afterwards, you know, with machine learning and stuff like that, and I was just trying, failing, trying, failing so many times and then ChatGPT was released and I was kind of like, hey, this makes it easy. And I just kind of like went way overboard and just tried to make it too easy and said, okay, I need to find the middle ground between, you know, machine learning and AI, which is...
+
+which is where I got it. Yeah, so...
+
+Guido (08:42)
+Yeah, nice. And
+
+you already mentioned smaller and smaller models. I most of us just open the chat window, whatever LLM we use, and we just go for the default obvious choices, right? And maybe even when we use tools like NNN, yeah, maybe we're too cautious, say, okay, we need the smartest and strongest model. Maybe Opus, GPT-5, whatever your choice is.
+
+What made you go the other way?
+
+Iqbal (09:14)
+I read Karen Hao's book, Empire of AI, which really opened my to the ethical, sustainable impact of AI.
+
+Guido (09:30)
+I'll link
+
+to that in the show notes. Empire of AI is a really, good book.
+
+Iqbal (09:33)
+Yeah, it's a great book.
+
+Yeah, yeah. And I think it's absolute required reading, I would say, for anybody wanting to do this sort of stuff. And then from there, experimenting. I had already been experimenting with small models, but I sort of went into it with full force. And I saw that the level of improvement in small models were just coming in leaps and bounds.
+
+whereas large language models were kind of stalling, so it hit the scaling wall. And yeah, from there, I just preferred to use small models and then have a variety, knowing that they're never gonna give you the best answer or an accurate answer, but having some variations, some two or three small models give you some output and then use as a jumping off point.
+
+Guido (10:18)
+Mm-hmm.
+
+Iqbal (10:30)
+to then create my own output if it's to do with writing or whatever, that I found was a good fit for me as well. And it's just a lot quicker as well, working with small models.
+
+Guido (10:37)
+Gotcha.
+
+Yeah,
+
+yeah, so I have loved to hear your thoughts about it when I'm working on anything and creating workflows. I mean, I some people, I mean, not to disregard how they are working on it, but a lot of people, see this as an input. There's a huge LLM scripts or prompt that you're giving and then you're hoping for an output. Well, and of course, I also started that way. But I think
+
+Iqbal (11:02)
+Hmm.
+
+Guido (11:07)
+when you're building these workflows more and more, I find myself thinking about, okay, where can I remove AI? I'm starting to reduce AI, right? As much as possible, because in my experience, at least, I feel like the more AI in there, the more variability, the more risk I'm having with this workflow, especially if it's a workflow that you don't just like run once a month, but if you run it a couple of times a day, I mean, even 95 % success rate is not good enough because then you're still...
+
+Iqbal (11:15)
+Hmm.
+
+Guido (11:38)
+running on all of manual stuff or fixing stuff afterwards that the AI didn't catch. Is that something you see as well or how do you deal with that?
+
+Iqbal (11:47)
+100 % something where I see which is what was saying about Rosada it went from a lot of AI use to less and less and less AI use and the same again and it leads into the workshop quite nicely actually because same again as I've been building workflows like with with n8n and whatever is is just trying to see where exactly like you said
+
+Where can I remove AI and replace it with a script?
+
+or with a tool that gives you reliable, consistent results every time and where AI can be used as the glue to decide and to really manipulate information in such a way to go to the next step and stuff like that. I'm just kind of breaking things into smaller and smaller and smaller and smaller tests, nodes and components.
+
+that I find has been the key to getting better output and using less AI and using smaller models with AI as well.
+
+Guido (13:00)
+Yeah, yeah, and also
+
+try to fit as much as possible into a code node or even checking what the AI is doing. I mean, you can, for example, you can ask an AI, output this in JSON, but that's just hoping. There's no guarantee it does, right? Again, maybe it does it in 95 % of the time, but maybe it's not valid JSON. So put a code node afterwards to make sure, hey, this is valid JSON. And if it doesn't, isn't, it's fine to just.
+
+Iqbal (13:05)
+Yes.
+
+Yeah. Yeah.
+
+Guido (13:29)
+and I'll loop it back to the AI and ask it to do it again, but there needs to be some check in there that the AI is producing what you actually want it to produce.
+
+Iqbal (13:34)
+Exactly.
+
+Yeah, and this is where like newer sort of development frameworks like DSPy really clue you into the direction things are headed because a framework like DSPy has no prompts. You don't prompt for your AI output. You just define the output and then you provide a bunch of examples.
+
+Guido (14:00)
+Mmm.
+
+Iqbal (14:03)
+and that's all you do. and then from there you know you're always going to get a output in that specific JSON format because the entire program just kind of like handles that part.
+
+Guido (14:20)
+Gotcha.
+
+Iqbal (14:21)
+And then the examples is where you can kind of manipulate it to get the to work in the way that you want. And then you add some validation steps to say like, OK, it's going to give me some output.
+
+how can I validate that the output is correct? And this isn't some validation that you use throw out to another AI. This is some concrete sort of checks to get some guidance to LLM to say, is this output good?
+
+Is this what I'm looking for? Is this not what I'm looking for? And just to sort of direct it little bit. So yeah, so those are the key sort of things. Yeah, DSPy is output centric thinking is basically a really important thing. Yeah, it makes total sense.
+
+Guido (15:04)
+Gotcha, DSPy, I've never heard of that one. I'll need to look at that.
+
+Yeah. Yeah, makes total sense. Yeah.
+
+Yeah, give, I mean, with prompting in the early days, there was also an example, right? So give the AI a couple of examples of what the output should look like. So it has an idea of what you're expecting. But the more you can put that into code, of course, the better it is for the AI as well, more reliable. Speaking of reliability and getting data, so you also did a series on MCPs, right? Could you explain a bit for someone who is not a developer?
+
+Iqbal (15:34)
+Yeah, exactly.
+
+Yes.
+
+Guido (15:45)
+What does using an MCP in combination with an AI, what does that unlock for us and maybe specifically for experimentation folks?
+
+Iqbal (15:54)
+So this is a problem that had supposedly already been fixed with APIs in that it gives you access to another tool.
+
+that you can then code and access this other tool like a weather app or know bus times or whatever and then you're able to get that information and you're able to then use that information in your app and the idea is that you can you can mix and match all these kind of APIs and then you can build something cool. The problem is is that the there is a little bit of friction
+
+with these APIs, you know, that make it difficult to, or is difficult to figure out, like, what is the call that I'm supposed to make? So there's a little bit of learning there. MCP's, Model Context Protocol, in the simplest terms, what it does is it's a kind of like a...
+
+a tool that's a wrapper around the API that just adds some documentation. So then when the LLM connects to the MCP, it knows, has some context as to what API calls to make. then meaning you don't have to deal with learning, you know, all of the endpoints and how, what sort of format you should be sending data through and what sort of format you'll be receiving data, all that kind of stuff.
+
+So yeah, that's basically the in a nutshell MCPs.
+
+Guido (17:18)
+And how are you using that for experimentation work or data analysis work? Do you have specific tools that you connect your AI still through MCP?
+
+Iqbal (17:26)
+Yeah, so
+
+one of the big problems with MCP is the security aspect. basically, you have MCP tools and those are tools that you add to your Cloud Code or Cloud Cowork and those tools are just there. They're there lying dormant and they could be actioned at any time with the LLM.
+
+which feels a little bit dangerous to me and which is why like there's a growing concern from there's a Red Hat sort of post article about this as well where there's a growing concern about the security implications of having MCP which is probably one of the reasons why it hasn't really taken off big but the way I like to use it is to put in a middleware like an MCPO there's service called MCPO
+
+which takes, and it sounds really crazy, but stick with me, it takes MCPs and it turns them back into an API. But when it turns it back into an API, it does so with really nice documentation, making it very easy to work with. So it fixes a problem with APIs in some ways, where it just basically...
+
+you know, makes the APIs consistent and you've got one place for all your MCPs. And then if you're, if you're connecting to scripts on your laptop or with API services, it's all available from this MCPO service as an API endpoint.
+
+and then you're able to really lock down and use them very purposefully in your n8n workflows, which makes them very secure. yeah, I really like this, that sort of process with working with MCPs, because it really does fix a lot of the problems with APIs and problems with MCPs, and it's kind of like the middle ground.
+
+Guido (19:22)
+Yeah, the problem with MCP in terms of security is not necessarily that if you're using an MCP that everyone can use your API. It's not that someone else gets access, but it's mainly that it's often, well, depending on the server, it's often like a blank slate access to a tool, right? So if you're using the MCP to Gmail, it can basically do anything on your Gmail. It's not a very granular permission while with API.
+
+Iqbal (19:39)
+Yes.
+
+Guido (19:49)
+You could be way more granular in what you want it to be able to do
+
+Iqbal (19:54)
+Exactly, 100 % exactly that. yeah. Said better than I said it.
+
+Guido (19:56)
+Yeah, nice. Yeah, that's
+
+just trying to summarize what you said. But that's an important one. I mean, think MCPs, the way I use that is that when I have something in my chatbot or cloud code, I give it an MCP because I don't know what I'm going to use it for. I just give it access to a tool and I want it to be able to explore and...
+
+Iqbal (20:02)
+Yeah.
+
+Mm-hmm. Yeah.
+
+Guido (20:24)
+Usually it only does things on my command, it's fairly, feels safe-ish to give it a blank slate access still, because I'm just playing around at that point. But to your point, when you build workflows like n8n you build it for a specific purpose. And then it's important that you make sure, especially when there's still an AI around,
+
+They can still make certain decisions. So you don't you don't want a workflow executing a thousand things a day and give it access to something it might not need or doesn't really need access to to begin with to make sure it doesn't Go wild and do something It shouldn't be supposed to
+
+Iqbal (21:09)
+Yeah, it's also very inefficient with tokens as well, because it's constantly... But it is very useful as well, if you're using MCP, to get those API commands, because then you can just ask Claude, okay, give me... What was the API?
+
+you used the API, the command you used and the data that you passed in, what was the structure to do this. And then in a very simple way you've got the very very precise API sort of instructions to then put into n8n.
+
+Guido (21:42)
+Nice, cool. Hey, back to the workshop. You're going May 6th, May 6th in London, full day workshop, same location as the Space Academy event the day after. Who is the event for? Who should join that workshop? What's the target audience?
+
+Iqbal (21:46)
+Yes. May 6th.
+
+Target audience is people who are in charge of rolling out AI. So that's one target audience. The morning is going to be very beneficial for them because they're going to learn where...
+
+you can best apply AI to within your organization, within your projects and stuff like that. And then for the afternoon, which is probably going to be more towards project managers and people who want to dip their toes into n8n is going to be taking those workflows and creating
+
+simple n8n workflows from AI and through conceptual workflows to actual concrete workflows within n8n and get some ideas of the basics and learn some how n8n can actually help your organization whether or not it's a good fit. yeah, it's I'm hoping that it's going to be easy for non-techies. So that's
+
+Guido (23:08)
+Mm-hmm.
+
+Iqbal (23:09)
+that's a group but
+
+Guido (23:10)
+Yep.
+
+Iqbal (23:11)
+yeah getting into some sort of giving them some techie information just the bits that they need in order to get a good idea about how they can apply it to you know their company their organization.
+
+Guido (23:25)
+Gotcha. And do you, you've done this before with direct workshops or consulting in general, where do you see people get stuck most often when trying to build these workflows with AI?
+
+Iqbal (23:32)
+Yes.
+
+It's, I think it's right at the beginning. think people get into an ATEN.
+
+way too quick is what my finding is. And instead is to take a step, exactly what you were saying before actually, in terms of like where can I use AI, where can I not use AI? Because when you go straight into NA 10, you start to just use AI nodes everywhere, agents everywhere, and then it just becomes a mess. Whereas taking a step back and decomposing your work into
+
+to steps and then understanding where AI should be applied and how it should be applied there and where you can use tools instead. And then that way you have a very good sort of mental model about what it is you're going to build before going into an E10.
+
+Guido (24:34)
+Iqbal, our time is already up. Thank you so much for this. So yeah, Iqbal is speaking at Space Academy on May 6 in London, running the workshop. n8n... You speak, you're speaking during the workshop, right? They're gonna stay quiet the day after because then your voice will be gone. So...
+
+Iqbal (24:37)
+okay.
+
+I'm not speaking. I'm not speaking, sorry. I'm speaking to you in the workshop, yeah. Yeah, yeah. I'm gonna say it quiet, yeah.
+
+yeah,
+
+yeah.
+
+Guido (25:03)
+will not be talking at the conference. You'll be there with your comic books, right? So you get everyone to sign, right? But you're giving the workshop together with Sani. So link to the event and link to the workshop will be in the show notes, together with link to Iqbal's LinkedIn page if you want to find him there and Ressada Also be adding links to Karen Hao's Empire of AI.
+
+Iqbal (25:08)
+I'll be there. I'll definitely be there. Yeah. Yeah.
+
+Yes.
+
+Guido (25:29)
+DSPy framework and MCPO, I think was the last one, right? Perfect. Cool. Iqbal, thank you so much. This is CRO CAFE I'm Guido Jansen and see you at the next one. Bye bye.
+
+Iqbal (25:33)
+Yes.
+
+Thanks, Guido
+
+Alright, take care.

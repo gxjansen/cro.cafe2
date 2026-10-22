@@ -4,10 +4,10 @@
   "slug": "rss",
   "iconUrl": "/images/platforms/rss.png",
   "urls": {
-    "en": "https://feeds.transistor.fm/cro-cafe",
-    "nl": "https://feeds.transistor.fm/cro-cafe-nl",
-    "de": "https://feeds.transistor.fm/cro-cafe-deutsch",
-    "es": "https://feeds.transistor.fm/cro-cafe-es"
+    "en": "https://podcasts.gui.do/cro-cafe/feed.xml",
+    "nl": "https://podcasts.gui.do/cro-cafe-nl/feed.xml",
+    "de": "https://podcasts.gui.do/cro-cafe-deutsch/feed.xml",
+    "es": "https://podcasts.gui.do/cro-cafe-es/feed.xml"
   },
   "displayOrder": 20,
   "isActive": true,
