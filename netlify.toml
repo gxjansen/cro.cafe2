@@ -713,22 +713,22 @@
 
 [[redirects]]
   from = "/feed.xml"
-  to = "https://feeds.transistor.fm/cro-cafe"
+  to = "https://podcasts.gui.do/cro-cafe/feed.xml"
   status = 301
 
 [[redirects]]
   from = "/rss"
-  to = "https://feeds.transistor.fm/cro-cafe"
+  to = "https://podcasts.gui.do/cro-cafe/feed.xml"
   status = 301
 
 [[redirects]]
   from = "/feeds"
-  to = "https://feeds.transistor.fm/cro-cafe"
+  to = "https://podcasts.gui.do/cro-cafe/feed.xml"
   status = 301
 
 [[redirects]]
   from = "/rss.xml"
-  to = "https://feeds.transistor.fm/cro-cafe"
+  to = "https://podcasts.gui.do/cro-cafe/feed.xml"
   status = 301
 
 # ============================================================================

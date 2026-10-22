@@ -176,7 +176,7 @@ function processSitemap(xmlFile, lang, currentSlugs) {
         '/croppuccino': '/about/', // Assuming this is an about/event page
         '/code-of-conduct': '/about/',
         '/privacy-policy': '/privacy-policy/',
-        '/rss-episodes': `https://feeds.transistor.fm/cro-cafe${lang === 'de' ? '-deutsch' : lang === 'nl' ? '-nl' : lang === 'es' ? '-es' : ''}`
+        '/rss-episodes': `https://podcasts.gui.do/cro-cafe${lang === 'de' ? '-deutsch' : lang === 'nl' ? '-nl' : lang === 'es' ? '-es' : ''}/feed.xml`
       };
       
       if (mappings[path]) {
